@@ -1,0 +1,12 @@
+D:\Github\IdentityServer\IdentityServer\obj\Debug\net6.0\IdentityServer.csproj.AssemblyReference.cache
+D:\Github\IdentityServer\IdentityServer\obj\Debug\net6.0\IdentityServer.GeneratedMSBuildEditorConfig.editorconfig
+D:\Github\IdentityServer\IdentityServer\obj\Debug\net6.0\IdentityServer.AssemblyInfoInputs.cache
+D:\Github\IdentityServer\IdentityServer\obj\Debug\net6.0\IdentityServer.AssemblyInfo.cs
+D:\Github\IdentityServer\IdentityServer\obj\Debug\net6.0\IdentityServer.csproj.CoreCompileInputs.cache
+D:\Github\IdentityServer\IdentityServer\bin\Debug\net6.0\IdentityServer.deps.json
+D:\Github\IdentityServer\IdentityServer\bin\Debug\net6.0\IdentityServer.dll
+D:\Github\IdentityServer\IdentityServer\bin\Debug\net6.0\ref\IdentityServer.dll
+D:\Github\IdentityServer\IdentityServer\bin\Debug\net6.0\IdentityServer.pdb
+D:\Github\IdentityServer\IdentityServer\obj\Debug\net6.0\IdentityServer.dll
+D:\Github\IdentityServer\IdentityServer\obj\Debug\net6.0\ref\IdentityServer.dll
+D:\Github\IdentityServer\IdentityServer\obj\Debug\net6.0\IdentityServer.pdb
