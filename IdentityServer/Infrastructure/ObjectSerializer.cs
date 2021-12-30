@@ -5,14 +5,14 @@ namespace IdentityServer.Infrastructure
 {
     internal static class ObjectSerializer
     {
-        readonly static JsonSerializerOptions SerializerOptions = new JsonSerializerOptions
+        public static JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
         };
 
-        public static string Serialize(object obj)
+        public static string SerializeObject(object obj)
         {
-            return JsonSerializer.Serialize(obj, SerializerOptions);
+            return JsonSerializer.Serialize(obj, JsonSerializerOptions);
         }
     }
 }

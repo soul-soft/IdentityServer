@@ -30,14 +30,14 @@ namespace Microsoft.Extensions.DependencyInjection
         #endregion
 
         #region core
-        public static IIdentityServerBuilder AddCoreServices(this IIdentityServerBuilder builder)
+        internal static IIdentityServerBuilder AddCoreServices(this IIdentityServerBuilder builder)
         {
             return builder;
         }
-
         #endregion
 
         #region endpoints
+ 
         public static IIdentityServerBuilder AddEndpoint<T>(this IIdentityServerBuilder builder, string name, PathString path)
           where T : class, IEndpointHandler
         {
@@ -46,7 +46,7 @@ namespace Microsoft.Extensions.DependencyInjection
             return builder;
         }
 
-        public static IIdentityServerBuilder AddDefaultEndpoints(this IIdentityServerBuilder builder)
+        internal static IIdentityServerBuilder AddDefaultEndpoints(this IIdentityServerBuilder builder)
         {
             builder.Services.AddTransient<IEndpointRouter, EndpointRouter>();
 
@@ -63,9 +63,19 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
-        public static IIdentityServerBuilder AddPluggableServices(this IIdentityServerBuilder builder)
+        internal static IIdentityServerBuilder AddPluggableServices(this IIdentityServerBuilder builder)
         {
+            builder.Services.TryAddTransient<IDiscoveryResponseGenerator, DefaultDiscoveryResponseGenerator>();
             builder.Services.TryAddTransient<IServerUrls, ServerUrls>();
+            return builder;
+        }
+        #endregion
+
+        #region responseGenerators
+        internal static IIdentityServerBuilder AddResponseGenerators(this IIdentityServerBuilder builder)
+        {
+            builder.Services.TryAddTransient<IDiscoveryResponseGenerator, DefaultDiscoveryResponseGenerator>();
+            builder.Services.TryAddTransient<IDiscoveryKeyResponseGenerator, DefaultDiscoveryKeyResponseGenerator>();
             return builder;
         }
         #endregion
