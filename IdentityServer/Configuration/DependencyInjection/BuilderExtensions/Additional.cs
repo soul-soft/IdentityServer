@@ -5,9 +5,9 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class Additional
     {
         #region signingCredentials
-        public static IIdentityServerBuilder AddSigningCredentials(this IIdentityServerBuilder builder, Action<SigningCredentialsBuilder> configure)
+        public static IIdentityServerBuilder AddSigningCredentials(this IIdentityServerBuilder builder, Action<IdentityServerSigningCredentialsBuilder> configure)
         {
-            var arg = new SigningCredentialsBuilder(builder.Services);
+            var arg = new IdentityServerSigningCredentialsBuilder(builder.Services);
             configure(arg);
             arg.Build();
             return builder;

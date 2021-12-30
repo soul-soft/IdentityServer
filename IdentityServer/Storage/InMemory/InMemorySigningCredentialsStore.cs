@@ -7,20 +7,20 @@ namespace IdentityServer.Storage.InMemory
     public class InMemorySigningCredentialsStore
         : ISigningCredentialStore
     {
+        private readonly IEnumerable<SecurityKeyInfo> _securityKeys;
+      
         private readonly IEnumerable<SigningCredentials> _credentials;
 
         public InMemorySigningCredentialsStore(IEnumerable<SigningCredentials> credentials)
         {
             _credentials = credentials;
+            _securityKeys = _credentials.Select(credential => 
+                new SecurityKeyInfo(credential.Key, credential.Algorithm));
         }
 
         public Task<IEnumerable<SecurityKeyInfo>> GetSecurityKeysAsync()
         {
-            var result = _credentials.Select(credential =>
-            {
-                return new SecurityKeyInfo(credential.Key, credential.Algorithm);
-            });
-            return Task.FromResult(result);
+            return Task.FromResult(_securityKeys);
         }
 
         public Task<IEnumerable<SigningCredentials>> GetSigningCredentialsAsync()
