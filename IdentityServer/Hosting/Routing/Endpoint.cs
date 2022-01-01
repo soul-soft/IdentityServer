@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IdentityServer.Hosting.Routing
+namespace IdentityServer.Hosting
 {
     public class Endpoint
     {

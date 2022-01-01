@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace IdentityServer.Hosting.Routing
+namespace IdentityServer.Hosting
 {
     public interface IEndpointHandler
     {

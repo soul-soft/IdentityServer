@@ -1,14 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace IdentityServer
 {
     internal static class StringExtensions
     {
+        [DebuggerStepThrough]
+        public static string ToSpaceSeparatedString(this IEnumerable<string> list)
+        {
+            if (list == null)
+            {
+                return string.Empty;
+            }
+
+            var sb = new StringBuilder(100);
+
+            foreach (var element in list)
+            {
+                sb.Append(element + " ");
+            }
+
+            return sb.ToString().Trim();
+        }
+       
         [DebuggerStepThrough]
         public static bool IsMissing(string value)
         {

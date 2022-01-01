@@ -1,5 +1,4 @@
 ﻿using IdentityServer.Models;
-using IdentityServer.Storage.Stores;
 using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityServer.Storage.InMemory
@@ -18,12 +17,12 @@ namespace IdentityServer.Storage.InMemory
                 new SecurityKeyInfo(credential.Key, credential.Algorithm));
         }
 
-        public Task<IEnumerable<SecurityKeyInfo>> GetSecurityKeysAsync()
+        public Task<IEnumerable<SecurityKeyInfo>> GetSecurityKeyInfosAsync()
         {
             return Task.FromResult(_securityKeys);
         }
 
-        public Task<IEnumerable<SigningCredentials>> GetSigningCredentialsAsync()
+        public Task<IEnumerable<SigningCredentials>> GetAllSigningCredentialsAsync()
         {
             return Task.FromResult(_credentials);
         }

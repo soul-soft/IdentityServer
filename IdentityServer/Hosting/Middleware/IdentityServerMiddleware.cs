@@ -1,7 +1,6 @@
-﻿using IdentityServer.Hosting.Routing;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
-namespace IdentityServer.Hosting.Middleware
+namespace IdentityServer.Hosting
 {
     internal class IdentityServerMiddleware
     {

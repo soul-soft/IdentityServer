@@ -1,7 +1,5 @@
 ﻿using IdentityServer;
-using IdentityServer.Configuration;
-using IdentityServer.Hosting.Middleware;
-using Microsoft.Extensions.DependencyInjection;
+using IdentityServer.Hosting;
 
 namespace Microsoft.AspNetCore.Builder
 {

@@ -2,7 +2,6 @@
 using IdentityServer.Application;
 using IdentityServer.Configuration;
 using IdentityServer.Hosting;
-using IdentityServer.Hosting.Routing;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -34,15 +33,15 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             return builder;
         }
-        #endregion
+        #endregion       
 
         #region endpoints
- 
+
         public static IIdentityServerBuilder AddEndpoint<T>(this IIdentityServerBuilder builder, string name, PathString path)
           where T : class, IEndpointHandler
         {
             builder.Services.AddTransient<T>();
-            builder.Services.AddSingleton(new IdentityServer.Hosting.Routing.Endpoint(name, path, typeof(T)));
+            builder.Services.AddSingleton(new IdentityServer.Hosting.Endpoint(name, path, typeof(T)));
             return builder;
         }
 
@@ -52,6 +51,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             builder.AddEndpoint<DiscoveryKeyEndpoint>(EndpointNames.Discovery, ProtocolRoutePaths.DiscoveryWebKeys.EnsureLeadingSlash());
             builder.AddEndpoint<DiscoveryEndpoint>(EndpointNames.Discovery, ProtocolRoutePaths.DiscoveryConfiguration.EnsureLeadingSlash());
+            builder.AddEndpoint<TokenEndpoint>(EndpointNames.Token, ProtocolRoutePaths.Token.EnsureLeadingSlash());
 
             return builder;
         }
@@ -65,7 +65,8 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns></returns>
         internal static IIdentityServerBuilder AddPluggableServices(this IIdentityServerBuilder builder)
         {
-            builder.Services.TryAddTransient<IDiscoveryResponseGenerator, DefaultDiscoveryResponseGenerator>();
+            builder.Services.TryAddTransient<ITokenService, DefaultTokenService>();
+            builder.Services.TryAddTransient<ITokenCreationService, DefaultTokenCreationService>();
             builder.Services.TryAddTransient<IServerUrls, ServerUrls>();
             return builder;
         }
@@ -78,6 +79,17 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<IDiscoveryKeyResponseGenerator, DefaultDiscoveryKeyResponseGenerator>();
             return builder;
         }
+        #endregion
+
+        #region cookieAuthentication
+        public static IIdentityServerBuilder AddCookieAuthentication(this IIdentityServerBuilder builder)
+        {
+            builder.Services.AddAuthentication(IdentityServerConstants.DefaultCookieAuthenticationScheme)
+                .AddCookie(IdentityServerConstants.DefaultCookieAuthenticationScheme)
+                .AddCookie(IdentityServerConstants.ExternalCookieAuthenticationScheme);
+            return builder;
+        }
+
         #endregion
     }
 }

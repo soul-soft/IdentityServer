@@ -1,4 +1,4 @@
-﻿using IdentityServer.Hosting.Routing;
+﻿using IdentityServer.Hosting;
 using IdentityServer.Infrastructure;
 using Microsoft.AspNetCore.Http;
 

@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using IdentityServer.Infrastructure;
 using IdentityServer.Storage.InMemory;
-using IdentityServer.Storage.Stores;
+using IdentityServer.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 

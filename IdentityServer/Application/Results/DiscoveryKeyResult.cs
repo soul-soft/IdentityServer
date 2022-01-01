@@ -1,4 +1,4 @@
-﻿using IdentityServer.Hosting.Routing;
+﻿using IdentityServer.Hosting;
 using IdentityServer.Infrastructure;
 using IdentityServer.Models;
 using Microsoft.AspNetCore.Http;
@@ -16,7 +16,11 @@ namespace IdentityServer.Application
 
         public async Task ExecuteAsync(HttpContext context)
         {
-            await context.Response.WriteAsJsonAsync(new { keys = JsonWebKeys }, ObjectSerializer.JsonSerializerOptions);
+            var data = new 
+            { 
+                keys = JsonWebKeys
+            };
+            await context.Response.WriteAsJsonAsync(data, ObjectSerializer.JsonSerializerOptions);
         }
     }
 }

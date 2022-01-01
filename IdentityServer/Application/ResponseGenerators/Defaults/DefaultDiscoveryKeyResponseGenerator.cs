@@ -1,8 +1,7 @@
 ﻿using System.Security.Cryptography;
 using IdentityModel;
-using IdentityModel.Jwk;
 using IdentityServer.Configuration;
-using IdentityServer.Storage.Stores;
+using IdentityServer.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using JsonWebKey = IdentityServer.Models.JsonWebKey;
@@ -12,9 +11,9 @@ namespace IdentityServer.Application
     internal class DefaultDiscoveryKeyResponseGenerator
         : IDiscoveryKeyResponseGenerator
     {
-        private readonly ILogger Logger;
+        private readonly ILogger _logger;
         private readonly ISigningCredentialStore _signingCredentials;
-        private readonly IdentityServerOptions Options;
+        private readonly IdentityServerOptions _options;
 
         public DefaultDiscoveryKeyResponseGenerator(
             IdentityServerOptions options,
@@ -22,8 +21,8 @@ namespace IdentityServer.Application
             ILogger<DefaultDiscoveryKeyResponseGenerator> logger)
         {
             _signingCredentials = signingCredentials;
-            Options = options;
-            Logger = logger;
+            _options = options;
+            _logger = logger;
         }
 
 
@@ -31,7 +30,7 @@ namespace IdentityServer.Application
         {
             var webKeys = new List<JsonWebKey>();
 
-            foreach (var key in await _signingCredentials.GetSecurityKeysAsync())
+            foreach (var key in await _signingCredentials.GetSecurityKeyInfosAsync())
             {
                 if (key.Key is X509SecurityKey x509Key)
                 {
