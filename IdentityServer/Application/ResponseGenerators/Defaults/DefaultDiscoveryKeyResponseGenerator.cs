@@ -11,18 +11,12 @@ namespace IdentityServer.Application
     internal class DefaultDiscoveryKeyResponseGenerator
         : IDiscoveryKeyResponseGenerator
     {
-        private readonly ILogger _logger;
         private readonly ISigningCredentialStore _signingCredentials;
-        private readonly IdentityServerOptions _options;
 
         public DefaultDiscoveryKeyResponseGenerator(
-            IdentityServerOptions options,
-            ISigningCredentialStore signingCredentials,
-            ILogger<DefaultDiscoveryKeyResponseGenerator> logger)
+            ISigningCredentialStore signingCredentials)
         {
             _signingCredentials = signingCredentials;
-            _options = options;
-            _logger = logger;
         }
 
 
