@@ -1,20 +1,14 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 
 namespace IdentityServer.Application
 {
-    internal class DefaultSecretsListParser
+    internal class SecretsListParser
         : ISecretsListParser
     {
-        private readonly ILogger _logger;
-
         private readonly IEnumerable<ISecretParser> _providers;
 
-        public DefaultSecretsListParser(
-            ILogger<DefaultTokenRequestValidator> logger,
-            IEnumerable<ISecretParser> providers)
+        public SecretsListParser(IEnumerable<ISecretParser> providers)
         {
-            _logger = logger;
             _providers = providers;
         }
 
@@ -26,7 +20,7 @@ namespace IdentityServer.Application
             }
         }
 
-        public async Task<ParsedSecret> TryParseAsync(HttpContext context)
+        public async Task<ParsedSecret?> ParseAsync(HttpContext context)
         {
             foreach (var provider in _providers)
             {
@@ -36,9 +30,7 @@ namespace IdentityServer.Application
                     return secret;
                 }
             }
-            var errorDescription = "Secret not found. Please implement and register the 'icretpasser' interface";
-            _logger.LogInformation(errorDescription);
-            throw new InvalidOperationException(errorDescription);
+            return null;
         }
     }
 }
