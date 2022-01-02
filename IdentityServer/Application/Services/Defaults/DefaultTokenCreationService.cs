@@ -75,64 +75,22 @@ namespace IdentityServer.Application
     
         private Task<JwtPayload> CreatePayloadAsync(Token token)
         {
+            var notbefore = _clock.UtcNow.UtcDateTime;
+            var expires = _clock.UtcNow.UtcDateTime
+                .AddSeconds(token.Lifetime);
+
             var payload = new JwtPayload(
                 token.Issuer,
                 null,
                 null,
-                _clock.UtcNow.UtcDateTime,
-                _clock.UtcNow.UtcDateTime.AddSeconds(token.Lifetime));
+                notbefore,
+                expires);
 
             foreach (var aud in token.Audiences)
             {
                 payload.AddClaim(new Claim(JwtClaimTypes.Audience, aud));
             }
 
-            var amrClaims = token.Claims
-                .Where(x => x.Type == JwtClaimTypes.AuthenticationMethod)
-                .ToArray();
-
-            var scopeClaims = token.Claims.
-                Where(x => x.Type == JwtClaimTypes.Scope)
-                .ToArray();
-
-            var jsonClaims = token.Claims
-                .Where(x => x.ValueType == IdentityServerConstants.ClaimValueTypes.Json)
-                .ToList();
-
-            // add confirmation claim if present (it's JSON valued)
-            if (!string.IsNullOrWhiteSpace(token.Confirmation))
-            {
-                jsonClaims.Add(new Claim(JwtClaimTypes.Confirmation, token.Confirmation, IdentityServerConstants.ClaimValueTypes.Json));
-            }
-
-            var normalClaims = token.Claims
-                .Except(amrClaims)
-                .Except(jsonClaims)
-                .Except(scopeClaims);
-
-            payload.AddClaims(normalClaims);
-
-            // scope claims
-            if (!scopeClaims.IsNullOrEmpty())
-            {
-                var scopeValues = scopeClaims.Select(x => x.Value).ToArray();
-
-                if (_options.EmitScopesAsSpaceDelimitedStringInJwt)
-                {
-                    payload.Add(JwtClaimTypes.Scope, string.Join(" ", scopeValues));
-                }
-                else
-                {
-                    payload.Add(JwtClaimTypes.Scope, scopeValues);
-                }
-            }
-
-            // amr claims
-            if (!amrClaims.IsNullOrEmpty())
-            {
-                var amrValues = amrClaims.Select(x => x.Value).Distinct().ToArray();
-                payload.Add(JwtClaimTypes.AuthenticationMethod, amrValues);
-            }
             return Task.FromResult(payload);
         }
     }

@@ -32,7 +32,7 @@ namespace IdentityServer
         {
             public const string Json = "json";
         }
-
+      
         public enum RsaSigningAlgorithm
         {
             RS256,
@@ -49,6 +49,14 @@ namespace IdentityServer
             ES256,
             ES384,
             ES512
+        }
+
+        public static class ParsedSecretTypes
+        {
+            public const string NoSecret = "NoSecret";
+            public const string SharedSecret = "SharedSecret";
+            public const string X509Certificate = "X509Certificate";
+            public const string JwtBearer = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
         }
     }
 }

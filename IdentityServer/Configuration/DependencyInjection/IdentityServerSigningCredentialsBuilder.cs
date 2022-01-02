@@ -18,15 +18,16 @@ namespace IdentityServer.Configuration.DependencyInjection
             _services = services;
         }
 
-        public IdentityServerSigningCredentialsBuilder AddCredential(SigningCredentials credentials)
+        public IdentityServerSigningCredentialsBuilder AddSigningCredentials(SigningCredentials credentials)
         {
             _credentials.Add(credentials);
             return this;
         }
 
-        public IdentityServerSigningCredentialsBuilder AddCredential(X509Certificate2 certificate, string signingAlgorithm = SecurityAlgorithms.RsaSha256)
+        public IdentityServerSigningCredentialsBuilder AddSigningCredentials(X509Certificate2 certificate, string signingAlgorithm = SecurityAlgorithms.RsaSha256)
         {
-            if (certificate == null) throw new ArgumentNullException(nameof(certificate));
+            if (certificate == null) 
+                throw new ArgumentNullException(nameof(certificate));
 
             if (!certificate.HasPrivateKey)
             {
@@ -37,19 +38,19 @@ namespace IdentityServer.Configuration.DependencyInjection
             key.KeyId += signingAlgorithm;
 
             var credential = new SigningCredentials(key, signingAlgorithm);
-            return AddCredential(credential);
+            return AddSigningCredentials(credential);
         }
 
-        public IdentityServerSigningCredentialsBuilder AddCredential(SecurityKey key, string signingAlgorithm)
+        public IdentityServerSigningCredentialsBuilder AddSigningCredentials(SecurityKey key, string signingAlgorithm)
         {
             var credential = new SigningCredentials(key, signingAlgorithm);
-            return AddCredential(credential);
+            return AddSigningCredentials(credential);
         }
        
-        public IdentityServerSigningCredentialsBuilder AddCredential(RsaSecurityKey key, IdentityServerConstants.RsaSigningAlgorithm signingAlgorithm)
+        public IdentityServerSigningCredentialsBuilder AddSigningCredentials(RsaSecurityKey key, IdentityServerConstants.RsaSigningAlgorithm signingAlgorithm)
         {
             var credential = new SigningCredentials(key, CryptoHelper.GetRsaSigningAlgorithmValue(signingAlgorithm));
-            return AddCredential(credential);
+            return AddSigningCredentials(credential);
         }
        
         public IdentityServerSigningCredentialsBuilder AddDeveloperCredential(bool persistKey = true,string? filename = null, IdentityServerConstants.RsaSigningAlgorithm signingAlgorithm = IdentityServerConstants.RsaSigningAlgorithm.RS256)
@@ -63,7 +64,7 @@ namespace IdentityServer.Configuration.DependencyInjection
             {
                 var json = File.ReadAllText(filename);
                 var jwk = new JsonWebKey(json);
-                return AddCredential(jwk, jwk.Alg);
+                return AddSigningCredentials(jwk, jwk.Alg);
             }
             else
             {
@@ -76,7 +77,7 @@ namespace IdentityServer.Configuration.DependencyInjection
                     File.WriteAllText(filename, ObjectSerializer.SerializeObject(jwk));
                 }
 
-                return AddCredential(key, signingAlgorithm);
+                return AddSigningCredentials(key, signingAlgorithm);
             }
         }
       

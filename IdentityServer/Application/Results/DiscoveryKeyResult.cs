@@ -1,5 +1,4 @@
 ﻿using IdentityServer.Hosting;
-using IdentityServer.Infrastructure;
 using IdentityServer.Models;
 using Microsoft.AspNetCore.Http;
 
@@ -20,7 +19,7 @@ namespace IdentityServer.Application
             { 
                 keys = JsonWebKeys
             };
-            await context.Response.WriteAsJsonAsync(data, ObjectSerializer.JsonSerializerOptions);
+            await context.WriteAsJsonExAsync(data);
         }
     }
 }

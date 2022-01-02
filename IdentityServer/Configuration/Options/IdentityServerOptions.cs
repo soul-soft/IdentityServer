@@ -2,6 +2,7 @@
 {
     public class IdentityServerOptions
     {
+        public InputLengthRestrictions InputLengthRestrictions { get; set; } = new InputLengthRestrictions();
         public DiscoveryOptions Discovery { get; set; } = new DiscoveryOptions();
         public EndpointsOptions Endpoints { get; set; } = new EndpointsOptions();
         public string? IssuerUri { get; set; }

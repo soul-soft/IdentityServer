@@ -1,10 +1,9 @@
 ﻿using IdentityServer.Hosting;
-using IdentityServer.Infrastructure;
 using Microsoft.AspNetCore.Http;
 
 namespace IdentityServer.Application
 {
-    public class DiscoveryDocumentResult 
+    public class DiscoveryDocumentResult
         : IEndpointResult
     {
         private readonly Dictionary<string, object> _document;
@@ -17,7 +16,8 @@ namespace IdentityServer.Application
 
         public async Task ExecuteAsync(HttpContext context)
         {
-            await context.Response.WriteAsJsonAsync(_document, ObjectSerializer.JsonSerializerOptions);
+            var data = _document;
+            await context.WriteAsJsonExAsync(data);
         }
     }
 }
