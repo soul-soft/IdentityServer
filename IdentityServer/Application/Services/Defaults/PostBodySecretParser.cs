@@ -5,14 +5,15 @@ using Microsoft.Extensions.Logging;
 
 namespace IdentityServer.Application
 {
-    internal class PostBodyClientSecretScheme
-        : IClientSecretScheme
+    internal class PostBodySecretParser
+        : ISecretParser
     {
         private readonly ILogger _logger;
+
         private readonly IdentityServerOptions _options;
-      
-        public PostBodyClientSecretScheme(
-            ILogger<PostBodyClientSecretScheme> logger,
+
+        public PostBodySecretParser(
+            ILogger<PostBodySecretParser> logger,
             IdentityServerOptions options)
         {
             _logger = logger;
@@ -34,7 +35,7 @@ namespace IdentityServer.Application
             var body = await context.Request.ReadFormAsync();
             var clientId = body["client_id"].FirstOrDefault();
             var secret = body["client_secret"].FirstOrDefault();
-           
+
             if (string.IsNullOrWhiteSpace(clientId))
             {
                 _logger.LogError("No clientId in post body found");
@@ -55,7 +56,7 @@ namespace IdentityServer.Application
                     return null;
                 }
 
-                return new ParsedSecret(clientId, secret, IdentityServerConstants.ParsedSecretTypes.SharedSecret);;
+                return new ParsedSecret(clientId, secret, IdentityServerConstants.ParsedSecretTypes.SharedSecret); ;
             }
             else
             {

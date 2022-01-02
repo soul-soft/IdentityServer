@@ -1,38 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Authentication;
 
 namespace IdentityServer.Application
 {
     internal class DefaultClientSecretValidator
         : IClientSecretValidator
     {
-        private readonly ILogger _logger;
-       
-        private readonly IClientSecretParser _parser;
+        private readonly ISystemClock _clock;
 
         public DefaultClientSecretValidator(
-            ILogger<DefaultClientSecretValidator> logger,
-            IClientSecretParser parser)
+            ISystemClock clock)
         {
-            _logger = logger;
-            _providers = providers;
+            _clock = clock;
         }
 
-        public async Task<ClientSecretValidationResult> ValidateAsync(HttpContext context)
+        public Task ValidateAsync(ClientSecretValidationContext context)
         {
-            foreach (var provider in _providers)
+            var client = context.Client;
+            //Validate Client
+            if (!client.Enabled)
             {
-                var secret = await provider.ParseAsync(context);
-                if (secret != null)
-                {
-                    _logger.LogDebug("Parser found secret: {type}", provider.GetType().Name);
-                }
+                context.Fail("Invalid client");
+                return Task.CompletedTask;
             }
+            //Validate Secret
+            var parsedSecret = context.ParsedSecret;
+
+            if (parsedSecret.Type == IdentityServerConstants.ParsedSecretTypes.NoSecret)
+            {
+                context.Success();
+                return Task.CompletedTask;
+            }
+            var flag = client.ClientSecrets
+                .Where(a => a.Enabled)
+                .Where(a => a.Expiration.HasValue && a.Expiration.Value.HasExpired(_clock.UtcNow.UtcDateTime))
+                .Where(a => a.Credential == parsedSecret.Credential)
+                .Any();
+            if (flag)
+            {
+                context.Success();
+                return Task.CompletedTask;
+            }
+            context.Fail("Invalid secret");
+            return Task.CompletedTask;
         }
     }
 }

@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using IdentityServer.Models;
 
 namespace IdentityServer.Application
 {
     public interface IClientSecretValidator
     {
-        Task<ClientSecretValidationResult> ValidateAsync(HttpContext context);
+        Task ValidateAsync(ClientSecretValidationContext context);
     }
 }

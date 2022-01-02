@@ -2,9 +2,9 @@
 {
     public class ParsedSecret
     {
-        public string ClientId { get; set; }
-        public string? ClientSecret { get; set; }
-        public string Type { get; set; }
+        public string ClientId { get; }
+        public string? Credential { get;  }
+        public string Type { get; }
         public Dictionary<string, string> Properties { get; } = new Dictionary<string, string>();
 
         public ParsedSecret(string clientId, string type)
@@ -16,7 +16,7 @@
         public ParsedSecret(string clientId, string secret, string type)
         {
             ClientId = clientId;
-            ClientSecret = secret;
+            Credential = secret;
             Type = type;
         }
     }
