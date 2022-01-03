@@ -4,10 +4,10 @@ namespace IdentityServer.Application
 {
     public class ResourceOwnerPasswordGrantRequest
     {
-        public Client Client { get; }
+        public IClient Client { get; }
         public string UserName { get; }
         public string Password { get; }
-        public ResourceOwnerPasswordGrantRequest(Client client, string userName, string password)
+        public ResourceOwnerPasswordGrantRequest(IClient client, string userName, string password)
         {
             Client = client;
             UserName = userName;

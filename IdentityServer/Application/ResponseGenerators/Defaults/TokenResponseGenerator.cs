@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using IdentityServer.Storage;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace IdentityServer.Application
@@ -8,49 +9,34 @@ namespace IdentityServer.Application
     {
         private readonly ILogger _logger;
         private readonly ITokenService _tokenService;
-        private readonly IClientSecretValidator _clientValidator;
+        private readonly ISecretListParser _secretsListParser;
+        private readonly ISecretValidator _secretsListValidator;
+        private readonly IClientValidator _clientValidator;
+        private readonly IClientStore _clientStore;
         private readonly ITokenRequestValidator _requestValidator;
 
         public TokenResponseGenerator(
             ILogger<TokenResponseGenerator> logger,
             ITokenService tokenService,
-            IClientSecretValidator clientValidator,
+            ISecretListParser secretsListParser,
+            ISecretValidator secretsListValidator,
+            IClientValidator clientValidator,
+            IClientStore clientStore,
             ITokenRequestValidator requestValidator)
         {
             _logger = logger;
             _tokenService = tokenService;
+            _secretsListParser = secretsListParser;
+            _secretsListValidator = secretsListValidator;
             _clientValidator = clientValidator;
+            _clientStore = clientStore;
             _requestValidator = requestValidator;
         }
 
         public async Task<TokenResponse> ProcessAsync(HttpContext context)
         {
-            //验证客户端
-            var clientValidationResult = await _clientValidator.ValidateAsync(context);
-
-            if (clientValidationResult.IsError)
-            {
-                _logger.LogError(clientValidationResult.Description);
-            }
-
-            var parameters = await context.Request.ReadFormAsNameValueCollectionAsync();
-            //验证请求
-            var tokenValidationResult = await _requestValidator.ValidateRequestAsync(parameters, clientValidationResult);
-            //创建token
-            var token = await _tokenService.CreateAccessTokenAsync(new TokenCreationRequest
-            {
-                AccessTokenLifetime = tokenValidationResult.Client.AccessTokenLifetime,
-                AccessTokenType = tokenValidationResult.Client.AccessTokenType,
-            });
-            //通过密钥加密
-            var accessToken = await _tokenService.CreateSecurityTokenAsync(token);
-            var response = new TokenResponse()
-            {
-                AccessToken = accessToken,
-                ExpiresIn = token.Lifetime,
-                Scope = tokenValidationResult.Scopes
-            };
-            return response;
+            
+            return new TokenResponse();
         }
     }
 }

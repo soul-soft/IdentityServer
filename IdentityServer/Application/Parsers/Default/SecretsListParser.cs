@@ -2,19 +2,18 @@
 
 namespace IdentityServer.Application
 {
-    internal class SecretsListParser
-        : ISecretsListParser
+    internal class SecretsListParser: ISecretListParser
     {
-        private readonly IEnumerable<ISecretParser> _providers;
+        private readonly IEnumerable<ISecretParser> _parsers;
 
-        public SecretsListParser(IEnumerable<ISecretParser> providers)
+        public SecretsListParser(IEnumerable<ISecretParser> parsers)
         {
-            _providers = providers;
+            _parsers = parsers;
         }
 
         public IEnumerable<string> GetAuthenticationMethods()
         {
-            foreach (var item in _providers)
+            foreach (var item in _parsers)
             {
                 yield return item.AuthenticationMethod;
             }
@@ -22,7 +21,7 @@ namespace IdentityServer.Application
 
         public async Task<ParsedSecret?> ParseAsync(HttpContext context)
         {
-            foreach (var provider in _providers)
+            foreach (var provider in _parsers)
             {
                 var secret = await provider.ParseAsync(context);
                 if (secret != null && secret.Type != IdentityServerConstants.ParsedSecretTypes.NoSecret)

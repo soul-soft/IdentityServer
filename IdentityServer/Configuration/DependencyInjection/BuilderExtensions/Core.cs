@@ -97,7 +97,7 @@ namespace Microsoft.Extensions.DependencyInjection
         internal static IIdentityServerBuilder AddDefaultSecretParsers(this IIdentityServerBuilder builder)
         {
             builder.Services.AddTransient<ISecretParser, PostBodySecretParser>();
-            builder.Services.AddTransient<ISecretsListParser, SecretsListParser>();
+            builder.Services.AddTransient<ISecretListParser, SecretsListParser>();
             return builder;
         }
         #endregion
@@ -106,9 +106,9 @@ namespace Microsoft.Extensions.DependencyInjection
         internal static IIdentityServerBuilder AddDefaultValidators(this IIdentityServerBuilder builder)
         {
             //Secret
-            builder.Services.AddTransient<ISecretValidator, HashedSharedSecretValidator>();
-            builder.Services.AddTransient<ISecretsListValidator, SecretsListValidator>();
-            builder.Services.AddTransient<IClientSecretValidator, ClientSecretValidator>();
+            builder.Services.AddTransient<ICredentialValidator, HashSecretValidator>();
+            builder.Services.AddTransient<ISecretValidator, SecretsListValidator>();
+            builder.Services.AddTransient<IClientValidator, ClientValidator>();
             //requst
             builder.Services.AddTransient<ITokenRequestValidator, TokenRequestValidator>();
             return builder;

@@ -4,6 +4,6 @@ namespace IdentityServer.Storage
 {
     public interface IClientStore
     {
-        Task<Client?> FindClientByIdAsync(string clientId);
+        Task<IClient?> FindClientByIdAsync(string clientId);
     }
 }

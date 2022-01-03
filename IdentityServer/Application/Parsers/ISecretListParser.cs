@@ -2,10 +2,7 @@
 
 namespace IdentityServer.Application
 {
-    /// <summary>
-    /// 密钥集解析器组
-    /// </summary>
-    public interface ISecretsListParser
+    public interface ISecretListParser
     {
         Task<ParsedSecret?> ParseAsync(HttpContext context);
         IEnumerable<string> GetAuthenticationMethods();

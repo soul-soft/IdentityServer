@@ -28,8 +28,8 @@ namespace IdentityServer
 
             return false;
         }
-    
-        public static async Task<NameValueCollection> ReadFormAsNameValueCollectionAsync(this HttpRequest request)
+
+        internal static async Task<NameValueCollection> ReadFormAsNameValueCollectionAsync(this HttpRequest request)
         {
             var collection = await request.ReadFormAsync();
             var nv = new NameValueCollection();

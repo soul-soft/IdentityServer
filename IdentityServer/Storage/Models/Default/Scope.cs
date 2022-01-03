@@ -3,11 +3,11 @@
     /// <summary>
     /// 资源组
     /// </summary>
-    public class ApiScope
+    public class Scope
     {
         public string Name { get; set; }
         public string? DisplayName { get; set; }
-        public ApiScope(string name)
+        public Scope(string name)
         {
             Name = name;
         }

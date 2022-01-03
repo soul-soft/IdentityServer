@@ -2,6 +2,6 @@
 {
     public interface IResourceOwnerPasswordGrantValidator
     {
-        Task<GrantValidationResult> ValidateAsync(ResourceOwnerPasswordGrantRequest context);
+        Task<ValidationResult> ValidateAsync(ResourceOwnerPasswordGrantRequest context);
     }
 }

@@ -9,7 +9,7 @@
         /// <summary>
         /// 凭据
         /// </summary>
-        public object? Credential { get; set; }
+        public object? Credential { get; }
         /// <summary>
         /// 凭据类型：IdentityServerConstants.ParsedSecretTypes
         /// </summary>
@@ -18,11 +18,13 @@
         /// 扩展属性
         /// </summary>
         public Dictionary<string, string> Properties { get; } = new Dictionary<string, string>();
+
         public ParsedSecret(string id, string type)
         {
             Id = id;
             Type = type;
         }
+
         public ParsedSecret(string clientId, object credential, string type)
         {
             Id = clientId;

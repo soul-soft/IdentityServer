@@ -1,3 +1,4 @@
+using IdentityServer.Models;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,7 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddIdentityServer()
-    .AddInMemoryClienStore()
+    .AddInMemoryClienStore(new List<Client>())
     .AddDefaultSigningCredential();
 
 var app = builder.Build();

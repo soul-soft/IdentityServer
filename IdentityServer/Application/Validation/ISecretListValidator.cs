@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Application
 {
-    public interface ISecretValidator
+    public interface ISecretListValidator
     {
         Task<ValidationResult> ValidateAsync(SecretValidationRequest request);
     }
