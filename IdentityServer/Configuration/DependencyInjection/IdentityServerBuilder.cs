@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
-namespace IdentityServer.Configuration.DependencyInjection
+namespace IdentityServer.Configuration
 {
     public class IdentityServerBuilder
         : IIdentityServerBuilder

@@ -8,12 +8,12 @@ using JsonWebKey = IdentityServer.Models.JsonWebKey;
 
 namespace IdentityServer.Application
 {
-    internal class DefaultDiscoveryKeyResponseGenerator
+    internal class DiscoveryKeyResponseGenerator
         : IDiscoveryKeyResponseGenerator
     {
         private readonly ISigningCredentialStore _signingCredentials;
 
-        public DefaultDiscoveryKeyResponseGenerator(
+        public DiscoveryKeyResponseGenerator(
             ISigningCredentialStore signingCredentials)
         {
             _signingCredentials = signingCredentials;

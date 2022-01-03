@@ -12,6 +12,7 @@
         public int? ReferenceTokenLifetime { get; } = 3600;
         public bool RequireClientSecret { get;  } = true;
         public AccessTokenType AccessTokenType { get; } = AccessTokenType.Jwt;
-        public ICollection<string> AllowedGrantTypes { get; } = new HashSet<string>();
+        public IReadOnlyCollection<string> AllowedScopes { get; } = new HashSet<string>();
+        public IReadOnlyCollection<string> AllowedGrantTypes { get; } = new HashSet<string>();
     }
 }

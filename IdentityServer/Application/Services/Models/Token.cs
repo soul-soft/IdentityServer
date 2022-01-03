@@ -19,7 +19,7 @@ namespace IdentityServer.Application
         public string? Confirmation { get; set; }
         public DateTime CreationTime { get;  set; }
         public string ClientId { get;  set; }
-        public string Description { get;  set; }
+        public string? Description { get;  set; }
         public AccessTokenType AccessTokenType { get; internal set; }
     }
 }

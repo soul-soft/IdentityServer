@@ -5,15 +5,15 @@ using Microsoft.Extensions.Logging;
 
 namespace IdentityServer.Application
 {
-    internal class DefaultDiscoveryResponseGenerator
+    internal class DiscoveryResponseGenerator
         : IDiscoveryResponseGenerator
     {
         private readonly ILogger Logger;
         private readonly IdentityServerOptions Options;
        
-        public DefaultDiscoveryResponseGenerator(
+        public DiscoveryResponseGenerator(
             IdentityServerOptions options,
-            ILogger<DefaultDiscoveryResponseGenerator> logger)
+            ILogger<DiscoveryResponseGenerator> logger)
         {
             Options = options;
             Logger = logger;

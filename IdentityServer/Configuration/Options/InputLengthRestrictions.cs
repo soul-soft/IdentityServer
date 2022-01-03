@@ -27,5 +27,10 @@
         /// Max length for password
         /// </summary>
         public int Password { get; set; } = Default;
+      
+        /// <summary>
+        /// Max length for scope
+        /// </summary>
+        public int Scopes { get; set; } = 300;
     }
 }

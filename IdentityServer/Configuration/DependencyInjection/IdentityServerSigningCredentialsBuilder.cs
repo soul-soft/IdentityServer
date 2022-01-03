@@ -1,8 +1,9 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using IdentityServer.Infrastructure;
-using IdentityServer.Storage.InMemory;
 using IdentityServer.Storage;
+using IdentityServer.Storage.InMemory;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityServer.Configuration.DependencyInjection
@@ -11,7 +12,7 @@ namespace IdentityServer.Configuration.DependencyInjection
     {
         private readonly IServiceCollection _services;
 
-        private readonly List<SigningCredentials> _credentials = new();
+        private readonly List<SigningCredentials> _credentials = new List<SigningCredentials>();
 
         public IdentityServerSigningCredentialsBuilder(IServiceCollection services)
         {
@@ -26,7 +27,7 @@ namespace IdentityServer.Configuration.DependencyInjection
 
         public IdentityServerSigningCredentialsBuilder AddSigningCredentials(X509Certificate2 certificate, string signingAlgorithm = SecurityAlgorithms.RsaSha256)
         {
-            if (certificate == null) 
+            if (certificate == null)
                 throw new ArgumentNullException(nameof(certificate));
 
             if (!certificate.HasPrivateKey)
@@ -46,14 +47,14 @@ namespace IdentityServer.Configuration.DependencyInjection
             var credential = new SigningCredentials(key, signingAlgorithm);
             return AddSigningCredentials(credential);
         }
-       
+
         public IdentityServerSigningCredentialsBuilder AddSigningCredentials(RsaSecurityKey key, IdentityServerConstants.RsaSigningAlgorithm signingAlgorithm)
         {
             var credential = new SigningCredentials(key, CryptoHelper.GetRsaSigningAlgorithmValue(signingAlgorithm));
             return AddSigningCredentials(credential);
         }
-       
-        public IdentityServerSigningCredentialsBuilder AddDeveloperCredential(bool persistKey = true,string? filename = null, IdentityServerConstants.RsaSigningAlgorithm signingAlgorithm = IdentityServerConstants.RsaSigningAlgorithm.RS256)
+
+        public IdentityServerSigningCredentialsBuilder AddDefaultSigningCredential(bool persistKey = true, string? filename = null, IdentityServerConstants.RsaSigningAlgorithm signingAlgorithm = IdentityServerConstants.RsaSigningAlgorithm.RS256)
         {
             if (filename == null)
             {
@@ -80,10 +81,13 @@ namespace IdentityServer.Configuration.DependencyInjection
                 return AddSigningCredentials(key, signingAlgorithm);
             }
         }
-      
+
         internal void Build()
         {
-            _services.AddSingleton<ISigningCredentialStore>(new InMemorySigningCredentialsStore(_credentials));
+            _services.TryAddSingleton<ISigningCredentialStore>(sp =>
+            {
+                return new InMemorySigningCredentialsStore(_credentials);
+            });
         }
     }
 }

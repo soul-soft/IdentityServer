@@ -9,10 +9,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddIdentityServer()
-    .AddSigningCredentials(credentials =>
-    {
-        credentials.AddDeveloperCredential();
-    });
+    .AddInMemoryClienStore()
+    .AddDefaultSigningCredential();
 
 var app = builder.Build();
 

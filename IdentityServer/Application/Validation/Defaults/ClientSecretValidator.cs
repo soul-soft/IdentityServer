@@ -1,12 +1,11 @@
 ﻿using IdentityServer.Models;
 using IdentityServer.Storage;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 
 namespace IdentityServer.Application
 {
-    internal class ClientSecretValidator : IClientSecretValidator
+    internal class ClientSecretValidator 
+        : IClientSecretValidator
     {
         private readonly IClientStore _clients;
         private readonly ISecretsListParser _parsers;
@@ -40,12 +39,15 @@ namespace IdentityServer.Application
             {
                 return Success(client, parsedSecret);
             }
-            var secretValidationResult = await _validator.ValidateAsync(client.ClientSecrets, parsedSecret);
-            if (secretValidationResult.IsError)
+            else
             {
-                return Error("Client secret validation failed for client: {clientId}.", client.ClientId);
+                var secretValidationResult = await _validator.ValidateAsync(client.ClientSecrets, parsedSecret);
+                if (secretValidationResult.IsError)
+                {
+                    return Error("Client secret validation failed for client: {clientId}.", client.ClientId);
+                }
+                return Success(client, parsedSecret);
             }
-            return Success(client, parsedSecret);
         }
 
         private ClientSecretValidationResult Error(string format, params object?[] args)
@@ -57,7 +59,8 @@ namespace IdentityServer.Application
 
         private ClientSecretValidationResult Success(Client client, ParsedSecret secret)
         {
-            var result = new ClientSecretValidationResult();
+            var result = new ClientSecretValidationResult(client, secret);
+            result.Success();
             return result;
         }
     }

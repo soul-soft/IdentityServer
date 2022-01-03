@@ -1,5 +1,4 @@
 ﻿using IdentityServer.Configuration;
-using IdentityServer.Configuration.DependencyInjection;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -14,12 +13,15 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             var builder = services.AddIdentityServerBuilder();
 
-            builder.AddRequiredPlatformServices()
+            builder
+                .AddRequiredPlatformServices()
                 .AddCoreServices()
+                .AddDefaultEndpoints()
+                .AddDefaultSecretParsers()
+                .AddDefaultValidators()
                 .AddCookieAuthentication()
                 .AddPluggableServices()
-                .AddResponseGenerators()
-                .AddDefaultEndpoints();
+                .AddResponseGenerators();
 
             return builder;
         }

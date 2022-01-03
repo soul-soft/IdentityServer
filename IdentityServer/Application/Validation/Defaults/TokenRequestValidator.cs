@@ -2,7 +2,7 @@
 using IdentityModel;
 using IdentityServer.Configuration;
 using IdentityServer.Models;
-using IdentityServer.Storage;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace IdentityServer.Application
@@ -10,76 +10,122 @@ namespace IdentityServer.Application
     internal class TokenRequestValidator
         : ITokenRequestValidator
     {
+        private ILogger _logger;
         private readonly IdentityServerOptions _options;
-        private readonly IClientStore _clients;
-        private readonly ISecretsListParser _clientProvider;
-        private readonly IClientSecretValidator _clientValidator;
+        private readonly IServiceProvider _services;
+        private readonly IResourceValidator _resourceValidator;
 
         public TokenRequestValidator(
             IdentityServerOptions options,
-            IClientStore clients,
-            ISecretsListParser clientProvider,
-            IClientSecretValidator clientValidator)
+            IServiceProvider services,
+            IResourceValidator resourceValidator,
+            ILogger<TokenRequestValidator> logger)
         {
+            _logger = logger;
             _options = options;
-            _clients = clients;
-            _clientProvider = clientProvider;
-            _clientValidator = clientValidator;
+            _services = services;
+            _resourceValidator = resourceValidator;
         }
 
-        public async Task ValidateRequestAsync(TokenRequestValidationContext context)
+        public async Task<TokenRequestValidationResult> ValidateRequestAsync(NameValueCollection parameters, ClientSecretValidationResult clientSecretValidationResult)
         {
-            var parameters = await context.HttpContext.Request.ReadFormAsNameValueCollectionAsync();
-            //get grantType
+            var result = new TokenRequestValidationResult();
             var grantType = parameters.Get(OidcConstants.TokenRequest.GrantType);
             if (string.IsNullOrWhiteSpace(grantType))
             {
-                context.Fail(OidcConstants.TokenErrors.UnsupportedGrantType);
-                return;
+                _logger.LogError("Grant type is missing");
+                return Error(OidcConstants.TokenErrors.UnsupportedGrantType);
             }
             if (grantType.Length > _options.InputLengthRestrictions.GrantType)
             {
-                context.Fail(OidcConstants.TokenErrors.UnsupportedGrantType);
-                return;
+                _logger.LogError("Grant type is too long");
+                return Error(OidcConstants.TokenErrors.UnsupportedGrantType);
             }
-            //parse Secret
-            var parsedClient = await _clientProvider.ParseAsync(context.HttpContext);
-            if (parsedClient == null)
+            if (!clientSecretValidationResult.Client.AllowedGrantTypes.Contains(GrantType.ClientCredentials))
             {
-                context.Fail(OidcConstants.TokenErrors.InvalidRequest);
-                return;
+                _logger.LogError("Client not authorized for client credentials flow, check the AllowedGrantTypes setting");
+                return Error(OidcConstants.TokenErrors.UnauthorizedClient);
             }
-            //
-            //find Client
-            var client = await _clients.FindClientByIdAsync(parsedClient.Id);
-            if (client == null)
+            //Validate resource 
+            var scopes = parameters.Get(OidcConstants.TokenRequest.Scope) ?? string.Empty;
+            var requestScopes = scopes.Split(',')
+                .Where(a => !string.IsNullOrWhiteSpace(a));
+            var resourceValidationResult = await _resourceValidator.ValidateAsync(new ResourceValidationRequest(clientSecretValidationResult.Client, requestScopes));
+            if (resourceValidationResult.IsError)
             {
-                context.Fail(OidcConstants.TokenErrors.InvalidClient);
-                return;
+                _logger.LogError(resourceValidationResult.Description);
+                return Error(OidcConstants.TokenErrors.InvalidScope);
             }
-            //validation client
-            var clientValidationContext = new ClientSecretValidationContext(client, parsedClient);
-            await _clientValidator.ValidateAsync(clientValidationContext);
-            if (clientValidationContext.IsError)
-            {
-                context.Fail(OidcConstants.TokenErrors.UnauthorizedClient);
-            }
+            GrantValidationResult grantResult;
             switch (grantType)
             {
+                //Validate clientCredentials
+                case GrantType.ClientCredentials:
+                    var grantContext = new ClientCredentialsGrantRequest(clientSecretValidationResult.Client);
+                    var validator = _services.GetRequiredService<IClientCredentialsGrantValidator>();
+                    grantResult = await validator.ValidateAsync(grantContext);
+                    break;
+                //Validate resourceOwnerPassword
+                case GrantType.ResourceOwnerPassword:
+                    var username = parameters.Get(OidcConstants.TokenRequest.UserName);
+                    if (string.IsNullOrWhiteSpace(username))
+                    {
+                        return Error(OidcConstants.TokenErrors.InvalidGrant);
+                    }
+                    var password = parameters.Get(OidcConstants.TokenRequest.Password);
+                    if (string.IsNullOrWhiteSpace(password))
+                    {
+                        return Error(OidcConstants.TokenErrors.InvalidGrant);
+                    }
+                    if (username.Length > _options.InputLengthRestrictions.UserName ||
+                        password.Length > _options.InputLengthRestrictions.Password)
+                    {
+                        return Error(OidcConstants.TokenErrors.InvalidGrant);
+                    }
+                    var resourceOwnerPasswordGrantRequest = new ResourceOwnerPasswordGrantRequest(
+                        clientSecretValidationResult.Client,
+                        username,
+                        password);
+                    var resourceOwnerPasswordGrantValidator = _services.GetRequiredService<IResourceOwnerPasswordGrantValidator>();
+                    grantResult = await resourceOwnerPasswordGrantValidator.ValidateAsync(resourceOwnerPasswordGrantRequest);
+                    break;
+                //Validate extensionGrant
                 default:
-                    await RunValidationAsync(ValidateClientCredentialsRequestAsync);
+                    var extensionGrantRequest = new ExtensionGrantRequest(clientSecretValidationResult.Client);
+                    var extensionGrantValidator = _services.GetRequiredService<IExtensionGrantValidator>();
+                    grantResult = await extensionGrantValidator.ValidateAsync(extensionGrantRequest);
                     break;
             }
+            if (grantResult.IsError)
+            {
+                _logger.LogError(grantResult.Description);
+                return Error(OidcConstants.TokenErrors.InvalidRequest);
+            }
+            return Success(
+                clientSecretValidationResult.Client,
+                resourceValidationResult.Resources);
         }
-
-        private async Task RunValidationAsync(Func<NameValueCollection, Task> func, NameValueCollection parameters)
+        /// <summary>
+        /// 失败结果
+        /// </summary>
+        /// <param name="format"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        private TokenRequestValidationResult Error(string format, params object[] args)
         {
-            await func(parameters);
+            var result = new TokenRequestValidationResult();
+            result.Error(string.Format(format, args));
+            return result;
         }
-
-        private async Task ValidateClientCredentialsRequestAsync(NameValueCollection parameters)
+        /// <summary>
+        /// 成功结果
+        /// </summary>
+        /// <returns></returns>
+        private TokenRequestValidationResult Success(Client client, IEnumerable<Resource> resources)
         {
-            
+            var result = new TokenRequestValidationResult();
+            result.Success(client, resources);
+            return result;
         }
     }
 }

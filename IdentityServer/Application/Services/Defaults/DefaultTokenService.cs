@@ -1,8 +1,6 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using IdentityModel;
 using IdentityServer.Hosting;
-using IdentityServer.Storage;
 using Microsoft.AspNetCore.Authentication;
 
 namespace IdentityServer.Application
@@ -13,17 +11,14 @@ namespace IdentityServer.Application
         private readonly ISystemClock _clock;
         private readonly IServerUrls _urls;
         private readonly ITokenCreationService _creationService;
-        private readonly ISigningCredentialStore _credentials;
 
         public DefaultTokenService(
             IServerUrls urls,
             ISystemClock clock,
-            ISigningCredentialStore credentials,
             ITokenCreationService creationService)
         {
             _urls = urls;
             _clock = clock;
-            _credentials = credentials;
             _creationService = creationService;
         }
 
@@ -49,7 +44,6 @@ namespace IdentityServer.Application
                 ClientId = request.Client.ClientId,
                 Description = request.Description,
                 AccessTokenType = request.AccessTokenType,
-                AllowedSigningAlgorithms = request.Resources.ApiResources.FindMatchingSigningAlgorithms()
             };
             return Task.FromResult(token);
           

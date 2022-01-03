@@ -2,6 +2,7 @@
 using IdentityServer.Application;
 using IdentityServer.Configuration;
 using IdentityServer.Hosting;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -11,16 +12,24 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class Core
     {
-        #region required
+        #region CoreServices
+        internal static IIdentityServerBuilder AddCoreServices(this IIdentityServerBuilder builder)
+        {
+            return builder;
+        }
+        #endregion       
+
+        #region PlatformServices
         /// <summary>
         /// 必要的平台服务
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
-        public static IIdentityServerBuilder AddRequiredPlatformServices(this IIdentityServerBuilder builder)
+        internal static IIdentityServerBuilder AddRequiredPlatformServices(this IIdentityServerBuilder builder)
         {
-            builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             builder.Services.AddOptions();
+            builder.Services.TryAddSingleton<ISystemClock, SystemClock>();
+            builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             builder.Services.AddSingleton(
                 resolver => resolver.GetRequiredService<IOptions<IdentityServerOptions>>().Value);
             builder.Services.AddHttpClient();
@@ -28,14 +37,7 @@ namespace Microsoft.Extensions.DependencyInjection
         }
         #endregion
 
-        #region core
-        internal static IIdentityServerBuilder AddCoreServices(this IIdentityServerBuilder builder)
-        {
-            return builder;
-        }
-        #endregion       
-
-        #region endpoints
+        #region Endpoints
 
         public static IIdentityServerBuilder AddEndpoint<T>(this IIdentityServerBuilder builder, string name, PathString path)
           where T : class, IEndpointHandler
@@ -57,7 +59,7 @@ namespace Microsoft.Extensions.DependencyInjection
         }
         #endregion
 
-        #region pluggable
+        #region PluggableServices
         /// <summary>
         /// 可插拔的服务
         /// </summary>
@@ -72,24 +74,45 @@ namespace Microsoft.Extensions.DependencyInjection
         }
         #endregion
 
-        #region responseGenerators
+        #region ResponseGenerators
         internal static IIdentityServerBuilder AddResponseGenerators(this IIdentityServerBuilder builder)
         {
-            builder.Services.TryAddTransient<IDiscoveryResponseGenerator, DefaultDiscoveryResponseGenerator>();
-            builder.Services.TryAddTransient<IDiscoveryKeyResponseGenerator, DefaultDiscoveryKeyResponseGenerator>();
+            builder.Services.TryAddTransient<IDiscoveryResponseGenerator, DiscoveryResponseGenerator>();
+            builder.Services.TryAddTransient<IDiscoveryKeyResponseGenerator, DiscoveryKeyResponseGenerator>();
             return builder;
         }
         #endregion
 
-        #region cookieAuthentication
-        public static IIdentityServerBuilder AddCookieAuthentication(this IIdentityServerBuilder builder)
+        #region CookieAuthentication
+        internal static IIdentityServerBuilder AddCookieAuthentication(this IIdentityServerBuilder builder)
         {
-            builder.Services.AddAuthentication(IdentityServerConstants.DefaultCookieAuthenticationScheme)
-                .AddCookie(IdentityServerConstants.DefaultCookieAuthenticationScheme)
-                .AddCookie(IdentityServerConstants.ExternalCookieAuthenticationScheme);
+            //builder.Services.AddAuthentication(IdentityServerConstants.DefaultCookieAuthenticationScheme)
+            //    .AddCookie(IdentityServerConstants.DefaultCookieAuthenticationScheme)
+            //    .AddCookie(IdentityServerConstants.ExternalCookieAuthenticationScheme);
             return builder;
         }
+        #endregion
 
+        #region DefaultSecretParsers
+        internal static IIdentityServerBuilder AddDefaultSecretParsers(this IIdentityServerBuilder builder)
+        {
+            builder.Services.AddTransient<ISecretParser, PostBodySecretParser>();
+            builder.Services.AddTransient<ISecretsListParser, SecretsListParser>();
+            return builder;
+        }
+        #endregion
+
+        #region DefaultValidators
+        internal static IIdentityServerBuilder AddDefaultValidators(this IIdentityServerBuilder builder)
+        {
+            //Secret
+            builder.Services.AddTransient<ISecretValidator, HashedSharedSecretValidator>();
+            builder.Services.AddTransient<ISecretsListValidator, SecretsListValidator>();
+            builder.Services.AddTransient<IClientSecretValidator, ClientSecretValidator>();
+            //requst
+            builder.Services.AddTransient<ITokenRequestValidator, TokenRequestValidator>();
+            return builder;
+        }
         #endregion
     }
 }

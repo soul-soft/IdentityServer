@@ -1,7 +1,9 @@
-﻿namespace IdentityServer.Application
+﻿using System.Collections.Specialized;
+
+namespace IdentityServer.Application
 {
     public interface ITokenRequestValidator
     {
-        Task ValidateRequestAsync(TokenRequestValidationContext context);
+        Task<TokenRequestValidationResult> ValidateRequestAsync(NameValueCollection parameters, ClientSecretValidationResult result);
     }
 }

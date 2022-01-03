@@ -16,18 +16,18 @@ namespace IdentityServer.Application
         private readonly ISystemClock _clock;
         private readonly ILogger _logger;
         private readonly IdentityServerOptions _options;
-        private readonly ISigningCredentialStore _credentials;
+        private readonly ISigningCredentialStore _signingCredentials;
 
         public DefaultTokenCreationService(
             ISystemClock clock,
-            ISigningCredentialStore credentials,
+            ISigningCredentialStore signingCredentials,
             IdentityServerOptions options,
             ILogger<DefaultTokenCreationService> logger)
         {
             _clock = clock;
-            _credentials = credentials;
             _options = options;
             _logger = logger;
+            _signingCredentials = signingCredentials;
         }
 
         public async Task<string> CreateTokenAsync(Token token)
@@ -41,7 +41,7 @@ namespace IdentityServer.Application
 
         private async Task<JwtHeader> CreateHeaderAsync(Token token)
         {
-            var credential = await _credentials.GetSigningCredentialsAsync(token.AllowedSigningAlgorithms);
+            var credential = await _signingCredentials.GetSigningCredentialsAsync(token.AllowedSigningAlgorithms);
 
             if (credential == null)
             {

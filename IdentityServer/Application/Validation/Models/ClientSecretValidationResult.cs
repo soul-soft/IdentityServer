@@ -4,20 +4,20 @@ namespace IdentityServer.Application
 {
     public class ClientSecretValidationResult : ValidationResult
     {
-        public Client Client { get; private set; }
+        public Client Client { get; }
 
-        public ParsedSecret Secret { get; private set; }
+        public ParsedSecret ParsedSecret { get; }
 
         public ClientSecretValidationResult()
         {
             Client = null!;
-            Secret = null!;
+            ParsedSecret = null!;
         }
 
         public ClientSecretValidationResult(Client client, ParsedSecret secret)
         {
             Client = client;
-            Secret = secret;
+            ParsedSecret = secret;
         }
     }
 }
