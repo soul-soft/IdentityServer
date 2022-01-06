@@ -13,13 +13,18 @@ namespace IdentityServer.Storage.InMemory
         public InMemorySigningCredentialsStore(IEnumerable<SigningCredentials> credentials)
         {
             _credentials = credentials;
-            _securityKeys = _credentials.Select(credential => 
-                new SecurityKeyInfo(credential.Key, credential.Algorithm));
+            _securityKeys = _credentials
+                .Select(credential => new SecurityKeyInfo(credential.Key, credential.Algorithm));
         }
 
-        public Task<IEnumerable<SecurityKeyInfo>> GetSecurityKeyInfosAsync()
+        public Task<IEnumerable<SecurityKeyInfo>> GetSecurityKeysAsync()
         {
             return Task.FromResult(_securityKeys);
+        }
+
+        public Task<SigningCredentials?> GetSigningCredentialsAsync()
+        {
+            return Task.FromResult(_credentials.FirstOrDefault());
         }
 
         public Task<IEnumerable<SigningCredentials>> GetAllSigningCredentialsAsync()

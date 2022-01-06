@@ -1,7 +1,9 @@
-﻿namespace IdentityServer.Application
+﻿using Microsoft.AspNetCore.Http;
+
+namespace IdentityServer.Application
 {
     public interface ITokenRequestValidator
     {
-        Task<ValidationResult> ValidateRequestAsync(TokenRequestValidationRequest request);
+        Task<ValidationResult> ValidateRequestAsync(HttpContext context);
     }
 }

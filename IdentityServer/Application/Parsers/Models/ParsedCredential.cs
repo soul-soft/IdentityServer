@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Application
 {
-    public class ParsedSecret
+    public class ParsedCredential
     {
         /// <summary>
         /// 标识
@@ -9,7 +9,7 @@
         /// <summary>
         /// 凭据
         /// </summary>
-        public object? Credential { get; }
+        public object? Secret { get; }
         /// <summary>
         /// 凭据类型：IdentityServerConstants.ParsedSecretTypes
         /// </summary>
@@ -19,16 +19,16 @@
         /// </summary>
         public Dictionary<string, string> Properties { get; } = new Dictionary<string, string>();
 
-        public ParsedSecret(string id, string type)
+        public ParsedCredential(string id, string type)
         {
             Id = id;
             Type = type;
         }
 
-        public ParsedSecret(string clientId, object credential, string type)
+        public ParsedCredential(string clientId, object credential, string type)
         {
             Id = clientId;
-            Credential = credential;
+            Secret = credential;
             Type = type;
         }
     }

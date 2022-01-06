@@ -1,6 +1,5 @@
 ﻿using IdentityModel;
 using IdentityServer.Hosting;
-using IdentityServer.Models;
 using IdentityServer.Storage;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -9,71 +8,61 @@ namespace IdentityServer.Application
 {
     internal class TokenEndpoint : IEndpointHandler
     {
-        private readonly ITokenService _tokenService;
         private readonly ILogger _logger;
-        private readonly IServerUrls _urls;
+        private readonly IServerUrls _serverUrls;
+        private readonly ICredentialParser _credentialParser;
         private readonly IClientStore _clients;
-        private readonly ISecretListParser _secretListParser;
-        private readonly ISecretValidator _secretListValidator;
-        private readonly IClientValidator _clientValidator;
-        private readonly ITokenRequestValidator _requestValidator;
+        private readonly IClientSecretValidator _clientSecretValidator;
+        private readonly ITokenRequestValidator _tokenRequestValidator;
+        private readonly ITokenService _tokenService;
 
         public TokenEndpoint(
             IClientStore clients,
-            ISecretListParser secretListParser,
-            ISecretValidator secretListValidator,
-            IClientValidator clientValidator,
-            ITokenRequestValidator requestValidator,
-            ILogger<TokenEndpoint> logger,
+            IServerUrls serverUrls,
             ITokenService tokenService,
-            IServerUrls serverUrls)
+            ILogger<TokenEndpoint> logger,
+            ICredentialParser credentialParser,
+            IClientSecretValidator clientSecretValidator,
+            ITokenRequestValidator tokenRequestValidator)
         {
             _logger = logger;
             _clients = clients;
-            _secretListParser = secretListParser;
-            _secretListValidator = secretListValidator;
-            _clientValidator = clientValidator;
-            _requestValidator = requestValidator;
+            _serverUrls = serverUrls;
             _tokenService = tokenService;
-            _urls = serverUrls;
+            _credentialParser = credentialParser;
+            _clientSecretValidator = clientSecretValidator;
+            _tokenRequestValidator = tokenRequestValidator;
         }
 
         public async Task<IEndpointResult> ProcessAsync(HttpContext context)
         {
-            //解析凭据
-            var parsedCredential = await _secretListParser.ParseAsync(context);
-            if (parsedCredential == null)
-            {
-                return Error(OidcConstants.TokenErrors.InvalidClient);
-            }
-            var client = await _clients.FindClientByIdAsync(parsedCredential.Id);
+            //获取凭证
+            var credential = await _credentialParser.ParseAsync(context);
+            //获取客户端
+            var client = await _clients.FindClientByIdAsync(credential.Id);
             if (client == null)
             {
                 return Error(OidcConstants.TokenErrors.InvalidClient);
             }
-            //验证客户端
-            var validationResult = await _clientValidator.ValidateAsync(new ClientValidationRequest(client));
-            if (validationResult.IsError)
-            {
-                _logger.LogError(validationResult.Description);
-                return Error(OidcConstants.TokenErrors.InvalidClient);
-            }
-            //验证凭据
-            validationResult = await _secretListValidator.ValidateAsync(new SecretValidationRequest(client.ClientSecrets, parsedCredential));
+            //验证客户端凭证
+            var validationResult = await _clientSecretValidator.ValidateAsync(client, credential);
             if (validationResult.IsError)
             {
                 _logger.LogError(validationResult.Description);
                 return Error(OidcConstants.TokenErrors.UnauthorizedClient);
             }
             //验证请求
-            var parameters = await context.Request.ReadFormAsNameValueCollectionAsync();
-            validationResult = await _requestValidator.ValidateRequestAsync(new TokenRequestValidationRequest(client, parameters));
+            validationResult = await _tokenRequestValidator.ValidateRequestAsync(context);
             if (validationResult.IsError)
             {
                 _logger.LogError(validationResult.Description);
                 return Error(OidcConstants.TokenErrors.InvalidRequest);
             }
-            return new TokenResult(null);
+            var issuerUrl = _serverUrls.GetIdentityServerIssuerUri();
+            var accessToken = await _tokenService.CreateAccessTokenAsync(new TokenCreationRequest(issuerUrl, client) 
+            {
+            });
+            return new TokenResult(new TokenResponse());
         }
 
         private TokenErrorResult Error(string error, string? errorDescription = null)

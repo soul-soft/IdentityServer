@@ -2,23 +2,24 @@
 
 namespace IdentityServer.Application
 {
-    internal class HashSecretValidator : ISecretValidator
+    internal class SharedSecretValidator 
+        : ICredentialValidator
     {
-        public Task<ValidationResult> ValidateAsync(SecretValidationRequest request)
+        public Task<ValidationResult> ValidateAsync(IEnumerable<ISecret> secrets, ParsedCredential credential)
         {
-            var credential = request.ParsedSecret.Credential?.ToString();
-            if (request.ParsedSecret.Type != IdentityServerConstants.ParsedSecretTypes.SharedSecret)
+            if (credential.Type != IdentityServerConstants.ParsedSecretTypes.SharedSecret)
             {
-                return ValidationResult.ErrorAsync("Hashed shared secret validator cannot process {type}", request.ParsedSecret.Type ?? "null");
+                return ValidationResult.ErrorAsync("Hashed shared secret validator cannot process {type}", credential.Type ?? "null");
             }
-            if (string.IsNullOrEmpty(request.ParsedSecret.Id) || string.IsNullOrEmpty(credential))
+            var secretHash = credential.Secret?.ToString();
+            if (string.IsNullOrEmpty(credential.Id) || string.IsNullOrEmpty(secretHash))
             {
                 throw new ArgumentException("Id or Credential is missing.");
             }
-            var sharedSecrets = request.AllowedSecrets
+            var sharedSecrets = secrets
                 .Where(s => s.Type == IdentityServerConstants.SecretTypes.SharedSecret);
-            var sha256Credential = credential.Sha256();
-            var sha512Credential = credential.Sha512();
+            var sha256Credential = secretHash.Sha256();
+            var sha512Credential = secretHash.Sha512();
             var credentials = new string[]
             {
                 sha256Credential,

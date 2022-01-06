@@ -67,8 +67,8 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns></returns>
         internal static IIdentityServerBuilder AddPluggableServices(this IIdentityServerBuilder builder)
         {
-            builder.Services.TryAddTransient<ITokenService, DefaultTokenService>();
-            builder.Services.TryAddTransient<ITokenCreationService, DefaultTokenCreationService>();
+            builder.Services.TryAddTransient<ITokenService, TokenService>();
+            builder.Services.TryAddTransient<ISecurityTokenService, SecurityTokenService>();
             builder.Services.TryAddTransient<IServerUrls, ServerUrls>();
             return builder;
         }
@@ -96,7 +96,7 @@ namespace Microsoft.Extensions.DependencyInjection
         #region DefaultSecretParsers
         internal static IIdentityServerBuilder AddDefaultSecretParsers(this IIdentityServerBuilder builder)
         {
-            builder.Services.AddTransient<ISecretParser, PostBodySecretParser>();
+            builder.Services.AddTransient<ICredentialParser, ClientParser>();
             builder.Services.AddTransient<ISecretListParser, SecretsListParser>();
             return builder;
         }
@@ -106,9 +106,9 @@ namespace Microsoft.Extensions.DependencyInjection
         internal static IIdentityServerBuilder AddDefaultValidators(this IIdentityServerBuilder builder)
         {
             //Secret
-            builder.Services.AddTransient<ICredentialValidator, HashSecretValidator>();
-            builder.Services.AddTransient<ISecretValidator, SecretsListValidator>();
-            builder.Services.AddTransient<IClientValidator, ClientValidator>();
+            builder.Services.AddTransient<ICredentialValidator, SharedSecretValidator>();
+            builder.Services.AddTransient<ICredentialValidator, SecretsListValidator>();
+            builder.Services.AddTransient<IClientSecretValidator, ClientSecretValidator>();
             //requst
             builder.Services.AddTransient<ITokenRequestValidator, TokenRequestValidator>();
             return builder;

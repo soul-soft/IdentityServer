@@ -7,8 +7,8 @@
         public IReadOnlyCollection<ISecret> ClientSecrets { get; } = new HashSet<ISecret>();
         public IReadOnlyCollection<string> AllowedIdentityTokenSigningAlgorithms { get; set; } = new HashSet<string>();
         public bool IncludeJwtId { get; } = true;
-        public int AccessTokenLifetime { get; } = 3600;
-        public int IdentityTokenLifetime { get; } = 3600;
+        public int? AccessTokenLifetime { get; } = 3600;
+        public int? IdentityTokenLifetime { get; } = 3600;
         public int? ReferenceTokenLifetime { get; } = 3600;
         public bool RequireClientSecret { get; } = true;
         public AccessTokenType AccessTokenType { get; } = AccessTokenType.Jwt;

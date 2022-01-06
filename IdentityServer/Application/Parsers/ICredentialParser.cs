@@ -2,9 +2,9 @@
 
 namespace IdentityServer.Application
 {
-    public interface ISecretParser
+    public interface ICredentialParser
     {
-        Task<ParsedSecret?> ParseAsync(HttpContext context);
+        Task<ParsedCredential> ParseAsync(HttpContext context);
         string AuthenticationMethod { get; }
     }
 }

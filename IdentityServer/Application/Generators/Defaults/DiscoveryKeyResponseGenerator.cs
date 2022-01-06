@@ -24,7 +24,7 @@ namespace IdentityServer.Application
         {
             var webKeys = new List<JsonWebKey>();
 
-            foreach (var key in await _signingCredentials.GetSecurityKeyInfosAsync())
+            foreach (var key in await _signingCredentials.GetSecurityKeysAsync())
             {
                 if (key.Key is X509SecurityKey x509Key)
                 {

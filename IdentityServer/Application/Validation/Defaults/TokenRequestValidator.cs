@@ -1,6 +1,7 @@
 ﻿using IdentityModel;
 using IdentityServer.Configuration;
 using IdentityServer.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace IdentityServer.Application
@@ -22,10 +23,9 @@ namespace IdentityServer.Application
             _scopeValidator = resourceValidator;
         }
 
-        public async Task<ValidationResult> ValidateRequestAsync(TokenRequestValidationRequest request)
+        public async Task<ValidationResult> ValidateRequestAsync(HttpContext content)
         {
-            var parameters = request.Parameters;
-            var client = request.Client;
+          
             var grantType = parameters.Get(OidcConstants.TokenRequest.GrantType);
             if (string.IsNullOrWhiteSpace(grantType))
             {

@@ -10,24 +10,24 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityServer.Application
 {
-    internal class DefaultTokenCreationService
-        : ITokenCreationService
+    internal class SecurityTokenService
+        : ISecurityTokenService
     {
         private readonly ISystemClock _clock;
         private readonly ILogger _logger;
         private readonly IdentityServerOptions _options;
-        private readonly ISigningCredentialStore _signingCredentials;
+        private readonly ISigningCredentialStore _signings;
 
-        public DefaultTokenCreationService(
+        public SecurityTokenService(
             ISystemClock clock,
-            ISigningCredentialStore signingCredentials,
+            ISigningCredentialStore signings,
             IdentityServerOptions options,
-            ILogger<DefaultTokenCreationService> logger)
+            ILogger<SecurityTokenService> logger)
         {
             _clock = clock;
             _options = options;
             _logger = logger;
-            _signingCredentials = signingCredentials;
+            _signings = signings;
         }
 
         public async Task<string> CreateTokenAsync(Token token)
@@ -41,17 +41,17 @@ namespace IdentityServer.Application
 
         private async Task<JwtHeader> CreateHeaderAsync(Token token)
         {
-            var credential = await _signingCredentials.GetSigningCredentialsAsync(token.AllowedSigningAlgorithms);
+            var signing = await _signings.GetSigningCredentialsAsync();
 
-            if (credential == null)
+            if (signing == null)
             {
                 throw new InvalidOperationException("No signing credential is configured. Can't create JWT token");
             }
 
-            var header = new JwtHeader(credential);
+            var header = new JwtHeader(signing);
 
             // emit x5t claim for backwards compatibility with v4 of MS JWT library
-            if (credential.Key is X509SecurityKey x509Key)
+            if (signing.Key is X509SecurityKey x509Key)
             {
                 var cert = x509Key.Certificate;
                 if (_clock.UtcNow.UtcDateTime > cert.NotAfter)
@@ -76,21 +76,16 @@ namespace IdentityServer.Application
         private Task<JwtPayload> CreatePayloadAsync(Token token)
         {
             var notbefore = _clock.UtcNow.UtcDateTime;
-            var expires = _clock.UtcNow.UtcDateTime
-                .AddSeconds(token.Lifetime);
-
             var payload = new JwtPayload(
                 token.Issuer,
                 null,
-                null,
+                token.Claims,
                 notbefore,
-                expires);
-
+                token.Expires);
             foreach (var aud in token.Audiences)
             {
                 payload.AddClaim(new Claim(JwtClaimTypes.Audience, aud));
             }
-
             return Task.FromResult(payload);
         }
     }
