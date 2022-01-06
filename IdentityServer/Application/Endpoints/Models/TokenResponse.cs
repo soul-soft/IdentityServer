@@ -10,7 +10,7 @@ namespace IdentityServer.Application
     {
         public string? AccessToken { get; set; }
         public string? IdentityToken { get; set; }
-        public int ExpiresIn { get; set; }
+        public int? ExpiresIn { get; set; }
         public string? RefreshToken { get; set; }
         public string? Scope { get; set; }
         public Dictionary<string, object> Properties { get; set; } = new Dictionary<string, object>();

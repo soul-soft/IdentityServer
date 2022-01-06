@@ -4,6 +4,6 @@ namespace IdentityServer.Storage
 {
     public interface IResourceStore
     {
-        Task<IEnumerable<Resource>> FindResourcesByScopeNameAsync(IEnumerable<string> scopeNames);
+        Task<IEnumerable<IResource>> FindResourcesByScopesAsync(IEnumerable<string> scopes);
     }
 }

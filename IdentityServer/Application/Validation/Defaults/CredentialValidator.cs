@@ -2,8 +2,7 @@
 
 namespace IdentityServer.Application
 {
-    internal class SharedSecretValidator 
-        : ICredentialValidator
+    internal class CredentialValidator : ICredentialValidator
     {
         public Task<ValidationResult> ValidateAsync(IEnumerable<ISecret> secrets, ParsedCredential credential)
         {

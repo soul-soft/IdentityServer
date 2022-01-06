@@ -1,10 +1,32 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using IdentityModel;
+using Microsoft.AspNetCore.Http;
 
 namespace IdentityServer
 {
     internal static class Constants
     {
         public static string IdentityServerName { get; set; } = "IdentityServer";
+
+        public class ClaimTypeFilters
+        {
+            public static readonly string[] ClaimsServiceFilterClaimTypes =
+            {
+                JwtClaimTypes.Nonce,
+                JwtClaimTypes.Scope,
+                JwtClaimTypes.JwtId,
+                JwtClaimTypes.Issuer,
+                JwtClaimTypes.Subject,
+                JwtClaimTypes.Audience,
+                JwtClaimTypes.ClientId,
+                JwtClaimTypes.IssuedAt,
+                JwtClaimTypes.SessionId,
+                JwtClaimTypes.NotBefore,
+                JwtClaimTypes.Expiration,
+                JwtClaimTypes.IdentityProvider,
+                JwtClaimTypes.ReferenceTokenId,
+                JwtClaimTypes.AccessTokenHash,
+            };
+        }
 
         public static class EndpointNames
         {
@@ -24,9 +46,9 @@ namespace IdentityServer
             public const string ConnectPathPrefix = "connect";
 
             public const string DiscoveryConfiguration = ".well-known/openid-configuration";
-          
+
             public const string DiscoveryWebKeys = DiscoveryConfiguration + "/jwks";
-            
+
             public const string Token = ConnectPathPrefix + "/token";
 
             public static readonly string[] CorsPaths =

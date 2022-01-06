@@ -68,7 +68,7 @@ namespace Microsoft.Extensions.DependencyInjection
         internal static IIdentityServerBuilder AddPluggableServices(this IIdentityServerBuilder builder)
         {
             builder.Services.TryAddTransient<ITokenService, TokenService>();
-            builder.Services.TryAddTransient<ISecurityTokenService, SecurityTokenService>();
+            builder.Services.TryAddTransient<ITokenSerializeService, JwtTokenSerializeService>();
             builder.Services.TryAddTransient<IServerUrls, ServerUrls>();
             return builder;
         }
@@ -96,7 +96,7 @@ namespace Microsoft.Extensions.DependencyInjection
         #region DefaultSecretParsers
         internal static IIdentityServerBuilder AddDefaultSecretParsers(this IIdentityServerBuilder builder)
         {
-            builder.Services.AddTransient<ICredentialParser, ClientParser>();
+            builder.Services.AddTransient<ICredentialParser, CredentialParser>();
             builder.Services.AddTransient<ISecretListParser, SecretsListParser>();
             return builder;
         }
@@ -106,7 +106,7 @@ namespace Microsoft.Extensions.DependencyInjection
         internal static IIdentityServerBuilder AddDefaultValidators(this IIdentityServerBuilder builder)
         {
             //Secret
-            builder.Services.AddTransient<ICredentialValidator, SharedSecretValidator>();
+            builder.Services.AddTransient<ICredentialValidator, CredentialValidator>();
             builder.Services.AddTransient<ICredentialValidator, SecretsListValidator>();
             builder.Services.AddTransient<IClientSecretValidator, ClientSecretValidator>();
             //requst

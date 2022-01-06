@@ -1,6 +1,6 @@
-﻿using IdentityModel;
+﻿using System.Security.Claims;
+using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
-using System.Security.Claims;
 
 namespace IdentityServer.Application
 {
@@ -8,14 +8,20 @@ namespace IdentityServer.Application
         : ITokenService
     {
         private readonly ISystemClock _clock;
+        private readonly IClaimsService _claimsService;
+        private readonly ITokenCreationService _creation;
 
         public TokenService(
-            ISystemClock clock)
+            ISystemClock clock,
+            IClaimsService claimsService,
+            ITokenCreationService creation)
         {
             _clock = clock;
+            _creation = creation;
+            _claimsService = claimsService;
         }
 
-        public Task<Token> CreateAccessTokenAsync(TokenCreationRequest request)
+        public async Task<Token> CreateAccessTokenAsync(TokenRequest request)
         {
             var claims = new List<Claim>();
             if (request.Client.IncludeJwtId)
@@ -27,24 +33,28 @@ namespace IdentityServer.Application
                 claims.Add(new Claim(JwtClaimTypes.SessionId, request.SessionId));
             }
             claims.Add(new Claim(JwtClaimTypes.IssuedAt, _clock.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64));
-            var token = new Token(request.Issuer, OidcConstants.TokenTypes.AccessToken)
+            foreach (var scope in request.Scopes)
             {
-                CreationTime = _clock.UtcNow.UtcDateTime,                
-                Claims = claims.Distinct(new ClaimComparer()).ToHashSet(),
-                AccessTokenType = request.Client.AccessTokenType,
-            };
-            if (request.Client.AccessTokenLifetime.HasValue)
-            {
-                token.Expires = _clock.UtcNow.UtcDateTime
-                    .AddSeconds(request.Client.AccessTokenLifetime.Value);
+                claims.Add(new Claim(JwtClaimTypes.Scope, scope));
             }
-            return Task.FromResult(token);
-          
+            var claimsRequest = new ClaimsRequest(request.Client, request.UserClaims);
+            var issuerClaims = await _claimsService.GetAccessTokenClaimsAsync(claimsRequest);
+            foreach (var item in issuerClaims)
+            {
+                claims.Add(item);
+            }
+            var token = new Token(OidcConstants.TokenTypes.IdentityToken, request.Issuer, request.Scopes)
+            {
+                AccessTokenType = request.Client.AccessTokenType,
+                Lifetime = request.Client.IdentityTokenLifetime,
+                Claims = claims.ToHashSet()
+            };
+            return token;
         }
 
-        public Task<Token> CreateIdentityTokenAsync(TokenCreationRequest request)
+        public async Task<Token> CreateIdentityTokenAsync(TokenRequest request)
         {
-            var claims = new List<Claim>();
+            var claims = new HashSet<Claim>();
             if (request.Client.IncludeJwtId)
             {
                 claims.Add(new Claim(JwtClaimTypes.JwtId, CryptoRandom.CreateUniqueId(16, CryptoRandom.OutputFormat.Hex)));
@@ -54,18 +64,35 @@ namespace IdentityServer.Application
                 claims.Add(new Claim(JwtClaimTypes.SessionId, request.SessionId));
             }
             claims.Add(new Claim(JwtClaimTypes.IssuedAt, _clock.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64));
-            var token = new Token(request.Issuer, OidcConstants.TokenTypes.IdentityToken)
+            var claimsRequest = new ClaimsRequest(request.Client, request.UserClaims);
+            var issuerClaims = await _claimsService.GetIdentityTokenClaimsAsync(claimsRequest);
+            foreach (var item in issuerClaims)
             {
-                CreationTime = _clock.UtcNow.UtcDateTime,
-                Claims = claims.Distinct(new ClaimComparer()).ToHashSet(),
-                AccessTokenType = request.Client.AccessTokenType,
-            };
-            if (request.Client.AccessTokenLifetime.HasValue)
-            {
-                token.Expires = _clock.UtcNow.UtcDateTime
-                    .AddSeconds(request.Client.AccessTokenLifetime.Value);
+                claims.Add(item);
             }
-            return Task.FromResult(token);
+            var token = new Token(OidcConstants.TokenTypes.IdentityToken, request.Issuer, request.Scopes)
+            {
+                AccessTokenType = request.Client.AccessTokenType,
+                Lifetime = request.Client.IdentityTokenLifetime,
+                Claims = claims
+            };
+            return token;
+        }
+
+        public async Task<string> CreateSecurityTokenAsync(Token token)
+        {
+            if (token.Type == OidcConstants.TokenTypes.AccessToken)
+            {
+                return await _creation.CreateTokenAsync(token);
+            }
+            else if (token.Type == OidcConstants.TokenTypes.IdentityToken)
+            {
+                return await _creation.CreateTokenAsync(token);
+            }
+            else
+            {
+                throw new InvalidOperationException("Invalid token type.");
+            }
         }
     }
 }

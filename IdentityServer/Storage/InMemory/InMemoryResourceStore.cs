@@ -4,19 +4,18 @@ namespace IdentityServer.Storage.InMemory
 {
     public class InMemoryResourceStore : IResourceStore
     {
-        private readonly IEnumerable<Resource> _resources;
+        private readonly IEnumerable<IResource> _resources;
 
-        public InMemoryResourceStore(IEnumerable<Resource> resources)
+        public InMemoryResourceStore(IEnumerable<IResource> resources)
         {
             _resources = resources;
         }
 
-        public Task<IEnumerable<Resource>> FindResourcesByScopeNameAsync(IEnumerable<string> scopeNames)
+        public Task<IEnumerable<IResource>> FindResourcesByScopesAsync(IEnumerable<string> scopes)
         {
             var query = from resource in _resources
-                        where resource.Scopes.Any(name => scopeNames.Contains(name))
+                        where scopes.Contains(resource.Scope)
                         select resource;
-
             return Task.FromResult(query);
         }
     }

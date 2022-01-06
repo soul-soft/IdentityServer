@@ -12,24 +12,30 @@ namespace IdentityServer.Application
         private readonly IServerUrls _serverUrls;
         private readonly ICredentialParser _credentialParser;
         private readonly IClientStore _clients;
+        private readonly IResourceStore _resources;
+        private readonly ITokenService _tokenService;
+        private readonly IScopeRequestValidator _scopeRequestValidator;
         private readonly IClientSecretValidator _clientSecretValidator;
         private readonly ITokenRequestValidator _tokenRequestValidator;
-        private readonly ITokenService _tokenService;
 
         public TokenEndpoint(
             IClientStore clients,
             IServerUrls serverUrls,
             ITokenService tokenService,
             ILogger<TokenEndpoint> logger,
+            IResourceStore resources,
             ICredentialParser credentialParser,
+            IScopeRequestValidator scopeRequestValidator,
             IClientSecretValidator clientSecretValidator,
             ITokenRequestValidator tokenRequestValidator)
         {
             _logger = logger;
             _clients = clients;
+            _resources = resources;
             _serverUrls = serverUrls;
             _tokenService = tokenService;
             _credentialParser = credentialParser;
+            _scopeRequestValidator = scopeRequestValidator;
             _clientSecretValidator = clientSecretValidator;
             _tokenRequestValidator = tokenRequestValidator;
         }
@@ -52,17 +58,41 @@ namespace IdentityServer.Application
                 return Error(OidcConstants.TokenErrors.UnauthorizedClient);
             }
             //验证请求
-            validationResult = await _tokenRequestValidator.ValidateRequestAsync(context);
+            validationResult = await _tokenRequestValidator.ValidateAsync(client, context);
+            if (validationResult.IsError)
+            {
+                _logger.LogError(validationResult.Description);
+                return Error(OidcConstants.TokenErrors.InvalidRequest);
+            }
+            var parameters = await context.Request.ReadFormAsNameValueCollectionAsync();
+            var scope = parameters.Get(OidcConstants.TokenRequest.Scope);
+            if (string.IsNullOrWhiteSpace(scope))
+            {
+                scope = string.Join(",", client.AllowedScopes);
+            }
+            var scopes = scope.Split(',');
+            var resources = await _resources.FindResourcesByScopesAsync(scopes);
+            validationResult = await _scopeRequestValidator.ValidateAsync(client, scopes);
             if (validationResult.IsError)
             {
                 _logger.LogError(validationResult.Description);
                 return Error(OidcConstants.TokenErrors.InvalidRequest);
             }
             var issuerUrl = _serverUrls.GetIdentityServerIssuerUri();
-            var accessToken = await _tokenService.CreateAccessTokenAsync(new TokenCreationRequest(issuerUrl, client) 
+            var tokenRequest = new TokenRequest(client, issuerUrl, OidcConstants.TokenTypes.AccessToken)
             {
+                SessionId = Guid.NewGuid().ToString("N"),
+                Scopes = scopes,
+                UserClaims = resources.SelectMany(s => s.UserClaims).ToList()
+            };
+            var token = await _tokenService.CreateIdentityTokenAsync(tokenRequest);
+            var accessToken = await _tokenService.CreateSecurityTokenAsync(token);
+            return new TokenResult(new TokenResponse()
+            {
+                AccessToken = accessToken,
+                ExpiresIn = tokenRequest.Lifetime,
+                Scope = scope
             });
-            return new TokenResult(new TokenResponse());
         }
 
         private TokenErrorResult Error(string error, string? errorDescription = null)

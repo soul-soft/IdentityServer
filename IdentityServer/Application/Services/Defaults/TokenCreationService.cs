@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using IdentityModel;
 using IdentityServer.Configuration;
 using IdentityServer.Storage;
@@ -10,23 +9,23 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityServer.Application
 {
-    internal class SecurityTokenService
-        : ISecurityTokenService
+    internal class TokenCreationService
+        : ITokenCreationService
     {
-        private readonly ISystemClock _clock;
         private readonly ILogger _logger;
+        private readonly ISystemClock _clock;
         private readonly IdentityServerOptions _options;
         private readonly ISigningCredentialStore _signings;
 
-        public SecurityTokenService(
+        public TokenCreationService(
             ISystemClock clock,
-            ISigningCredentialStore signings,
             IdentityServerOptions options,
-            ILogger<SecurityTokenService> logger)
+            ISigningCredentialStore signings,
+            ILogger<TokenCreationService> logger)
         {
             _clock = clock;
-            _options = options;
             _logger = logger;
+            _options = options;
             _signings = signings;
         }
 
@@ -50,7 +49,6 @@ namespace IdentityServer.Application
 
             var header = new JwtHeader(signing);
 
-            // emit x5t claim for backwards compatibility with v4 of MS JWT library
             if (signing.Key is X509SecurityKey x509Key)
             {
                 var cert = x509Key.Certificate;
@@ -58,7 +56,6 @@ namespace IdentityServer.Application
                 {
                     _logger.LogWarning("Certificate {subjectName} has expired on {expiration}", cert.Subject, cert.NotAfter.ToString(CultureInfo.InvariantCulture));
                 }
-
                 header["x5t"] = Base64Url.Encode(cert.GetCertHash());
             }
 
@@ -72,20 +69,16 @@ namespace IdentityServer.Application
 
             return header;
         }
-    
+
         private Task<JwtPayload> CreatePayloadAsync(Token token)
         {
             var notbefore = _clock.UtcNow.UtcDateTime;
-            var payload = new JwtPayload(
-                token.Issuer,
-                null,
-                token.Claims,
-                notbefore,
-                token.Expires);
-            foreach (var aud in token.Audiences)
+            DateTime? expires = null;
+            if (token.Lifetime != null)
             {
-                payload.AddClaim(new Claim(JwtClaimTypes.Audience, aud));
+                expires = notbefore.AddSeconds(token.Lifetime.Value);
             }
+            var payload = new JwtPayload(token.Issuer, null, token.Claims, notbefore, expires);
             return Task.FromResult(payload);
         }
     }

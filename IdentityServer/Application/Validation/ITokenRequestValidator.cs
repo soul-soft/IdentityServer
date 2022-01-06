@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using IdentityServer.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace IdentityServer.Application
 {
     public interface ITokenRequestValidator
     {
-        Task<ValidationResult> ValidateRequestAsync(HttpContext context);
+        Task<ValidationResult> ValidateAsync(IClient client, HttpContext context);
     }
 }

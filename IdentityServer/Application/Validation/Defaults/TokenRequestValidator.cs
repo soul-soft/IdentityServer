@@ -11,21 +11,18 @@ namespace IdentityServer.Application
     {
         private readonly IdentityServerOptions _options;
         private readonly IServiceProvider _services;
-        private readonly IScopeValidator _scopeValidator;
 
         public TokenRequestValidator(
             IdentityServerOptions options,
-            IServiceProvider services,
-            IScopeValidator resourceValidator)
+            IServiceProvider services)
         {
             _options = options;
             _services = services;
-            _scopeValidator = resourceValidator;
         }
 
-        public async Task<ValidationResult> ValidateRequestAsync(HttpContext content)
+        public async Task<ValidationResult> ValidateAsync(IClient client, HttpContext content)
         {
-          
+            var parameters = await content.Request.ReadFormAsNameValueCollectionAsync();
             var grantType = parameters.Get(OidcConstants.TokenRequest.GrantType);
             if (string.IsNullOrWhiteSpace(grantType))
             {
@@ -39,13 +36,7 @@ namespace IdentityServer.Application
             {
                 return ValidationResult.Error("Client not authorized for client credentials flow, check the AllowedGrantTypes setting");
             }
-            //Validate resource 
-            var scopes = parameters.Get(OidcConstants.TokenRequest.Scope) ?? string.Empty;
-            var validationResult = await _scopeValidator.ValidateAsync(new ScopeValidationRequest(client, scopes));
-            if (validationResult.IsError)
-            {
-                return validationResult;
-            }
+            ValidationResult validationResult;
             if (grantType == GrantType.ClientCredentials)
             {
                 var grantRequest = new ClientCredentialsGrantValidationRequest(client);
