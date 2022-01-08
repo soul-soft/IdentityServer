@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Microsoft.IdentityModel.Protocols.OpenIdConnect
+namespace IdentityModel
 {
     public static class OpenIdConnectEndpointNames
     {

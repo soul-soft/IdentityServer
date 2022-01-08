@@ -1,4 +1,5 @@
-﻿using IdentityServer.Configuration;
+﻿using IdentityModel;
+using IdentityServer.Configuration;
 using IdentityServer.Endpoints;
 using IdentityServer.Hosting;
 using Microsoft.AspNetCore.Authentication;
@@ -6,7 +7,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using static IdentityServer.Constants;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -37,6 +37,14 @@ namespace Microsoft.Extensions.DependencyInjection
         }
         #endregion
 
+        #region PluggableServices
+        public static IIdentityServerBuilder AddPluggableServices(this IIdentityServerBuilder builder)
+        {
+            builder.Services.AddTransient<IServerUrl, ServerUrl>();
+            return builder;
+        }
+        #endregion
+
         #region Endpoints
 
         public static IIdentityServerBuilder AddEndpoint<T>(this IIdentityServerBuilder builder, string name, PathString path)
@@ -50,10 +58,9 @@ namespace Microsoft.Extensions.DependencyInjection
         internal static IIdentityServerBuilder AddDefaultEndpoints(this IIdentityServerBuilder builder)
         {
             builder.Services.AddTransient<IEndpointRouter, EndpointRouter>();
-
             builder.AddEndpoint<DiscoveryEndpoint>(OpenIdConnectEndpointNames.Discovery, OpenIdConnectRoutePaths.DiscoveryConfiguration);
-            builder.AddEndpoint<DiscoveryKeyEndpoint>(OpenIdConnectEndpointNames.Discovery, OpenIdConnectRoutePaths.DiscoveryWebKeys);
-            //builder.AddEndpoint<TokenEndpoint>(EndpointNames.Token, ProtocolRoutePaths.Token.EnsureLeadingSlash());
+            builder.AddEndpoint<DiscoveryKeyEndpoint>(OpenIdConnectEndpointNames.Discovery, OpenIdConnectRoutePaths.Jwks);
+            builder.AddEndpoint<TokenEndpoint>(OpenIdConnectEndpointNames.Token, OpenIdConnectRoutePaths.Token);
             return builder;
         }
         #endregion

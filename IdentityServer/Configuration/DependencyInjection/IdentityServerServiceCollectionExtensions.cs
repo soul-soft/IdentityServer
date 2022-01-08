@@ -15,6 +15,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             builder
                 .AddRequiredPlatformServices()
+                .AddPluggableServices()
                 .AddCoreServices()
                 .AddDefaultEndpoints();
 

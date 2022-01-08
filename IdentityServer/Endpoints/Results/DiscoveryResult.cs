@@ -1,21 +1,23 @@
-﻿using IdentityServer.Hosting;
-using IdentityServer.Infrastructure;
+﻿using System.Net.Mime;
+using IdentityServer.Hosting;
 using Microsoft.AspNetCore.Http;
 
 namespace IdentityServer.Endpoints
 {
     public class DiscoveryResult : IEndpointResult
     {
-        private readonly DiscoveryResponse _response;
+        private readonly DiscoveryResponse _discovery;
 
-        public DiscoveryResult(DiscoveryResponse response)
+        public DiscoveryResult(DiscoveryResponse discovery)
         {
-            _response = response;
+            _discovery = discovery;
         }
 
         public async Task ExecuteAsync(HttpContext context)
         {
-            await context.Response.WriteAsJsonAsync(_response, ObjectSerializer.JsonSerializerOptions);
+            var document = _discovery.Write();
+            context.Response.ContentType = MediaTypeNames.Application.Json;
+            await context.Response.WriteAsync(document, System.Text.Encoding.UTF8);
         }
     }
 }
