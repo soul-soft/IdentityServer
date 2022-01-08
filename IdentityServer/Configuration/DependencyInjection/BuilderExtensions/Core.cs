@@ -1,11 +1,11 @@
-﻿using IdentityServer;
-using IdentityServer.Application;
-using IdentityServer.Configuration;
+﻿using IdentityServer.Configuration;
+using IdentityServer.Endpoints;
 using IdentityServer.Hosting;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using static IdentityServer.Constants;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -51,66 +51,9 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             builder.Services.AddTransient<IEndpointRouter, EndpointRouter>();
 
-            builder.AddEndpoint<DiscoveryKeyEndpoint>(EndpointNames.Discovery, ProtocolRoutePaths.DiscoveryWebKeys.EnsureLeadingSlash());
-            builder.AddEndpoint<DiscoveryEndpoint>(EndpointNames.Discovery, ProtocolRoutePaths.DiscoveryConfiguration.EnsureLeadingSlash());
-            builder.AddEndpoint<TokenEndpoint>(EndpointNames.Token, ProtocolRoutePaths.Token.EnsureLeadingSlash());
-
-            return builder;
-        }
-        #endregion
-
-        #region PluggableServices
-        /// <summary>
-        /// 可插拔的服务
-        /// </summary>
-        /// <param name="builder"></param>
-        /// <returns></returns>
-        internal static IIdentityServerBuilder AddPluggableServices(this IIdentityServerBuilder builder)
-        {
-            builder.Services.TryAddTransient<ITokenService, TokenService>();
-            builder.Services.TryAddTransient<ITokenSerializeService, JwtTokenSerializeService>();
-            builder.Services.TryAddTransient<IServerUrls, ServerUrls>();
-            return builder;
-        }
-        #endregion
-
-        #region ResponseGenerators
-        internal static IIdentityServerBuilder AddResponseGenerators(this IIdentityServerBuilder builder)
-        {
-            builder.Services.TryAddTransient<IDiscoveryResponseGenerator, DiscoveryResponseGenerator>();
-            builder.Services.TryAddTransient<IDiscoveryKeyResponseGenerator, DiscoveryKeyResponseGenerator>();
-            return builder;
-        }
-        #endregion
-
-        #region CookieAuthentication
-        internal static IIdentityServerBuilder AddCookieAuthentication(this IIdentityServerBuilder builder)
-        {
-            //builder.Services.AddAuthentication(IdentityServerConstants.DefaultCookieAuthenticationScheme)
-            //    .AddCookie(IdentityServerConstants.DefaultCookieAuthenticationScheme)
-            //    .AddCookie(IdentityServerConstants.ExternalCookieAuthenticationScheme);
-            return builder;
-        }
-        #endregion
-
-        #region DefaultSecretParsers
-        internal static IIdentityServerBuilder AddDefaultSecretParsers(this IIdentityServerBuilder builder)
-        {
-            builder.Services.AddTransient<ICredentialParser, CredentialParser>();
-            builder.Services.AddTransient<ISecretListParser, SecretsListParser>();
-            return builder;
-        }
-        #endregion
-
-        #region DefaultValidators
-        internal static IIdentityServerBuilder AddDefaultValidators(this IIdentityServerBuilder builder)
-        {
-            //Secret
-            builder.Services.AddTransient<ICredentialValidator, CredentialValidator>();
-            builder.Services.AddTransient<ICredentialValidator, SecretsListValidator>();
-            builder.Services.AddTransient<IClientSecretValidator, ClientSecretValidator>();
-            //requst
-            builder.Services.AddTransient<ITokenRequestValidator, TokenRequestValidator>();
+            builder.AddEndpoint<DiscoveryEndpoint>(OpenIdConnectEndpointNames.Discovery, OpenIdConnectRoutePaths.DiscoveryConfiguration);
+            builder.AddEndpoint<DiscoveryKeyEndpoint>(OpenIdConnectEndpointNames.Discovery, OpenIdConnectRoutePaths.DiscoveryWebKeys);
+            //builder.AddEndpoint<TokenEndpoint>(EndpointNames.Token, ProtocolRoutePaths.Token.EnsureLeadingSlash());
             return builder;
         }
         #endregion

@@ -2,8 +2,7 @@
 
 namespace IdentityServer.Hosting
 {
-    public class EndpointRouter
-        : IEndpointRouter
+    public class EndpointRouter : IEndpointRouter
     {
         private readonly IEnumerable<Endpoint> _endpoints;
 

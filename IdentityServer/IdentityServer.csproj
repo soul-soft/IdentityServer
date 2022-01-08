@@ -7,14 +7,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="Application\Endpoints\DiscoveryKeyEndpoint.cs~RFf9c6228.TMP" />
 	  <None Remove="Hosting\Routing\JsonEndpointResult.cs~RFaa26d48.TMP" />
 	</ItemGroup>
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="IdentityModel" Version="6.0.0" />
-	  <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.15.0" />
+	  <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="6.15.0" />
 	</ItemGroup>
 </Project>
