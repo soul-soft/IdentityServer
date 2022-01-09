@@ -1,9 +1,7 @@
-﻿using System.Net;
-using IdentityModel;
+﻿using IdentityServer.ResponseGenerators;
 using IdentityServer.Configuration;
 using IdentityServer.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace IdentityServer.Endpoints
 {
@@ -13,38 +11,33 @@ namespace IdentityServer.Endpoints
     internal class DiscoveryEndpoint : EndpointBase
     {
         private readonly IServerUrl _urls;
+        private readonly IDiscoveryResponseGenerator _generator;
         private readonly IdentityServerOptions _options;
 
-        public DiscoveryEndpoint(IServerUrl urls, IdentityServerOptions options)
+        public DiscoveryEndpoint(
+            IServerUrl urls,
+            IDiscoveryResponseGenerator generator,
+            IdentityServerOptions options)
         {
             _urls = urls;
             _options = options;
+            _generator = generator;
         }
 
-        public override Task<IEndpointResult> ProcessAsync(HttpContext context)
+        public override async Task<IEndpointResult> ProcessAsync(HttpContext context)
         {
             if (!HttpMethods.IsGet(context.Request.Method))
             {
-                return ResultAsync(HttpStatusCode.MethodNotAllowed);
+                return MethodNotAllowed();
             }
             if (!_options.Endpoints.EnableDiscoveryEndpoint)
             {
-                return ResultAsync(HttpStatusCode.NotFound);
+                return MethodNotAllowed();
             }
             var issuer = _urls.GetIdentityServerIssuer();
-            var document = CreateDiscoveryDocument(issuer);
-            return ResultAsync(new DiscoveryResponse(document));
+            var response = await _generator.CreateDiscoveryDocumentAsync(issuer);
+            return DiscoveryResult(response);
         }
 
-        public OpenIdConnectConfiguration CreateDiscoveryDocument(string issuer)
-        {
-            var document = new OpenIdConnectConfiguration();
-            document.Issuer = issuer;
-            document.AuthorizationEndpoint = issuer + OpenIdConnectRoutePaths.Authorize;
-            document.TokenEndpoint = issuer + OpenIdConnectRoutePaths.Token;
-            document.UserInfoEndpoint = issuer + OpenIdConnectRoutePaths.UserInfo;
-            document.JwksUri = issuer + OpenIdConnectRoutePaths.Jwks;
-            return document;
-        }
     }
 }

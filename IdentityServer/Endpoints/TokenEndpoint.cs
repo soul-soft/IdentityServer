@@ -1,18 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using IdentityServer.Hosting;
+﻿using IdentityServer.Hosting;
+using IdentityServer.Models;
+using IdentityServer.ResponseGenerators;
 using Microsoft.AspNetCore.Http;
 
 namespace IdentityServer.Endpoints
 {
     public class TokenEndpoint : EndpointBase
     {
-        public override Task<IEndpointResult> ProcessAsync(HttpContext context)
+        private readonly ITokenResponseGenerator _generator;
+
+        public TokenEndpoint(ITokenResponseGenerator generator)
         {
-            throw new NotImplementedException();
+            _generator = generator;
+        }
+
+        public override async Task<IEndpointResult> ProcessAsync(HttpContext context)
+        {
+            var response = await _generator.ProcessAsync(new Client());
+            return TokenResult(response);
         }
     }
 }

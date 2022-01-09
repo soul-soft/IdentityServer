@@ -4,9 +4,9 @@ namespace IdentityServer.Hosting
 {
     public class EndpointRouter : IEndpointRouter
     {
-        private readonly IEnumerable<Endpoint> _endpoints;
+        private readonly IEnumerable<EndpointDescriptor> _endpoints;
 
-        public EndpointRouter(IEnumerable<Endpoint> endpoints)
+        public EndpointRouter(IEnumerable<EndpointDescriptor> endpoints)
         {
             _endpoints = endpoints;
         }
@@ -23,7 +23,7 @@ namespace IdentityServer.Hosting
             return GetEndpointHandler(context, endpoint);
         }
 
-        private IEndpointHandler? GetEndpointHandler(HttpContext context, Endpoint endpoint)
+        private IEndpointHandler? GetEndpointHandler(HttpContext context, EndpointDescriptor endpoint)
         {
             return context.RequestServices
                 .GetService(endpoint.Handler) as IEndpointHandler;

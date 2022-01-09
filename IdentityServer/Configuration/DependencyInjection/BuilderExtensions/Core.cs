@@ -1,12 +1,13 @@
-﻿using IdentityModel;
-using IdentityServer.Configuration;
+﻿using IdentityServer.Configuration;
 using IdentityServer.Endpoints;
 using IdentityServer.Hosting;
+using IdentityServer.Protocols;
+using IdentityServer.ResponseGenerators;
+using IdentityServer.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -40,7 +41,8 @@ namespace Microsoft.Extensions.DependencyInjection
         #region PluggableServices
         public static IIdentityServerBuilder AddPluggableServices(this IIdentityServerBuilder builder)
         {
-            builder.Services.AddTransient<IServerUrl, ServerUrl>();
+            builder.Services.TryAddTransient<IServerUrl, ServerUrl>();
+            builder.Services.TryAddTransient<ISecurityTokenService, SecurityTokenService>();
             return builder;
         }
         #endregion
@@ -51,18 +53,31 @@ namespace Microsoft.Extensions.DependencyInjection
           where T : class, IEndpointHandler
         {
             builder.Services.AddTransient<T>();
-            builder.Services.AddSingleton(new IdentityServer.Hosting.Endpoint(name, path, typeof(T)));
+            builder.Services.AddSingleton(new EndpointDescriptor(name, path, typeof(T)));
             return builder;
         }
 
         internal static IIdentityServerBuilder AddDefaultEndpoints(this IIdentityServerBuilder builder)
         {
+            builder.Services.AddSingleton<EndpointDescriptorCollection>();
             builder.Services.AddTransient<IEndpointRouter, EndpointRouter>();
-            builder.AddEndpoint<DiscoveryEndpoint>(OpenIdConnectEndpointNames.Discovery, OpenIdConnectRoutePaths.DiscoveryConfiguration);
-            builder.AddEndpoint<DiscoveryKeyEndpoint>(OpenIdConnectEndpointNames.Discovery, OpenIdConnectRoutePaths.Jwks);
-            builder.AddEndpoint<TokenEndpoint>(OpenIdConnectEndpointNames.Token, OpenIdConnectRoutePaths.Token);
+            builder.AddEndpoint<TokenEndpoint>(OpenIdConnectEndpoint.Names.Token, OpenIdConnectEndpoint.RoutePaths.Token);
+            builder.AddEndpoint<TokenEndpoint>(OpenIdConnectEndpoint.Names.Authorize, OpenIdConnectEndpoint.RoutePaths.Authorize);
+            builder.AddEndpoint<UserInfoEndpoint>(OpenIdConnectEndpoint.Names.UserInfo, OpenIdConnectEndpoint.RoutePaths.UserInfo);
+            builder.AddEndpoint<DiscoveryEndpoint>(OpenIdConnectEndpoint.Names.Discovery,  OpenIdConnectEndpoint.RoutePaths.Discovery);
+            builder.AddEndpoint<DiscoveryKeyEndpoint>(OpenIdConnectEndpoint.Names.DiscoveryJwks, OpenIdConnectEndpoint.RoutePaths.DiscoveryJwks);
             return builder;
         }
         #endregion
+
+        #region ResponseGenerators
+        public static IIdentityServerBuilder AddResponseGenerators(this IIdentityServerBuilder builder)
+        {
+            builder.Services.TryAddTransient<IDiscoveryResponseGenerator, DiscoveryResponseGenerator>();
+            builder.Services.TryAddTransient<ITokenResponseGenerator, TokenResponseGenerator>();
+            return builder;
+        }
+        #endregion
+      
     }
 }

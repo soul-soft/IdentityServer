@@ -4,18 +4,18 @@ using Microsoft.AspNetCore.Http;
 
 namespace IdentityServer.Endpoints
 {
-    public class DiscoveryResult : IEndpointResult
+    public class JwkDiscoveryResult : IEndpointResult
     {
-        private readonly DiscoveryResponse _discovery;
+        public JwkDiscoveryResponse _response;
 
-        public DiscoveryResult(DiscoveryResponse discovery)
+        public JwkDiscoveryResult(JwkDiscoveryResponse response)
         {
-            _discovery = discovery;
+            _response = response;
         }
 
         public async Task ExecuteAsync(HttpContext context)
         {
-            var json = _discovery.Serialize();
+            var json = _response.Serialize();
             context.Response.ContentType = MediaTypeNames.Application.Json;
             await context.Response.WriteAsync(json, System.Text.Encoding.UTF8);
         }

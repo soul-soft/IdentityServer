@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using IdentityServer.ResponseGenerators;
 using IdentityServer.Hosting;
 using Microsoft.AspNetCore.Http;
 
@@ -8,16 +9,34 @@ namespace IdentityServer.Endpoints
     {
         public abstract Task<IEndpointResult> ProcessAsync(HttpContext context);
 
-        protected Task<IEndpointResult> ResultAsync(DiscoveryResponse response)
+        protected IEndpointResult DiscoveryResult(DiscoveryResponse response)
         {
-            var result = new DiscoveryResult(response);
-            return Task.FromResult<IEndpointResult>(result);
+            return new DiscoveryResult(response);
         }
 
-        protected Task<IEndpointResult> ResultAsync(HttpStatusCode statusCode)
+        protected IEndpointResult DiscoveryResult(JwkDiscoveryResponse response)
         {
-            var result = new StatusCodeResult(statusCode);
-            return Task.FromResult<IEndpointResult>(result);
+            return new JwkDiscoveryResult(response);
+        }
+
+        protected IEndpointResult TokenResult(TokenResponse response)
+        {
+            return new TokenResult(response);
+        }
+
+        protected IEndpointResult Result(HttpStatusCode statusCode)
+        {
+            return new StatusCodeResult(statusCode);
+        }
+
+        protected IEndpointResult MethodNotAllowed()
+        {
+            return new StatusCodeResult(HttpStatusCode.MethodNotAllowed);
+        }
+
+        protected IEndpointResult NotFound()
+        {
+            return new StatusCodeResult(HttpStatusCode.NotFound);
         }
     }
 }

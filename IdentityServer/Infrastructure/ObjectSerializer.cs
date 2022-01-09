@@ -7,7 +7,9 @@ namespace IdentityServer.Infrastructure
     {
         public static JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions
         {
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            IgnoreReadOnlyFields = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         };
 
         public static string SerializeObject(object obj)

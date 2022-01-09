@@ -4,14 +4,14 @@ namespace IdentityServer.Endpoints
 {
     public class DiscoveryResponse
     {
-        public OpenIdConnectConfiguration Configuration { get; } = null!;
+        public OpenIdConnectConfiguration Configuration { get; }
 
         public DiscoveryResponse(OpenIdConnectConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public string Write()
+        public string Serialize()
         {
             return OpenIdConnectConfiguration.Write(Configuration);
         }
