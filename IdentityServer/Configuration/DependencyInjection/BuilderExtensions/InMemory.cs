@@ -1,18 +1,20 @@
-﻿using IdentityServer.Storage;
+﻿using IdentityServer.Configuration;
+using IdentityServer.Storage;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class InMemory
     {
-        public static IIdentityServerBuilder AddSigningCredentials(this IIdentityServerBuilder builder, IEnumerable<SigningCredentials> credentials)
+        public static IIdentityServerBuilder ConfigureSigningCredentials(this IIdentityServerBuilder builder, Action<SigningCredentialsBuilder> configure)
         {
-            builder.Services.AddSingleton<ISigningCredentialStore>(sp => 
+            var signingCredentialsBuilder = new SigningCredentialsBuilder();
+            configure(signingCredentialsBuilder);
+            var signingCredentials = signingCredentialsBuilder.Build();
+            builder.Services.TryAddSingleton<ISigningCredentialStore>(sp =>
             {
-                return new InMemorySigningCredentialStore(credentials);
+                return new InMemorySigningCredentialStore(signingCredentials);
             });
-
             return builder;
         }
     }

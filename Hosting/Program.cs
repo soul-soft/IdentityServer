@@ -10,10 +10,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddIdentityServer()
- .AddSigningCredentials(new List<SigningCredentials>()
-{
-   new SigningCredentials(CryptoGenerator.CreateRsaSecurityKey(), SecurityAlgorithms.RsaSha256)
-});
+ .ConfigureSigningCredentials(configure =>
+ {
+     configure.AddSigningCredentials(CryptoGenerator.CreateRsaSecurityKey(), SecurityAlgorithms.RsaSha256);
+ });
 
 var app = builder.Build();
 

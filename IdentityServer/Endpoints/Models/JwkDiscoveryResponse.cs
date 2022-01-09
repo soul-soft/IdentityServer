@@ -1,24 +1,33 @@
 ﻿using IdentityServer.Infrastructure;
+using IdentityServer.Models;
 using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityServer.Endpoints
 {
     public class JwkDiscoveryResponse
     {
-        public IEnumerable<SecurityKey> SecurityKeys { get; }
+        public IEnumerable<SigningCredentialsDescriptor> Descriptors { get; }
 
-        public JwkDiscoveryResponse(IEnumerable<SecurityKey> securityKeys)
+        public JwkDiscoveryResponse(IEnumerable<SigningCredentialsDescriptor> descriptors)
         {
-            SecurityKeys = securityKeys;
+            Descriptors = descriptors;
         }
 
         public string Serialize()
         {
-            var keys = SecurityKeys.Select(key =>
+            var keys = Descriptors.Select(credentials =>
             {
-                var jwk = JsonWebKeyConverter.ConvertFromSecurityKey(key);
-                return Map(jwk);
-            });
+                if (credentials.Key is RsaSecurityKey rsaKey)
+                {
+                    var jwk = JsonWebKeyConverter.ConvertFromRSASecurityKey(rsaKey);
+                    jwk.Alg = credentials.SigningAlgorithm;
+                    return Map(jwk);
+                }
+                else
+                {
+                    throw new InvalidOperationException("不知");
+                }
+            }).ToArray();
             var keySet = new { Keys = keys };
             return ObjectSerializer.SerializeObject(keySet);
         }
@@ -34,7 +43,6 @@ namespace IdentityServer.Endpoints
                 jsonWebKey.DQ,
                 jsonWebKey.E,
                 jsonWebKey.K,
-                jsonWebKey.KeyId,
                 KeyOps = jsonWebKey.ShouldSerializeKeyOps() ? jsonWebKey.KeyOps : null,
                 jsonWebKey.Kid,
                 jsonWebKey.Kty,
@@ -43,7 +51,7 @@ namespace IdentityServer.Endpoints
                 jsonWebKey.P,
                 jsonWebKey.Q,
                 jsonWebKey.QI,
-                jsonWebKey.Use,
+                Use = jsonWebKey.Use ?? "sig",
                 jsonWebKey.X,
                 X5c = jsonWebKey.ShouldSerializeX5c() ? jsonWebKey.X5c : null,
                 jsonWebKey.X5t,

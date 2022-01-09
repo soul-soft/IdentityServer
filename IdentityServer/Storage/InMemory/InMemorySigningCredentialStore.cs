@@ -1,38 +1,32 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using IdentityServer.Models;
 
 namespace IdentityServer.Storage
 {
     public class InMemorySigningCredentialStore : ISigningCredentialStore
     {
-        private readonly IEnumerable<SigningCredentials> _credentials;
+        private readonly IEnumerable<SigningCredentialsDescriptor> _descriptor;
 
-        public InMemorySigningCredentialStore(IEnumerable<SigningCredentials> credentials)
+        public InMemorySigningCredentialStore(IEnumerable<SigningCredentialsDescriptor> descriptor)
         {
-            _credentials = credentials;
+            _descriptor = descriptor;
         }
 
-        public Task<IEnumerable<SecurityKey>> GetSigningKeysAsync()
+        public Task<IEnumerable<SigningCredentialsDescriptor>> GetSigningCredentialsAsync()
         {
-            var keys = _credentials.Select(s => s.Key);
-            return Task.FromResult(keys);
+            return Task.FromResult(_descriptor);
         }
 
-        public Task<IEnumerable<SigningCredentials>> GetSigningCredentialsAsync()
-        {
-            return Task.FromResult(_credentials);
-        }
-
-        public Task<SigningCredentials> GetSigningCredentialsByAlgorithmsAsync(string? algorithm)
+        public Task<SigningCredentialsDescriptor> GetSigningCredentialsByAlgorithmsAsync(string? algorithm)
         {
             if (algorithm == null)
             {
-                return Task.FromResult(_credentials.First());
+                return Task.FromResult(_descriptor.First());
             }
 
-            var credential = _credentials
-                    .Where(a => a.Algorithm == algorithm)
+            var credential = _descriptor
+                    .Where(a => a.SigningAlgorithm == algorithm)
                     .FirstOrDefault()
-                    ?? _credentials.First();
+                    ?? _descriptor.First();
 
             return Task.FromResult(credential);
         }

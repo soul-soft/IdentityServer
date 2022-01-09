@@ -33,8 +33,8 @@ namespace IdentityServer.ResponseGenerators
 
         public async Task<JwkDiscoveryResponse> CreateJwkDiscoveryDocumentAsync()
         {
-            var signingKeys = await _credentials.GetSigningKeysAsync();
-            return new JwkDiscoveryResponse(signingKeys);
+            var credentials = await _credentials.GetSigningCredentialsAsync();
+            return new JwkDiscoveryResponse(credentials);
         }
     }
 }

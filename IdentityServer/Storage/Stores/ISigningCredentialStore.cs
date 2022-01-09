@@ -1,11 +1,10 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using IdentityServer.Models;
 
 namespace IdentityServer.Storage
 {
     public interface ISigningCredentialStore
     {
-        Task<IEnumerable<SecurityKey>> GetSigningKeysAsync();
-        Task<IEnumerable<SigningCredentials>> GetSigningCredentialsAsync();
-        Task<SigningCredentials> GetSigningCredentialsByAlgorithmsAsync(string? algorithm);
+        Task<IEnumerable<SigningCredentialsDescriptor>> GetSigningCredentialsAsync();
+        Task<SigningCredentialsDescriptor> GetSigningCredentialsByAlgorithmsAsync(string? algorithm);
     }
 }

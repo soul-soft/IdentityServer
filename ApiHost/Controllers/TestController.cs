@@ -22,8 +22,9 @@ namespace ApiHost.Controllers
             var client = new HttpClient();
 
             var disco = await client.GetDiscoveryDocumentAsync("https://localhost:7150");
-            if (disco.IsError) throw new Exception(disco.Error);
-            return disco;
+            if (disco.IsError)
+                throw new Exception(disco.Error);
+            return disco.Raw;
         }
     }
 }
