@@ -17,16 +17,9 @@ namespace IdentityServer.Endpoints
         {
             var keys = Descriptors.Select(credentials =>
             {
-                if (credentials.Key is RsaSecurityKey rsaKey)
-                {
-                    var jwk = JsonWebKeyConverter.ConvertFromRSASecurityKey(rsaKey);
-                    jwk.Alg = credentials.SigningAlgorithm;
-                    return Map(jwk);
-                }
-                else
-                {
-                    throw new InvalidOperationException("不知");
-                }
+                var jwk = JsonWebKeyConverter.ConvertFromSecurityKey(credentials.Key);
+                jwk.Alg = credentials.SigningAlgorithm;
+                return Map(jwk);
             }).ToArray();
             var keySet = new { Keys = keys };
             return ObjectSerializer.SerializeObject(keySet);
