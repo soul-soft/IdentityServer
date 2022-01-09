@@ -18,7 +18,7 @@ namespace IdentityServer.Endpoints
         {
             var json = _response.Serialize();
             context.Response.ContentType = MediaTypeNames.Application.Json;
-            await context.Response.WriteAsJsonAsync(json, ObjectSerializer.JsonSerializerOptions);
+            await context.Response.WriteAsync(json, System.Text.Encoding.UTF8);
         }
     }
 }

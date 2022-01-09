@@ -22,15 +22,18 @@ namespace IdentityServer.Storage
             return Task.FromResult(_credentials);
         }
 
-        public Task<SigningCredentials> GetSigningCredentialsByAlgorithmsAsync(string algorithm)
+        public Task<SigningCredentials> GetSigningCredentialsByAlgorithmsAsync(string? algorithm)
         {
+            if (algorithm == null)
+            {
+                return Task.FromResult(_credentials.First());
+            }
+
             var credential = _credentials
                     .Where(a => a.Algorithm == algorithm)
-                    .FirstOrDefault();
-            if (credential == null)
-            {
-                credential = _credentials.First();
-            }
+                    .FirstOrDefault()
+                    ?? _credentials.First();
+
             return Task.FromResult(credential);
         }
     }

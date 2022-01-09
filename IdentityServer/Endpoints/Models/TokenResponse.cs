@@ -11,13 +11,15 @@ namespace IdentityServer.Endpoints
         public string? Scope { get; set; }
         public string Serialize()
         {
-            var data = new Dictionary<string, object?>();
-            data.Add("id_token", IdentityToken);
-            data.Add("access_token", AccessToken);
-            data.Add("refresh_token", RefreshToken);
-            data.Add("expires_in", AccessTokenLifetime);
-            data.Add("scope", Scope);
-            return ObjectSerializer.SerializeObject(data);
+            var token = new Dictionary<string, object?>
+            {
+                { "id_token", IdentityToken },
+                { "access_token", AccessToken },
+                { "refresh_token", RefreshToken },
+                { "expires_in", AccessTokenLifetime },
+                { "scope", Scope }
+            };
+            return ObjectSerializer.SerializeObject(token);
         }
     }
 }

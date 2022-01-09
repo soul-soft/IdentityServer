@@ -15,9 +15,9 @@ namespace IdentityServer.ResponseGenerators
 
         public async Task<TokenResponse> ProcessAsync(IClient client)
         {
-            var tokenRequest = new TokenRequest();
+            var tokenRequest = new SecurityTokenRequest();
 
-            var accessToken = await _tokenService.CreateTokenAsync(tokenRequest);
+            var accessToken = await _tokenService.CreateAccessTokenAsync(tokenRequest);
 
             var response = new TokenResponse()
             {

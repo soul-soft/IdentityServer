@@ -1,10 +1,9 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using IdentityServer.Models;
+﻿using IdentityServer.Models;
 
 namespace IdentityServer.Services
 {
     public interface ISecurityTokenService
     {
-        Task<string> CreateTokenAsync(TokenRequest request);
+        Task<string> CreateAccessTokenAsync(SecurityTokenRequest request);
     }
 }
