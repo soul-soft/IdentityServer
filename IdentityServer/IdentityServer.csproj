@@ -7,6 +7,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Hosting\Server\**" />
+	  <EmbeddedResource Remove="Hosting\Server\**" />
+	  <None Remove="Hosting\Server\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <None Remove="Hosting\Routing\JsonEndpointResult.cs~RFaa26d48.TMP" />
 	</ItemGroup>
 	<ItemGroup>
@@ -14,10 +20,5 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="6.15.0" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Extensions\" />
-	  <Folder Include="Application\Validators\" />
-	  <Folder Include="Hosting\Server\" />
 	</ItemGroup>
 </Project>

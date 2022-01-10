@@ -38,7 +38,19 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<IResourceStore>(implementationFactory);
             return builder;
         }
-
+      
+        public static IIdentityServerBuilder AddReferenceTokenStore<T>(this IIdentityServerBuilder builder)
+          where T : class, IReferenceTokenStore
+        {
+            builder.Services.TryAddTransient<IReferenceTokenStore,T>();
+            return builder;
+        }
+        public static IIdentityServerBuilder AddReferenceTokenStore<T>(this IIdentityServerBuilder builder, Func<IServiceProvider, T> implementationFactory)
+          where T : class, IReferenceTokenStore
+        {
+            builder.Services.TryAddTransient<IReferenceTokenStore>(implementationFactory);
+            return builder;
+        }
         public static IIdentityServerBuilder AddSigningCredentialStore<T>(this IIdentityServerBuilder builder)
             where T : class, ISigningCredentialStore
         {

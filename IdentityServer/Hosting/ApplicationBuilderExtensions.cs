@@ -1,20 +1,23 @@
 ﻿using IdentityServer;
 using IdentityServer.Hosting;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.AspNetCore.Builder
 {
     public static class ApplicationBuilderExtensions
     {
-        public static IApplicationBuilder UseIdentityServer(this IApplicationBuilder app)
+        public static IApplicationBuilder UseIdentityServer(this WebApplication app)
         {
-            app.ConfigureCors();
-            app.UseMiddleware<IdentityServerMiddleware>();
+            //app.UseMiddleware<IdentityServerMiddleware>();
+            app.MapEndpoints();
             return app;
         }
 
-        private static void ConfigureCors(this IApplicationBuilder app)
+        internal static void MapEndpoints(this IEndpointRouteBuilder endpoints)
         {
-            app.UseCors(Constants.IdentityServerName);
+            var descriptors = endpoints.ServiceProvider.GetRequiredService<IEnumerable<EndpointDescriptor>>();
+            endpoints.DataSources.Add(new IdentityServerEndpointDataSource(descriptors));
         }
     }
 }

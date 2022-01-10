@@ -46,7 +46,7 @@ namespace IdentityServer.Configuration
             });
             services.AddResourceStore(sp =>
             {
-                return new InMemoryResourceStore(Resources);
+                return new InMemoryResourceStore(new Resources(Resources));
             });
             services.AddSigningCredentialStore(sp =>
             {

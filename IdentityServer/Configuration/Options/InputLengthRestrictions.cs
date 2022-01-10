@@ -31,6 +31,6 @@
         /// <summary>
         /// Max length for scope
         /// </summary>
-        public int Scopes { get; set; } = 300;
+        public int Scope { get;  set; } = 300;
     }
 }

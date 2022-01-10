@@ -12,6 +12,7 @@
         int? AccessTokenLifetime { get; }
         int IdentityTokenLifetime { get; }
         AccessTokenType AccessTokenType { get; }
+        IReadOnlyCollection<string> AllowedScopes { get; }
         IReadOnlyCollection<ISecret> ClientSecrets { get; }
         IReadOnlyCollection<string> AllowedGrantTypes { get; }
         IReadOnlyCollection<string> AllowedSigningAlgorithms { get; }

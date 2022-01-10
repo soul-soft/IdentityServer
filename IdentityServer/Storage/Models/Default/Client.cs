@@ -23,6 +23,8 @@ namespace IdentityServer.Models
         public IReadOnlyCollection<string> AllowedGrantTypes { get; set; } = new HashSet<string>();
         public AccessTokenType AccessTokenType { get; set; } = AccessTokenType.Jwt;
         public IReadOnlyCollection<string> AllowedSigningAlgorithms { get; set; }
+        public IReadOnlyCollection<string> AllowedScopes { get; set; } = new HashSet<string>();
+
         public Client(string clientId, string clientSecret)
         {
             ClientId = clientId;

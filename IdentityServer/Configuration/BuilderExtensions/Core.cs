@@ -4,6 +4,7 @@ using IdentityServer.Hosting;
 using IdentityServer.Protocols;
 using IdentityServer.ResponseGenerators;
 using IdentityServer.Services;
+using IdentityServer.Storage;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -41,8 +42,13 @@ namespace Microsoft.Extensions.DependencyInjection
         #region PluggableServices
         public static IIdentityServerBuilder AddPluggableServices(this IIdentityServerBuilder builder)
         {
-            builder.Services.TryAddTransient<IUrlParse, UrlParse>();
+            builder.AddReferenceTokenStore<InMemoryReferenceTokenStore>();
+            builder.Services.TryAddTransient<IServerUrl, ServerUrl>();
             builder.Services.TryAddTransient<ITokenService, TokenService>();
+            builder.Services.TryAddTransient<ITokenCreationService, TokenCreationService>();
+            builder.Services.TryAddTransient<ITokenCreationService, TokenCreationService>();
+            builder.Services.TryAddTransient<ITokenEndpointAuthMethod, PostBodyClientSecretScheme>();
+            builder.Services.TryAddTransient<ITokenEndpointAuthMethodProvider, TokenEndpointAuthMethodProvider>();
             return builder;
         }
         #endregion

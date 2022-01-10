@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Models
 {
-    public class IdentityResource : ResourceCollection, IIdentityResource
+    public class IdentityResource : Resource, IIdentityResource
     {
         public bool Required { get; set; } = false;
        

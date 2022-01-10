@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IdentityServer.Models
 {
-    public class ApiScope : ResourceCollection, IApiScope
+    public class ApiScope : Resource, IApiScope
     {
         public ApiScope(string name) : base(name)
         {

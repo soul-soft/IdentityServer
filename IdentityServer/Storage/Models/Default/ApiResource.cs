@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Models
 {
-    public class ApiResource : ResourceCollection, IApiResource
+    public class ApiResource : Resource, IApiResource
     {
         public bool Required { get; set; } = false;
 

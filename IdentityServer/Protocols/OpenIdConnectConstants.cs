@@ -10,7 +10,16 @@ namespace IdentityServer.Protocols
             public const string IdentityToken = "id_token";
             public const string RefreshToken = "refresh_token";
         }
-       
+        public class GrantTypes
+        {
+            public const string AuthorizationCode = "authorization_code";
+
+            public const string RefreshToken = "refresh_token";
+
+            public const string Password = "password";
+
+            public const string ClientCredentials = "client_credentials";
+        }
         public static class ParsedSecretTypes
         {
             public const string NoSecret = "NoSecret";
@@ -19,7 +28,7 @@ namespace IdentityServer.Protocols
             public const string JwtBearer = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
         }
 
-        public static class EndpointAuthenticationMethods
+        public static class TokenEndpointAuthenticationMethods
         {
             public const string PostBody = "client_secret_post";
             public const string BasicAuthentication = "client_secret_basic";

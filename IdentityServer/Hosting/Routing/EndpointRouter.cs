@@ -14,7 +14,7 @@ namespace IdentityServer.Hosting
         public IEndpointHandler? Find(HttpContext context)
         {
             var endpoint = _endpoints
-                .Where(a => a.Path == context.Request.Path)
+                .Where(a => a.Pattern == context.Request.Path)
                 .FirstOrDefault();
             if (endpoint == null)
             {
