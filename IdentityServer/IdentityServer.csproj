@@ -15,4 +15,9 @@
 	<ItemGroup>
 	  <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="6.15.0" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Extensions\" />
+	  <Folder Include="Application\Validators\" />
+	  <Folder Include="Hosting\Server\" />
+	</ItemGroup>
 </Project>

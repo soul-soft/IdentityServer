@@ -1,34 +1,46 @@
 ﻿using IdentityServer.Models;
+using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityServer.Storage
 {
-    public class InMemorySigningCredentialStore : ISigningCredentialStore
+    internal class InMemorySigningCredentialStore : ISigningCredentialStore
     {
-        private readonly IEnumerable<SigningCredentialsDescriptor> _descriptor;
+        private readonly IEnumerable<SigningCredentialsInfo> _descriptor;
 
-        public InMemorySigningCredentialStore(IEnumerable<SigningCredentialsDescriptor> descriptor)
+        public InMemorySigningCredentialStore(IEnumerable<SigningCredentialsInfo> descriptor)
         {
             _descriptor = descriptor;
         }
 
-        public Task<IEnumerable<SigningCredentialsDescriptor>> GetSigningCredentialsAsync()
+        public Task<IEnumerable<JsonWebKey>> GetJsonWebKeysAsync()
+        {
+            var jwks = _descriptor.Select(descriptor =>
+            {
+                var jwk = JsonWebKeyConverter.ConvertFromSecurityKey(descriptor.Key);
+                jwk.Alg = descriptor.SigningAlgorithm;
+                return jwk;
+            });
+            return Task.FromResult(jwks);
+        }
+
+        public Task<IEnumerable<SigningCredentialsInfo>> GetSigningCredentialsDescriptorAsync()
         {
             return Task.FromResult(_descriptor);
         }
 
-        public Task<SigningCredentialsDescriptor> GetSigningCredentialsByAlgorithmsAsync(string? algorithm)
+        public Task<SigningCredentials> GetSigningCredentialsByAlgorithmsAsync(IEnumerable<string> algorithms)
         {
-            if (algorithm == null)
+            if (algorithms.Count() == 0)
             {
-                return Task.FromResult(_descriptor.First());
+                return Task.FromResult(_descriptor.First().SigningCredentials);
             }
 
             var credential = _descriptor
-                    .Where(a => a.SigningAlgorithm == algorithm)
+                    .Where(a => algorithms.Contains(a.SigningAlgorithm))
                     .FirstOrDefault()
                     ?? _descriptor.First();
 
-            return Task.FromResult(credential);
+            return Task.FromResult(credential.SigningCredentials);
         }
     }
 }

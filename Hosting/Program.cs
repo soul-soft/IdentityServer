@@ -1,3 +1,5 @@
+using Hosting;
+using Hosting.Configuration;
 using IdentityServer.Infrastructure;
 using Microsoft.IdentityModel.Tokens;
 
@@ -9,11 +11,16 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 builder.Services.AddIdentityServer()
- .ConfigureSigningCredentials(configure =>
- {
-     configure.AddSigningCredentials(CryptoGenerator.CreateRsaSecurityKey(), SecurityAlgorithms.RsaSha256);
- });
+        .AddInMemoryStores(setup =>
+        {
+            setup.AddClients(Config.Clients);
+            setup.AddResources(Config.ApiScopes);
+            setup.AddResources(Config.IdentityResources);
+            setup.AddResources(Config.IdentityResources);
+            setup.AddSigningCredentials(CryptoRandom.CreateRsaSecurityKey(), SecurityAlgorithms.RsaSha256);
+        });
 
 var app = builder.Build();
 
@@ -25,7 +32,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+//app.MapIdentityServerEndpoint();
 app.UseIdentityServer();
 
 app.MapControllers();
