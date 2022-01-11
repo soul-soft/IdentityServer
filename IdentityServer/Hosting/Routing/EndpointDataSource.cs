@@ -90,7 +90,6 @@ namespace IdentityServer.Hosting
                 };
                 var routePattern = RoutePatternFactory.Parse(item.RoutePattern);
                 var builder = new RouteEndpointBuilder(requestDelegate, routePattern, 0);
-                var metadatas = new EndpointMetadataCollection();
                 yield return builder.Build();
             }
         }

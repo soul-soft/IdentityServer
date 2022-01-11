@@ -3,9 +3,9 @@
     public interface IClient
     {
         string ClientId { get; }
-        string ClientName { get; }
-        string Description { get; }
-        string ClientUri { get; }
+        string? ClientName { get; }
+        string? Description { get; }
+        string? ClientUri { get; }
         bool Enabled { get; }
         bool IncludeJwtId { get; }
         int? AccessTokenLifetime { get; }

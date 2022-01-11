@@ -1,4 +1,3 @@
-using Hosting;
 using Hosting.Configuration;
 using IdentityServer.Infrastructure;
 using Microsoft.IdentityModel.Tokens;

@@ -56,7 +56,7 @@ namespace Hosting.Configuration
                 Required = true,
                 UserClaims = new string[]
                 {
-                    JwtClaimTypes.Subject
+                    JwtClaimTypes.Subject,
                 }
             }
         };

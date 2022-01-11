@@ -1,6 +1,4 @@
-﻿using IdentityServer;
-using IdentityServer.Hosting;
-using Microsoft.AspNetCore.Routing;
+﻿using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using EndpointDataSource = IdentityServer.Hosting.EndpointDataSource;
 

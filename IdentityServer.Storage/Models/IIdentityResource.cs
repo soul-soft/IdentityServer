@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Models
 {
-    public interface IIdentityResource : IResource
+    public interface IIdentityResource : IIdentityScope
     {
         bool Required { get; }
     }
