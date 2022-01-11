@@ -21,4 +21,7 @@
 	<ItemGroup>
 	  <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="6.15.0" />
 	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\IdentityServer.Storage\IdentityServer.Storage.csproj" />
+	</ItemGroup>
 </Project>

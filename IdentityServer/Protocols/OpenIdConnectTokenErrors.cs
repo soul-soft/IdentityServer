@@ -3,6 +3,8 @@
     public class OpenIdConnectTokenErrors
     {
         public const string InvalidRequest = "invalid_request";
+      
+        public const string UnsupportedContextType = "unsupported_context_type";
 
         public const string InvalidClient = "invalid_client";
 

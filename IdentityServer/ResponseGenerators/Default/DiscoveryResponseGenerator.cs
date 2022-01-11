@@ -11,11 +11,11 @@ namespace IdentityServer.ResponseGenerators
     internal class DiscoveryResponseGenerator
         : IDiscoveryResponseGenerator
     {
-        private readonly ITokenEndpointAuthMethodProvider _secretParsers;
+        private readonly ISecretParserProvider _secretParsers;
         private readonly ISigningCredentialStore _credentials;
 
         public DiscoveryResponseGenerator(
-            ITokenEndpointAuthMethodProvider secretParsers,
+            ISecretParserProvider secretParsers,
             ISigningCredentialStore credentials)
         {
             _secretParsers = secretParsers;
@@ -34,7 +34,7 @@ namespace IdentityServer.ResponseGenerators
             configuration.GrantTypesSupported.Add(GrantTypes.Password);
             configuration.GrantTypesSupported.Add(GrantTypes.AuthorizationCode);
             configuration.GrantTypesSupported.Add(GrantTypes.RefreshToken);
-            foreach (var item in _secretParsers.GetAllAuthMethods())
+            foreach (var item in _secretParsers.GetAuthenticationMethods())
             {
                 configuration.TokenEndpointAuthMethodsSupported.Add(item);
             }

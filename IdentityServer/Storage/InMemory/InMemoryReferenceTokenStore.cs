@@ -4,7 +4,7 @@ using IdentityServer.Models;
 
 namespace IdentityServer.Storage
 {
-    public class InMemoryReferenceTokenStore : IReferenceTokenStore
+    internal class InMemoryReferenceTokenStore : IReferenceTokenStore
     {
         private readonly ConcurrentDictionary<string, IToken> _tokens = new ConcurrentDictionary<string, IToken>();
 

@@ -25,6 +25,7 @@ namespace IdentityServer.Models
                     .ToList();
             }
         }
+      
         public IReadOnlyCollection<IApiScope> ApiScopes
         {
             get
@@ -35,6 +36,7 @@ namespace IdentityServer.Models
                     .ToList();
             }
         }
+       
         public IReadOnlyCollection<IIdentityResource> IdentityResources
         {
             get

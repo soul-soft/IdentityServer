@@ -20,7 +20,7 @@ namespace IdentityServer.Protocols
 
             public const string ClientCredentials = "client_credentials";
         }
-        public static class ParsedSecretTypes
+        public static class ClientSecretTypes
         {
             public const string NoSecret = "NoSecret";
             public const string SharedSecret = "SharedSecret";
@@ -28,7 +28,7 @@ namespace IdentityServer.Protocols
             public const string JwtBearer = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
         }
 
-        public static class TokenEndpointAuthenticationMethods
+        public static class TokenEndpointAuthMethods
         {
             public const string PostBody = "client_secret_post";
             public const string BasicAuthentication = "client_secret_basic";

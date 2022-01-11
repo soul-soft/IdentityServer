@@ -6,23 +6,23 @@ using static IdentityServer.Protocols.OpenIdConnectConstants;
 
 namespace IdentityServer.Services
 {
-    public class PostBodyClientSecretScheme : ITokenEndpointAuthMethod
+    public class PostBodySecretParser : ISecretParser
     {
         private readonly ILogger _logger;
-       
+
         private readonly IdentityServerOptions _options;
-      
-        public PostBodyClientSecretScheme(
+
+        public PostBodySecretParser(
             IdentityServerOptions options,
-            ILogger<PostBodyClientSecretScheme> logger)
+            ILogger<PostBodySecretParser> logger)
         {
             _logger = logger;
             _options = options;
         }
 
-        public string AuthMethod => TokenEndpointAuthenticationMethods.PostBody;
+        public string AuthenticationMethod => TokenEndpointAuthMethods.PostBody;
 
-        public async Task<ParsedClientSecret?> ParseAsync(HttpContext context)
+        public async Task<ClientSecret?> ParseAsync(HttpContext context)
         {
             var form = await context.Request.ReadFormAsync();
             var id = form["client_id"].FirstOrDefault();
@@ -45,10 +45,7 @@ namespace IdentityServer.Services
                 _logger.LogError("Client secret exceeds maximum length.");
                 return null;
             }
-            return new ParsedClientSecret(id, ParsedSecretTypes.SharedSecret)
-            {
-                Credential = secret,
-            };
+            return new ClientSecret(id, ClientSecretTypes.SharedSecret, secret);
         }
     }
 }

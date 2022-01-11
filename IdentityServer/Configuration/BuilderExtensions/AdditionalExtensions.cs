@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class Additional
+    public static class AdditionalExtensions
     {
         public static IIdentityServerBuilder AddClientStore<T>(this IIdentityServerBuilder builder)
              where T : class, IClientStore

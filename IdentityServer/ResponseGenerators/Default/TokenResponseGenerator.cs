@@ -1,7 +1,5 @@
-﻿using System.Security.Claims;
-using IdentityServer.Endpoints;
+﻿using IdentityServer.Endpoints;
 using IdentityServer.Models;
-using IdentityServer.Protocols;
 using IdentityServer.Services;
 
 namespace IdentityServer.ResponseGenerators
@@ -9,6 +7,7 @@ namespace IdentityServer.ResponseGenerators
     public class TokenResponseGenerator : ITokenResponseGenerator
     {
         private readonly IServerUrl _serverUrl;
+
         private readonly ITokenService _tokenService;
 
         public TokenResponseGenerator(
@@ -19,19 +18,19 @@ namespace IdentityServer.ResponseGenerators
             _tokenService = tokenService;
         }
 
-        public async Task<TokenResponse> ProcessAsync(TokenRequest request)
+        public async Task<TokenResponse> ProcessAsync(TokenCreationRequest request)
         {
-            var tokenRequest = new TokenCreationRequest(request.Client, request.Resources)
-            {
-            };
+            var at = await _tokenService.CreateAccessTokenAsync(request);
+
+            var accessToken = await _tokenService.CreateSecurityTokenAsync(at);
+
+            var scope = string.Join(",", request.Scopes);
            
-            var accessToken = await _tokenService.CreateAccessTokenAsync(tokenRequest);
-
-            var securityAccessToken = await _tokenService.CreateSecurityTokenAsync(accessToken);
-
             var response = new TokenResponse()
             {
-                AccessToken = securityAccessToken
+                AccessToken = accessToken,
+                AccessTokenLifetime = request.Client.AccessTokenLifetime,
+                Scope = scope,
             };
 
             return response;

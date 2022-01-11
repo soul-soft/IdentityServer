@@ -2,7 +2,7 @@
 
 namespace IdentityServer.Models
 {
-    public class SigningCredentialsInfo
+    public class SigningCredentialsDescriptor
     {
         public SecurityKey Key { get; }
 
@@ -10,7 +10,7 @@ namespace IdentityServer.Models
       
         public string SigningAlgorithm { get; }
 
-        public SigningCredentialsInfo(SigningCredentials signingCredentials, string signingAlgorithm)
+        public SigningCredentialsDescriptor(SigningCredentials signingCredentials, string signingAlgorithm)
         {
             Key = signingCredentials.Key;
             SigningCredentials = signingCredentials;

@@ -14,9 +14,9 @@ namespace IdentityServer.Models
         string? Nonce { get; }
         AccessTokenType AccessTokenType { get; }
         string? Description { get; }
-        IReadOnlyCollection<string> Scopes { get; }
-        IReadOnlyCollection<string> Audiences { get; }
-        IReadOnlyCollection<string> AllowedSigningAlgorithms { get; }
+        ICollection<string> Scopes { get; }
+        ICollection<string> Audiences { get; }
+        ICollection<string> AllowedSigningAlgorithms { get; }
         DateTime CreationTime { get; }
     }
 }

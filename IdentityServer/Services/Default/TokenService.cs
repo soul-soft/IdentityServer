@@ -1,12 +1,7 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using IdentityServer.Infrastructure;
+﻿using IdentityServer.Infrastructure;
 using IdentityServer.Models;
-using IdentityServer.Services;
-using IdentityServer.Protocols;
 using IdentityServer.Storage;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.IdentityModel.Tokens;
 using static IdentityServer.Protocols.OpenIdConnectConstants;
 
 namespace IdentityServer.Services
@@ -17,7 +12,6 @@ namespace IdentityServer.Services
         private readonly ISystemClock _clock;
         private readonly ITokenCreationService _securityToken;
         private readonly IReferenceTokenStore _referenceTokens;
-        private readonly ISigningCredentialStore _credentials;
 
         public TokenService(
             IServerUrl urls,
@@ -30,13 +24,13 @@ namespace IdentityServer.Services
             _clock = clock;
             _referenceTokens = referenceTokens;
             _securityToken = securityToken;
-            _credentials = credentials;
         }
 
         public Task<IToken> CreateAccessTokenAsync(TokenCreationRequest request)
         {
             var issuer = _urls.GetIdentityServerIssuerUri();
             var client = request.Client;
+            var resources = request.Resources;
             var token = new Token(issuer, TokenTypes.AccessToken, client.ClientId)
             {
                 Nonce = request.Nonce,
@@ -48,6 +42,10 @@ namespace IdentityServer.Services
                 SubjectId = request.SubjectId,
                 CreationTime = _clock.UtcNow.UtcDateTime,
             };
+            foreach (var item in resources.ApiScopes)
+            {
+                token.Audiences.Add(item.Name);
+            }
             if (client.IncludeJwtId)
             {
                 token.JwtId = CryptoRandom.CreateUniqueId(16, CryptoRandom.OutputFormat.Hex);

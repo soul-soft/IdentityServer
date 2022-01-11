@@ -3,7 +3,6 @@
     public interface IClient
     {
         string ClientId { get; }
-        string ClientSecret { get; }
         string ClientName { get; }
         string Description { get; }
         string ClientUri { get; }

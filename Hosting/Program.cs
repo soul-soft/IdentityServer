@@ -17,7 +17,7 @@ builder.Services.AddIdentityServer()
         {
             setup.AddClients(Config.Clients);
             setup.AddResources(Config.ApiScopes);
-            setup.AddResources(Config.IdentityResources);
+            setup.AddResources(Config.ApiResources);
             setup.AddResources(Config.IdentityResources);
             setup.AddSigningCredentials(CryptoRandom.CreateRsaSecurityKey(), SecurityAlgorithms.RsaSha256);
         });
@@ -32,7 +32,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-//app.MapIdentityServerEndpoint();
+
 app.UseIdentityServer();
 
 app.MapControllers();

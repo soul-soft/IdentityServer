@@ -8,7 +8,7 @@
         public string? SessionId { get; set; }
         public string? Description { get; set; }
         public string? SubjectId { get; set; }
-        public List<string> Scopes { get; set; } = new List<string>();
+        public ICollection<string> Scopes { get; set; } = new HashSet<string>();
         public TokenCreationRequest(IClient client, Resources resources)
         {
             Client = client;

@@ -10,7 +10,6 @@ namespace IdentityServer.Models
     public class Client : IClient
     {
         public string ClientId { get; set; }
-        public string ClientSecret { get; set; }
         public string ClientName { get; set; }
         public string Description { get; set; }
         public string ClientUri { get; set; }
@@ -25,10 +24,9 @@ namespace IdentityServer.Models
         public IReadOnlyCollection<string> AllowedSigningAlgorithms { get; set; }
         public IReadOnlyCollection<string> AllowedScopes { get; set; } = new HashSet<string>();
 
-        public Client(string clientId, string clientSecret)
+        public Client(string clientId)
         {
             ClientId = clientId;
-            ClientSecret = clientSecret;
         }
     }
 }

@@ -1,26 +1,29 @@
-﻿using IdentityServer.Models;
+﻿using IdentityServer.Configuration;
+using IdentityServer.Models;
 using IdentityServer.Protocols;
 using IdentityServer.Storage;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace IdentityServer.Services
 {
     internal class TokenCreationService : ITokenCreationService
     {
         private readonly ISystemClock _clock;
+        private readonly IdentityServerOptions _options;
         private readonly ISigningCredentialStore _credentials;
 
         public TokenCreationService(
             ISystemClock clock,
+            IdentityServerOptions options,
             ISigningCredentialStore credentials)
         {
-            _clock=clock;
+            _clock = clock;
+            _options = options;
             _credentials = credentials;
         }
-        
+
         public async Task<string> CreateTokenAsync(IToken token)
         {
             var header = await CreateJwtHeaderAsync(token);
@@ -42,7 +45,10 @@ namespace IdentityServer.Services
             }
             if (request.Type == OpenIdConnectConstants.TokenTypes.AccessToken)
             {
-                header["typ"] = "at+jwt";
+                if (!string.IsNullOrWhiteSpace(_options.AccessTokenJwtType))
+                {
+                    header["typ"] = _options.AccessTokenJwtType;
+                }
             }
             return header;
         }
@@ -55,26 +61,30 @@ namespace IdentityServer.Services
             {
                 expires = notBefore.AddSeconds(token.Lifetime.Value);
             }
-            var issuerAt = _clock.UtcNow.ToUnixTimeSeconds().ToString();
-            var claims = new List<Claim>();
-            if (!string.IsNullOrEmpty(token.SessionId))
-            {
-                claims.Add(new Claim(JwtClaimTypes.SessionId, token.SessionId));
-            }
-            if (!string.IsNullOrEmpty(token.SessionId))
-            {
-                claims.Add(new Claim(JwtClaimTypes.SessionId, token.SessionId));
-            }
-            foreach (var item in token.Audiences)
-            {
-                claims.Add(new Claim(JwtClaimTypes.Audience, item));
-            }
             var payload = new JwtPayload(
                 issuer: token.Issuer,
                 audience: null,
-                claims: claims,
+                claims: null,
                 notBefore: notBefore,
                 expires: expires);
+            payload.Add(JwtClaimTypes.ClientId, token.ClientId);
+            payload.Add(JwtClaimTypes.Audience, token.Audiences);
+            if (!string.IsNullOrEmpty(token.SubjectId))
+            {
+                payload.Add(JwtClaimTypes.Subject, token.SubjectId);
+            }
+            if (!string.IsNullOrEmpty(token.SessionId))
+            {
+                payload.Add(JwtClaimTypes.SessionId, token.SessionId);
+            }
+            if (_options.EmitScopesAsSpaceDelimitedStringInJwt)
+            {
+                payload.Add(JwtClaimTypes.Scope, string.Join(",", token.Scopes));
+            }
+            else
+            {
+                payload.Add(JwtClaimTypes.Scope, token.Scopes);
+            }
             return Task.FromResult(payload);
         }
 

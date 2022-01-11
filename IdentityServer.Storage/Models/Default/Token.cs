@@ -22,13 +22,13 @@
 
         public string? Description { get; set; }
 
-        public IReadOnlyCollection<string> Scopes { get; set; } = new HashSet<string>();
+        public ICollection<string> Scopes { get; set; } = new HashSet<string>();
 
-        public IReadOnlyCollection<string> Audiences { get; set; } = new HashSet<string>();
+        public ICollection<string> Audiences { get; set; } = new HashSet<string>();
 
         public DateTime CreationTime { get; set; }
 
-        public IReadOnlyCollection<string> AllowedSigningAlgorithms { get; set; } = new HashSet<string>();
+        public ICollection<string> AllowedSigningAlgorithms { get; set; } = new HashSet<string>();
 
         public Token(string issuer, string type, string clientId)
         {

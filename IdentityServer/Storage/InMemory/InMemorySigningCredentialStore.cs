@@ -5,9 +5,9 @@ namespace IdentityServer.Storage
 {
     internal class InMemorySigningCredentialStore : ISigningCredentialStore
     {
-        private readonly IEnumerable<SigningCredentialsInfo> _descriptor;
+        private readonly IEnumerable<SigningCredentialsDescriptor> _descriptor;
 
-        public InMemorySigningCredentialStore(IEnumerable<SigningCredentialsInfo> descriptor)
+        public InMemorySigningCredentialStore(IEnumerable<SigningCredentialsDescriptor> descriptor)
         {
             _descriptor = descriptor;
         }
@@ -23,7 +23,7 @@ namespace IdentityServer.Storage
             return Task.FromResult(jwks);
         }
 
-        public Task<IEnumerable<SigningCredentialsInfo>> GetSigningCredentialsDescriptorAsync()
+        public Task<IEnumerable<SigningCredentialsDescriptor>> GetSigningCredentialsDescriptorAsync()
         {
             return Task.FromResult(_descriptor);
         }

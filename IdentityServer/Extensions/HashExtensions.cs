@@ -5,9 +5,9 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IdentityServer.Infrastructure
+namespace IdentityServer.Models
 {
-    public static class HashGenerator
+    public static class HashExtensions
     {
         public static string Sha256(this string input)
         {

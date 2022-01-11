@@ -5,6 +5,7 @@ using IdentityServer.Protocols;
 using IdentityServer.ResponseGenerators;
 using IdentityServer.Services;
 using IdentityServer.Storage;
+using IdentityServer.Validation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -12,7 +13,7 @@ using Microsoft.Extensions.Options;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class Core
+    public static class CoreExtensions
     {
         #region CoreServices
         internal static IIdentityServerBuilder AddCoreServices(this IIdentityServerBuilder builder)
@@ -46,9 +47,19 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<IServerUrl, ServerUrl>();
             builder.Services.TryAddTransient<ITokenService, TokenService>();
             builder.Services.TryAddTransient<ITokenCreationService, TokenCreationService>();
-            builder.Services.TryAddTransient<ITokenCreationService, TokenCreationService>();
-            builder.Services.TryAddTransient<ITokenEndpointAuthMethod, PostBodyClientSecretScheme>();
-            builder.Services.TryAddTransient<ITokenEndpointAuthMethodProvider, TokenEndpointAuthMethodProvider>();
+            builder.Services.TryAddTransient<ISecretParser, PostBodySecretParser>();
+            builder.Services.TryAddTransient<ISecretParserProvider, SecretParserProvider>();
+            return builder;
+        }
+        #endregion
+
+        #region Validators
+        public static IIdentityServerBuilder AddValidators(this IIdentityServerBuilder builder)
+        {
+            builder.Services.TryAddTransient<IScopeValidator, ScopeValidator>();
+            builder.Services.TryAddTransient<IResourceValidator, ResourceValidator>();
+            builder.Services.TryAddTransient<ISecretValidator, SharedSecretValidator>();
+            builder.Services.TryAddTransient<ISecretValidatorProvider, SecretValidatorProvider>();
             return builder;
         }
         #endregion
@@ -64,7 +75,6 @@ namespace Microsoft.Extensions.DependencyInjection
 
         internal static IIdentityServerBuilder AddDefaultEndpoints(this IIdentityServerBuilder builder)
         {
-            builder.Services.AddTransient<IEndpointRouter, EndpointRouter>();
             builder.AddEndpoint<TokenEndpoint>(Constants.EndpointNames.Token, Constants.EndpointRoutePaths.Token);
             builder.AddEndpoint<TokenEndpoint>(Constants.EndpointNames.Authorize, Constants.EndpointRoutePaths.Authorize);
             builder.AddEndpoint<UserInfoEndpoint>(Constants.EndpointNames.UserInfo, Constants.EndpointRoutePaths.UserInfo);

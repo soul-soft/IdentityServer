@@ -10,13 +10,13 @@ namespace IdentityServer.Configuration
         #region fields
         private readonly List<IClient> Clients = new List<IClient>();
         private readonly List<IResource> Resources = new List<IResource>();
-        private readonly List<SigningCredentialsInfo> SigningCredentials = new List<SigningCredentialsInfo>();
+        private readonly List<SigningCredentialsDescriptor> SigningCredentials = new List<SigningCredentialsDescriptor>();
         #endregion
 
         #region SigningCredentials
         public InMemoryStoreBuilder AddSigningCredentials(SecurityKey securityKey, string signingAlgorithm)
         {
-            SigningCredentials.Add(new SigningCredentialsInfo(new SigningCredentials(securityKey, signingAlgorithm), signingAlgorithm));
+            SigningCredentials.Add(new SigningCredentialsDescriptor(new SigningCredentials(securityKey, signingAlgorithm), signingAlgorithm));
             return this;
         }
         #endregion
