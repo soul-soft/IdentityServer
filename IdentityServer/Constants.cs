@@ -12,7 +12,7 @@
             public const string DiscoveryJwks = "Jwks";
             public const string UserInfo = "Userinfo";
         }
-       
+
         public static class EndpointRoutePaths
         {
             public const string ConnectPathPrefix = "/connect";

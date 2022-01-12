@@ -1,10 +1,8 @@
-﻿using IdentityServer.Configuration;
-using IdentityServer.Models;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace IdentityServer.Services
 {
-    public class SecretParsers : ISecretParsers
+    public class SecretParsers : ISecretsParser
     {
         private readonly IdentityServerOptions _options;
 

@@ -1,6 +1,4 @@
-﻿using IdentityServer.Endpoints;
-
-namespace IdentityServer.ResponseGenerators
+﻿namespace IdentityServer.ResponseGenerators
 {
     public interface IDiscoveryResponseGenerator
     {

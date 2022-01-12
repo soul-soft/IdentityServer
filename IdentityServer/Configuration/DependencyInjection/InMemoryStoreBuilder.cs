@@ -1,6 +1,4 @@
-﻿using IdentityServer.Models;
-using IdentityServer.Storage;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityServer.Configuration

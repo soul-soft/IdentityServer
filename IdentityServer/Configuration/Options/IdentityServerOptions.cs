@@ -1,6 +1,4 @@
-﻿using static IdentityServer.OpenIdConnects;
-
-namespace IdentityServer.Configuration
+﻿namespace IdentityServer.Configuration
 {
     public class IdentityServerOptions
     {

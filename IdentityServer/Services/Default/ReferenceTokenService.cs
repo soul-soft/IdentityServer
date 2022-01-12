@@ -1,7 +1,4 @@
-﻿using IdentityServer.Models;
-using IdentityServer.Storage;
-
-namespace IdentityServer.Services
+﻿namespace IdentityServer.Services
 {
     internal class ReferenceTokenService : IReferenceTokenService
     {

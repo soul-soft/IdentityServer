@@ -31,7 +31,7 @@ namespace Hosting.Configuration
             new ApiScope("api")
             {
 
-            }, 
+            },
             new ApiScope("rpc")
             {
 
@@ -58,7 +58,8 @@ namespace Hosting.Configuration
                 {
                     JwtClaimTypes.Subject,
                 }
-            }
+            },
+            new IdentityResource(StandardScopes.OfflineAccess)
         };
     }
 }

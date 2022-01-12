@@ -1,8 +1,5 @@
-﻿using IdentityServer.Configuration;
-using IdentityServer.Models;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using static IdentityServer.OpenIdConnects;
 
 namespace IdentityServer.Services
 {

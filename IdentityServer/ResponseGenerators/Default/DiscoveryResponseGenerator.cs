@@ -1,10 +1,4 @@
-﻿using IdentityServer.Endpoints;
-using IdentityServer.Hosting;
-using IdentityServer.Services;
-using IdentityServer.Protocols;
-using IdentityServer.Storage;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using static IdentityServer.OpenIdConnects;
+﻿using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace IdentityServer.ResponseGenerators
 {
@@ -12,12 +6,12 @@ namespace IdentityServer.ResponseGenerators
         : IDiscoveryResponseGenerator
     {
         private readonly IResourceStore _resources;
-        private readonly ISecretParsers _secretParsers;
+        private readonly ISecretsParser _secretParsers;
         private readonly ISigningCredentialStore _credentials;
 
         public DiscoveryResponseGenerator(
             IResourceStore resources,
-            ISecretParsers secretParsers,
+            ISecretsParser secretParsers,
             ISigningCredentialStore credentials)
         {
             _resources = resources;

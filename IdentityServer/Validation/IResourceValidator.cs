@@ -1,6 +1,4 @@
-﻿using IdentityServer.Models;
-
-namespace IdentityServer.Validation
+﻿namespace IdentityServer.Validation
 {
     public interface IResourceValidator
     {

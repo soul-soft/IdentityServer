@@ -1,5 +1,4 @@
-﻿using IdentityServer.Models;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace IdentityServer.Services
 {

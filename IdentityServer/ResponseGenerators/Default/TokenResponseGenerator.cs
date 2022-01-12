@@ -1,8 +1,4 @@
-﻿using IdentityServer.Endpoints;
-using IdentityServer.Models;
-using IdentityServer.Services;
-
-namespace IdentityServer.ResponseGenerators
+﻿namespace IdentityServer.ResponseGenerators
 {
     public class TokenResponseGenerator : ITokenResponseGenerator
     {

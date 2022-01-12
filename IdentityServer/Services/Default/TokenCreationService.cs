@@ -1,8 +1,4 @@
-﻿using IdentityServer.Configuration;
-using IdentityServer.Models;
-using IdentityServer.Protocols;
-using IdentityServer.Storage;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 

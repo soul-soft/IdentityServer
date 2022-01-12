@@ -1,6 +1,4 @@
-﻿using IdentityServer.Infrastructure;
-
-namespace IdentityServer.Endpoints
+﻿namespace IdentityServer.Endpoints
 {
     public class TokenResponse
     {

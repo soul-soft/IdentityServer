@@ -1,9 +1,4 @@
-﻿using IdentityServer.Infrastructure;
-using IdentityServer.Models;
-using Microsoft.AspNetCore.Authentication;
-using static IdentityServer.OpenIdConnects;
-
-namespace IdentityServer.Services
+﻿namespace IdentityServer.Services
 {
     internal class TokenService : ITokenService
     {

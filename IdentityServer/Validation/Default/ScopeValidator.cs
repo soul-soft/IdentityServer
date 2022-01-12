@@ -1,6 +1,4 @@
-﻿using IdentityServer.Configuration;
-
-namespace IdentityServer.Validation
+﻿namespace IdentityServer.Validation
 {
     public class ScopeValidator : IScopeValidator
     {

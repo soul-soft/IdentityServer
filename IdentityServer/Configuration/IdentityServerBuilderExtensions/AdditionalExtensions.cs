@@ -1,6 +1,4 @@
-﻿using IdentityServer.Configuration;
-using IdentityServer.Storage;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+﻿using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection
 {

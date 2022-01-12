@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace IdentityServer.Hosting
 {
-    internal class EndpointDataSource : Microsoft.AspNetCore.Routing.EndpointDataSource
+    internal class IdentityServerEndpointDataSource : EndpointDataSource
     {
         private readonly object _lock = new object();
         private List<Endpoint>? _endpoints;
@@ -16,7 +16,7 @@ namespace IdentityServer.Hosting
 
         private readonly IEnumerable<EndpointDescriptor> _descriptors;
 
-        public EndpointDataSource(IEnumerable<EndpointDescriptor> descriptors)
+        public IdentityServerEndpointDataSource(IEnumerable<EndpointDescriptor> descriptors)
         {
             _descriptors = descriptors;
         }

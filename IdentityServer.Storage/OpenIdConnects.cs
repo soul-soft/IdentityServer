@@ -6,6 +6,5 @@
         {
             public const string OfflineAccess = "offline_access";
         }
-      
     }
 }

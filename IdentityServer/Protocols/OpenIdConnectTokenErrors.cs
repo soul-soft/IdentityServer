@@ -12,8 +12,6 @@
 
         public const string UnauthorizedClient = "unauthorized_client";
 
-        public const string UnsupportedGrantType = "unsupported_grant_type";
-
         public const string UnsupportedResponseType = "unsupported_response_type";
 
         public const string InvalidScope = "invalid_scope";

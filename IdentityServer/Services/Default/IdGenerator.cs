@@ -5,7 +5,7 @@
         public string GeneratorId()
         {
             var array = Guid.NewGuid().ToByteArray();
-            return BitConverter.ToString(array);
+            return BitConverter.ToString(array).Replace("-", "");
         }
     }
 }

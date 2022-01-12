@@ -8,6 +8,8 @@ using IdentityServer.Services;
 using IdentityServer.Storage;
 using IdentityServer.Validation;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using static IdentityServer.OpenIdConnects;
@@ -21,31 +23,34 @@ namespace IdentityServer.Endpoints
         private readonly IdentityServerOptions _options;
         private readonly ILogger<TokenEndpoint> _logger;
         private readonly ITokenResponseGenerator _generator;
-        private readonly ISecretParsers _secretParsers;
+        private readonly ISecretsParser _secretsParser;
         private readonly IScopeValidator _scopeValidator;
+        private readonly ISecretsValidator _secretsValidator;
         private readonly IResourceValidator _resourceValidator;
-        private readonly ISecretValidatorProvider _secretValidatorProvider;
+        private readonly IGrantTypeValidator _grantTypeValidator;
 
         public TokenEndpoint(
             IClientStore clients,
             IResourceStore resources,
+            ISecretsParser secretsParser,
             IdentityServerOptions options,
             ILogger<TokenEndpoint> logger,
             ITokenResponseGenerator generator,
             IScopeValidator scopeValidator,
-            ISecretParsers secretParsers,
+            ISecretsValidator secretsValidator,
             IResourceValidator resourceValidator,
-            ISecretValidatorProvider secretValidatorProvider)
+            IGrantTypeValidator grantTypeValidator)
         {
             _logger = logger;
             _clients = clients;
             _options = options;
             _resources = resources;
             _generator = generator;
+            _secretsParser = secretsParser;
             _scopeValidator = scopeValidator;
+            _secretsValidator = secretsValidator;
             _resourceValidator = resourceValidator;
-            _secretParsers = secretParsers;
-            _secretValidatorProvider = secretValidatorProvider;
+            _grantTypeValidator = grantTypeValidator;
         }
 
         public override async Task<IEndpointResult> ProcessAsync(HttpContext context)
@@ -66,7 +71,7 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Get Secret
-            var secret = await _secretParsers.ParseAsync(context);
+            var secret = await _secretsParser.ParseAsync(context);
             if (secret == null)
             {
                 _logger.LogError("The client with secret cannot be found in the '{0}' authorization method", _options.TokenEndpointAuthMethod);
@@ -84,8 +89,7 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Validate Secret
-            var secretValidator = _secretValidatorProvider.GetSecretValidator(secret.Type);
-            var validationResult = await secretValidator.ValidateAsync(client.ClientSecrets, secret);
+            var validationResult = await _secretsValidator.ValidateAsync(secret, client.ClientSecrets);
             if (validationResult.IsError)
             {
                 LogError(validationResult.Description, client.ClientId);
@@ -118,14 +122,11 @@ namespace IdentityServer.Endpoints
             {
                 return BadRequest(OpenIdConnectTokenErrors.InvalidGrant, "Grant Type is missing");
             }
-            if (grantType.Length > _options.InputLengthRestrictions.GrantType)
+            await _grantTypeValidator.ValidateAsync(grantType,client.AllowedGrantTypes);
+            if (validationResult.IsError)
             {
-                return BadRequest(OpenIdConnectTokenErrors.InvalidGrant, "Grant type is too long");
-            }
-            if (!client.AllowedGrantTypes.Contains(grantType))
-            {
-                _logger.LogError("Client not authorized for {0} flow, check the AllowedGrantTypes setting", grantType);
-                return BadRequest(OpenIdConnectTokenErrors.UnsupportedGrantType);
+                LogError(validationResult.Description, client.ClientId);
+                return BadRequest(OpenIdConnectTokenErrors.InvalidResource, validationResult.Description);
             }
             #endregion
 
@@ -143,15 +144,25 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Validate Grant
-            switch (grantType)
+            if (GrantTypes.ClientCredentials.Equals(grantType))
             {
-                case GrantTypes.ClientCredentials:
-                    validationResult = ValidateClientCredentialsRequest(resources);
-                    break;
-                //case GrantTypes.Password:
-                //    validationResult = ValidateResourceOwnerCredentialRequestAsync(context);
-                default:
-                    break;
+                var grantContext = new ClientCredentialsGrantValidationContext(
+                    client,
+                    resources,
+                    scopes);
+                var grantValidator = context.RequestServices
+                    .GetRequiredService<IClientCredentialsGrantValidator>();
+                validationResult = await grantValidator.ValidateAsync(grantContext);
+            }
+            else if (GrantTypes.Password.Equals(grantType))
+            {
+                var grantContext = new PasswordGrantContext(
+                    client,
+                    resources,
+                    scopes);
+                var grantValidator = context.RequestServices
+                   .GetRequiredService<IPasswordGrantValidator>();
+                validationResult = await grantValidator.ValidateAsync(grantContext);
             }
             if (validationResult.IsError)
             {
@@ -169,8 +180,8 @@ namespace IdentityServer.Endpoints
             #endregion
         }
 
-       
-        private ValidationResult ValidateClientCredentialsRequest(Resources resources)
+
+        private ValidationResult ValidateClientCredentialsRequest(IClient client, Resources resources)
         {
             if (resources.IdentityResources.Any())
             {

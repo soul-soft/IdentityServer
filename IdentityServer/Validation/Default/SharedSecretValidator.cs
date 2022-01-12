@@ -1,6 +1,4 @@
-﻿using IdentityServer.Models;
-using Microsoft.AspNetCore.Authentication;
-using static IdentityServer.OpenIdConnects;
+﻿using Microsoft.AspNetCore.Authentication;
 
 namespace IdentityServer.Validation
 {
@@ -15,7 +13,7 @@ namespace IdentityServer.Validation
             _clock = clock;
         }
 
-        public Task<ValidationResult> ValidateAsync(IEnumerable<ISecret> secrets, ClientSecret clientSecret)
+        public Task<ValidationResult> ValidateAsync(ClientSecret clientSecret,IEnumerable<ISecret> allowedSecrets)
         {
             var credential = clientSecret.Credential?.ToString();
 
@@ -30,14 +28,14 @@ namespace IdentityServer.Validation
                 credential.Sha256(),
             };
 
-            var equalsSecets = secrets
+            var secets = allowedSecrets
                 .Where(a => credentials.Contains(a.Value));
 
-            if (equalsSecets.Any(a => a.Expiration == null || a.Expiration >= _clock.UtcNow.UtcDateTime))
+            if (secets.Any(a => a.Expiration == null || a.Expiration >= _clock.UtcNow.UtcDateTime))
             {
                 return ValidationResult.SuccessAsync();
             }
-            else if (equalsSecets.Any(a => a.Expiration != null || a.Expiration < _clock.UtcNow.UtcDateTime))
+            else if (secets.Any(a => a.Expiration != null || a.Expiration < _clock.UtcNow.UtcDateTime))
             {
                 return ValidationResult.ErrorAsync("The Client credential has expired");
             }

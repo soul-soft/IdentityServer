@@ -1,11 +1,5 @@
 ﻿using IdentityServer;
-using IdentityServer.Configuration;
 using IdentityServer.Endpoints;
-using IdentityServer.Hosting;
-using IdentityServer.ResponseGenerators;
-using IdentityServer.Services;
-using IdentityServer.Storage;
-using IdentityServer.Validation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -46,7 +40,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<IServerUrl, ServerUrl>();
             builder.Services.TryAddTransient<IIdGenerator, IdGenerator>();
             builder.Services.TryAddTransient<ISecretParser, PostBodySecretParser>();
-            builder.Services.TryAddTransient<ISecretParsers, SecretParsers>();
+            builder.Services.TryAddTransient<ISecretsParser, SecretParsers>();
             builder.Services.TryAddTransient<ITokenService, TokenService>();
             builder.Services.TryAddTransient<ITokenCreationService, TokenCreationService>();
             builder.Services.TryAddTransient<IRefreshTokenService, RefreshTokenService>();
@@ -60,8 +54,9 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             builder.Services.TryAddTransient<IScopeValidator, ScopeValidator>();
             builder.Services.TryAddTransient<IResourceValidator, ResourceValidator>();
+            builder.Services.TryAddTransient<IGrantTypeValidator, GrantTypeValidator>();
+            builder.Services.TryAddTransient<ISecretsValidator, SecretsValidator>();
             builder.Services.TryAddTransient<ISecretValidator, SharedSecretValidator>();
-            builder.Services.TryAddTransient<ISecretValidatorProvider, SecretValidatorProvider>();
             return builder;
         }
         #endregion

@@ -1,7 +1,5 @@
-﻿using System.Net.Mime;
-using IdentityServer.Hosting;
-using IdentityServer.Infrastructure;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
+using System.Net.Mime;
 
 namespace IdentityServer.Endpoints
 {

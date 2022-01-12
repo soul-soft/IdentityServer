@@ -1,6 +1,4 @@
-﻿using IdentityServer.Models;
-
-namespace IdentityServer.Services
+﻿namespace IdentityServer.Services
 {
     public interface IRefreshTokenService
     {

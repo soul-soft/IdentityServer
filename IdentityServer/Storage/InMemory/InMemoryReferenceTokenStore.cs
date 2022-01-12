@@ -1,6 +1,4 @@
-﻿using IdentityServer.Infrastructure;
-using IdentityServer.Models;
-using Microsoft.Extensions.Caching.Distributed;
+﻿using Microsoft.Extensions.Caching.Distributed;
 
 namespace IdentityServer.Storage
 {

@@ -1,6 +1,4 @@
-﻿using IdentityServer.Infrastructure;
-using IdentityServer.Models;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityServer.Endpoints
 {

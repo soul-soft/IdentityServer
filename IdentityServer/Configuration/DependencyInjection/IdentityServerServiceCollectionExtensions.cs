@@ -1,6 +1,4 @@
-﻿using IdentityServer.Configuration;
-
-namespace Microsoft.Extensions.DependencyInjection
+﻿namespace Microsoft.Extensions.DependencyInjection
 {
     public static class IdentityServerServiceCollectionExtensions
     {

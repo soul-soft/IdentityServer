@@ -1,6 +1,4 @@
-﻿using IdentityServer.Models;
-
-namespace IdentityServer.Storage
+﻿namespace IdentityServer.Storage
 {
     internal class InMemoryClientStore : IClientStore
     {

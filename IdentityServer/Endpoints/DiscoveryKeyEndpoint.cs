@@ -1,7 +1,4 @@
-﻿using IdentityServer.ResponseGenerators;
-using IdentityServer.Hosting;
-using Microsoft.AspNetCore.Http;
-using IdentityServer.Configuration;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace IdentityServer.Endpoints
 {
