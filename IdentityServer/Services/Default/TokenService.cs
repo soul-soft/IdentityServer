@@ -1,37 +1,36 @@
 ﻿using IdentityServer.Infrastructure;
 using IdentityServer.Models;
-using IdentityServer.Storage;
 using Microsoft.AspNetCore.Authentication;
-using static IdentityServer.Protocols.OpenIdConnectConstants;
+using static IdentityServer.OpenIdConnects;
 
 namespace IdentityServer.Services
 {
     internal class TokenService : ITokenService
     {
         private readonly IServerUrl _urls;
-        private readonly ISystemClock _clock;
-        private readonly ITokenCreationService _securityToken;
-        private readonly IReferenceTokenStore _referenceTokens;
+        private readonly IIdGenerator _idGenerator;
+        private readonly IReferenceTokenService _referenceTokenService;
+        private readonly ITokenCreationService _tokenCreationService;
 
         public TokenService(
             IServerUrl urls,
-            ISystemClock clock,
-            IReferenceTokenStore referenceTokens,
-            ITokenCreationService securityToken,
-            ISigningCredentialStore credentials)
+            IIdGenerator idGenerator,
+            ITokenCreationService tokenCreationService,
+            IReferenceTokenService referenceTokenService)
         {
             _urls = urls;
-            _clock = clock;
-            _referenceTokens = referenceTokens;
-            _securityToken = securityToken;
+            _idGenerator = idGenerator;
+            _tokenCreationService = tokenCreationService;
+            _referenceTokenService = referenceTokenService;
         }
 
-        public Task<IToken> CreateAccessTokenAsync(TokenCreationRequest request)
+        public Task<IToken> CreateAccessTokenAsync(TokenRequest request)
         {
+            var id = _idGenerator.GeneratorId();
             var issuer = _urls.GetIdentityServerIssuerUri();
             var client = request.Client;
             var resources = request.Resources;
-            var token = new Token(issuer, TokenTypes.AccessToken, client.ClientId)
+            var token = new Token(id, issuer, TokenTypes.AccessToken, client.ClientId)
             {
                 Nonce = request.Nonce,
                 Scopes = request.Scopes,
@@ -40,7 +39,6 @@ namespace IdentityServer.Services
                 Description = request.Description,
                 Lifetime = client.AccessTokenLifetime,
                 SubjectId = request.SubjectId,
-                CreationTime = _clock.UtcNow.UtcDateTime,
             };
             foreach (var item in resources.ApiScopes)
             {
@@ -48,13 +46,14 @@ namespace IdentityServer.Services
             }
             if (client.IncludeJwtId)
             {
-                token.JwtId = CryptoRandom.CreateUniqueId(16, CryptoRandom.OutputFormat.Hex);
+                token.Id = CryptoRandom.CreateUniqueId(16, CryptoRandom.OutputFormat.Hex);
             }
             return Task.FromResult<IToken>(token);
         }
 
-        public Task<IToken> CreateIdentityTokenAsync(TokenCreationRequest request)
+        public Task<IToken> CreateIdentityTokenAsync(TokenRequest request)
         {
+            var id = _idGenerator.GeneratorId();
             var issuer = _urls.GetIdentityServerIssuerUri();
             var client = request.Client;
             var audiences = new List<string>();
@@ -62,7 +61,7 @@ namespace IdentityServer.Services
             {
                 audiences.Add(item.Name);
             }
-            var token = new Token(issuer, TokenTypes.IdentityToken, client.ClientId)
+            var token = new Token(id, issuer, TokenTypes.IdentityToken, client.ClientId)
             {
                 Nonce = request.Nonce,
                 Scopes = request.Scopes,
@@ -71,12 +70,11 @@ namespace IdentityServer.Services
                 Description = request.Description,
                 Lifetime = client.IdentityTokenLifetime,
                 SubjectId = request.SubjectId,
-                CreationTime = _clock.UtcNow.UtcDateTime,
                 Audiences = audiences
             };
             if (client.IncludeJwtId)
             {
-                token.JwtId = CryptoRandom.CreateUniqueId(16, CryptoRandom.OutputFormat.Hex);
+                token.Id = CryptoRandom.CreateUniqueId(16, CryptoRandom.OutputFormat.Hex);
             }
             return Task.FromResult<IToken>(token);
         }
@@ -89,11 +87,11 @@ namespace IdentityServer.Services
             {
                 if (token.AccessTokenType == AccessTokenType.Jwt)
                 {
-                    tokenResult = await _securityToken.CreateTokenAsync(token);
+                    tokenResult = await _tokenCreationService.CreateTokenAsync(token);
                 }
                 else
                 {
-                    var handle = await _referenceTokens.SaveAsync(token);
+                    var handle = await _referenceTokenService.CreateAsync(token);
 
                     tokenResult = handle;
                 }
@@ -101,7 +99,7 @@ namespace IdentityServer.Services
             else if (token.Type == TokenTypes.IdentityToken)
             {
 
-                tokenResult = await _securityToken.CreateTokenAsync(token);
+                tokenResult = await _tokenCreationService.CreateTokenAsync(token);
             }
             else
             {
@@ -110,7 +108,6 @@ namespace IdentityServer.Services
 
             return tokenResult;
         }
-
 
     }
 }

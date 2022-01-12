@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 
 namespace IdentityServer.Models
 {
-    public class ApiScope : Resource, IApiScope
+    public static class ResourcesExtensions
     {
-        public string Scope => Name;
-
-        public ApiScope(string name) : base(name)
+        public static Resources ToResources(this IEnumerable<IResource> resources)
         {
-
+            return new Resources(resources);
         }
     }
 }

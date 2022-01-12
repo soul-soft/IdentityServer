@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace IdentityServer.Services
 {
-    public interface ISecretParserProvider
+    public interface ISecretParsers
     {
-        ISecretParser GetParser();
         IEnumerable<string> GetAuthenticationMethods();
+        Task<ClientSecret?> ParseAsync(HttpContext context);
     }
 }

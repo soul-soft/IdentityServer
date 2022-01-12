@@ -1,7 +1,7 @@
 ﻿using IdentityServer.Models;
 using IdentityServer.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using static IdentityServer.Protocols.OpenIdConnectConstants;
+using static IdentityServer.OpenIdConnects;
 
 namespace Hosting.Configuration
 {
@@ -21,7 +21,7 @@ namespace Hosting.Configuration
                 },
                 AllowedScopes = new[]
                 {
-                    "api","rpc"
+                    "api","rpc",StandardScopes.OfflineAccess
                 }
             }
         };

@@ -1,4 +1,4 @@
-﻿using static IdentityServer.Protocols.OpenIdConnectConstants;
+﻿using static IdentityServer.OpenIdConnects;
 
 namespace IdentityServer.Configuration
 {

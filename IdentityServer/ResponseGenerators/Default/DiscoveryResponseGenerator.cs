@@ -4,25 +4,28 @@ using IdentityServer.Services;
 using IdentityServer.Protocols;
 using IdentityServer.Storage;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using static IdentityServer.Protocols.OpenIdConnectConstants;
+using static IdentityServer.OpenIdConnects;
 
 namespace IdentityServer.ResponseGenerators
 {
     internal class DiscoveryResponseGenerator
         : IDiscoveryResponseGenerator
     {
-        private readonly ISecretParserProvider _secretParsers;
+        private readonly IResourceStore _resources;
+        private readonly ISecretParsers _secretParsers;
         private readonly ISigningCredentialStore _credentials;
 
         public DiscoveryResponseGenerator(
-            ISecretParserProvider secretParsers,
+            IResourceStore resources,
+            ISecretParsers secretParsers,
             ISigningCredentialStore credentials)
         {
-            _secretParsers = secretParsers;
+            _resources = resources;
             _credentials = credentials;
+            _secretParsers = secretParsers;
         }
 
-        public Task<DiscoveryResponse> CreateDiscoveryDocumentAsync(string issuer)
+        public async Task<DiscoveryResponse> CreateDiscoveryDocumentAsync(string issuer)
         {
             var configuration = new OpenIdConnectConfiguration();
             configuration.Issuer = issuer;
@@ -34,12 +37,17 @@ namespace IdentityServer.ResponseGenerators
             configuration.GrantTypesSupported.Add(GrantTypes.Password);
             configuration.GrantTypesSupported.Add(GrantTypes.AuthorizationCode);
             configuration.GrantTypesSupported.Add(GrantTypes.RefreshToken);
+            var scopes = await _resources.GetScopesAsync();
+            foreach (var item in scopes)
+            {
+                configuration.ScopesSupported.Add(item);
+            }
             foreach (var item in _secretParsers.GetAuthenticationMethods())
             {
                 configuration.TokenEndpointAuthMethodsSupported.Add(item);
             }
             var response = new DiscoveryResponse(configuration);
-            return Task.FromResult(response);
+            return response;
         }
 
         public async Task<JwkDiscoveryResponse> CreateJwkDiscoveryDocumentAsync()

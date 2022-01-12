@@ -15,6 +15,7 @@ namespace IdentityServer.Storage
         {
             var client = _clients
                 .Where(a => a.ClientId == clientId)
+                .Where(a => a.Enabled)
                 .FirstOrDefault();
             return Task.FromResult(client);
         }

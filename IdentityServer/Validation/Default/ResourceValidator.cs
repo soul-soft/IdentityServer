@@ -5,13 +5,12 @@ namespace IdentityServer.Validation
     public class ResourceValidator : IResourceValidator
     {
         public Task<ValidationResult> ValidateAsync(Resources resources, IEnumerable<string> requestedScopes)
-        {
-            foreach (var item in requestedScopes)
+        {           
+            foreach (var scope in requestedScopes)
             {
-                if (!resources.ApiScopes.Any(a => a.Name == item)
-                    && !resources.IdentityResources.Any(a => a.Name == item))
+                if (!resources.Scopes.Contains(scope))
                 {
-                    return ValidationResult.ErrorAsync("Invalid scope:\"{0}\"", item);
+                    return ValidationResult.ErrorAsync("Unsupported resource:'{0}'", scope);
                 }
             }
             return ValidationResult.SuccessAsync();

@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Models
 {
-    public class TokenCreationRequest
+    public class TokenRequest
     {
         public string? Nonce { get; }
         public IClient Client { get; }
@@ -9,7 +9,7 @@
         public string? Description { get; set; }
         public string? SubjectId { get; set; }
         public ICollection<string> Scopes { get; set; } = new HashSet<string>();
-        public TokenCreationRequest(IClient client, Resources resources)
+        public TokenRequest(IClient client, Resources resources)
         {
             Client = client;
             Resources = resources;

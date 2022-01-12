@@ -5,6 +5,6 @@ namespace IdentityServer.ResponseGenerators
 {
     public interface ITokenResponseGenerator
     {
-        Task<TokenResponse> ProcessAsync(TokenCreationRequest request);
+        Task<TokenResponse> ProcessAsync(TokenRequest request);
     }
 }

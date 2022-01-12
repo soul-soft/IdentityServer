@@ -1,19 +1,20 @@
-﻿using IdentityServer.Infrastructure;
+﻿using Microsoft.Extensions.Caching.Distributed;
+using IdentityServer.Infrastructure;
 using IdentityServer.Models;
-using Microsoft.Extensions.Caching.Distributed;
+using IdentityServer.Protocols;
 
 namespace IdentityServer.Storage
 {
-    internal class InMemoryReferenceTokenStore : IReferenceTokenStore
+    internal class InMemoryRefreshTokenStore : IRefreshTokenStore
     {
         private readonly IDistributedCache _cache;
 
-        public InMemoryReferenceTokenStore(IDistributedCache cache)
+        public InMemoryRefreshTokenStore(IDistributedCache cache)
         {
             _cache = cache;
         }
 
-        public async Task SaveAsync(IReferenceToken token)
+        public async Task SaveAsync(IRefreshToken token)
         {
             var key = CreateKey(token);
             var json = Serialize(token);
@@ -23,12 +24,12 @@ namespace IdentityServer.Storage
             });
         }
 
-        private string CreateKey(IReferenceToken token)
+        private string CreateKey(IRefreshToken token)
         {
-            return $"{Constants.IdentityServerName}:ReferenceToken:{token.Id}";
+            return $"{Constants.IdentityServerName}:RefreshToken:{token.Id}";
         }
 
-        private string Serialize(IReferenceToken token)
+        private string Serialize(IRefreshToken token)
         {
             return ObjectSerializer.SerializeObject(token);
         }

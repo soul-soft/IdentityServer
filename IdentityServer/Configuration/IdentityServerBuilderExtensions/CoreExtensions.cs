@@ -1,7 +1,7 @@
-﻿using IdentityServer.Configuration;
+﻿using IdentityServer;
+using IdentityServer.Configuration;
 using IdentityServer.Endpoints;
 using IdentityServer.Hosting;
-using IdentityServer.Protocols;
 using IdentityServer.ResponseGenerators;
 using IdentityServer.Services;
 using IdentityServer.Storage;
@@ -43,12 +43,14 @@ namespace Microsoft.Extensions.DependencyInjection
         #region PluggableServices
         public static IIdentityServerBuilder AddPluggableServices(this IIdentityServerBuilder builder)
         {
-            builder.AddReferenceTokenStore<InMemoryReferenceTokenStore>();
             builder.Services.TryAddTransient<IServerUrl, ServerUrl>();
+            builder.Services.TryAddTransient<IIdGenerator, IdGenerator>();
+            builder.Services.TryAddTransient<ISecretParser, PostBodySecretParser>();
+            builder.Services.TryAddTransient<ISecretParsers, SecretParsers>();
             builder.Services.TryAddTransient<ITokenService, TokenService>();
             builder.Services.TryAddTransient<ITokenCreationService, TokenCreationService>();
-            builder.Services.TryAddTransient<ISecretParser, PostBodySecretParser>();
-            builder.Services.TryAddTransient<ISecretParserProvider, SecretParserProvider>();
+            builder.Services.TryAddTransient<IRefreshTokenService, RefreshTokenService>();
+            builder.Services.TryAddTransient<IReferenceTokenService, ReferenceTokenService>();
             return builder;
         }
         #endregion

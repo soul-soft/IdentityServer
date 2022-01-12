@@ -1,7 +1,7 @@
 ﻿namespace IdentityServer.Models
 {
-    public interface IApiScope: IResource
+    public interface IApiScope: IResource, IScope
     {
-
+        
     }
 }

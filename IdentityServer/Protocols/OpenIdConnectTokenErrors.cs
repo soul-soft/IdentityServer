@@ -18,6 +18,8 @@
 
         public const string InvalidScope = "invalid_scope";
 
+        public const string InvalidResource = "invalid_resource";
+
         public const string AuthorizationPending = "authorization_pending";
 
         public const string AccessDenied = "access_denied";

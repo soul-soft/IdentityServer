@@ -28,9 +28,9 @@ namespace IdentityServer.Endpoints
             return new StatusCodeResult(statusCode);
         }
 
-        protected IEndpointResult BadRequest(string error)
+        protected IEndpointResult BadRequest(string error, string? description = null)
         {
-            return new ErrorResult(error, HttpStatusCode.BadRequest);
+            return new ErrorResult(error, description, HttpStatusCode.BadRequest);
         }
 
         protected IEndpointResult MethodNotAllowed()

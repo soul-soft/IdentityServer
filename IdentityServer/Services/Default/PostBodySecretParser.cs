@@ -2,7 +2,7 @@
 using IdentityServer.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using static IdentityServer.Protocols.OpenIdConnectConstants;
+using static IdentityServer.OpenIdConnects;
 
 namespace IdentityServer.Services
 {

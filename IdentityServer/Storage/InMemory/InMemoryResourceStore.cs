@@ -14,19 +14,31 @@ namespace IdentityServer.Storage
         public Task<Resources> FindResourcesByScopeAsync(IEnumerable<string> scopes)
         {
             var identityResources = _resources.IdentityResources
-                .Where(a => scopes.Contains(a.Name))
-                .DistinctBy(a => a.Name);
+                .Where(a => a.Enabled)
+                .Where(a => scopes.Contains(a.Name));
 
             var apiResources = _resources.ApiResources
-                .Where(a => a.Scopes.Any(scope => scopes.Contains(scope)))
-                .DistinctBy(a => a.Name);
+                .Where(a => a.Enabled)
+                .Where(a => a.Scopes.Any(scope => scopes.Contains(scope)));
 
             var apiScopes = _resources.ApiScopes
-                .Where(a => scopes.Contains(a.Name))
-                .DistinctBy(a => a.Name);
+                .Where(a => a.Enabled)
+                .Where(a => scopes.Contains(a.Name));
 
-            var resources = new Resources(identityResources, apiResources, apiScopes);
+            var resources = new Resources(identityResources, apiScopes, apiResources);
             return Task.FromResult(resources);
+        }
+
+        public Task<IEnumerable<string>> GetScopesAsync()
+        {
+            var scopes = new List<string>();
+            scopes.AddRange(_resources.IdentityResources
+                .Where(a => a.Enabled)
+                .Select(s => s.Scope));
+            scopes.AddRange(_resources.ApiScopes
+                .Where(a => a.Enabled)
+                .Select(s => s.Scope));
+            return Task.FromResult<IEnumerable<string>>(scopes);
         }
     }
 }

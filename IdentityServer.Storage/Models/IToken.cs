@@ -7,8 +7,8 @@ namespace IdentityServer.Models
         string Issuer { get; }
         string Type { get; }
         string ClientId { get; }
-        int? Lifetime { get; }
-        string? JwtId { get; }
+        int Lifetime { get; }
+        string? Id { get; }
         string? SubjectId { get; }
         string? SessionId { get; }
         string? Nonce { get; }
@@ -17,6 +17,5 @@ namespace IdentityServer.Models
         ICollection<string> Scopes { get; }
         ICollection<string> Audiences { get; }
         ICollection<string> AllowedSigningAlgorithms { get; }
-        DateTime CreationTime { get; }
     }
 }

@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IdentityServer.Models
+namespace IdentityServer.Services
 {
-    public interface IIdentityScope : IResource, IScope
+    public interface IIdGenerator
     {
+        string GeneratorId();
     }
 }

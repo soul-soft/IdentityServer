@@ -43,7 +43,7 @@ namespace IdentityServer.Services
                 var cert = x509Key.Certificate;
                 header["x5t"] = Base64UrlEncoder.Encode(cert.GetCertHash());
             }
-            if (request.Type == OpenIdConnectConstants.TokenTypes.AccessToken)
+            if (request.Type == OpenIdConnects.TokenTypes.AccessToken)
             {
                 if (!string.IsNullOrWhiteSpace(_options.AccessTokenJwtType))
                 {
@@ -56,11 +56,7 @@ namespace IdentityServer.Services
         protected Task<JwtPayload> CreateJwtPayloadAsync(IToken token)
         {
             var notBefore = _clock.UtcNow.UtcDateTime;
-            DateTime? expires = null;
-            if (token.Lifetime.HasValue)
-            {
-                expires = notBefore.AddSeconds(token.Lifetime.Value);
-            }
+            DateTime? expires = notBefore.AddSeconds(token.Lifetime);
             var payload = new JwtPayload(
                 issuer: token.Issuer,
                 audience: null,
@@ -68,6 +64,7 @@ namespace IdentityServer.Services
                 notBefore: notBefore,
                 expires: expires);
             payload.Add(JwtClaimTypes.ClientId, token.ClientId);
+            payload.Add(JwtClaimTypes.JwtId, token.Id);
             payload.Add(JwtClaimTypes.Audience, token.Audiences);
             if (!string.IsNullOrEmpty(token.SubjectId))
             {

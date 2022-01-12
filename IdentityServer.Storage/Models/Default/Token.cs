@@ -2,15 +2,13 @@
 {
     public class Token : IToken
     {
-        public string Issuer { get;  }
-
+        public string Id { get; set; }
         public string Type { get;  }
+        public string Issuer { get;  }
 
         public string ClientId { get;  }
 
-        public string? JwtId { get; set; }
-
-        public int? Lifetime { get; set; }
+        public int Lifetime { get; set; }
 
         public string? Nonce { get; set; }
 
@@ -26,12 +24,11 @@
 
         public ICollection<string> Audiences { get; set; } = new HashSet<string>();
 
-        public DateTime CreationTime { get; set; }
-
         public ICollection<string> AllowedSigningAlgorithms { get; set; } = new HashSet<string>();
 
-        public Token(string issuer, string type, string clientId)
+        public Token(string id,string issuer, string type, string clientId)
         {
+            Id = id;
             Issuer = issuer;
             Type = type;
             ClientId = clientId;

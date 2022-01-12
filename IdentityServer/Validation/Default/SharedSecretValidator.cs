@@ -1,6 +1,6 @@
 ﻿using IdentityServer.Models;
 using Microsoft.AspNetCore.Authentication;
-using static IdentityServer.Protocols.OpenIdConnectConstants;
+using static IdentityServer.OpenIdConnects;
 
 namespace IdentityServer.Validation
 {
@@ -43,7 +43,7 @@ namespace IdentityServer.Validation
             }
             else
             {
-                return ValidationResult.ErrorAsync("Invalid client credential");
+                return ValidationResult.ErrorAsync("Invalid client or credential");
             }
         }
     }

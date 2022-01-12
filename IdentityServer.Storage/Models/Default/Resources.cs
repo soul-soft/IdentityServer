@@ -13,7 +13,32 @@ namespace IdentityServer.Models
 
         public Resources(params IEnumerable<IResource>[] resources)
         {
-            _resources = resources.SelectMany(s => s) ?? new List<IResource>();
+            _resources = resources.SelectMany(s => s);
+        }
+
+        public bool OfflineAccess => Scopes.Contains(OpenIdConnects.StandardScopes.OfflineAccess);
+
+        public IReadOnlyCollection<string> Scopes
+        {
+            get
+            {
+                return _resources
+                    .Where(a => a is IScope)
+                    .Cast<IScope>()
+                    .Select(s => s.Scope)
+                    .ToList();
+            }
+        }
+
+        public IReadOnlyCollection<IApiScope> ApiScopes
+        {
+            get
+            {
+                return _resources
+                    .Where(a => a is IApiScope)
+                    .Cast<IApiScope>()
+                    .ToList();
+            }
         }
 
         public IReadOnlyCollection<IApiResource> ApiResources
@@ -25,18 +50,7 @@ namespace IdentityServer.Models
                     .ToList();
             }
         }
-      
-        public IReadOnlyCollection<IApiScope> ApiScopes
-        {
-            get
-            {
-                return _resources
-                    .Where(a => a is IApiScope)
-                    .Cast<IApiScope>()
-                    .ToList();
-            }
-        }
-       
+
         public IReadOnlyCollection<IIdentityResource> IdentityResources
         {
             get

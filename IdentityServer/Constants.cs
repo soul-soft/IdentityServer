@@ -1,7 +1,9 @@
-﻿namespace IdentityServer.Protocols
+﻿namespace IdentityServer
 {
     internal static class Constants
     {
+        public const string IdentityServerName = "IdentityServer";
+
         public static class EndpointNames
         {
             public const string Authorize = "Authorize";

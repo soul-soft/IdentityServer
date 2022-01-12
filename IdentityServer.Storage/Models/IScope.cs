@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace IdentityServer.Models
 {
-    public interface IIdentityScope : IResource, IScope
+    public interface IScope
     {
+        string Scope { get; }
     }
 }

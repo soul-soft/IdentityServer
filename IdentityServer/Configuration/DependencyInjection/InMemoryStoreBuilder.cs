@@ -40,18 +40,27 @@ namespace IdentityServer.Configuration
         #region build
         internal void Build(IIdentityServerBuilder services)
         {
-            services.AddClientStore(sp =>
+            if (Clients.Any())
             {
-                return new InMemoryClientStore(Clients);
-            });
-            services.AddResourceStore(sp =>
+                services.AddClientStore(sp =>
+                {
+                    return new InMemoryClientStore(Clients);
+                });
+            }
+            if (Resources.Any())
             {
-                return new InMemoryResourceStore(new Resources(Resources));
-            });
-            services.AddSigningCredentialStore(sp =>
+                services.AddResourceStore(sp =>
+                {
+                    return new InMemoryResourceStore(new Resources(Resources));
+                });
+            }
+            if (SigningCredentials.Any())
             {
-                return new InMemorySigningCredentialStore(SigningCredentials);
-            });
+                services.AddSigningCredentialStore(sp =>
+                {
+                    return new InMemorySigningCredentialStore(SigningCredentials);
+                });
+            }
         }
         #endregion
     }

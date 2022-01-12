@@ -1,16 +1,14 @@
-﻿using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-
-namespace IdentityServer.Protocols
+﻿namespace IdentityServer
 {
-    public static class OpenIdConnectConstants
+    public static class OpenIdConnects
     {
-        public class TokenTypes
+        public static class TokenTypes
         {
             public const string AccessToken = "access_token";
             public const string IdentityToken = "id_token";
             public const string RefreshToken = "refresh_token";
         }
-        public class GrantTypes
+        public static class GrantTypes
         {
             public const string AuthorizationCode = "authorization_code";
 
@@ -27,7 +25,15 @@ namespace IdentityServer.Protocols
             public const string X509Certificate = "X509Certificate";
             public const string JwtBearer = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
         }
-
+        public static class StandardScopes
+        {
+            public const string OpenId = "openid";
+            public const string Profile = "profile";
+            public const string Email = "email";
+            public const string Address = "address";
+            public const string Phone = "phone";
+            public const string OfflineAccess = "offline_access";
+        }
         public static class TokenEndpointAuthMethods
         {
             public const string PostBody = "client_secret_post";
