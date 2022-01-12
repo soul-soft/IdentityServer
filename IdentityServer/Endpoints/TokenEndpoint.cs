@@ -122,7 +122,7 @@ namespace IdentityServer.Endpoints
             {
                 return BadRequest(OpenIdConnectTokenErrors.InvalidGrant, "Grant Type is missing");
             }
-            await _grantTypeValidator.ValidateAsync(grantType,client.AllowedGrantTypes);
+            validationResult = await _grantTypeValidator.ValidateAsync(grantType,client.AllowedGrantTypes);
             if (validationResult.IsError)
             {
                 LogError(validationResult.Description, client.ClientId);
@@ -167,7 +167,7 @@ namespace IdentityServer.Endpoints
             if (validationResult.IsError)
             {
                 LogError(validationResult.Description, client.ClientId);
-                return BadRequest(OpenIdConnectTokenErrors.InvalidScope);
+                return BadRequest(OpenIdConnectTokenErrors.InvalidScope, validationResult.Description);
             }
             #endregion
 

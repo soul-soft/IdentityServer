@@ -13,7 +13,7 @@ namespace Hosting.Configuration
             {
                 AllowedGrantTypes = new []
                 {
-                    GrantTypes.ClientCredentials
+                    GrantTypes.Password
                 },
                 ClientSecrets=new ISecret[]
                 {
@@ -21,7 +21,7 @@ namespace Hosting.Configuration
                 },
                 AllowedScopes = new[]
                 {
-                    "api","rpc",StandardScopes.OfflineAccess
+                    "api","rpc" ,StandardScopes.OfflineAccess
                 }
             }
         };

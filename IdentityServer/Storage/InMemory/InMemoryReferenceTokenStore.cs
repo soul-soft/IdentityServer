@@ -1,34 +1,23 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
-
-namespace IdentityServer.Storage
+﻿namespace IdentityServer.Storage
 {
     internal class InMemoryReferenceTokenStore : IReferenceTokenStore
     {
-        private readonly IDistributedCache _cache;
+        private readonly IObjectStorage _storage;
 
-        public InMemoryReferenceTokenStore(IDistributedCache cache)
+        public InMemoryReferenceTokenStore(IObjectStorage storage)
         {
-            _cache = cache;
+            _storage = storage;
         }
 
         public async Task SaveAsync(IReferenceToken token)
         {
             var key = CreateKey(token);
-            var json = Serialize(token);
-            await _cache.SetStringAsync(key, json, new DistributedCacheEntryOptions
-            {
-                SlidingExpiration = TimeSpan.FromSeconds(token.Lifetime)
-            });
+            await _storage.SetAsync(key, token, TimeSpan.FromSeconds(token.Lifetime));
         }
 
         private string CreateKey(IReferenceToken token)
         {
             return $"{Constants.IdentityServerName}:ReferenceToken:{token.Id}";
-        }
-
-        private string Serialize(IReferenceToken token)
-        {
-            return ObjectSerializer.SerializeObject(token);
         }
     }
 }

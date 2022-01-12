@@ -1,34 +1,23 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
-
-namespace IdentityServer.Storage
+﻿namespace IdentityServer.Storage
 {
     internal class InMemoryRefreshTokenStore : IRefreshTokenStore
     {
-        private readonly IDistributedCache _cache;
+        private readonly IObjectStorage _storage;
 
-        public InMemoryRefreshTokenStore(IDistributedCache cache)
+        public InMemoryRefreshTokenStore(IObjectStorage storage)
         {
-            _cache = cache;
+            _storage = storage;
         }
 
         public async Task SaveAsync(IRefreshToken token)
         {
             var key = CreateKey(token);
-            var json = Serialize(token);
-            await _cache.SetStringAsync(key, json, new DistributedCacheEntryOptions
-            {
-                SlidingExpiration = TimeSpan.FromSeconds(token.Lifetime)
-            });
+            await _storage.SetAsync(key, token, TimeSpan.FromSeconds(token.Lifetime));
         }
 
         private string CreateKey(IRefreshToken token)
         {
             return $"{Constants.IdentityServerName}:RefreshToken:{token.Id}";
-        }
-
-        private string Serialize(IRefreshToken token)
-        {
-            return ObjectSerializer.SerializeObject(token);
         }
     }
 }

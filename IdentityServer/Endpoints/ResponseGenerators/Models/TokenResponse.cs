@@ -17,7 +17,7 @@
                 expires_in = AccessTokenLifetime,
                 scope = Scope
             };
-            return ObjectSerializer.SerializeObject(token);
+            return ObjectSerializer.Serialize(token);
         }
     }
 }

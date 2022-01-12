@@ -12,9 +12,14 @@ namespace IdentityServer.Infrastructure
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         };
 
-        public static string SerializeObject(object obj)
+        public static string Serialize(object obj)
         {
             return JsonSerializer.Serialize(obj, JsonSerializerOptions);
+        }
+      
+        public static byte[] SerializeToUtf8Bytes(object obj)
+        {
+            return JsonSerializer.SerializeToUtf8Bytes(obj, JsonSerializerOptions);
         }
     }
 }

@@ -40,7 +40,9 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<IServerUrl, ServerUrl>();
             builder.Services.TryAddTransient<IIdGenerator, IdGenerator>();
             builder.Services.TryAddTransient<ISecretParser, PostBodySecretParser>();
+            builder.Services.TryAddTransient<IObjectStorage, ObjectStorage>();
             builder.Services.TryAddTransient<ISecretsParser, SecretParsers>();
+            builder.Services.TryAddTransient<IExtensionGrantsValidator, ExtensionGrantsValidator>();
             builder.Services.TryAddTransient<ITokenService, TokenService>();
             builder.Services.TryAddTransient<ITokenCreationService, TokenCreationService>();
             builder.Services.TryAddTransient<IRefreshTokenService, RefreshTokenService>();
@@ -57,6 +59,8 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<IGrantTypeValidator, GrantTypeValidator>();
             builder.Services.TryAddTransient<ISecretsValidator, SecretsValidator>();
             builder.Services.TryAddTransient<ISecretValidator, SharedSecretValidator>();
+            builder.Services.TryAddTransient<IClientCredentialsGrantValidator, ClientCredentialsGrantValidator>();
+            builder.Services.TryAddTransient<IPasswordGrantValidator, PasswordGrantValidator>();
             return builder;
         }
         #endregion

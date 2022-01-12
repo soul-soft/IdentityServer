@@ -36,7 +36,7 @@
         {
             var token = await _tokenService.CreateAccessTokenAsync(request);
             var accessToken = await _tokenService.CreateSecurityTokenAsync(token);
-            if (request.Resources.OfflineAccess)
+            if (request.Client.AllowedOfflineAccess)
             {
                 var refreshToken = await _refreshTokenService.CreateAsync(token, request.Client.RefreshTokenLifetime);
                 return (accessToken, refreshToken);

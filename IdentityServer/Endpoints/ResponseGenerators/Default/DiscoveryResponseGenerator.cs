@@ -7,16 +7,19 @@ namespace IdentityServer.ResponseGenerators
     {
         private readonly IResourceStore _resources;
         private readonly ISecretsParser _secretParsers;
+        private readonly IExtensionGrantsValidator _grantTypeService;
         private readonly ISigningCredentialStore _credentials;
 
         public DiscoveryResponseGenerator(
             IResourceStore resources,
             ISecretsParser secretParsers,
+            IExtensionGrantsValidator grantTypeService,
             ISigningCredentialStore credentials)
         {
             _resources = resources;
             _credentials = credentials;
             _secretParsers = secretParsers;
+            _grantTypeService = grantTypeService;
         }
 
         public async Task<DiscoveryResponse> CreateDiscoveryDocumentAsync(string issuer)
@@ -27,16 +30,22 @@ namespace IdentityServer.ResponseGenerators
             configuration.AuthorizationEndpoint = issuer + Constants.EndpointRoutePaths.Authorize;
             configuration.TokenEndpoint = issuer + Constants.EndpointRoutePaths.Token;
             configuration.UserInfoEndpoint = issuer + Constants.EndpointRoutePaths.UserInfo;
+            var grantTypes = await _grantTypeService.GetGrantTypesAsync();
+            foreach (var item in grantTypes)
+            {
+                configuration.GrantTypesSupported.Add(item);
+            }
             configuration.GrantTypesSupported.Add(GrantTypes.ClientCredentials);
             configuration.GrantTypesSupported.Add(GrantTypes.Password);
-            configuration.GrantTypesSupported.Add(GrantTypes.AuthorizationCode);
             configuration.GrantTypesSupported.Add(GrantTypes.RefreshToken);
-            var scopes = await _resources.GetScopesAsync();
+            var scopes = await _resources.GetShowInDiscoveryDocumentScopesAsync();
             foreach (var item in scopes)
             {
                 configuration.ScopesSupported.Add(item);
             }
-            foreach (var item in _secretParsers.GetAuthenticationMethods())
+            configuration.ScopesSupported.Add(StandardScopes.OfflineAccess);
+            var authMethods = _secretParsers.GetAuthenticationMethods(); 
+            foreach (var item in authMethods)
             {
                 configuration.TokenEndpointAuthMethodsSupported.Add(item);
             }

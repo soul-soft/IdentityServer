@@ -18,7 +18,7 @@ namespace IdentityServer.Endpoints
                 return Map(jwk);
             }).ToArray();
             var keySet = new { Keys = keys };
-            return ObjectSerializer.SerializeObject(keySet);
+            return ObjectSerializer.Serialize(keySet);
         }
 
         public static object Map(JsonWebKey jsonWebKey)

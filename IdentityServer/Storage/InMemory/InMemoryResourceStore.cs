@@ -27,14 +27,16 @@
             return Task.FromResult(resources);
         }
 
-        public Task<IEnumerable<string>> GetScopesAsync()
+        public Task<IEnumerable<string>> GetShowInDiscoveryDocumentScopesAsync()
         {
             var scopes = new List<string>();
             scopes.AddRange(_resources.IdentityResources
                 .Where(a => a.Enabled)
+                .Where(a=>a.ShowInDiscoveryDocument)
                 .Select(s => s.Scope));
             scopes.AddRange(_resources.ApiScopes
                 .Where(a => a.Enabled)
+                .Where(a => a.ShowInDiscoveryDocument)
                 .Select(s => s.Scope));
             return Task.FromResult<IEnumerable<string>>(scopes);
         }

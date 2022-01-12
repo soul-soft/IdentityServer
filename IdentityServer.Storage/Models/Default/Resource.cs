@@ -10,7 +10,7 @@
 
         public string? Description { get; set; }
 
-        public bool ShowInDiscoveryDocument { get; set; }
+        public bool ShowInDiscoveryDocument { get; set; } = true;
 
         public IReadOnlyCollection<string> UserClaims { get; set; } = new HashSet<string>();
 

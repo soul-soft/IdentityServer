@@ -1,4 +1,6 @@
-﻿namespace IdentityServer.Services
+﻿using Microsoft.IdentityModel.Tokens;
+
+namespace IdentityServer.Services
 {
     internal class RefreshTokenService : IRefreshTokenService
     {
@@ -18,7 +20,7 @@
             var id = _idGenerator.GeneratorId();
             var refreshToken = new RefreshToken(id, token, lifetime);
             await _refreshTokenStore.SaveAsync(refreshToken);
-            return id;
+            return Base64UrlEncoder.Encode(id);
         }
     }
 }

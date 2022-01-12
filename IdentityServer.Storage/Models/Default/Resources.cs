@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using static IdentityServer.OpenIdConnects;
 
 namespace IdentityServer.Models
 {
@@ -16,7 +17,14 @@ namespace IdentityServer.Models
             _resources = resources.SelectMany(s => s);
         }
 
-        public bool OfflineAccess => Scopes.Contains(OpenIdConnects.StandardScopes.OfflineAccess);
+        public bool OfflineAccess
+        {
+            get
+            {
+                return IdentityResources
+                .Any(a => a.Name == StandardScopes.OfflineAccess);
+            }
+        }
 
         public IReadOnlyCollection<string> Scopes
         {
