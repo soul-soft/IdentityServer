@@ -4,17 +4,17 @@
     {
         public string Id { get; }
 
-        public IToken Token { get; }
+        public IToken AccessToken { get; }
 
         public int Lifetime { get; }
 
         public DateTime CreationTime { get; }
 
-        public ReferenceToken(string id, IToken token, DateTime creationTime)
+        public ReferenceToken(string id, IToken accessToken, int lifetime, DateTime creationTime)
         {
             Id = id;
-            Token = token;
-            Lifetime = Token.Lifetime;
+            AccessToken = accessToken;
+            Lifetime = lifetime;
             CreationTime = creationTime;
         }
     }

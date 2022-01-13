@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Models\RefreshToken.cs~RF9bb40ec.TMP" />
+  </ItemGroup>
+
 </Project>

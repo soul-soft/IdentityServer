@@ -1,4 +1,6 @@
-﻿namespace IdentityServer.Endpoints
+﻿using IdentityServer.Serialization;
+
+namespace IdentityServer.Endpoints
 {
     public class TokenResponse
     {

@@ -3,7 +3,7 @@
     public interface IReferenceToken
     {
         string Id { get; }
-        IToken Token { get; }
+        IToken AccessToken { get; }
         int Lifetime { get; }
         DateTime CreationTime { get; }
     }

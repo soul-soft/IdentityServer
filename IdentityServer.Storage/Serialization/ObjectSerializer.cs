@@ -25,7 +25,7 @@ namespace IdentityServer.Serialization
 
         public static T? Deserialize<T>(string json)
         {
-            return JsonSerializer.Deserialize<T>(json);
+            return JsonSerializer.Deserialize<T>(json, JsonSerializerOptions);
         }
     }
 }

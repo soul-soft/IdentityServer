@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using IdentityServer.Serialization;
+using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityServer.Endpoints
 {

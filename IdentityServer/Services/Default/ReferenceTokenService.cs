@@ -21,7 +21,13 @@ namespace IdentityServer.Services
         public async Task<string> CreateAsync(IToken token)
         {
             var id = _idGenerator.GeneratorId();
-            var referenceToken = new ReferenceToken(id, token, _clock.UtcNow.UtcDateTime);
+            var creationTime = _clock.UtcNow.UtcDateTime;
+            var expiration = creationTime.AddSeconds(token.Lifetime);
+            var referenceToken = new ReferenceToken(
+                id, 
+                token,
+                token.Lifetime,
+                creationTime);
             await _referenceTokens.SaveAsync(referenceToken);
             return id;
         }

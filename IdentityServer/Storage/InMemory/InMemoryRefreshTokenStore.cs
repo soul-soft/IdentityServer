@@ -21,6 +21,12 @@
             await _storage.SaveAsync(key, token, TimeSpan.FromSeconds(token.Lifetime));
         }
 
+        public async Task RevomeAsync(IRefreshToken token)
+        {
+            var key = CreateKey(token.Id);
+            await _storage.RevomeAsync(key);
+        }
+
         private string CreateKey(string id)
         {
             return $"{Constants.IdentityServerName}:RefreshToken:{id}";

@@ -12,13 +12,18 @@ namespace IdentityServer.Services
             _distributedCache = distributedCache;
         }
 
-        public async Task SaveAsync(string key, object value, TimeSpan expiration)
+        public async Task SaveAsync(string key, object value, TimeSpan timeSpan)
         {
             var json = ObjectSerializer.Serialize(value);
             await _distributedCache.SetStringAsync(key, json, new DistributedCacheEntryOptions
             {
-                SlidingExpiration = expiration,
+                SlidingExpiration = timeSpan,
             });
+        }
+
+        public async Task RevomeAsync(string key)
+        {
+            await _distributedCache.RemoveAsync(key);
         }
 
         public async Task<T?> GetAsync<T>(string key)
