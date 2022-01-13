@@ -19,12 +19,18 @@ namespace IdentityServer.Services
             _refreshTokenStore = refreshTokenStore;
         }
 
-        public async Task<string> CreateAsync(IToken token, int lifetime)
+        public async Task<string> CreateRefreshTokenAsync(IToken token, int lifetime)
         {
             var id = _idGenerator.GeneratorId();
             var refreshToken = new RefreshToken(id, token, lifetime, _clock.UtcNow.UtcDateTime);
             await _refreshTokenStore.SaveAsync(refreshToken);
             return Base64UrlEncoder.Encode(id);
+        }
+
+        public async Task<IRefreshToken?> FindRefreshTokenAsync(string id)
+        {
+            id = Base64UrlEncoder.Decode(id);
+            return await _refreshTokenStore.FindRefreshTokenByIdAsync(id);
         }
     }
 }

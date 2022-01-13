@@ -154,8 +154,24 @@ namespace IdentityServer.Endpoints
 
         private async Task<GrantValidationResult> ValidateGrantAsync(HttpContext context, ValidatedRequest request)
         {
+            //验证刷新令牌
+            if(GrantTypes.RefreshToken.Equals(request.GrantType))
+            {
+                var refreshToken = request.Raw[OpenIdConnectParameterNames.RefreshToken];
+                if (refreshToken==null)
+                {
+                    return GrantValidationResult.Error("RefreshToken is missing");
+                }
+                if (refreshToken.Length>_options.InputLengthRestrictions.RefreshToken)
+                {
+                    return GrantValidationResult.Error("RefreshToken too long");
+                }
+                var grantContext = new RefreshTokenGrantValidationContext(refreshToken, request);
+                var grantValidator = context.RequestServices.GetRequiredService<IRefreshTokenGrantValidator>();
+                return await grantValidator.ValidateAsync(grantContext);
+            }
             //验证客户端凭据授权
-            if (GrantTypes.ClientCredentials.Equals(request.GrantType))
+            else if (GrantTypes.ClientCredentials.Equals(request.GrantType))
             {
                 var grantContext = new ClientCredentialsGrantValidationContext(request);
                 var grantValidator = context.RequestServices
@@ -169,19 +185,19 @@ namespace IdentityServer.Endpoints
                 var password = request.Raw[OpenIdConnectParameterNames.Password];
                 if (string.IsNullOrEmpty(username))
                 {
-                    return GrantValidationResult.Error(OpenIdConnectTokenErrors.InvalidGrant, "Username is missing");
+                    return GrantValidationResult.Error("Username is missing");
                 }
                 if (username.Length > _options.InputLengthRestrictions.UserName)
                 {
-                    return GrantValidationResult.Error(OpenIdConnectTokenErrors.InvalidGrant, "Username too long");
+                    return GrantValidationResult.Error("Username too long");
                 }
                 if (string.IsNullOrEmpty(password))
                 {
-                    return GrantValidationResult.Error(OpenIdConnectTokenErrors.InvalidGrant, "Password is missing");
+                    return GrantValidationResult.Error("Password is missing");
                 }
                 if (password.Length > _options.InputLengthRestrictions.Password)
                 {
-                    return GrantValidationResult.Error(OpenIdConnectTokenErrors.InvalidGrant, "Password is missing");
+                    return GrantValidationResult.Error("Password is missing");
                 }
                 var grantContext = new ResourceOwnerPasswordGrantValidationContext(
                     request: request,

@@ -11,7 +11,7 @@ namespace Hosting.Configuration
             {
                 AllowedGrantTypes = new []
                 {
-                   "myGrant"
+                   "myGrant",GrantTypes.RefreshToken
                 },
                 ClientSecrets=new ISecret[]
                 {

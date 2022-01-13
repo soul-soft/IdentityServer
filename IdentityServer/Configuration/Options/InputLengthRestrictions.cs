@@ -32,5 +32,10 @@
         /// Max length for scope
         /// </summary>
         public int Scope { get;  set; } = 300;
+
+        /// <summary>
+        /// Max length for refresh tokens
+        /// </summary>
+        public int RefreshToken { get; set; } = Default;
     }
 }

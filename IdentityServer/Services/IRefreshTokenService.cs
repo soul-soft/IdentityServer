@@ -2,6 +2,7 @@
 {
     public interface IRefreshTokenService
     {
-        Task<string> CreateAsync(IToken token, int lifetime);
+        Task<string> CreateRefreshTokenAsync(IToken token, int lifetime);
+        Task<IRefreshToken?> FindRefreshTokenAsync(string id);
     }
 }

@@ -9,15 +9,21 @@
             _storage = storage;
         }
 
+        public async Task<IRefreshToken?> FindRefreshTokenByIdAsync(string id)
+        {
+            var key = CreateKey(id);
+            return await _storage.GetAsync<RefreshToken>(key);
+        }
+
         public async Task SaveAsync(IRefreshToken token)
         {
-            var key = CreateKey(token);
+            var key = CreateKey(token.Id);
             await _storage.SaveAsync(key, token, TimeSpan.FromSeconds(token.Lifetime));
         }
 
-        private string CreateKey(IRefreshToken token)
+        private string CreateKey(string id)
         {
-            return $"{Constants.IdentityServerName}:RefreshToken:{token.Id}";
+            return $"{Constants.IdentityServerName}:RefreshToken:{id}";
         }
     }
 }

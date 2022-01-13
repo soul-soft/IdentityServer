@@ -14,7 +14,7 @@ namespace IdentityServer.Services
             DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         };
-        
+
         public ObjectStorage(IDistributedCache distributedCache)
         {
             _distributedCache = distributedCache;
@@ -25,6 +25,12 @@ namespace IdentityServer.Services
             return JsonSerializer.SerializeToUtf8Bytes(obj, _serializerOptions);
         }
 
+        public T? Deserialize<T>(byte[] bytes)
+        {
+            var span = new ReadOnlySpan<byte>(bytes);
+            return JsonSerializer.Deserialize<T>(span, _serializerOptions);
+        }
+
         public async Task SaveAsync(string key, object value, TimeSpan expiration)
         {
             var values = SerializeToUtf8Bytes(value);
@@ -32,6 +38,16 @@ namespace IdentityServer.Services
             {
                 SlidingExpiration = expiration,
             });
+        }
+
+        public async Task<T?> GetAsync<T>(string key)
+        {
+            var bytes = await _distributedCache.GetAsync(key);
+            if (bytes == null)
+            {
+                return default;
+            }
+            return Deserialize<T>(bytes);
         }
     }
 }
