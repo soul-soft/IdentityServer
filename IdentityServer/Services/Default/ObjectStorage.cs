@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using IdentityServer.Serialization;
 using Microsoft.Extensions.Caching.Distributed;
 
 namespace IdentityServer.Services
@@ -8,33 +7,15 @@ namespace IdentityServer.Services
     {
         private readonly IDistributedCache _distributedCache;
 
-        private static JsonSerializerOptions _serializerOptions = new JsonSerializerOptions
-        {
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        };
-
         public ObjectStorage(IDistributedCache distributedCache)
         {
             _distributedCache = distributedCache;
         }
 
-        public byte[] SerializeToUtf8Bytes(object obj)
-        {
-            return JsonSerializer.SerializeToUtf8Bytes(obj, _serializerOptions);
-        }
-
-        public T? Deserialize<T>(byte[] bytes)
-        {
-            var span = new ReadOnlySpan<byte>(bytes);
-            return JsonSerializer.Deserialize<T>(span, _serializerOptions);
-        }
-
         public async Task SaveAsync(string key, object value, TimeSpan expiration)
         {
-            var values = SerializeToUtf8Bytes(value);
-            await _distributedCache.SetAsync(key, values, new DistributedCacheEntryOptions
+            var json = ObjectSerializer.Serialize(value);
+            await _distributedCache.SetStringAsync(key, json, new DistributedCacheEntryOptions
             {
                 SlidingExpiration = expiration,
             });
@@ -42,12 +23,12 @@ namespace IdentityServer.Services
 
         public async Task<T?> GetAsync<T>(string key)
         {
-            var bytes = await _distributedCache.GetAsync(key);
-            if (bytes == null)
+            var json = await _distributedCache.GetStringAsync(key);
+            if (string.IsNullOrEmpty(json))
             {
                 return default;
             }
-            return Deserialize<T>(bytes);
+            return ObjectSerializer.Deserialize<T>(json);
         }
     }
 }
