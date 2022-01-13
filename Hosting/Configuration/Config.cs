@@ -11,7 +11,7 @@ namespace Hosting.Configuration
             {
                 AllowedGrantTypes = new []
                 {
-                   GrantTypes.Password
+                   "myGrant"
                 },
                 ClientSecrets=new ISecret[]
                 {

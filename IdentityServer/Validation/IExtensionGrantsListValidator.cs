@@ -1,8 +1,8 @@
 ﻿namespace IdentityServer.Validation
 {
-    public interface IExtensionGrantValidator
+    public interface IExtensionGrantsListValidator
     {
-        string GrantType { get; }
+        IEnumerable<string> GetExtensionGrantTypes();
         Task<GrantValidationResult> ValidateAsync(ExtensionGrantValidationContext context);
     }
 }

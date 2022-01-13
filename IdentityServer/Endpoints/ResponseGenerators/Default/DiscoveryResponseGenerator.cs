@@ -6,14 +6,14 @@ namespace IdentityServer.ResponseGenerators
         : IDiscoveryResponseGenerator
     {
         private readonly IResourceStore _resources;
-        private readonly ISecretsParser _secretParsers;
-        private readonly IExtensionGrantsValidator _grantTypeService;
+        private readonly ISecretsListParser _secretParsers;
+        private readonly IExtensionGrantsListValidator _grantTypeService;
         private readonly ISigningCredentialStore _credentials;
 
         public DiscoveryResponseGenerator(
             IResourceStore resources,
-            ISecretsParser secretParsers,
-            IExtensionGrantsValidator grantTypeService,
+            ISecretsListParser secretParsers,
+            IExtensionGrantsListValidator grantTypeService,
             ISigningCredentialStore credentials)
         {
             _resources = resources;

@@ -7,7 +7,6 @@ namespace Microsoft.AspNetCore.Builder
     {
         public static IApplicationBuilder UseIdentityServer(this WebApplication app)
         {
-            //app.UseMiddleware<IdentityServerMiddleware>();
             app.UseAuthentication();
             app.MapEndpoints();
             return app;

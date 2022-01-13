@@ -12,20 +12,20 @@ namespace IdentityServer.Endpoints
         private readonly IResourceStore _resources;
         private readonly IdentityServerOptions _options;
         private readonly ITokenResponseGenerator _generator;
-        private readonly ISecretsParser _secretsParser;
+        private readonly ISecretsListParser _secretsParser;
         private readonly IScopeValidator _scopeValidator;
-        private readonly ISecretsValidator _secretsValidator;
+        private readonly ISecretsListValidator _secretsValidator;
         private readonly IResourceValidator _resourceValidator;
         private readonly IGrantTypeValidator _grantTypeValidator;
 
         public TokenEndpoint(
             IClientStore clients,
             IResourceStore resources,
-            ISecretsParser secretsParser,
+            ISecretsListParser secretsParser,
             IdentityServerOptions options,
             ITokenResponseGenerator generator,
             IScopeValidator scopeValidator,
-            ISecretsValidator secretsValidator,
+            ISecretsListValidator secretsValidator,
             IResourceValidator resourceValidator,
             IGrantTypeValidator grantTypeValidator)
         {
@@ -134,8 +134,12 @@ namespace IdentityServer.Endpoints
                 grantType: grantType,
                 raw: form);
             var grantValidationResult = await ValidateGrantAsync(context, validatedRequest);
+            if (grantValidationResult.IsError)
+            {
+                return BadRequest(OpenIdConnectTokenErrors.InvalidGrant, grantValidationResult.Description);
+            }
             #endregion
-          
+
             #region Generator Response
             var response = await _generator.ProcessAsync(new TokenRequest(client, resources)
             {
@@ -187,7 +191,15 @@ namespace IdentityServer.Endpoints
                    .GetRequiredService<IResourceOwnerPasswordGrantValidator>();
                 return await grantValidator.ValidateAsync(grantContext);
             }
-            throw new InvalidOperationException();
+            //验证自定义授权
+            else
+            {
+                var grantContext = new ExtensionGrantValidationContext(request);
+                var grantValidator = context.RequestServices
+                    .GetRequiredService<IExtensionGrantsListValidator>();
+                return await grantValidator.ValidateAsync(grantContext);
+            }
+
         }
     }
 }

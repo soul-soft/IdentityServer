@@ -17,7 +17,7 @@
             }
             if (!allowedGrantTypes.Contains(requestedGrantType))
             {
-                return ValidationResult.ErrorAsync("Unsupported grant type:'{0}'", requestedGrantType);
+                return ValidationResult.ErrorAsync("The client does not allow '{0}' authorization", requestedGrantType);
             }
             return ValidationResult.SuccessAsync();
         }
