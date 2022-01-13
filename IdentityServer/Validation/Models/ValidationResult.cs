@@ -6,7 +6,7 @@
 
         public string Description { get; }
 
-        private ValidationResult(bool isError, string description)
+        protected ValidationResult(bool isError, string description = "success")
         {
             IsError = isError;
             Description = description;

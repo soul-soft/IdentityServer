@@ -1,4 +1,6 @@
-﻿namespace IdentityServer.Models
+﻿using System.Security.Claims;
+
+namespace IdentityServer.Models
 {
     public class TokenRequest
     {
@@ -8,8 +10,9 @@
         public string? SessionId { get; set; }
         public string? Description { get; set; }
         public string? SubjectId { get; set; }
-        public ICollection<string> Scopes { get; set; } = new HashSet<string>();
         public string? GrantType { get;  set; }
+        public IEnumerable<Claim> Claims { get; set; } = new List<Claim>();
+        public ICollection<string> Scopes { get; set; } = new HashSet<string>();
 
         public TokenRequest(IClient client, Resources resources)
         {

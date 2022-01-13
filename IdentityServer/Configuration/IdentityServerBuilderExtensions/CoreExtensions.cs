@@ -7,10 +7,10 @@ using Microsoft.Extensions.Options;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class CoreExtensions
+    internal static class CoreExtensions
     {
         #region CoreServices
-        internal static IIdentityServerBuilder AddCoreServices(this IIdentityServerBuilder builder)
+        public static IIdentityServerBuilder AddCoreServices(this IIdentityServerBuilder builder)
         {
             return builder;
         }
@@ -22,7 +22,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="builder"></param>
         /// <returns></returns>
-        internal static IIdentityServerBuilder AddRequiredPlatformServices(this IIdentityServerBuilder builder)
+        public static IIdentityServerBuilder AddRequiredPlatformServices(this IIdentityServerBuilder builder)
         {
             builder.Services.AddOptions();
             builder.Services.TryAddSingleton<ISystemClock, SystemClock>();
@@ -39,14 +39,13 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             builder.Services.TryAddTransient<IServerUrl, ServerUrl>();
             builder.Services.TryAddTransient<IIdGenerator, IdGenerator>();
-            builder.Services.TryAddTransient<IClaimsService, ClaimsService>();
+            builder.Services.TryAddTransient<IClaimIssueService, ClaimIssueService>();
             builder.Services.TryAddTransient<IProfileService, ProfileService>();
             builder.Services.TryAddTransient<ISecretParser, PostBodySecretParser>();
             builder.Services.TryAddTransient<IObjectStorage, ObjectStorage>();
             builder.Services.TryAddTransient<ISecretsParser, SecretParsers>();
-            builder.Services.TryAddTransient<IExtensionGrantsValidator, ExtensionGrantsValidator>();
             builder.Services.TryAddTransient<ITokenService, TokenService>();
-            builder.Services.TryAddTransient<ITokenCreationService, TokenCreationService>();
+            builder.Services.TryAddTransient<ISecurityTokenService, SecurityTokenService>();
             builder.Services.TryAddTransient<IRefreshTokenService, RefreshTokenService>();
             builder.Services.TryAddTransient<IReferenceTokenService, ReferenceTokenService>();
             return builder;
@@ -62,21 +61,14 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<ISecretsValidator, SecretsValidator>();
             builder.Services.TryAddTransient<ISecretValidator, SharedSecretValidator>();
             builder.Services.TryAddTransient<IClientCredentialsGrantValidator, ClientCredentialsGrantValidator>();
-            builder.Services.TryAddTransient<IPasswordGrantValidator, PasswordGrantValidator>();
+            builder.Services.TryAddTransient<IResourceOwnerPasswordGrantValidator, ResourceOwnerPasswordGrantValidator>();
+            builder.Services.TryAddTransient<IExtensionGrantsValidator, ExtensionGrantsValidator>();
             return builder;
         }
         #endregion
 
         #region Endpoints
-        public static IIdentityServerBuilder AddEndpoint<T>(this IIdentityServerBuilder builder, string name, PathString path)
-          where T : class, IEndpointHandler
-        {
-            builder.Services.AddTransient<T>();
-            builder.Services.AddSingleton(new EndpointDescriptor(name, path, typeof(T)));
-            return builder;
-        }
-
-        internal static IIdentityServerBuilder AddDefaultEndpoints(this IIdentityServerBuilder builder)
+        public static IIdentityServerBuilder AddDefaultEndpoints(this IIdentityServerBuilder builder)
         {
             builder.AddEndpoint<TokenEndpoint>(Constants.EndpointNames.Token, Constants.EndpointRoutePaths.Token);
             builder.AddEndpoint<TokenEndpoint>(Constants.EndpointNames.Authorize, Constants.EndpointRoutePaths.Authorize);

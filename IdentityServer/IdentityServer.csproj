@@ -11,13 +11,12 @@
 		<Using Include="IdentityServer.Storage" />
 		<Using Include="IdentityServer.Hosting" />
 		<Using Include="IdentityServer.Services" />
-		<Using Include="IdentityServer.Protocols" />
 		<Using Include="IdentityServer.Endpoints" />
 		<Using Include="IdentityServer.Validation" />
 		<Using Include="IdentityServer.Configuration" />
 		<Using Include="IdentityServer.Infrastructure" />
 		<Using Include="IdentityServer.ResponseGenerators" />
-		<Using Include="IdentityServer.OpenIdConnects" Static="true" />
+		<Using Include="IdentityServer.Models.OpenIdConnects" Static="true" />
 	</ItemGroup>
 	
 	<ItemGroup>		

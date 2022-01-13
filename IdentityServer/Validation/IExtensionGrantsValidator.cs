@@ -3,6 +3,6 @@
     public interface IExtensionGrantsValidator
     {
         IEnumerable<string> GetExtensionGrantTypes();
-        IExtensionGrantValidator? GetExtensionGrantValidator(string grantType);
+        IExtensionGrantValidator? ValidateAsync(string grantType);
     }
 }

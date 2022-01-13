@@ -17,7 +17,7 @@
             }
         }
 
-        public IExtensionGrantValidator? GetExtensionGrantValidator(string grantType)
+        public IExtensionGrantValidator? ValidateAsync(string grantType)
         {
             foreach (var item in _extensions)
             {

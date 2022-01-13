@@ -2,15 +2,11 @@
 {
     public class ClientCredentialsGrantValidationContext
     {
-        public IClient Client { get; }
-        public Resources Resources { get; }
-        public IEnumerable<string> Scopes { get; }
-
-        public ClientCredentialsGrantValidationContext(IClient client, Resources resources, IEnumerable<string> scopes)
+        public ValidatedRequest Request { get; }
+       
+        public ClientCredentialsGrantValidationContext(ValidatedRequest request)
         {
-            Client = client;
-            Resources = resources;
-            Scopes = scopes;
+            Request = request;
         }
     }
 }

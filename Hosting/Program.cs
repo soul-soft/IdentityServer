@@ -12,11 +12,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddIdentityServer()
+        .AddResourceOwnerPasswordGrantValidator<ResourceOwnerPasswordGrantValidator>()
         .AddInMemoryStores(setup =>
         {
             setup.AddClients(Config.Clients);
             setup.AddResources(Config.ApiScopes);
-            setup.AddResources(Config.ApiResources);
+            //setup.AddResources(Config.ApiResources);
             setup.AddResources(Config.IdentityResources);
             setup.AddSigningCredentials(CryptoRandom.CreateRsaSecurityKey(), SecurityAlgorithms.RsaSha256);
         });

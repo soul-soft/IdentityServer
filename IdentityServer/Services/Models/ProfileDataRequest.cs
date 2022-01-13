@@ -1,4 +1,4 @@
-﻿namespace IdentityServer.Services
+﻿namespace IdentityServer.Models
 {
     public class ProfileDataRequest
     {

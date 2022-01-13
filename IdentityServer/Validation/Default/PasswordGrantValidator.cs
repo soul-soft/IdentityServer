@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace IdentityServer.Validation
+﻿namespace IdentityServer.Validation
 {
-    internal class PasswordGrantValidator : IPasswordGrantValidator
+    internal class ResourceOwnerPasswordGrantValidator : IResourceOwnerPasswordGrantValidator
     {
-        public Task<ValidationResult> ValidateAsync(PasswordGrantContext context)
+        public Task<GrantValidationResult> ValidateAsync(ResourceOwnerPasswordGrantValidationContext context)
         {
-            //"invalid username or password";
-            return ValidationResult.SuccessAsync();
+            return GrantValidationResult.ErrorAsync("Invalid username or password");
         }
     }
 }

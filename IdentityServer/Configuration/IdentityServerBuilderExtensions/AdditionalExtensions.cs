@@ -1,9 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection.Extensions;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class AdditionalExtensions
-    {
+    {     
         #region IClientStore
         public static IIdentityServerBuilder AddClientStore<T>(this IIdentityServerBuilder builder)
             where T : class, IClientStore
@@ -91,6 +92,32 @@ namespace Microsoft.Extensions.DependencyInjection
             var inMemoryStoreBuilder = new InMemoryStoreBuilder();
             configure(inMemoryStoreBuilder);
             inMemoryStoreBuilder.Build(builder);
+            return builder;
+        }
+        #endregion
+
+        #region Endpoint
+        public static IIdentityServerBuilder AddEndpoint<T>(this IIdentityServerBuilder builder, string name, PathString path)
+          where T : class, IEndpointHandler
+        {
+            builder.Services.AddTransient<T>();
+            builder.Services.AddSingleton(new EndpointDescriptor(name, path, typeof(T)));
+            return builder;
+        }
+        public static IIdentityServerBuilder AddEndpoint<T>(this IIdentityServerBuilder builder, string name, PathString path, Func<IServiceProvider, T> implementationFactory)
+         where T : class, IEndpointHandler
+        {
+            builder.Services.AddTransient(implementationFactory);
+            builder.Services.AddSingleton(new EndpointDescriptor(name, path, typeof(T)));
+            return builder;
+        }
+        #endregion
+
+        #region ResourceOwnerPasswordGrantValidator
+        public static IIdentityServerBuilder AddResourceOwnerPasswordGrantValidator<T>(this IIdentityServerBuilder builder)
+            where T : class, IResourceOwnerPasswordGrantValidator
+        {
+            builder.Services.ReplaceTransient<IResourceOwnerPasswordGrantValidator, T>();
             return builder;
         }
         #endregion

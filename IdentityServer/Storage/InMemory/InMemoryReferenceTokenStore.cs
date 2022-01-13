@@ -12,7 +12,7 @@
         public async Task SaveAsync(IReferenceToken token)
         {
             var key = CreateKey(token);
-            await _storage.SetAsync(key, token, TimeSpan.FromSeconds(token.Lifetime));
+            await _storage.SaveAsync(key, token, TimeSpan.FromSeconds(token.Lifetime));
         }
 
         private string CreateKey(IReferenceToken token)

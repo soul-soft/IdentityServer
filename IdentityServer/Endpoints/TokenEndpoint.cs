@@ -1,18 +1,8 @@
-﻿using IdentityServer.Configuration;
-using IdentityServer.Extensions;
-using IdentityServer.Hosting;
-using IdentityServer.Models;
-using IdentityServer.Protocols;
-using IdentityServer.ResponseGenerators;
-using IdentityServer.Services;
-using IdentityServer.Storage;
-using IdentityServer.Validation;
+﻿using IdentityServer.Extensions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using static IdentityServer.OpenIdConnects;
 
 namespace IdentityServer.Endpoints
 {
@@ -21,7 +11,6 @@ namespace IdentityServer.Endpoints
         private readonly IClientStore _clients;
         private readonly IResourceStore _resources;
         private readonly IdentityServerOptions _options;
-        private readonly ILogger<TokenEndpoint> _logger;
         private readonly ITokenResponseGenerator _generator;
         private readonly ISecretsParser _secretsParser;
         private readonly IScopeValidator _scopeValidator;
@@ -34,14 +23,12 @@ namespace IdentityServer.Endpoints
             IResourceStore resources,
             ISecretsParser secretsParser,
             IdentityServerOptions options,
-            ILogger<TokenEndpoint> logger,
             ITokenResponseGenerator generator,
             IScopeValidator scopeValidator,
             ISecretsValidator secretsValidator,
             IResourceValidator resourceValidator,
             IGrantTypeValidator grantTypeValidator)
         {
-            _logger = logger;
             _clients = clients;
             _options = options;
             _resources = resources;
@@ -66,40 +53,37 @@ namespace IdentityServer.Endpoints
             }
             if (!context.Request.HasApplicationFormContentType())
             {
-                return BadRequest(OpenIdConnectTokenErrors.UnsupportedContextType);
+                return BadRequest(OpenIdConnectTokenErrors.InvalidRequest);
             }
             #endregion
 
             #region Get Secret
-            var secret = await _secretsParser.ParseAsync(context);
-            if (secret == null)
+            var clientSecret = await _secretsParser.ParseAsync(context);
+            if (clientSecret == null)
             {
-                _logger.LogError("The client with secret cannot be found in the '{0}' authorization method", _options.TokenEndpointAuthMethod);
                 return BadRequest(OpenIdConnectTokenErrors.InvalidClient, "No client credentials found");
             }
             #endregion
 
             #region Get Client
-            var client = await _clients.FindClientByIdAsync(secret.Id);
+            var client = await _clients.FindClientByIdAsync(clientSecret.Id);
             if (client == null)
             {
-                _logger.LogError("No client with id '{clientId}' found.", secret.Id);
                 return BadRequest(OpenIdConnectTokenErrors.InvalidClient, "No client found");
             }
             #endregion
 
             #region Validate Secret
-            var validationResult = await _secretsValidator.ValidateAsync(secret, client.ClientSecrets);
+            var validationResult = await _secretsValidator.ValidateAsync(clientSecret, client.ClientSecrets);
             if (validationResult.IsError)
             {
-                LogError(validationResult.Description, client.ClientId);
                 return BadRequest(OpenIdConnectTokenErrors.UnauthorizedClient, validationResult.Description);
             }
             #endregion
 
             #region Get Scopes
-            var form = await context.Request.ReadFormAsync();
-            var scope = form[OpenIdConnectParameterNames.Scope].FirstOrDefault();
+            var form = await context.Request.ReadFormAsNameValueCollectionAsync();
+            var scope = form[OpenIdConnectParameterNames.Scope];
             if (string.IsNullOrWhiteSpace(scope))
             {
                 scope = string.Join(",", client.AllowedScopes);
@@ -111,13 +95,12 @@ namespace IdentityServer.Endpoints
             validationResult = await _scopeValidator.Validate(client.AllowedScopes, scopes);
             if (validationResult.IsError)
             {
-                LogError(validationResult.Description, client.ClientId);
                 return BadRequest(OpenIdConnectTokenErrors.InvalidScope, validationResult.Description);
             }
             #endregion
 
             #region Validate GrantType
-            var grantType = form[OpenIdConnectParameterNames.GrantType].FirstOrDefault();
+            var grantType = form[OpenIdConnectParameterNames.GrantType];
             if (string.IsNullOrEmpty(grantType))
             {
                 return BadRequest(OpenIdConnectTokenErrors.InvalidGrant, "Grant Type is missing");
@@ -125,8 +108,7 @@ namespace IdentityServer.Endpoints
             validationResult = await _grantTypeValidator.ValidateAsync(grantType, client.AllowedGrantTypes);
             if (validationResult.IsError)
             {
-                LogError(validationResult.Description, client.ClientId);
-                return BadRequest(OpenIdConnectTokenErrors.InvalidResource, validationResult.Description);
+                return BadRequest(OpenIdConnectTokenErrors.InvalidGrant, validationResult.Description);
             }
             #endregion
 
@@ -138,52 +120,74 @@ namespace IdentityServer.Endpoints
             validationResult = await _resourceValidator.ValidateAsync(resources, scopes);
             if (validationResult.IsError)
             {
-                LogError(validationResult.Description, client.ClientId);
-                return BadRequest(OpenIdConnectTokenErrors.InvalidResource, validationResult.Description);
-            }
-            #endregion
-
-            #region Validate Grant
-            if (GrantTypes.ClientCredentials.Equals(grantType))
-            {
-                var grantContext = new ClientCredentialsGrantValidationContext(
-                    client,
-                    resources,
-                    scopes);
-                var grantValidator = context.RequestServices
-                    .GetRequiredService<IClientCredentialsGrantValidator>();
-                validationResult = await grantValidator.ValidateAsync(grantContext);
-            }
-            else if (GrantTypes.Password.Equals(grantType))
-            {
-                var grantContext = new PasswordGrantContext(
-                    client,
-                    resources,
-                    scopes);
-                var grantValidator = context.RequestServices
-                   .GetRequiredService<IPasswordGrantValidator>();
-                validationResult = await grantValidator.ValidateAsync(grantContext);
-            }
-            if (validationResult.IsError)
-            {
-                LogError(validationResult.Description, client.ClientId);
                 return BadRequest(OpenIdConnectTokenErrors.InvalidScope, validationResult.Description);
             }
             #endregion
 
+            #region Validate Grant
+            var validatedRequest = new ValidatedRequest(
+                client: client,
+                clientSecret: clientSecret,
+                options: _options,
+                scopes: scopes,
+                resources: resources,
+                grantType: grantType,
+                raw: form);
+            var grantValidationResult = await ValidateGrantAsync(context, validatedRequest);
+            #endregion
+          
             #region Generator Response
             var response = await _generator.ProcessAsync(new TokenRequest(client, resources)
             {
                 Scopes = scopes,
                 GrantType = grantType,
+                SubjectId = grantValidationResult.SubjectId,
+                Claims = grantValidationResult.Claims,
             });
             return TokenResult(response);
             #endregion
         }
 
-        private void LogError(string description, string clientId)
+        private async Task<GrantValidationResult> ValidateGrantAsync(HttpContext context, ValidatedRequest request)
         {
-            _logger.LogError($"[{clientId}]" + description);
+            //验证客户端凭据授权
+            if (GrantTypes.ClientCredentials.Equals(request.GrantType))
+            {
+                var grantContext = new ClientCredentialsGrantValidationContext(request);
+                var grantValidator = context.RequestServices
+                    .GetRequiredService<IClientCredentialsGrantValidator>();
+                return await grantValidator.ValidateAsync(grantContext);
+            }
+            //验证资源所有者密码授权
+            else if (GrantTypes.Password.Equals(request.GrantType))
+            {
+                var username = request.Raw[OpenIdConnectParameterNames.Username];
+                var password = request.Raw[OpenIdConnectParameterNames.Password];
+                if (string.IsNullOrEmpty(username))
+                {
+                    return GrantValidationResult.Error(OpenIdConnectTokenErrors.InvalidGrant, "Username is missing");
+                }
+                if (username.Length > _options.InputLengthRestrictions.UserName)
+                {
+                    return GrantValidationResult.Error(OpenIdConnectTokenErrors.InvalidGrant, "Username too long");
+                }
+                if (string.IsNullOrEmpty(password))
+                {
+                    return GrantValidationResult.Error(OpenIdConnectTokenErrors.InvalidGrant, "Password is missing");
+                }
+                if (password.Length > _options.InputLengthRestrictions.Password)
+                {
+                    return GrantValidationResult.Error(OpenIdConnectTokenErrors.InvalidGrant, "Password is missing");
+                }
+                var grantContext = new ResourceOwnerPasswordGrantValidationContext(
+                    request: request,
+                    username: username,
+                    password: password);
+                var grantValidator = context.RequestServices
+                   .GetRequiredService<IResourceOwnerPasswordGrantValidator>();
+                return await grantValidator.ValidateAsync(grantContext);
+            }
+            throw new InvalidOperationException();
         }
     }
 }

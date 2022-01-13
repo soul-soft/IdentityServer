@@ -30,7 +30,7 @@ namespace IdentityServer.ResponseGenerators
             configuration.AuthorizationEndpoint = issuer + Constants.EndpointRoutePaths.Authorize;
             configuration.TokenEndpoint = issuer + Constants.EndpointRoutePaths.Token;
             configuration.UserInfoEndpoint = issuer + Constants.EndpointRoutePaths.UserInfo;
-            var grantTypes = await _grantTypeService.GetGrantTypesAsync();
+            var grantTypes = _grantTypeService.GetExtensionGrantTypes();
             foreach (var item in grantTypes)
             {
                 configuration.GrantTypesSupported.Add(item);
@@ -43,7 +43,6 @@ namespace IdentityServer.ResponseGenerators
             {
                 configuration.ScopesSupported.Add(item);
             }
-            configuration.ScopesSupported.Add(StandardScopes.OfflineAccess);
             var authMethods = _secretParsers.GetAuthenticationMethods(); 
             foreach (var item in authMethods)
             {

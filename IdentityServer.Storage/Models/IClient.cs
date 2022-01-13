@@ -10,7 +10,6 @@
         int AccessTokenLifetime { get; }
         int RefreshTokenLifetime { get; }
         int IdentityTokenLifetime { get; }
-        bool AllowedOfflineAccess { get; }
         AccessTokenType AccessTokenType { get; }
         IReadOnlyCollection<string> AllowedScopes { get; }
         IReadOnlyCollection<ISecret> ClientSecrets { get; }

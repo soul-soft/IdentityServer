@@ -2,6 +2,6 @@
 {
     public interface IClientCredentialsGrantValidator
     {
-        Task<ValidationResult> ValidateAsync(ClientCredentialsGrantValidationContext context);
+        Task<GrantValidationResult> ValidateAsync(ClientCredentialsGrantValidationContext context);
     }
 }

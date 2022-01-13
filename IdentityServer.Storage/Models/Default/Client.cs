@@ -18,7 +18,6 @@ namespace IdentityServer.Models
         public int IdentityTokenLifetime { get; set; } = 300;
         public bool RequireClientSecret { get; set; } = true;
         public bool IncludeJwtId { get; set; } = true;
-        public bool AllowedOfflineAccess { get; set; } = false;
         public IReadOnlyCollection<ISecret> ClientSecrets { get; set; } = new HashSet<ISecret>();
         public IReadOnlyCollection<string> AllowedGrantTypes { get; set; } = new HashSet<string>();
         public AccessTokenType AccessTokenType { get; set; } = AccessTokenType.Jwt;

@@ -4,13 +4,13 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace IdentityServer.Services
 {
-    internal class TokenCreationService : ITokenCreationService
+    internal class SecurityTokenService : ISecurityTokenService
     {
         private readonly ISystemClock _clock;
         private readonly IdentityServerOptions _options;
         private readonly ISigningCredentialStore _credentials;
 
-        public TokenCreationService(
+        public SecurityTokenService(
             ISystemClock clock,
             IdentityServerOptions options,
             ISigningCredentialStore credentials)
@@ -58,16 +58,19 @@ namespace IdentityServer.Services
                 notBefore: notBefore,
                 expires: expires);
             payload.Add(JwtClaimTypes.JwtId, token.Id);
-            payload.Add(JwtClaimTypes.Audience, token.Audiences);
-            if (string.IsNullOrWhiteSpace(token.ClientId))
+            if (token.Audiences.Any())
+            {
+                payload.Add(JwtClaimTypes.Audience, token.Audiences);
+            }
+            if (!string.IsNullOrWhiteSpace(token.ClientId))
             {
                 payload.Add(JwtClaimTypes.ClientId, token.ClientId);
             }
-            if (string.IsNullOrWhiteSpace(token.GrantType))
+            if (!string.IsNullOrWhiteSpace(token.GrantType))
             {
                 payload.Add(JwtClaimTypes.AuthenticationMethod, token.GrantType);
             }
-            if (string.IsNullOrWhiteSpace(_options.IdentityProvider))
+            if (!string.IsNullOrWhiteSpace(_options.IdentityProvider))
             {
                 payload.Add(JwtClaimTypes.IdentityProvider, _options.IdentityProvider);
             }

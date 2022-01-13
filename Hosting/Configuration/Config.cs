@@ -1,7 +1,5 @@
 ﻿using IdentityServer.Models;
-using IdentityServer.Protocols;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using static IdentityServer.OpenIdConnects;
+using static IdentityServer.Models.OpenIdConnects;
 
 namespace Hosting.Configuration
 {
@@ -13,7 +11,7 @@ namespace Hosting.Configuration
             {
                 AllowedGrantTypes = new []
                 {
-                    GrantTypes.Password
+                   GrantTypes.Password
                 },
                 ClientSecrets=new ISecret[]
                 {
@@ -21,45 +19,23 @@ namespace Hosting.Configuration
                 },
                 AllowedScopes = new[]
                 {
-                    "api","rpc" ,StandardScopes.OfflineAccess
+                    "api",
+                    StandardScopes.OpenId,
+                    StandardScopes.OfflineAccess
                 }
             }
         };
 
         public static IEnumerable<IApiScope> ApiScopes => new IApiScope[]
         {
-            new ApiScope("api")
-            {
-
-            },
+            new ApiScope("api"),
             new ApiScope("rpc")
-            {
-
-            }
-        };
-
-        public static IEnumerable<IApiResource> ApiResources => new IApiResource[]
-        {
-            new ApiResource("api1")
-            {
-                Scopes = new string[]
-                {
-                    "api"
-                }
-            }
         };
 
         public static IEnumerable<IIdentityResource> IdentityResources => new IIdentityResource[]
         {
-            new IdentityResource(OpenIdConnectScope.OpenId)
-            {
-                Required = true,
-                UserClaims = new string[]
-                {
-                    JwtClaimTypes.Subject,
-                }
-            },
-            new IdentityResource(StandardScopes.OfflineAccess)
+            OpenIdConnects.IdentityResources.OpenId,
+            OpenIdConnects.IdentityResources.OfflineAccess,
         };
     }
 }

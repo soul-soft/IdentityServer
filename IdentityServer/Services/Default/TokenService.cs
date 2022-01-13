@@ -7,16 +7,16 @@ namespace IdentityServer.Services
         private readonly IServerUrl _urls;
         private readonly ISystemClock _clock;
         private readonly IIdGenerator _idGenerator;
-        private readonly IClaimsService _claimsService;
+        private readonly IClaimIssueService _claimsService;
         private readonly IReferenceTokenService _referenceTokenService;
-        private readonly ITokenCreationService _tokenCreationService;
+        private readonly ISecurityTokenService _tokenCreationService;
 
         public TokenService(
             IServerUrl urls,
             ISystemClock clock,
             IIdGenerator idGenerator,
-            IClaimsService claimsService,
-            ITokenCreationService tokenCreationService,
+            IClaimIssueService claimsService,
+            ISecurityTokenService tokenCreationService,
             IReferenceTokenService referenceTokenService)
         {
             _urls = urls;
@@ -36,9 +36,9 @@ namespace IdentityServer.Services
             var claims = await _claimsService.GetAccessTokenClaimsAsync(request);
             var token = new Token(id, TokenTypes.AccessToken)
             {
-                Issuer=issuer,
-                ClientId =client.ClientId,
-                GrantType=request.GrantType,
+                Issuer = issuer,
+                ClientId = client.ClientId,
+                GrantType = request.GrantType,
                 Nonce = request.Nonce,
                 Scopes = request.Scopes,
                 SessionId = request.SessionId,
@@ -46,13 +46,13 @@ namespace IdentityServer.Services
                 Description = request.Description,
                 Lifetime = client.AccessTokenLifetime,
                 SubjectId = request.SubjectId,
-                CreationTime= _clock.UtcNow.UtcDateTime
+                CreationTime = _clock.UtcNow.UtcDateTime
             };
             foreach (var item in claims)
             {
                 token.Claims.Add(new ClaimLite(item.Type, item.Value, item.ValueType));
             }
-            foreach (var item in resources.ApiScopes)
+            foreach (var item in resources.ApiResources)
             {
                 token.Audiences.Add(item.Name);
             }

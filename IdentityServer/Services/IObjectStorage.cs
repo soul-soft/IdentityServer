@@ -2,7 +2,7 @@
 {
     public interface IObjectStorage
     {
-        Task SetAsync(string key, object value, TimeSpan expiration);
         byte[] SerializeToUtf8Bytes(object obj);
+        Task SaveAsync(string key, object value, TimeSpan expiration);
     }
 }

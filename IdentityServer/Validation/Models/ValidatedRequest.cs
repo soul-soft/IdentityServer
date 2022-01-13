@@ -1,0 +1,38 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace IdentityServer.Validation
+{
+    public class ValidatedRequest
+    {
+        public IClient Client { get; }
+        public string GrantType { get; }
+        public ClientSecret ClientSecret { get; }
+        public IEnumerable<string> Scopes { get; }
+        public Resources Resources { get; }
+        public IdentityServerOptions Options { get; }
+        public NameValueCollection Raw { get; }
+
+        public ValidatedRequest(
+            IClient client,
+            ClientSecret clientSecret,
+            IdentityServerOptions options,
+            IEnumerable<string> scopes,
+            string grantType,
+            Resources resources,
+            NameValueCollection raw)
+        {
+            Client = client;
+            ClientSecret = clientSecret;
+            Options = options;
+            Scopes = scopes;
+            Resources = resources;
+            GrantType = grantType;
+            Raw = raw;
+        }
+    }
+}

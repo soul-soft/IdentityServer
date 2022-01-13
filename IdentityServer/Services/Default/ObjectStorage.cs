@@ -25,7 +25,7 @@ namespace IdentityServer.Services
             return JsonSerializer.SerializeToUtf8Bytes(obj, _serializerOptions);
         }
 
-        public async Task SetAsync(string key, object value, TimeSpan expiration)
+        public async Task SaveAsync(string key, object value, TimeSpan expiration)
         {
             var values = SerializeToUtf8Bytes(value);
             await _distributedCache.SetAsync(key, values, new DistributedCacheEntryOptions
