@@ -7,7 +7,6 @@
         string? Description { get; }
         string? ClientUri { get; }
         bool Enabled { get; }
-        bool IncludeJwtId { get; }
         int AccessTokenLifetime { get; }
         int RefreshTokenLifetime { get; }
         int IdentityTokenLifetime { get; }

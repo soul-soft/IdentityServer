@@ -122,7 +122,7 @@ namespace IdentityServer.Endpoints
             {
                 return BadRequest(OpenIdConnectTokenErrors.InvalidGrant, "Grant Type is missing");
             }
-            validationResult = await _grantTypeValidator.ValidateAsync(grantType,client.AllowedGrantTypes);
+            validationResult = await _grantTypeValidator.ValidateAsync(grantType, client.AllowedGrantTypes);
             if (validationResult.IsError)
             {
                 LogError(validationResult.Description, client.ClientId);
@@ -175,40 +175,15 @@ namespace IdentityServer.Endpoints
             var response = await _generator.ProcessAsync(new TokenRequest(client, resources)
             {
                 Scopes = scopes,
+                GrantType = grantType,
             });
             return TokenResult(response);
             #endregion
-        }
-
-
-        private ValidationResult ValidateClientCredentialsRequest(IClient client, Resources resources)
-        {
-            if (resources.IdentityResources.Any())
-            {
-                return ValidationResult.Error("Client cannot request OpenID scopes in client credentials flow");
-            }
-            return ValidationResult.Success();
         }
 
         private void LogError(string description, string clientId)
         {
             _logger.LogError($"[{clientId}]" + description);
         }
-
-        //private async Task<ValidationResult> ValidatePasswordRequestAsync(HttpContext context, IFormCollection form)
-        //{
-        //    var username = form[OpenIdConnectParameterNames.Username].FirstOrDefault();
-        //    var password = form[OpenIdConnectParameterNames.Password].FirstOrDefault();
-        //    if (string.IsNullOrWhiteSpace(username))
-        //    {
-        //        return ValidationResult.Error("Username is missing");
-        //    }
-        //    if (username.Length > _options.InputLengthRestrictions.UserName ||
-        //        password?.Length > _options.InputLengthRestrictions.Password)
-        //    {
-        //        return ValidationResult.Error("Username or password too long");
-        //    }
-        //    return ValidationResult.Success();
-        //}
     }
 }

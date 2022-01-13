@@ -8,11 +8,14 @@
 
         public int Lifetime { get; }
 
-        public ReferenceToken(string id, IToken token)
+        public DateTime CreationTime { get; }
+
+        public ReferenceToken(string id, IToken token, DateTime creationTime)
         {
             Id = id;
             Token = token;
             Lifetime = Token.Lifetime;
+            CreationTime = creationTime;
         }
     }
 }

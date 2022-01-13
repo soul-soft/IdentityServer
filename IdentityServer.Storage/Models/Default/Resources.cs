@@ -38,6 +38,16 @@ namespace IdentityServer.Models
             }
         }
 
+        public IReadOnlyCollection<string> UserClaims
+        {
+            get
+            {
+                return _resources
+                   .SelectMany(s => s.UserClaims)
+                   .ToList();
+            }
+        }
+
         public IReadOnlyCollection<IApiScope> ApiScopes
         {
             get

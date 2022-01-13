@@ -22,24 +22,22 @@ namespace IdentityServer.Services
 
         public async Task<string> CreateTokenAsync(IToken token)
         {
-            var header = await CreateJwtHeaderAsync(token);
-            var payload = await CreateJwtPayloadAsync(token);
-            return await CreateJwtTokenAsync(new JwtSecurityToken(header, payload));
+            var credential = await _credentials
+              .GetSigningCredentialsByAlgorithmsAsync(token.AllowedSigningAlgorithms);
+            var header = CreateJwtHeader(token, credential);
+            var payload = CreateJwtPayload(token);
+            return CreateJwtToken(new JwtSecurityToken(header, payload));
         }
 
-        private async Task<JwtHeader> CreateJwtHeaderAsync(IToken request)
+        private JwtHeader CreateJwtHeader(IToken token, SigningCredentials credentials)
         {
-            var credential = await _credentials
-                .GetSigningCredentialsByAlgorithmsAsync(request.AllowedSigningAlgorithms);
-
-            var header = new JwtHeader(credential);
-
-            if (credential.Key is X509SecurityKey x509Key)
+            var header = new JwtHeader(credentials);
+            if (credentials.Key is X509SecurityKey x509Key)
             {
                 var cert = x509Key.Certificate;
                 header["x5t"] = Base64UrlEncoder.Encode(cert.GetCertHash());
             }
-            if (request.Type == OpenIdConnects.TokenTypes.AccessToken)
+            if (token.Type == TokenTypes.AccessToken)
             {
                 if (!string.IsNullOrWhiteSpace(_options.AccessTokenJwtType))
                 {
@@ -49,7 +47,7 @@ namespace IdentityServer.Services
             return header;
         }
 
-        protected Task<JwtPayload> CreateJwtPayloadAsync(IToken token)
+        private JwtPayload CreateJwtPayload(IToken token)
         {
             var notBefore = _clock.UtcNow.UtcDateTime;
             DateTime? expires = notBefore.AddSeconds(token.Lifetime);
@@ -59,10 +57,21 @@ namespace IdentityServer.Services
                 claims: null,
                 notBefore: notBefore,
                 expires: expires);
-            payload.Add(JwtClaimTypes.ClientId, token.ClientId);
             payload.Add(JwtClaimTypes.JwtId, token.Id);
             payload.Add(JwtClaimTypes.Audience, token.Audiences);
-            if (!string.IsNullOrEmpty(token.SubjectId))
+            if (string.IsNullOrWhiteSpace(token.ClientId))
+            {
+                payload.Add(JwtClaimTypes.ClientId, token.ClientId);
+            }
+            if (string.IsNullOrWhiteSpace(token.GrantType))
+            {
+                payload.Add(JwtClaimTypes.AuthenticationMethod, token.GrantType);
+            }
+            if (string.IsNullOrWhiteSpace(_options.IdentityProvider))
+            {
+                payload.Add(JwtClaimTypes.IdentityProvider, _options.IdentityProvider);
+            }
+            if (!string.IsNullOrWhiteSpace(token.SubjectId))
             {
                 payload.Add(JwtClaimTypes.Subject, token.SubjectId);
             }
@@ -78,13 +87,14 @@ namespace IdentityServer.Services
             {
                 payload.Add(JwtClaimTypes.Scope, token.Scopes);
             }
-            return Task.FromResult(payload);
+            payload.AddClaims(token.Claims.ToClaims());
+            return payload;
         }
 
-        protected Task<string> CreateJwtTokenAsync(JwtSecurityToken jwt)
+        private string CreateJwtToken(JwtSecurityToken jwt)
         {
             var handler = new JwtSecurityTokenHandler();
-            return Task.FromResult(handler.WriteToken(jwt));
+            return handler.WriteToken(jwt);
         }
     }
 }

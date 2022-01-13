@@ -39,6 +39,8 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             builder.Services.TryAddTransient<IServerUrl, ServerUrl>();
             builder.Services.TryAddTransient<IIdGenerator, IdGenerator>();
+            builder.Services.TryAddTransient<IClaimsService, ClaimsService>();
+            builder.Services.TryAddTransient<IProfileService, ProfileService>();
             builder.Services.TryAddTransient<ISecretParser, PostBodySecretParser>();
             builder.Services.TryAddTransient<IObjectStorage, ObjectStorage>();
             builder.Services.TryAddTransient<ISecretsParser, SecretParsers>();
@@ -88,8 +90,8 @@ namespace Microsoft.Extensions.DependencyInjection
         #region ResponseGenerators
         public static IIdentityServerBuilder AddResponseGenerators(this IIdentityServerBuilder builder)
         {
-            builder.Services.TryAddTransient<IDiscoveryResponseGenerator, DiscoveryResponseGenerator>();
             builder.Services.TryAddTransient<ITokenResponseGenerator, TokenResponseGenerator>();
+            builder.Services.TryAddTransient<IDiscoveryResponseGenerator, DiscoveryResponseGenerator>();
             return builder;
         }
         #endregion

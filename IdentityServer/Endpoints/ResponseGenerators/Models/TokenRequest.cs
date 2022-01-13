@@ -9,6 +9,8 @@
         public string? Description { get; set; }
         public string? SubjectId { get; set; }
         public ICollection<string> Scopes { get; set; } = new HashSet<string>();
+        public string? GrantType { get;  set; }
+
         public TokenRequest(IClient client, Resources resources)
         {
             Client = client;

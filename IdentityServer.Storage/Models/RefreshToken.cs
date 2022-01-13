@@ -8,11 +8,14 @@
 
         public int Lifetime { get; }
 
-        public RefreshToken(string id, IToken token, int lifetime)
+        public DateTime CreationTime { get; }
+
+        public RefreshToken(string id, IToken token, int lifetime, DateTime creationTime)
         {
             Id = id;
             Token = token;
             Lifetime = lifetime;
+            CreationTime = creationTime;
         }
     }
 }

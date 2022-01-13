@@ -5,5 +5,6 @@
         string Id { get; }
         IToken Token { get; }
         int Lifetime { get; }
+        DateTime CreationTime { get; }
     }
 }
