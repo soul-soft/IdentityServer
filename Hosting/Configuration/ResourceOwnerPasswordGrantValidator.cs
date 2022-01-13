@@ -11,7 +11,7 @@ namespace Hosting.Configuration
         {
             if (context.Username == "test" && context.Password == "test")
             {
-                return GrantValidationResult.ResultAsync("1",new Claim[] 
+                return GrantValidationResult.SuccessAsync("1",new Claim[] 
                 {
                     new Claim(JwtClaimTypes.Role,"admin")
                 });

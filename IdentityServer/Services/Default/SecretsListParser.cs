@@ -2,13 +2,13 @@
 
 namespace IdentityServer.Services
 {
-    public class SecretParsers : ISecretsListParser
+    public class SecretsListParser : ISecretsListParser
     {
         private readonly IdentityServerOptions _options;
 
         private readonly IEnumerable<ISecretParser> _parsers;
 
-        public SecretParsers(
+        public SecretsListParser(
             IdentityServerOptions options,
             IEnumerable<ISecretParser> parsers)
         {

@@ -12,7 +12,7 @@
                 return GrantValidationResult.ErrorAsync("Client cannot request OpenID scopes in client credentials flow");
             }
             
-            return GrantValidationResult.ResultAsync();
+            return GrantValidationResult.SuccessAsync();
         }
     }
 }

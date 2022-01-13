@@ -43,7 +43,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<IProfileService, ProfileService>();
             builder.Services.TryAddTransient<ISecretParser, PostBodySecretParser>();
             builder.Services.TryAddTransient<IObjectStorage, ObjectStorage>();
-            builder.Services.TryAddTransient<ISecretsListParser, SecretParsers>();
+            builder.Services.TryAddTransient<ISecretsListParser, SecretsListParser>();
             builder.Services.TryAddTransient<ITokenService, TokenService>();
             builder.Services.TryAddTransient<ISecurityTokenService, SecurityTokenService>();
             builder.Services.TryAddTransient<IRefreshTokenService, RefreshTokenService>();

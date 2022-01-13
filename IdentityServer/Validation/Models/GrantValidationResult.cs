@@ -41,12 +41,12 @@ namespace IdentityServer.Validation
             return new GrantValidationResult(null, claims);
         }
 
-        public static Task<GrantValidationResult> ResultAsync(string? subject = null, IEnumerable<Claim>? claims = null)
+        public static Task<GrantValidationResult> SuccessAsync(string? subject = null, IEnumerable<Claim>? claims = null)
         {
             return Task.FromResult(Result(subject, claims ?? new List<Claim>()));
         }
 
-        public static Task<GrantValidationResult> ResultAsync(IEnumerable<Claim> claims)
+        public static Task<GrantValidationResult> SuccessAsync(IEnumerable<Claim> claims)
         {
             return Task.FromResult(Result(null, claims));
         }
