@@ -1,6 +1,5 @@
 using Hosting.Configuration;
-using IdentityServer.Infrastructure;
-using Microsoft.IdentityModel.Tokens;
+using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,14 +11,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddIdentityServer()
-        .AddResourceOwnerPasswordGrantValidator<ResourceOwnerPasswordGrantValidator>()
         .AddExtensionGrantValidator<MyExtensionGrantValidator>()
+        .AddResourceOwnerPasswordGrantValidator<ResourceOwnerPasswordGrantValidator>()
         .AddInMemoryStores(setup =>
         {
             setup.AddClients(Config.Clients);
             setup.AddResources(Config.ApiScopes);
             setup.AddResources(Config.IdentityResources);
-            setup.AddSigningCredentials(CryptoRandom.CreateRsaSecurityKey(), SecurityAlgorithms.RsaSha256);
+            setup.AddSigningCredentials(new X509Certificate2("idsvr.pfx","nbjc"));
+            //setup.AddSigningCredentials(CryptoRandom.CreateRsaSecurityKey());
         });
 
 var app = builder.Build();

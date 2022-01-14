@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Cryptography.X509Certificates;
 
 namespace IdentityServer.Configuration
 {
@@ -12,8 +13,19 @@ namespace IdentityServer.Configuration
         #endregion
 
         #region SigningCredentials
-        public InMemoryStoreBuilder AddSigningCredentials(SecurityKey securityKey, string signingAlgorithm)
+        public InMemoryStoreBuilder AddSigningCredentials(SecurityKey securityKey, string signingAlgorithm = SecurityAlgorithms.RsaSha256)
         {
+            SigningCredentials.Add(new SigningCredentialsDescriptor(new SigningCredentials(securityKey, signingAlgorithm), signingAlgorithm));
+            return this;
+        }
+        public InMemoryStoreBuilder AddSigningCredentials(X509Certificate2 certificate, string signingAlgorithm = SecurityAlgorithms.RsaSha256)
+        {
+            if (!certificate.HasPrivateKey)
+            {
+                throw new InvalidOperationException("X509 certificate does not have a private key.");
+            }
+            var securityKey = new X509SecurityKey(certificate);
+            securityKey.KeyId += signingAlgorithm;
             SigningCredentials.Add(new SigningCredentialsDescriptor(new SigningCredentials(securityKey, signingAlgorithm), signingAlgorithm));
             return this;
         }

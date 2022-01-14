@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityServer.Services
 {
@@ -18,18 +19,17 @@ namespace IdentityServer.Services
             _referenceTokens = referenceTokens;
         }
 
-        public async Task<string> CreateAsync(IToken token)
+        public async Task<string> CreateReferenceTokenAsync(IToken token)
         {
             var id = _idGenerator.GeneratorId();
             var creationTime = _clock.UtcNow.UtcDateTime;
-            var expiration = creationTime.AddSeconds(token.Lifetime);
             var referenceToken = new ReferenceToken(
                 id, 
                 token,
                 token.Lifetime,
                 creationTime);
             await _referenceTokens.SaveAsync(referenceToken);
-            return id;
+            return Base64UrlEncoder.Encode(id);
         }
     }
 }

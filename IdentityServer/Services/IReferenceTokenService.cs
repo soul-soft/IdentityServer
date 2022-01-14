@@ -2,6 +2,6 @@
 {
     public interface IReferenceTokenService
     {
-        Task<string> CreateAsync(IToken token);
+        Task<string> CreateReferenceTokenAsync(IToken token);
     }
 }

@@ -102,7 +102,7 @@ namespace IdentityServer.Services
                 }
                 else
                 {
-                    var handle = await _referenceTokenService.CreateAsync(token);
+                    var handle = await _referenceTokenService.CreateReferenceTokenAsync(token);
                     tokenResult = handle;
                 }
             }
