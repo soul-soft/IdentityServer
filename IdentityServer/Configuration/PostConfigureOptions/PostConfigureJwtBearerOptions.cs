@@ -1,16 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 
 namespace IdentityServer.Configuration
 {
     internal class PostConfigureJwtBearerOptions : IPostConfigureOptions<JwtBearerOptions>
     {
         private readonly IServiceProvider _sp;
-      
+
         public PostConfigureJwtBearerOptions(IServiceProvider sp)
         {
             _sp = sp;
@@ -25,7 +23,7 @@ namespace IdentityServer.Configuration
                 SaveSigninToken = false,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                IssuerValidator= IssuerValidator,
+                IssuerValidator = IssuerValidator,
                 IssuerSigningKeyResolver = IssuerSigningKeyResolver
             };
         }
@@ -35,13 +33,22 @@ namespace IdentityServer.Configuration
             using (var scope = _sp.CreateScope())
             {
                 var credentials = scope.ServiceProvider.GetRequiredService<ISigningCredentialStore>();
-                return credentials.GetSecurityKeys();  
+                return credentials.GetSecurityKeys();
             }
         }
 
-        string IssuerValidator (string issuer, SecurityToken securityToken, TokenValidationParameters validationParameters)
+        string IssuerValidator(string issuer, SecurityToken securityToken, TokenValidationParameters validationParameters)
         {
-            return "false";
+            using (var scope = _sp.CreateScope())
+            {
+                var url = scope.ServiceProvider.GetRequiredService<IServerUrl>();
+                var serverIssuer = url.GetIdentityServerIssuerUri();
+                if (!serverIssuer.Equals(serverIssuer))
+                {
+                    throw new SecurityTokenInvalidIssuerException("IDX10211: Unable to validate issuer. The 'issuer' parameter is null or whitespace");
+                }
+                return issuer;
+            }
         }
     }
 }
