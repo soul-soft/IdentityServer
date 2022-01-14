@@ -25,7 +25,7 @@ namespace IdentityServer.Configuration
                 SaveSigninToken = false,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                IssuerValidator = IssuerValidator,
+                IssuerValidator= IssuerValidator,
                 IssuerSigningKeyResolver = IssuerSigningKeyResolver
             };
         }
@@ -39,13 +39,9 @@ namespace IdentityServer.Configuration
             }
         }
 
-        private string IssuerValidator(string issuer, SecurityToken securityToken, TokenValidationParameters validationParameters)
+        string IssuerValidator (string issuer, SecurityToken securityToken, TokenValidationParameters validationParameters)
         {
-            using (var scope = _sp.CreateScope())
-            {
-                var urls = scope.ServiceProvider.GetRequiredService<IServerUrl>();
-                throw new exception
-            }
+            return "false";
         }
     }
 }
