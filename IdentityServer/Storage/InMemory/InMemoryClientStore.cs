@@ -9,7 +9,7 @@
             _clients = clients;
         }
 
-        public Task<IClient?> FindClientByIdAsync(string clientId)
+        public Task<IClient?> GetAsync(string clientId)
         {
             var client = _clients
                 .Where(a => a.ClientId == clientId)

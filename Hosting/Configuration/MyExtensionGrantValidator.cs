@@ -10,10 +10,7 @@ namespace Hosting.Configuration
 
         public Task<GrantValidationResult> ValidateAsync(ExtensionGrantValidationContext context)
         {
-            return GrantValidationResult.SuccessAsync("2",new Claim[] 
-            {
-                new Claim(JwtClaimTypes.Role,"admin")
-            });
+            return GrantValidationResult.SuccessAsync("2");
         }
     }
 }

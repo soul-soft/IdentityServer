@@ -18,14 +18,14 @@ namespace IdentityServer.Validation
 
         public async Task<GrantValidationResult> ValidateAsync(RefreshTokenGrantValidationContext context)
         {
-            var refreshToken = await _refreshTokenService.FindRefreshTokenAsync(context.RefreshToken);
+            var refreshToken = await _refreshTokenService.GetAsync(context.RefreshToken);
             if (refreshToken == null)
             {
                 return GrantValidationResult.Error("Refresh token does not exist");
             }
             if (_clock.UtcNow.UtcDateTime > refreshToken.Expiration)
             {
-                await _refreshTokenService.DeleteRefreshTokenAsync(refreshToken);
+                await _refreshTokenService.DeleteAsync(refreshToken);
                 return GrantValidationResult.Error("Refresh token has expired");
             }
             if (refreshToken.AccessToken.ClientId != context.Request.Client.ClientId)
@@ -39,7 +39,7 @@ namespace IdentityServer.Validation
                     return GrantValidationResult.Error("Exceeded allowed scope");
                 }
             }
-            await _refreshTokenService.DeleteRefreshTokenAsync(refreshToken);
+            await _refreshTokenService.DeleteAsync(refreshToken);
             return GrantValidationResult.Success();
         }
     }

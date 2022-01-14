@@ -35,14 +35,13 @@
         private async Task<(string accessToken, string? refreshToken)> CreateAccessTokenAsync(TokenRequest request)
         {
             var token = await _tokenService.CreateAccessTokenAsync(request);
-
             var accessToken = await _tokenService.CreateSecurityTokenAsync(token);
             if (request.Resources.OfflineAccess)
             {
-                var refreshToken = await _refreshTokenService.CreateRefreshTokenAsync(token, request.Client.RefreshTokenLifetime);
+                var refreshToken = await _refreshTokenService
+                    .CreateAsync(token, request.Client.RefreshTokenLifetime);
                 return (accessToken, refreshToken);
             }
-
             return (accessToken, null);
         }
     }

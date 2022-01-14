@@ -1,11 +1,9 @@
-﻿using System.Security.Claims;
-
-namespace IdentityServer.Models
+﻿namespace IdentityServer.Models
 {
     public interface IToken
     {
         string? Id { get; }
-        string Type { get; }
+        string? Type { get; }
         string? ClientId { get; }
         string? Issuer { get; }
         int Lifetime { get; }
@@ -14,11 +12,12 @@ namespace IdentityServer.Models
         string? GrantType { get; }
         string? Nonce { get; }
         string? Description { get; }
-        DateTime CreationTime { get; }
         AccessTokenType AccessTokenType { get; }
-        ICollection<string> Scopes { get; }
-        ICollection<string> Audiences { get; }
-        ICollection<IClaimLite> Claims { get; }
-        ICollection<string> AllowedSigningAlgorithms { get; }
+        IReadOnlyCollection<string> Scopes { get; }
+        IReadOnlyCollection<string> Audiences { get; }
+        DateTime? NotBefore { get; }
+        DateTime? Expiration { get; }
+        IReadOnlyCollection<ClaimLite> Claims { get; }
+        IReadOnlyCollection<string> AllowedSigningAlgorithms { get; }
     }
 }

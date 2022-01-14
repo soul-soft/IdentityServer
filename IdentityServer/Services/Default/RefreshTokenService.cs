@@ -19,7 +19,7 @@ namespace IdentityServer.Services
             _refreshTokenStore = refreshTokenStore;
         }
 
-        public async Task<string> CreateRefreshTokenAsync(IToken token, int lifetime)
+        public async Task<string> CreateAsync(IToken token, int lifetime)
         {
             var id = _idGenerator.GeneratorId();
             var nowTime = _clock.UtcNow.UtcDateTime;
@@ -32,15 +32,15 @@ namespace IdentityServer.Services
             return Base64UrlEncoder.Encode(id);
         }
 
-        public async Task DeleteRefreshTokenAsync(IRefreshToken refreshToken)
+        public async Task DeleteAsync(IRefreshToken refreshToken)
         {
             await _refreshTokenStore.RevomeAsync(refreshToken);
         }
 
-        public async Task<IRefreshToken?> FindRefreshTokenAsync(string id)
+        public async Task<IRefreshToken?> GetAsync(string id)
         {
             id = Base64UrlEncoder.Decode(id);
-            return await _refreshTokenStore.FindRefreshTokenByIdAsync(id);
+            return await _refreshTokenStore.GetAsync(id);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityServer.Services
@@ -19,7 +20,7 @@ namespace IdentityServer.Services
             _referenceTokens = referenceTokens;
         }
 
-        public async Task<string> CreateReferenceTokenAsync(IToken token)
+        public async Task<string> CreateAsync(IToken token)
         {
             var id = _idGenerator.GeneratorId();
             var creationTime = _clock.UtcNow.UtcDateTime;
@@ -30,6 +31,17 @@ namespace IdentityServer.Services
                 creationTime);
             await _referenceTokens.SaveAsync(referenceToken);
             return Base64UrlEncoder.Encode(id);
+        }
+
+        public ClaimsPrincipal CreateClaimsPrincipal(IReferenceToken token)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<IReferenceToken?> GetAsync(string id)
+        {
+            id = Base64UrlEncoder.Decode(id);
+            return await _referenceTokens.FindReferenceTokenByIdAsync(id);
         }
     }
 }

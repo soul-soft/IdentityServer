@@ -1,6 +1,6 @@
-﻿namespace IdentityServer.Models
+﻿namespace IdentityServer
 {
-    public static class OpenIdConnects
+    public static class IdentityServerConstants
     {
         public static class TokenTypes
         {
@@ -41,6 +41,12 @@
             public const string PrivateKeyJwt = "private_key_jwt";
             public const string TlsClientAuth = "tls_client_auth";
             public const string SelfSignedTlsClientAuth = "self_signed_tls_client_auth";
+        }
+        public static class LocalApi
+        {
+            public const string AuthenticationScheme = "IdentityServerAccessToken";
+            public const string ScopeName = "IdentityServerApi";
+            public const string PolicyName = AuthenticationScheme;
         }
         public static class IdentityResources
         {

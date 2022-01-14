@@ -1,4 +1,4 @@
-﻿namespace IdentityServer
+﻿namespace IdentityServer.Models
 {
     internal static class Constants
     {

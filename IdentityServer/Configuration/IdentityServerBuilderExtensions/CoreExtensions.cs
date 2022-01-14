@@ -1,11 +1,8 @@
-﻿using IdentityServer;
+﻿using IdentityServer.Authentication;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -14,12 +11,8 @@ namespace Microsoft.Extensions.DependencyInjection
         #region CoreServices
         public static IIdentityServerBuilder AddCoreServices(this IIdentityServerBuilder builder)
         {
-            builder.Services.AddAuthentication()
-                .AddJwtBearer(options => 
-                {
-                   
-                });
-            builder.Services.AddTransient<IPostConfigureOptions<JwtBearerOptions>, PostConfigureJwtBearerOptions>();
+            builder.Services.AddAuthentication(LocalApi.AuthenticationScheme)
+                .AddLoaclApiAuthentication();
             return builder;
         }
         #endregion       
@@ -45,15 +38,17 @@ namespace Microsoft.Extensions.DependencyInjection
         #region PluggableServices
         public static IIdentityServerBuilder AddPluggableServices(this IIdentityServerBuilder builder)
         {
+            builder.Services.TryAddTransient<ISecretsListParser, SecretsListParser>();
+            builder.Services.TryAddTransient<ISecretParser, PostBodySecretParser>();
+            builder.Services.TryAddTransient<IBearerTokenUsageParser, BearerTokenUsageParser>();
+
             builder.Services.TryAddTransient<IServerUrl, ServerUrl>();
             builder.Services.TryAddTransient<IIdGenerator, IdGenerator>();
-            builder.Services.TryAddTransient<IClaimIssueService, ClaimIssueService>();
+            builder.Services.TryAddTransient<IClaimsService, ClaimIssueService>();
             builder.Services.TryAddTransient<IProfileService, ProfileService>();
-            builder.Services.TryAddTransient<ISecretResolver, PostBodySecretParser>();
             builder.Services.TryAddTransient<IObjectStorage, ObjectStorage>();
-            builder.Services.TryAddTransient<ISecretsListParser, SecretsListParser>();
             builder.Services.TryAddTransient<ITokenService, TokenService>();
-            builder.Services.TryAddTransient<ISecurityTokenService, SecurityTokenService>();
+            builder.Services.TryAddTransient<ISecurityTokenService, JwtTokenService>();
             builder.Services.TryAddTransient<IRefreshTokenService, RefreshTokenService>();
             builder.Services.TryAddTransient<IReferenceTokenService, ReferenceTokenService>();
             return builder;
@@ -64,8 +59,9 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IIdentityServerBuilder AddValidators(this IIdentityServerBuilder builder)
         {
             builder.Services.TryAddTransient<IScopeValidator, ScopeValidator>();
+            builder.Services.TryAddTransient<ITokenValidator, TokenValidator>();
             builder.Services.TryAddTransient<IResourceValidator, ResourceValidator>();
-            builder.Services.TryAddTransient<IGrantTypeValidator, GrantTypeValidator>();
+            builder.Services.TryAddTransient<IGrantTypeValidator, GrantTypeValidator>();            
             builder.Services.TryAddTransient<ISecretsListValidator, SecretsValidator>();
             builder.Services.TryAddTransient<ISecretValidator, SharedSecretValidator>();
             builder.Services.TryAddTransient<IRefreshTokenGrantValidator, RefreshTokenGrantValidator>();

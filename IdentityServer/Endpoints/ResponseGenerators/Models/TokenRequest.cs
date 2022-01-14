@@ -9,13 +9,12 @@ namespace IdentityServer.Models
         public Resources Resources { get; }
         public string? SessionId { get; set; }
         public string? Description { get; set; }
-        public string? SubjectId { get; set; }
-        public string? GrantType { get;  set; }
-        public IEnumerable<Claim> Claims { get; set; } = new List<Claim>();
-        public ICollection<string> Scopes { get; set; } = new HashSet<string>();
-
-        public TokenRequest(IClient client, Resources resources)
+        public ClaimsPrincipal Subject { get; }
+        public string? GrantType { get; set; }
+        public IEnumerable<string> Scopes { get; set; } = new HashSet<string>();
+        public TokenRequest(ClaimsPrincipal subject, IClient client, Resources resources)
         {
+            Subject = subject;
             Client = client;
             Resources = resources;
         }

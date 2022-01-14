@@ -1,5 +1,6 @@
-﻿using IdentityServer.Models;
-using static IdentityServer.Models.OpenIdConnects;
+﻿using IdentityServer;
+using IdentityServer.Models;
+using static IdentityServer.IdentityServerConstants;
 
 namespace Hosting.Configuration
 {
@@ -35,8 +36,8 @@ namespace Hosting.Configuration
 
         public static IEnumerable<IIdentityResource> IdentityResources => new IIdentityResource[]
         {
-            OpenIdConnects.IdentityResources.OpenId,
-            OpenIdConnects.IdentityResources.OfflineAccess,
+            IdentityServerConstants.IdentityResources.OpenId,
+            IdentityServerConstants.IdentityResources.OfflineAccess,
         };
     }
 }

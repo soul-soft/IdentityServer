@@ -16,6 +16,8 @@ namespace IdentityServer.Serialization
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             };
             JsonSerializerOptions.Converters.Add(new TokenJsonConverter());
+            JsonSerializerOptions.Converters.Add(new RefreshTokenJsonConverter());
+            JsonSerializerOptions.Converters.Add(new ReferenceTokenJsonConverter());
         }
 
         public static string Serialize(object obj)

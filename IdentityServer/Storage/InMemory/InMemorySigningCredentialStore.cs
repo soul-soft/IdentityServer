@@ -10,6 +10,12 @@ namespace IdentityServer.Storage
         {
             _descriptor = descriptor;
         }
+      
+        public Task<IEnumerable<SecurityKey>> GetSecurityKeysAsync()
+        {
+            var securityKeys = _descriptor.Select(s => s.Key);
+            return Task.FromResult(securityKeys);
+        }
 
         public Task<IEnumerable<JsonWebKey>> GetJsonWebKeysAsync()
         {
@@ -40,11 +46,6 @@ namespace IdentityServer.Storage
                     ?? _descriptor.First();
 
             return Task.FromResult(credential.SigningCredentials);
-        }
-
-        public IEnumerable<SecurityKey> GetSecurityKeys()
-        {
-            return _descriptor.Select(s => s.Key);
         }
     }
 }

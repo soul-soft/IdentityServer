@@ -4,6 +4,6 @@ namespace IdentityServer.Services
 {
     public interface IBearerTokenUsageParser
     {
-        Task<string?> GetBearerTokenAsync(HttpContext context);
+        Task<string?> ParserAsync(HttpContext context);
     }
 }

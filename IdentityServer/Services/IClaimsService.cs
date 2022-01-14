@@ -2,7 +2,7 @@
 
 namespace IdentityServer.Services
 {
-    public interface IClaimIssueService
+    public interface IClaimsService
     {
         Task<IEnumerable<Claim>> GetAccessTokenClaimsAsync(TokenRequest request);
         Task<IEnumerable<Claim>> GetIdentityTokenClaimsAsync(TokenRequest request);

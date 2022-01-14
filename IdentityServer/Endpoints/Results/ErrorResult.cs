@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 
 namespace IdentityServer.Endpoints
@@ -27,6 +28,12 @@ namespace IdentityServer.Endpoints
         public Task ExecuteAsync(HttpContext context)
         {
             context.Response.StatusCode = (int)StatusCode;
+            var options = context.RequestServices
+                .GetRequiredService<IdentityServerOptions>();
+            if (!options.IncludeErrorDetails)
+            {
+                ErrorDescription = null;
+            }
             context.Response.WriteAsJsonAsync(new
             {
                 error = Error,

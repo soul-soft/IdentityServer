@@ -5,8 +5,6 @@
         public string Name { get; set; }
         public string RoutePattern { get; set; }
         public Type Handler { get; set; }
-        public List<Attribute> Metas { get; set; } = new List<Attribute>();
-
         public EndpointDescriptor(string name, string path, Type handler)
         {
             Name = name;

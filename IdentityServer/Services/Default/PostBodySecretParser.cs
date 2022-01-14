@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace IdentityServer.Services
 {
-    public class PostBodySecretParser : ISecretResolver
+    public class PostBodySecretParser : ISecretParser
     {
         private readonly ILogger _logger;
 

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hosting.Controllers
@@ -11,6 +12,13 @@ namespace Hosting.Controllers
         public WeatherForecastController(ILogger<WeatherForecastController> logger)
         {
             _logger = logger;
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public string Test()
+        {
+            return "111";
         }
     }
 }

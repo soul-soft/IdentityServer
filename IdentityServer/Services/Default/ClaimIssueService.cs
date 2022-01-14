@@ -2,7 +2,7 @@
 
 namespace IdentityServer.Services
 {
-    public class ClaimIssueService : IClaimIssueService
+    public class ClaimIssueService : IClaimsService
     {
         private readonly IProfileService _profileService;
 
@@ -13,10 +13,10 @@ namespace IdentityServer.Services
             JwtClaimTypes.AuthenticationMethod,
             JwtClaimTypes.AuthenticationTime,
             JwtClaimTypes.AuthorizedParty,
+            JwtClaimTypes.IdentityProvider,
             JwtClaimTypes.AuthorizationCodeHash,
             JwtClaimTypes.ClientId,
             JwtClaimTypes.Expiration,
-            JwtClaimTypes.IdentityProvider,
             JwtClaimTypes.IssuedAt,
             JwtClaimTypes.Issuer,
             JwtClaimTypes.JwtId,
@@ -38,10 +38,13 @@ namespace IdentityServer.Services
         {
             var list = new List<Claim>();
             var claimTypes = FilterRequestedClaimTypes(request.Resources.UserClaims);
-            var profileDataRequest = new ProfileDataRequest(ProfileDataCaller.ClaimsProviderAccessToken,claimTypes);
-            var claims = await _profileService.GetProfileDataAsync(profileDataRequest);
-            list.AddRange(claims);
-            list.AddRange(request.Claims);
+            var profileDataRequest = new ProfileDataRequestContext(
+                request.Client,
+                request.Subject,
+                ProfileDataCaller.ClaimsProviderAccessToken,
+                claimTypes);
+            await _profileService.GetProfileDataAsync(profileDataRequest);
+            list.AddRange(profileDataRequest.IssuedClaims);
             return FilterProtocolClaims(list);
         }
 
@@ -49,10 +52,13 @@ namespace IdentityServer.Services
         {
             var list = new List<Claim>();
             var claimTypes = FilterRequestedClaimTypes(request.Resources.UserClaims);
-            var profileDataRequest = new ProfileDataRequest(ProfileDataCaller.ClaimsProviderIdentityToken,claimTypes);
-            var claims = await _profileService.GetProfileDataAsync(profileDataRequest);
-            list.AddRange(claims);
-            list.AddRange(request.Claims);
+            var profileDataRequest = new ProfileDataRequestContext(
+                request.Client,
+                request.Subject,
+                ProfileDataCaller.ClaimsProviderIdentityToken,
+                claimTypes);
+            await _profileService.GetProfileDataAsync(profileDataRequest);
+            list.AddRange(profileDataRequest.IssuedClaims);
             return FilterProtocolClaims(list);
         }
 

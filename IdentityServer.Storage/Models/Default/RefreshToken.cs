@@ -8,9 +8,9 @@
 
         public int Lifetime { get; }
 
-        public DateTime CreationTime { get; }
-
         public DateTime Expiration => CreationTime.AddSeconds(Lifetime);
+       
+        public DateTime CreationTime { get; }
 
         public RefreshToken(string id, IToken accessToken, int lifetime, DateTime creationTime)
         {

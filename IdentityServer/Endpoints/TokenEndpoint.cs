@@ -1,7 +1,6 @@
 ﻿using IdentityServer.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace IdentityServer.Endpoints
@@ -51,7 +50,7 @@ namespace IdentityServer.Endpoints
             {
                 return MethodNotAllowed();
             }
-            if (!context.Request.HasApplicationFormContentType())
+            if (!context.Request.HasFormContentType)
             {
                 return BadRequest(OpenIdConnectTokenErrors.InvalidRequest);
             }
@@ -66,7 +65,7 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Get Client
-            var client = await _clients.FindClientByIdAsync(clientSecret.Id);
+            var client = await _clients.GetAsync(clientSecret.Id);
             if (client == null)
             {
                 return BadRequest(OpenIdConnectTokenErrors.InvalidClient, "No client found");
@@ -141,12 +140,10 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Generator Response
-            var response = await _generator.ProcessAsync(new TokenRequest(client, resources)
+            var response = await _generator.ProcessAsync(new TokenRequest(grantValidationResult.Subject, client, resources)
             {
                 Scopes = scopes,
                 GrantType = grantType,
-                SubjectId = grantValidationResult.SubjectId,
-                Claims = grantValidationResult.Claims,
             });
             return TokenResult(response);
             #endregion

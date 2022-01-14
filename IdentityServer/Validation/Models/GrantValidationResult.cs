@@ -2,79 +2,57 @@
 
 namespace IdentityServer.Validation
 {
-    public class GrantValidationResult
+    public class GrantValidationResult : ValidationResult
     {
-        public bool IsError { get; }
+        public ClaimsPrincipal Subject { get; } = new ClaimsPrincipal();
 
-        public string Description { get; }
-
-        public string? SubjectId { get; }
-
-        public IReadOnlyCollection<Claim> Claims { get; } = new List<Claim>();
+        public GrantValidationResult(ClaimsPrincipal subject)
+            : base(false)
+        {
+            Subject = subject;
+        }
 
         protected GrantValidationResult(bool isError, string description = "success")
+            : base(isError, description)
         {
-            IsError = isError;
-            Description = description;
+
         }
 
-        protected GrantValidationResult(string? subject, IEnumerable<Claim> claims)
-           : this(false)
+        public static new GrantValidationResult Success()
         {
-            SubjectId = subject;
-            Claims = claims.ToList();
+            return new GrantValidationResult(false);
         }
 
-
-
-        public static GrantValidationResult Error(string description, params object[] args)
-        {
-            return new GrantValidationResult(true, string.Format(description, args));
-        }
-
-        public static Task<GrantValidationResult> ErrorAsync(string description, params object[] args)
-        {
-            return Task.FromResult(Error(description, args));
-        }
-
-        public static GrantValidationResult Success()
-        {
-            return new GrantValidationResult(null, new List<Claim>());
-        }
-
-        public static GrantValidationResult Success(string subject)
-        {
-            return new GrantValidationResult(subject, new List<Claim>());
-        }
-
-        public static GrantValidationResult Success(string subject, IEnumerable<Claim> claims)
-        {
-            return new GrantValidationResult(subject, claims);
-        }
-
-        public static GrantValidationResult Success(IEnumerable<Claim> claims)
-        {
-            return new GrantValidationResult(null, claims);
-        }
-        
-        public static Task<GrantValidationResult> SuccessAsync()
+        public static new Task<GrantValidationResult> SuccessAsync()
         {
             return Task.FromResult(Success());
         }
 
-        public static Task<GrantValidationResult> SuccessAsync(string subject)
+        public static new GrantValidationResult Error(string description, params object[] args)
         {
-            return Task.FromResult(Success(subject));
+            return new GrantValidationResult(true, string.Format(description, args));
         }
 
-        public static Task<GrantValidationResult> SuccessAsync(string subject, IEnumerable<Claim> claims)
+        public static new Task<GrantValidationResult> ErrorAsync(string description, params object[] args)
         {
-            return Task.FromResult(Success(subject, claims));
+            return Task.FromResult(Error(description, args));
         }
 
-        public static Task<GrantValidationResult> SuccessAsync(IEnumerable<Claim> claims)
+        public static GrantValidationResult Success(string subject, IEnumerable<Claim>? cliams = null)
         {
-            return Task.FromResult(Success(claims));
+            var list = new List<Claim>();
+            list.Add(new Claim(JwtClaimTypes.Subject, subject));
+            if (cliams != null)
+            {
+                list.AddRange(cliams);
+            }
+            return new GrantValidationResult(new ClaimsPrincipal(new ClaimsIdentity(list)));
         }
+
+        public static Task<GrantValidationResult> SuccessAsync(string subject, IEnumerable<Claim>? cliams = null)
+        {
+            return Task.FromResult(Success(subject, cliams));
+        }
+
     }
 }

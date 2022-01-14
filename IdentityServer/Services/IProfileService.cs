@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace IdentityServer.Services
+﻿namespace IdentityServer.Services
 {
     public interface IProfileService
     {
-        Task<IEnumerable<Claim>> GetProfileDataAsync(ProfileDataRequest context);
+        Task IsActiveAsync(IsActiveContext context);
+        Task GetProfileDataAsync(ProfileDataRequestContext context);
     }
 }

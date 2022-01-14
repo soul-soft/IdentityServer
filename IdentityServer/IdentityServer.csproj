@@ -12,11 +12,12 @@
 		<Using Include="IdentityServer.Hosting" />
 		<Using Include="IdentityServer.Services" />
 		<Using Include="IdentityServer.Endpoints" />
+		<Using Include="IdentityServer.Extensions" />
 		<Using Include="IdentityServer.Validation" />
 		<Using Include="IdentityServer.Configuration" />
 		<Using Include="IdentityServer.Infrastructure" />
 		<Using Include="IdentityServer.ResponseGenerators" />
-		<Using Include="IdentityServer.Models.OpenIdConnects" Static="true" />
+		<Using Include="IdentityServer.IdentityServerConstants" Static="true" />
 	</ItemGroup>
 	
 	<ItemGroup>		
@@ -26,13 +27,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="Hosting\Routing\JsonEndpointResult.cs~RFaa26d48.TMP" />
+	  <None Remove="Hosting\Endpoints\JsonEndpointResult.cs~RFaa26d48.TMP" />
 	</ItemGroup>
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.0" />
 	  <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.0" />
 	  <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="6.15.0" />
 	</ItemGroup>

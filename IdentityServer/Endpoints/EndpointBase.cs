@@ -32,6 +32,11 @@ namespace IdentityServer.Endpoints
             return new ErrorResult(error, description, HttpStatusCode.BadRequest);
         }
 
+        protected IEndpointResult Unauthorized(string error, string? description = null)
+        {
+            return new ErrorResult(error, description, HttpStatusCode.Unauthorized);
+        }
+
         protected IEndpointResult MethodNotAllowed()
         {
             return new StatusCodeResult(HttpStatusCode.MethodNotAllowed);

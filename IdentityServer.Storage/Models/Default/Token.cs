@@ -1,10 +1,12 @@
-﻿namespace IdentityServer.Models
+﻿using System.Security.Claims;
+
+namespace IdentityServer.Models
 {
     public class Token : IToken
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
-        public string Type { get; set; }
+        public string? Type { get; set; }
 
         public string? Issuer { get; set; } 
 
@@ -24,20 +26,16 @@
 
         public string? GrantType { get; set; } 
 
-        public DateTime CreationTime { get; set; }
-        
-        public ICollection<string> Scopes { get; set; } = new HashSet<string>();
+        public IReadOnlyCollection<string> Scopes { get; set; } = new HashSet<string>();
        
-        public ICollection<IClaimLite> Claims { get; set; } = new List<IClaimLite>();
+        public IReadOnlyCollection<ClaimLite> Claims { get; set; } = new List<ClaimLite>();
 
-        public ICollection<string> Audiences { get; set; } = new HashSet<string>();
+        public IReadOnlyCollection<string> Audiences { get; set; } = new HashSet<string>();
 
-        public ICollection<string> AllowedSigningAlgorithms { get; set; } = new HashSet<string>();
+        public IReadOnlyCollection<string> AllowedSigningAlgorithms { get; set; } = new HashSet<string>();
 
-        public Token(string id, string type)
-        {
-            Id = id;
-            Type = type;
-        }
+        public DateTime? NotBefore { get; set; }
+
+        public DateTime? Expiration { get; set; }
     }
 }

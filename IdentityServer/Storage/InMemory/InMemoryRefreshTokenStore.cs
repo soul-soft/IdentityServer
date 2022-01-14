@@ -9,10 +9,10 @@
             _storage = storage;
         }
 
-        public async Task<IRefreshToken?> FindRefreshTokenByIdAsync(string id)
+        public async Task<IRefreshToken?> GetAsync(string id)
         {
             var key = CreateKey(id);
-            return await _storage.GetAsync<RefreshToken>(key);
+            return await _storage.GetAsync<IRefreshToken>(key);
         }
 
         public async Task SaveAsync(IRefreshToken token)

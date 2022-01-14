@@ -34,7 +34,5 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseIdentityServer();
-
 app.MapControllers();
-
 app.Run();

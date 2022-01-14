@@ -3,7 +3,12 @@
     public class InputLengthRestrictions
     {
         private const int Default = 100;
-        
+
+        /// <summary>
+        /// Max length for AccessToken
+        /// </summary>
+        public int AccessToken { get; set; } = 51200;
+
         /// <summary>
         /// Max length for client_id
         /// </summary>
