@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.Extensions.DependencyInjection;
@@ -90,6 +91,13 @@ namespace IdentityServer.Hosting
                 };
                 var routePattern = RoutePatternFactory.Parse(item.RoutePattern);
                 var builder = new RouteEndpointBuilder(requestDelegate, routePattern, 0);
+                if (item.Name == Constants.EndpointNames.UserInfo)
+                {
+                    builder.Metadata.Add(new AuthorizeAttribute() 
+                    {
+                        AuthenticationSchemes= Constants.AuthenticationSchemes.AuthorizationHeaderBearer
+                    });
+                }
                 yield return builder.Build();
             }
         }

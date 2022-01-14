@@ -1,9 +1,11 @@
 ﻿using IdentityServer;
-using IdentityServer.Endpoints;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -12,6 +14,12 @@ namespace Microsoft.Extensions.DependencyInjection
         #region CoreServices
         public static IIdentityServerBuilder AddCoreServices(this IIdentityServerBuilder builder)
         {
+            builder.Services.AddAuthentication()
+                .AddJwtBearer(options => 
+                {
+                   
+                });
+            builder.Services.AddTransient<IPostConfigureOptions<JwtBearerOptions>, PostConfigureJwtBearerOptions>();
             return builder;
         }
         #endregion       
@@ -41,7 +49,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<IIdGenerator, IdGenerator>();
             builder.Services.TryAddTransient<IClaimIssueService, ClaimIssueService>();
             builder.Services.TryAddTransient<IProfileService, ProfileService>();
-            builder.Services.TryAddTransient<ISecretParser, PostBodySecretParser>();
+            builder.Services.TryAddTransient<ISecretResolver, PostBodySecretParser>();
             builder.Services.TryAddTransient<IObjectStorage, ObjectStorage>();
             builder.Services.TryAddTransient<ISecretsListParser, SecretsListParser>();
             builder.Services.TryAddTransient<ITokenService, TokenService>();

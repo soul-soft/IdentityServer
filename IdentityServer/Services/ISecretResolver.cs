@@ -2,7 +2,7 @@
 
 namespace IdentityServer.Services
 {
-    public interface ISecretParser
+    public interface ISecretResolver
     {
         string AuthenticationMethod { get; }
         Task<ClientSecret?> ParseAsync(HttpContext context);

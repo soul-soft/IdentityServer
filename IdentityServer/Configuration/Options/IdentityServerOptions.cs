@@ -2,6 +2,7 @@
 {
     public class IdentityServerOptions
     {
+        public bool IncludeErrorDetails { get; set; } = true;
         public string? IdentityProvider { get; set; }
         public InputLengthRestrictions InputLengthRestrictions { get; set; } = new InputLengthRestrictions();
         public DiscoveryOptions Discovery { get; set; } = new DiscoveryOptions();

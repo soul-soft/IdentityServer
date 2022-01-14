@@ -27,5 +27,15 @@
 
             public const string UserInfo = ConnectPathPrefix + "/userinfo";
         }
+
+        public static class AuthenticationSchemes
+        {
+            public const string AuthorizationHeaderBearer = "Bearer";
+            public const string FormPostBearer = "access_token";
+            public const string QueryStringBearer = "access_token";
+            public const string AuthorizationHeaderPop = "PoP";
+            public const string FormPostPop = "pop_access_token";
+            public const string QueryStringPop = "pop_access_token";
+        }
     }
 }

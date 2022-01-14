@@ -6,11 +6,11 @@ namespace IdentityServer.Services
     {
         private readonly IdentityServerOptions _options;
 
-        private readonly IEnumerable<ISecretParser> _parsers;
+        private readonly IEnumerable<ISecretResolver> _parsers;
 
         public SecretsListParser(
             IdentityServerOptions options,
-            IEnumerable<ISecretParser> parsers)
+            IEnumerable<ISecretResolver> parsers)
         {
             _options = options;
             _parsers = parsers;

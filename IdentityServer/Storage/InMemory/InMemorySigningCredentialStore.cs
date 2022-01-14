@@ -41,5 +41,10 @@ namespace IdentityServer.Storage
 
             return Task.FromResult(credential.SigningCredentials);
         }
+
+        public IEnumerable<SecurityKey> GetSecurityKeys()
+        {
+            return _descriptor.Select(s => s.Key);
+        }
     }
 }

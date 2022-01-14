@@ -8,6 +8,7 @@ namespace Microsoft.AspNetCore.Builder
         public static IApplicationBuilder UseIdentityServer(this WebApplication app)
         {
             app.UseAuthentication();
+            app.UseAuthorization();
             app.MapEndpoints();
             return app;
         }
