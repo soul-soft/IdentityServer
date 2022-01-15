@@ -2,6 +2,6 @@
 {
     public interface IScopeValidator
     {
-        Task<ValidationResult> Validate(IEnumerable<string> allowedScopes,IEnumerable<string> requestedScopes);
+        Task<ValidationResult> ValidateAsync(IEnumerable<string> allowedScopes,IEnumerable<string> requestedScopes);
     }
 }

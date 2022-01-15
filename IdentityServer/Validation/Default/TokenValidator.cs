@@ -8,10 +8,11 @@ namespace IdentityServer.Validation
     internal class TokenValidator : ITokenValidator
     {
         private readonly IServerUrl _urls;
+        private readonly IClientStore _clients;
         private readonly ISystemClock _systemClock;
         private readonly IdentityServerOptions _options;
+        private readonly IScopeValidator _scopeValidator;
         private readonly ISigningCredentialStore _credentials;
-        private readonly IClientStore _clients;
         private readonly IProfileService _profileService;
         private readonly IReferenceTokenService _referenceTokenService;
 
@@ -20,13 +21,15 @@ namespace IdentityServer.Validation
             IClientStore clients,
             ISystemClock systemClock,
             IdentityServerOptions options,
-            ISigningCredentialStore credentials,
+            IScopeValidator scopeValidator,
             IProfileService profileService,
+            ISigningCredentialStore credentials,
             IReferenceTokenService referenceTokenService)
         {
             _urls = urls;
             _options = options;
             _clients = clients;
+            _scopeValidator = scopeValidator;
             _systemClock = systemClock;
             _credentials = credentials;
             _profileService = profileService;
@@ -52,11 +55,6 @@ namespace IdentityServer.Validation
             {
                 validationResult = await ValidateReferenceTokenAsync(token);
             }
-            var sub = validationResult.Subject.FindFirstValue(JwtClaimTypes.Subject);
-            if (string.IsNullOrWhiteSpace(sub))
-            {
-                return TokenValidationResult.Error("Sub is missing");
-            }
             var isActive = new IsActiveContext(
                 validationResult.Client,
                 validationResult.Subject,
@@ -64,6 +62,7 @@ namespace IdentityServer.Validation
             await _profileService.IsActiveAsync(isActive);
             if (!isActive.IsActive)
             {
+                var sub = validationResult.Subject.GetSubjectId();
                 return TokenValidationResult.Error("User marked as not active: {subject}", sub);
             }
             return validationResult;
@@ -100,10 +99,10 @@ namespace IdentityServer.Validation
                 {
                     return TokenValidationResult.Error("Client deleted or disabled: {clientId}", clidentId);
                 }
-                var sub = subject.GetSubjectId();
-                if (string.IsNullOrWhiteSpace(sub))
+                var result = await ValidateClientAsync(client, subject);
+                if (result.IsError)
                 {
-                    return TokenValidationResult.Error("Sub is missing");
+                    return TokenValidationResult.Error(result.Description);
                 }
                 return TokenValidationResult.Success(client, subject);
             }
@@ -137,12 +136,30 @@ namespace IdentityServer.Validation
             {
                 return TokenValidationResult.Error("Client deleted or disabled: {clientId}", clidentId);
             }
+            var result = await ValidateClientAsync(client, subject);
+            if (result.IsError)
+            {
+                return TokenValidationResult.Error(result.Description);
+            }
+            return TokenValidationResult.Success(client, subject);
+        }
+
+        private async Task<ValidationResult> ValidateClientAsync(IClient client, ClaimsPrincipal subject)
+        {
             var sub = subject.GetSubjectId();
             if (string.IsNullOrWhiteSpace(sub))
             {
-                return TokenValidationResult.Error("Sub is missing");
+                return ValidationResult.Error("Sub is missing");
             }
-            return TokenValidationResult.Success(client, subject);
+            var scopes = subject.FindAll(JwtClaimTypes.Scope)
+                   .Select(s => s.Value)
+                   .Where(s => !string.IsNullOrWhiteSpace(s));
+            var validationResult = await _scopeValidator.ValidateAsync(client.AllowedScopes, scopes);
+            if (validationResult.IsError)
+            {
+                return ValidationResult.Error(validationResult.Description);
+            }
+            return ValidationResult.Success();
         }
     }
 }

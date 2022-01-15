@@ -2,8 +2,8 @@
 
 namespace IdentityServer.Authentication
 {
-    internal class LocalApiAuthenticationOptions : AuthenticationSchemeOptions
+    public class LocalApiAuthenticationOptions : AuthenticationSchemeOptions
     {
-
+        public bool SaveToken { get; set; } = true;
     }
 }

@@ -1,5 +1,4 @@
-﻿using IdentityServer.Authentication;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -9,7 +8,7 @@ namespace Microsoft.Extensions.DependencyInjection
     internal static class CoreExtensions
     {
         #region CoreServices
-        public static IIdentityServerBuilder AddCoreServices(this IIdentityServerBuilder builder)
+        public static IIdentityServerBuilder AddLocalApiAuthentication(this IIdentityServerBuilder builder)
         {
             builder.Services.AddAuthentication(LocalApi.AuthenticationScheme)
                 .AddLoaclApiAuthentication();

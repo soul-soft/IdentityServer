@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication;
 
 namespace IdentityServer.Endpoints
 {
@@ -21,17 +22,20 @@ namespace IdentityServer.Endpoints
 
         public override async Task<IEndpointResult> ProcessAsync(HttpContext context)
         {
-            var token = await _bearerTokenUsageParser.ParserAsync(context);
-            var validationResult = await _tokenValidator.ValidateAccessTokenAsync(token);
-            if (validationResult.IsError)
+            var authenticateResult = await context.AuthenticateAsync();
+            if (authenticateResult == null || !authenticateResult.Succeeded)
             {
-                return Unauthorized(OpenIdConnectTokenErrors.InvalidToken, validationResult.Description);
+                return Unauthorized(OpenIdConnectTokenErrors.InvalidRequest, "authentication failed");
             }
-            var client = validationResult.Client;
-            var subject = validationResult.Subject;
+            var client = authenticateResult.Properties.GetParameter<IClient>("client");
+            if (client == null)
+            {
+                return Unauthorized(OpenIdConnectTokenErrors.InvalidRequest, "Client deleted or disabled");
+            }
+            var subject = authenticateResult.Principal;
             var isActive = new IsActiveContext(
                 client,
-                subject,
+                authenticateResult.Principal,
                 ProfileIsActiveCaller.UserInfoRequestValidation);
             await _profileService.IsActiveAsync(isActive);
             if (!isActive.IsActive)
@@ -43,7 +47,7 @@ namespace IdentityServer.Endpoints
             //    subject,
             //    ProfileDataCaller.UserInfoEndpoint);
             //await _profileService.GetProfileDataAsync(profileDataCotnext);
-            return Unauthorized(OpenIdConnectTokenErrors.InvalidToken, validationResult.Description);
+            throw new NotImplementedException();
         }
 
     }

@@ -9,7 +9,7 @@
             _options=options;
         }
       
-        public Task<ValidationResult> Validate(IEnumerable<string> allowedScopes, IEnumerable<string> requestedScopes)
+        public Task<ValidationResult> ValidateAsync(IEnumerable<string> allowedScopes, IEnumerable<string> requestedScopes)
         {
             if (!allowedScopes.Any())
             {

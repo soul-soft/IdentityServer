@@ -9,8 +9,8 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             return builder.AddScheme<LocalApiAuthenticationOptions, LocalApiAuthenticationHandler>(
                 LocalApi.AuthenticationScheme,
-                LocalApi.AuthenticationScheme, 
-                configure => 
+                LocalApi.AuthenticationScheme,
+                configure =>
                 {
 
                 });

@@ -2,7 +2,7 @@
 
 namespace IdentityServer.Validation
 {
-    public class ValidatedRequest
+    public class ValidatedTokenRequest
     {
         public IClient Client { get; }
         public string GrantType { get; }
@@ -12,7 +12,7 @@ namespace IdentityServer.Validation
         public IdentityServerOptions Options { get; }
         public NameValueCollection Raw { get; }
 
-        public ValidatedRequest(
+        public ValidatedTokenRequest(
             IClient client,
             ClientSecret clientSecret,
             IdentityServerOptions options,

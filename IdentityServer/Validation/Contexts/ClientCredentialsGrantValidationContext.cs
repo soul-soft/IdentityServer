@@ -2,9 +2,9 @@
 {
     public class ClientCredentialsGrantValidationContext
     {
-        public ValidatedRequest Request { get; }
+        public ValidatedTokenRequest Request { get; }
        
-        public ClientCredentialsGrantValidationContext(ValidatedRequest request)
+        public ClientCredentialsGrantValidationContext(ValidatedTokenRequest request)
         {
             Request = request;
         }

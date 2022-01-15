@@ -1,5 +1,6 @@
 ﻿using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -36,9 +37,17 @@ namespace IdentityServer.Authentication
             {
                 return AuthenticateResult.Fail("Failed to validate the token");
             }
-            var ticket = new AuthenticationTicket(result.Subject, Scheme.Name);
+            var properties = new AuthenticationProperties();
+            if (Options.SaveToken)
+            {
+                properties.StoreTokens(new[]
+                {
+                    new AuthenticationToken { Name = "access_token", Value = token }
+                });
+            }
+            properties.SetParameter("client", result.Client);
+            var ticket = new AuthenticationTicket(result.Subject, properties, Scheme.Name);
             return AuthenticateResult.Success(ticket);
         }
-
     }
 }
