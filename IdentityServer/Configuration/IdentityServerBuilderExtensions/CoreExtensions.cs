@@ -10,8 +10,7 @@ namespace Microsoft.Extensions.DependencyInjection
         #region CoreServices
         public static IIdentityServerBuilder AddLocalApiAuthentication(this IIdentityServerBuilder builder)
         {
-            builder.Services.AddAuthentication(LocalApi.AuthenticationScheme)
-                .AddLoaclApiAuthentication();
+            builder.Services.AddAuthentication().AddLoaclApiAuthentication();
             return builder;
         }
         #endregion       
@@ -86,6 +85,7 @@ namespace Microsoft.Extensions.DependencyInjection
         #region ResponseGenerators
         public static IIdentityServerBuilder AddResponseGenerators(this IIdentityServerBuilder builder)
         {
+            builder.Services.TryAddTransient<IUserInfoResponseGenerator, UserInfoResponseGenerator>();
             builder.Services.TryAddTransient<ITokenResponseGenerator, TokenResponseGenerator>();
             builder.Services.TryAddTransient<IDiscoveryResponseGenerator, DiscoveryResponseGenerator>();
             return builder;

@@ -9,7 +9,7 @@
             _resources = resources;
         }
 
-        public Task<Resources> FindResourcesByScopeAsync(IEnumerable<string> scopes)
+        public Task<Resources> FindByScopeAsync(IEnumerable<string> scopes)
         {
             var identityResources = _resources.IdentityResources
                 .Where(a => a.Enabled)

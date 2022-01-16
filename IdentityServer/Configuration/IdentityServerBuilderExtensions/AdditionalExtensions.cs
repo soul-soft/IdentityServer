@@ -112,32 +112,5 @@ namespace Microsoft.Extensions.DependencyInjection
             return builder;
         }
         #endregion
-
-        #region ResourceOwnerPasswordGrantValidator
-        public static IIdentityServerBuilder AddResourceOwnerPasswordGrantValidator<T>(this IIdentityServerBuilder builder)
-            where T : class, IResourceOwnerPasswordGrantValidator
-        {
-            builder.Services.ReplaceTransient<IResourceOwnerPasswordGrantValidator, T>();
-            return builder;
-        }
-        #endregion
-
-        #region ExtensionGrantValidator
-        public static IIdentityServerBuilder AddExtensionGrantValidator<T>(this IIdentityServerBuilder builder)
-            where T : class, IExtensionGrantValidator
-        {
-            builder.Services.AddSingleton<IExtensionGrantValidator, T>();
-            return builder;
-        }
-        #endregion
-
-        #region ProfileService
-        public static IIdentityServerBuilder AddProfileService<T>(this IIdentityServerBuilder builder)
-           where T : class, IProfileService
-        {
-            builder.Services.ReplaceTransient<IProfileService, T>();
-            return builder;
-        }
-        #endregion
     }
 }

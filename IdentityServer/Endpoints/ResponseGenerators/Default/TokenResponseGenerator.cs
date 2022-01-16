@@ -1,4 +1,4 @@
-﻿namespace IdentityServer.ResponseGenerators
+﻿namespace IdentityServer.Endpoints
 {
     public class TokenResponseGenerator : ITokenResponseGenerator
     {

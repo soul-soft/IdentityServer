@@ -112,7 +112,7 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Get Resources
-            var resources = await _resources.FindResourcesByScopeAsync(scopes);
+            var resources = await _resources.FindByScopeAsync(scopes);
             #endregion
 
             #region Validate Resources

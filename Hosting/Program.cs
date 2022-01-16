@@ -1,4 +1,6 @@
 using Hosting.Configuration;
+using IdentityServer.Endpoints;
+using IdentityServer.Validation;
 using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,9 +12,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDistributedMemoryCache();
+builder.Services.AddTransient<IExtensionGrantValidator, MyExtensionGrantValidator>();
+builder.Services.AddTransient<IUserInfoResponseGenerator, UserInfoResponseGenerator>();
+builder.Services.AddTransient<IResourceOwnerPasswordGrantValidator, ResourceOwnerPasswordGrantValidator>();
 builder.Services.AddIdentityServer()
-        .AddExtensionGrantValidator<MyExtensionGrantValidator>()
-        .AddResourceOwnerPasswordGrantValidator<ResourceOwnerPasswordGrantValidator>()
         .AddInMemoryStores(setup =>
         {
             setup.AddClients(Config.Clients);

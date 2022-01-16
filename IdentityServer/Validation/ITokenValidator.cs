@@ -1,7 +1,9 @@
-﻿namespace IdentityServer.Validation
+﻿using System.Security.Claims;
+
+namespace IdentityServer.Validation
 {
     public interface ITokenValidator
     {
-        Task<TokenValidationResult> ValidateAccessTokenAsync(string? token);
+        Task<ClaimsPrincipal> ValidateAccessTokenAsync(string? token);
     }
 }

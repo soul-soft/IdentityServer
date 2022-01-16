@@ -26,7 +26,6 @@ namespace IdentityServer.Models
 
     public enum ProfileDataCaller
     {
-        UserInfoEndpoint,
         ClaimsProviderIdentityToken,
         ClaimsProviderAccessToken
     }

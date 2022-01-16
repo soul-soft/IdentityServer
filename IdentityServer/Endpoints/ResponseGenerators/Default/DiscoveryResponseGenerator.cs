@@ -1,6 +1,6 @@
 ﻿using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
-namespace IdentityServer.ResponseGenerators
+namespace IdentityServer.Endpoints
 {
     internal class DiscoveryResponseGenerator
         : IDiscoveryResponseGenerator

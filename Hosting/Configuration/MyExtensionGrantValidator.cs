@@ -1,6 +1,4 @@
-﻿using IdentityServer.Models;
-using IdentityServer.Validation;
-using System.Security.Claims;
+﻿using IdentityServer.Validation;
 
 namespace Hosting.Configuration
 {

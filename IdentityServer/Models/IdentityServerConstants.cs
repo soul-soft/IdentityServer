@@ -44,7 +44,7 @@
         }
         public static class LocalApi
         {
-            public const string AuthenticationScheme = "IdentityServerAccessToken";
+            public const string AuthenticationScheme = "IdentityServer";
             public const string ScopeName = "IdentityServerApi";
             public const string PolicyName = AuthenticationScheme;
         }
