@@ -29,8 +29,6 @@ namespace IdentityServer.Services
             JwtClaimTypes.Confirmation
         };
 
-
-
         public ClaimsService(IProfileService profileService)
         {
             _profileService = profileService;
@@ -39,30 +37,36 @@ namespace IdentityServer.Services
         public async Task<IEnumerable<Claim>> GetAccessTokenClaimsAsync(ValidatedTokenRequest request)
         {
             var list = new List<Claim>();
-            var profileDataRequest = new ProfileDataRequestContext(
+            var profileContext = new ProfileDataRequestContext(
                 request.Client,
                 request.Subject,
                 ProfileDataCaller.ClaimsProviderIdentityToken,
                 FilterRequestedClaimTypes(request.Resources.UserClaims));
-            await _profileService.GetProfileDataAsync(profileDataRequest);
-            list.AddRange(profileDataRequest.IssuedClaims);
-            var standardClaims = GetStandardClaims(request.Subject);
-            list.AddRange(standardClaims);
+            await _profileService.GetProfileDataAsync(profileContext);
+            list.AddRange(profileContext.IssuedClaims);
+            if (request.GrantType != GrantTypes.ClientCredentials)
+            {
+                var standardClaims = GetStandardClaims(request.Subject);
+                list.AddRange(standardClaims);
+            }
             return list;
         }
 
         public async Task<IEnumerable<Claim>> GetIdentityTokenClaimsAsync(ValidatedTokenRequest request)
         {
             var list = new List<Claim>();
-            var profileDataRequest = new ProfileDataRequestContext(
+            var profileContext = new ProfileDataRequestContext(
                 request.Client,
                 request.Subject,
                 ProfileDataCaller.ClaimsProviderIdentityToken,
                 FilterRequestedClaimTypes(request.Resources.UserClaims));
-            await _profileService.GetProfileDataAsync(profileDataRequest);
-            list.AddRange(profileDataRequest.IssuedClaims);
-            var standardClaims = GetStandardClaims(request.Subject);
-            list.AddRange(standardClaims);
+            await _profileService.GetProfileDataAsync(profileContext);
+            list.AddRange(profileContext.IssuedClaims);
+            if (request.GrantType != GrantTypes.ClientCredentials)
+            {
+                var standardClaims = GetStandardClaims(request.Subject);
+                list.AddRange(standardClaims);
+            }
             return list;
         }
 
