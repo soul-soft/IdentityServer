@@ -16,7 +16,7 @@
                 .First();
         }
 
-        public Task<ValidationResult> ValidateAsync(ClientSecret clientSecret, IEnumerable<ISecret> allowedSecrets)
+        public Task ValidateAsync(ClientSecret clientSecret, IEnumerable<ISecret> allowedSecrets)
         {
             var validator = GetSecretValidator(clientSecret.Type);
             return validator.ValidateAsync(clientSecret, allowedSecrets);

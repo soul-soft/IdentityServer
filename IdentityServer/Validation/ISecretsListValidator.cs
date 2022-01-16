@@ -2,6 +2,6 @@
 {
     public interface ISecretsListValidator
     {
-        Task<ValidationResult> ValidateAsync(ClientSecret clientSecret, IEnumerable<ISecret> allowedSecrets);
+        Task ValidateAsync(ClientSecret clientSecret, IEnumerable<ISecret> allowedSecrets);
     }
 }

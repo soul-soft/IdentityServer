@@ -2,13 +2,13 @@
 {
     public class ResourceOwnerPasswordGrantValidationContext
     {
-        public ValidatedTokenRequest Request { get; }
+        public TokenValidatedRequest Request { get; }
       
         public string Username { get; }
         
         public string Password { get; }
 
-        public ResourceOwnerPasswordGrantValidationContext(ValidatedTokenRequest request, string username, string password)
+        public ResourceOwnerPasswordGrantValidationContext(TokenValidatedRequest request, string username, string password)
         {
             Request = request;
             Username = username;

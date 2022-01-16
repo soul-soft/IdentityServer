@@ -31,11 +31,11 @@ namespace IdentityServer.Validation
         {
             if (string.IsNullOrWhiteSpace(token))
             {
-                throw new ValidationException("Access token is missing");
+                throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "Access token is missing");
             }
             if (token.Length > _options.InputLengthRestrictions.AccessToken)
             {
-                throw new ValidationException("Access token too long");
+                throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "Access token too long");
             }
             if (token.Contains('.'))
             {
@@ -66,7 +66,7 @@ namespace IdentityServer.Validation
             }
             catch (Exception ex)
             {
-                throw new ValidationException(ex.Message);
+                throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, ex.Message);
             }
         }
 
@@ -75,16 +75,15 @@ namespace IdentityServer.Validation
             var referenceToken = await _referenceTokenService.GetAsync(token);
             if (referenceToken == null || referenceToken.Expiration < _systemClock.UtcNow.UtcDateTime)
             {
-                throw new ValidationException("The access token has expired");
+                throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "The access token has expired");
             }
             var issuer = _urls.GetIdentityServerIssuerUri();
             if (referenceToken.Token.Issuer != issuer)
             {
-                throw new ValidationException("Invalid issuer");
+                throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "Invalid issuer");
             }
             var claims = referenceToken.Token.ToClaims(_options);
             return new ClaimsPrincipal(new ClaimsIdentity(claims));
         }
-     
     }
 }

@@ -56,31 +56,21 @@ namespace IdentityServer.Endpoints
             }
             #endregion
 
-            #region Get Secret
+            #region Validate ClientSecret
             var clientSecret = await _secretsParser.ParseAsync(context);
             if (clientSecret == null)
             {
                 return BadRequest(OpenIdConnectTokenErrors.InvalidClient, "No client credentials found");
             }
-            #endregion
-
-            #region Get Client
             var client = await _clients.GetAsync(clientSecret.Id);
             if (client == null)
             {
                 return BadRequest(OpenIdConnectTokenErrors.InvalidClient, "No client found");
             }
+            await _secretsValidator.ValidateAsync(clientSecret, client.ClientSecrets);
             #endregion
 
-            #region Validate Secret
-            var validationResult = await _secretsValidator.ValidateAsync(clientSecret, client.ClientSecrets);
-            if (validationResult.IsError)
-            {
-                return BadRequest(OpenIdConnectTokenErrors.UnauthorizedClient, validationResult.Description);
-            }
-            #endregion
-
-            #region Get Scopes
+            #region Validate Scopes
             var form = await context.Request.ReadFormAsNameValueCollectionAsync();
             var scope = form[OpenIdConnectParameterNames.Scope];
             if (string.IsNullOrWhiteSpace(scope))
@@ -88,14 +78,7 @@ namespace IdentityServer.Endpoints
                 scope = string.Join(",", client.AllowedScopes);
             }
             var scopes = scope.Split(",").Where(a => !string.IsNullOrWhiteSpace(a)).ToArray();
-            #endregion
-
-            #region Validate Scopes
-            validationResult = await _scopeValidator.ValidateAsync(client.AllowedScopes, scopes);
-            if (validationResult.IsError)
-            {
-                return BadRequest(OpenIdConnectTokenErrors.InvalidScope, validationResult.Description);
-            }
+            await _scopeValidator.ValidateAsync(client.AllowedScopes, scopes);
             #endregion
 
             #region Validate GrantType
@@ -104,27 +87,16 @@ namespace IdentityServer.Endpoints
             {
                 return BadRequest(OpenIdConnectTokenErrors.InvalidGrant, "Grant Type is missing");
             }
-            validationResult = await _grantTypeValidator.ValidateAsync(grantType, client.AllowedGrantTypes);
-            if (validationResult.IsError)
-            {
-                return BadRequest(OpenIdConnectTokenErrors.InvalidGrant, validationResult.Description);
-            }
-            #endregion
-
-            #region Get Resources
-            var resources = await _resources.FindByScopeAsync(scopes);
+            await _grantTypeValidator.ValidateAsync(grantType, client.AllowedGrantTypes);
             #endregion
 
             #region Validate Resources
-            validationResult = await _resourceValidator.ValidateAsync(resources, scopes);
-            if (validationResult.IsError)
-            {
-                return BadRequest(OpenIdConnectTokenErrors.InvalidScope, validationResult.Description);
-            }
+            var resources = await _resources.FindByScopeAsync(scopes);
+            await _resourceValidator.ValidateAsync(resources, scopes);
             #endregion
 
             #region Validate Grant
-            var validatedRequest = new ValidatedTokenRequest(
+            var validatedRequest = new TokenValidatedRequest(
                 client: client,
                 clientSecret: clientSecret,
                 options: _options,
@@ -133,10 +105,6 @@ namespace IdentityServer.Endpoints
                 grantType: grantType,
                 raw: form);
             var grantValidationResult = await ValidateGrantAsync(context, validatedRequest);
-            if (grantValidationResult.IsError)
-            {
-                return BadRequest(OpenIdConnectTokenErrors.InvalidGrant, grantValidationResult.Description);
-            }
             #endregion
 
             #region Generator Response
@@ -149,19 +117,19 @@ namespace IdentityServer.Endpoints
             #endregion
         }
 
-        private async Task<GrantValidationResult> ValidateGrantAsync(HttpContext context, ValidatedTokenRequest request)
+        private async Task<GrantValidationResult> ValidateGrantAsync(HttpContext context, TokenValidatedRequest request)
         {
             //验证刷新令牌
-            if(GrantTypes.RefreshToken.Equals(request.GrantType))
+            if (GrantTypes.RefreshToken.Equals(request.GrantType))
             {
                 var refreshToken = request.Raw[OpenIdConnectParameterNames.RefreshToken];
-                if (refreshToken==null)
+                if (refreshToken == null)
                 {
-                    return GrantValidationResult.Error("RefreshToken is missing");
+                    throw new InvalidRequestException("RefreshToken is missing");
                 }
-                if (refreshToken.Length>_options.InputLengthRestrictions.RefreshToken)
+                if (refreshToken.Length > _options.InputLengthRestrictions.RefreshToken)
                 {
-                    return GrantValidationResult.Error("RefreshToken too long");
+                    throw new InvalidRequestException("RefreshToken too long");
                 }
                 var grantContext = new RefreshTokenGrantValidationContext(refreshToken, request);
                 var grantValidator = context.RequestServices.GetRequiredService<IRefreshTokenGrantValidator>();
@@ -182,19 +150,19 @@ namespace IdentityServer.Endpoints
                 var password = request.Raw[OpenIdConnectParameterNames.Password];
                 if (string.IsNullOrEmpty(username))
                 {
-                    return GrantValidationResult.Error("Username is missing");
+                    throw new InvalidRequestException("Username is missing");
                 }
                 if (username.Length > _options.InputLengthRestrictions.UserName)
                 {
-                    return GrantValidationResult.Error("Username too long");
+                    throw new InvalidRequestException("Username too long");
                 }
                 if (string.IsNullOrEmpty(password))
                 {
-                    return GrantValidationResult.Error("Password is missing");
+                    throw new InvalidRequestException("Password is missing");
                 }
                 if (password.Length > _options.InputLengthRestrictions.Password)
                 {
-                    return GrantValidationResult.Error("Password is missing");
+                    throw new InvalidRequestException("Password too long");
                 }
                 var grantContext = new ResourceOwnerPasswordGrantValidationContext(
                     request: request,

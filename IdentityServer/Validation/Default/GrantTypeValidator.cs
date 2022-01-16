@@ -9,17 +9,17 @@
             _options = options;
         }
 
-        public Task<ValidationResult> ValidateAsync(string requestedGrantType, IEnumerable<string> allowedGrantTypes)
+        public Task ValidateAsync(string requestedGrantType, IEnumerable<string> allowedGrantTypes)
         {
             if (requestedGrantType.Length > _options.InputLengthRestrictions.GrantType)
             {
-                return ValidationResult.ErrorAsync("Grant type is too long");
+                throw new InvalidGrantException("Grant type is too long");
             }
             if (!allowedGrantTypes.Contains(requestedGrantType))
             {
-                return ValidationResult.ErrorAsync("The client does not allow '{0}' authorization", requestedGrantType);
+                throw new InvalidGrantException(string.Format("The client does not allow '{0}' authorization", requestedGrantType));
             }
-            return ValidationResult.SuccessAsync();
+            return Task.CompletedTask;
         }
     }
 }

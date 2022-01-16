@@ -21,7 +21,7 @@ namespace IdentityServer.Hosting
             }
             catch (Exception ex)
             {
-                if (ex is ValidationException validationException)
+                if (ex is InvalidException validationException)
                 {
                     var result = new ErrorResult(
                         validationException.Error,

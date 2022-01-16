@@ -22,7 +22,7 @@
             var validator = GetValidator(context.Request.GrantType);
             if (validator == null)
             {
-                return GrantValidationResult.ErrorAsync("The identityserver does not support '{0}' authentication", context.Request.GrantType);
+                throw new InvalidRequestException(string.Format("The identityserver does not support '{0}' authentication", context.Request.GrantType));
             }
             return validator.ValidateAsync(context);
         }

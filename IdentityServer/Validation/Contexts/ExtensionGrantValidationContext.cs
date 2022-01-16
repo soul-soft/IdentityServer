@@ -2,9 +2,9 @@
 {
     public class ExtensionGrantValidationContext
     {
-        public ValidatedTokenRequest Request { get; }
+        public TokenValidatedRequest Request { get; }
      
-        public ExtensionGrantValidationContext(ValidatedTokenRequest request)
+        public ExtensionGrantValidationContext(TokenValidatedRequest request)
         {
             Request = request;
         }

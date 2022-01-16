@@ -2,6 +2,6 @@
 {
     public interface IResourceValidator
     {
-        Task<ValidationResult> ValidateAsync(Resources resources, IEnumerable<string> requestedScopes);
+        Task ValidateAsync(Resources resources, IEnumerable<string> requestedScopes);
     }
 }

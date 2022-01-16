@@ -11,12 +11,13 @@ namespace Hosting.Configuration
         {
             if (context.Username == "test" && context.Password == "test")
             {
-                return GrantValidationResult.SuccessAsync("1",new Claim[] 
-                {
-                    new Claim(JwtClaimTypes.Role,"admin")
-                });
+                var identity = new ClaimsIdentity();
+                identity.AddClaim(new Claim(JwtClaimTypes.Subject, "1"));
+                identity.AddClaim(new Claim(JwtClaimTypes.Role, "admin"));
+                var result = new GrantValidationResult(identity);
+                return Task.FromResult(result);
             }
-            return GrantValidationResult.ErrorAsync("用户名或密码错误");
+            throw new InvalidGrantException("用户名或密码错误");
         }
     }
 }

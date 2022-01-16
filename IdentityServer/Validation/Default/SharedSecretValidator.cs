@@ -13,13 +13,13 @@ namespace IdentityServer.Validation
             _clock = clock;
         }
 
-        public Task<ValidationResult> ValidateAsync(ClientSecret clientSecret,IEnumerable<ISecret> allowedSecrets)
+        public Task ValidateAsync(ClientSecret clientSecret, IEnumerable<ISecret> allowedSecrets)
         {
             var credential = clientSecret.Credential?.ToString();
 
             if (string.IsNullOrWhiteSpace(credential))
             {
-                return ValidationResult.ErrorAsync("Client credential is missing");
+                throw new UnauthorizedClientException("Client credential is missing");
             }
 
             var credentials = new string[]
@@ -33,15 +33,15 @@ namespace IdentityServer.Validation
 
             if (secets.Any(a => a.Expiration == null || a.Expiration >= _clock.UtcNow.UtcDateTime))
             {
-                return ValidationResult.SuccessAsync();
+                return Task.CompletedTask;
             }
             else if (secets.Any(a => a.Expiration != null || a.Expiration < _clock.UtcNow.UtcDateTime))
             {
-                return ValidationResult.ErrorAsync("The Client credential has expired");
+                throw new UnauthorizedClientException("The Client credential has expired");
             }
             else
             {
-                return ValidationResult.ErrorAsync("Invalid client or credential");
+                throw new UnauthorizedClientException("Invalid client or credential");
             }
         }
     }

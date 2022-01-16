@@ -9,25 +9,22 @@ namespace IdentityServer.Endpoints
 
         private readonly IClientStore _clients;
         private readonly IResourceStore _resources;
-        private readonly ITokenValidator _tokenValidator;
-        private readonly IProfileService _profileService;
         private readonly IUserInfoResponseGenerator _generator;
-        private readonly IBearerTokenUsageParser _bearerTokenUsageParser;
+        private readonly IResourceValidator _resourceValidator;
 
         public UserInfoEndpoint(
             IClientStore clients,
             IResourceStore resources,
             ITokenValidator tokenValidator,
             IProfileService profileService,
+            IResourceValidator resourceValidator,
             IBearerTokenUsageParser bearerTokenUsageParser,
             IUserInfoResponseGenerator generator)
         {
             _clients = clients;
             _resources = resources;
             _generator = generator;
-            _tokenValidator = tokenValidator;
-            _profileService = profileService;
-            _bearerTokenUsageParser = bearerTokenUsageParser;
+            _resourceValidator = resourceValidator;
         }
 
         public override async Task<IEndpointResult> ProcessAsync(HttpContext context)
@@ -55,6 +52,7 @@ namespace IdentityServer.Endpoints
                 return BadRequest(OpenIdConnectTokenErrors.InvalidToken, "Invalid client");
             }
             var resources = await _resources.FindByScopeAsync(scopes);
+            await _resourceValidator.ValidateAsync(resources, scopes);
             var response = await _generator.ProcessAsync(new UserInfoRequest(subject, client, resources));
             return new UserInfoResult(response);
         }

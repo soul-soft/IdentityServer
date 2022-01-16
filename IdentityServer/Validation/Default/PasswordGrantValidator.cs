@@ -4,7 +4,7 @@
     {
         public Task<GrantValidationResult> ValidateAsync(ResourceOwnerPasswordGrantValidationContext context)
         {
-            return GrantValidationResult.ErrorAsync("Invalid username or password");
+            throw new InvalidGrantException("Invalid username or password");
         }
     }
 }

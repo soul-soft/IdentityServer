@@ -2,6 +2,6 @@
 {
     public interface IGrantTypeValidator
     {
-        Task<ValidationResult> ValidateAsync(string requestedGrantType, IEnumerable<string> allowedGrantTypes);
+        Task ValidateAsync(string requestedGrantType, IEnumerable<string> allowedGrantTypes);
     }
 }
