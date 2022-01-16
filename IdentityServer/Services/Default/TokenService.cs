@@ -27,18 +27,19 @@ namespace IdentityServer.Services
             _referenceTokenService = referenceTokenService;
         }
 
-        public async Task<IAccessToken> CreateAccessTokenAsync(TokenRequest request)
+        public async Task<IAccessToken> CreateAccessTokenAsync(ValidatedTokenRequest request)
         {
             var id = _idGenerator.GeneratorId();
             var issuer = _urls.GetIdentityServerIssuerUri();
             var client = request.Client;
             var resources = request.Resources;
             var notBefore = _clock.UtcNow.UtcDateTime;
+            var authTime = _clock.UtcNow.UtcDateTime;
             var expiration = notBefore.AddSeconds(client.AccessTokenLifetime);
             var audiences = resources.ApiResources.Select(s => s.Name).ToList();
-            var subjectId = request.Subject.FindFirst(JwtClaimTypes.Subject)?.Value;
             var claims = await _claimsService.GetAccessTokenClaimsAsync(request);
             var claimLites = claims.ToClaimLites().ToArray();
+            var subjectId = request.Subject.GetSubjectId();
             var token = new AccessToken
             {
                 Id = id,
@@ -61,18 +62,19 @@ namespace IdentityServer.Services
             return token;
         }
 
-        public async Task<IAccessToken> CreateIdentityTokenAsync(TokenRequest request)
+        public async Task<IAccessToken> CreateIdentityTokenAsync(ValidatedTokenRequest request)
         {
             var id = _idGenerator.GeneratorId();
             var issuer = _urls.GetIdentityServerIssuerUri();
             var client = request.Client;
             var resources = request.Resources;
             var notBefore = _clock.UtcNow.UtcDateTime;
+            var authTime = _clock.UtcNow.UtcDateTime;
             var expiration = notBefore.AddSeconds(client.AccessTokenLifetime);
             var audiences = resources.ApiResources.Select(s => s.Name).ToList();
-            var subjectId = request.Subject.FindFirst(JwtClaimTypes.Subject)?.Value;
             var claims = await _claimsService.GetAccessTokenClaimsAsync(request);
             var claimLites = claims.ToClaimLites().ToArray();
+            var subjectId = request.Subject.GetSubjectId();
             var token = new AccessToken
             {
                 Id = id,

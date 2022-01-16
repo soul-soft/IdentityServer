@@ -106,11 +106,11 @@ namespace IdentityServer.Endpoints
                 resources: resources,
                 grantType: grantType,
                 raw: form);
-            var grantValidationResult = await ValidateGrantAsync(context, validatedRequest);
+            var grantResult = await ValidateGrantAsync(context, validatedRequest);
             #endregion
 
             #region Generator Response
-            var response = await _generator.ProcessAsync(new TokenRequest(grantValidationResult.Subject, client, resources)
+            var response = await _generator.ProcessAsync(new ValidatedTokenRequest(grantResult.Subject, client, resources)
             {
                 Scopes = scopes,
                 GrantType = grantType,

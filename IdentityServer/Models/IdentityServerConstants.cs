@@ -2,6 +2,8 @@
 {
     public static class IdentityServerConstants
     {
+        public const string LocalIdentityProvider="local";
+
         public static class TokenTypes
         {
             public const string AccessToken = "access_token";

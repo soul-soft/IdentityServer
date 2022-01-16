@@ -12,7 +12,8 @@ namespace Hosting.Configuration
             {
                 AllowedGrantTypes = new []
                 {
-                   "myGrant",GrantTypes.RefreshToken
+                    "myGrant",
+                    GrantTypes.RefreshToken
                 },
                 ClientSecrets=new ISecret[]
                 {
@@ -23,7 +24,7 @@ namespace Hosting.Configuration
                 {
                     "api",
                     StandardScopes.OpenId,
-                    StandardScopes.OfflineAccess
+                    StandardScopes.OfflineAccess,
                 }
             }
         };

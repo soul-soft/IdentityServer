@@ -12,11 +12,11 @@
         string? GrantType { get; }
         string? Nonce { get; }
         string? Description { get; }
+        DateTime? NotBefore { get; }
+        DateTime? Expiration { get; }
         AccessTokenType AccessTokenType { get; }
         IReadOnlyCollection<string> Scopes { get; }
         IReadOnlyCollection<string> Audiences { get; }
-        DateTime? NotBefore { get; }
-        DateTime? Expiration { get; }
         IReadOnlyCollection<ClaimLite> Claims { get; }
         IReadOnlyCollection<string> AllowedSigningAlgorithms { get; }
     }

@@ -19,6 +19,7 @@ namespace IdentityServer.Models
             {
                 var timestamp = new DateTimeOffset(token.NotBefore.Value).ToUnixTimeSeconds();
                 claims.Add(new Claim(JwtClaimTypes.NotBefore, timestamp.ToString()));
+                claims.Add(new Claim(JwtClaimTypes.IssuedAt, timestamp.ToString()));
             }
             if (token.Expiration.HasValue)
             {
@@ -28,10 +29,6 @@ namespace IdentityServer.Models
             if (!string.IsNullOrWhiteSpace(token.ClientId))
             {
                 claims.Add(new Claim(JwtClaimTypes.ClientId, token.ClientId));
-            }
-            if (!string.IsNullOrWhiteSpace(token.GrantType))
-            {
-                claims.Add(new Claim(JwtClaimTypes.AuthenticationMethod, token.GrantType));
             }
             if (!string.IsNullOrWhiteSpace(token.SubjectId))
             {

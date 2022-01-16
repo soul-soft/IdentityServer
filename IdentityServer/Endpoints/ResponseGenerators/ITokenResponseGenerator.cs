@@ -2,6 +2,6 @@
 {
     public interface ITokenResponseGenerator
     {
-        Task<TokenResponse> ProcessAsync(TokenRequest request);
+        Task<TokenResponse> ProcessAsync(ValidatedTokenRequest request);
     }
 }

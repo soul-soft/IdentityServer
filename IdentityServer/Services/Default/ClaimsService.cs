@@ -2,7 +2,7 @@
 
 namespace IdentityServer.Services
 {
-    public class ClaimIssueService : IClaimsService
+    public class ClaimsService : IClaimsService
     {
         private readonly IProfileService _profileService;
 
@@ -29,48 +29,55 @@ namespace IdentityServer.Services
             JwtClaimTypes.Confirmation
         };
 
-        public ClaimIssueService(IProfileService profileService)
+
+
+        public ClaimsService(IProfileService profileService)
         {
             _profileService = profileService;
         }
 
-        public async Task<IEnumerable<Claim>> GetAccessTokenClaimsAsync(TokenRequest request)
+        public async Task<IEnumerable<Claim>> GetAccessTokenClaimsAsync(ValidatedTokenRequest request)
         {
             var list = new List<Claim>();
-            var claimTypes = FilterRequestedClaimTypes(request.Resources.UserClaims);
-            var profileDataRequest = new ProfileDataRequestContext(
-                request.Client,
-                request.Subject,
-                ProfileDataCaller.ClaimsProviderAccessToken,
-                claimTypes);
-            await _profileService.GetProfileDataAsync(profileDataRequest);
-            list.AddRange(profileDataRequest.IssuedClaims);
-            return FilterProtocolClaims(list);
-        }
-
-        public async Task<IEnumerable<Claim>> GetIdentityTokenClaimsAsync(TokenRequest request)
-        {
-            var list = new List<Claim>();
-            var claimTypes = FilterRequestedClaimTypes(request.Resources.UserClaims);
             var profileDataRequest = new ProfileDataRequestContext(
                 request.Client,
                 request.Subject,
                 ProfileDataCaller.ClaimsProviderIdentityToken,
-                claimTypes);
+                FilterRequestedClaimTypes(request.Resources.UserClaims));
             await _profileService.GetProfileDataAsync(profileDataRequest);
             list.AddRange(profileDataRequest.IssuedClaims);
-            return FilterProtocolClaims(list);
+            var standardClaims = GetStandardClaims(request.Subject);
+            list.AddRange(standardClaims);
+            return list;
         }
 
-        private IEnumerable<Claim> FilterProtocolClaims(IEnumerable<Claim> claims)
+        public async Task<IEnumerable<Claim>> GetIdentityTokenClaimsAsync(ValidatedTokenRequest request)
         {
-            foreach (var item in claims)
+            var list = new List<Claim>();
+            var profileDataRequest = new ProfileDataRequestContext(
+                request.Client,
+                request.Subject,
+                ProfileDataCaller.ClaimsProviderIdentityToken,
+                FilterRequestedClaimTypes(request.Resources.UserClaims));
+            await _profileService.GetProfileDataAsync(profileDataRequest);
+            list.AddRange(profileDataRequest.IssuedClaims);
+            var standardClaims = GetStandardClaims(request.Subject);
+            list.AddRange(standardClaims);
+            return list;
+        }
+
+        protected virtual IEnumerable<Claim> GetStandardClaims(ClaimsPrincipal subject)
+        {
+            var claims = subject.Claims
+                .Where(a =>
+                       a.Type == JwtClaimTypes.Subject
+                    || a.Type == JwtClaimTypes.IdentityProvider
+                    || a.Type == JwtClaimTypes.AuthenticationTime).ToList();
+            if (!string.IsNullOrWhiteSpace(subject.Identity?.AuthenticationType))
             {
-                if (!_filterClaimTypes.Any(a => a == item.Type))
-                {
-                    yield return item;
-                }
+                claims.Add(new Claim(JwtClaimTypes.AuthenticationMethod, subject.Identity.AuthenticationType));
             }
+            return claims;
         }
 
         private IEnumerable<string> FilterRequestedClaimTypes(IEnumerable<string> claims)

@@ -42,7 +42,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             builder.Services.TryAddTransient<IServerUrl, ServerUrl>();
             builder.Services.TryAddTransient<IIdGenerator, IdGenerator>();
-            builder.Services.TryAddTransient<IClaimsService, ClaimIssueService>();
+            builder.Services.TryAddTransient<IClaimsService, ClaimsService>();
             builder.Services.TryAddTransient<IProfileService, ProfileService>();
             builder.Services.TryAddTransient<IObjectStorage, ObjectStorage>();
             builder.Services.TryAddTransient<ITokenService, TokenService>();
