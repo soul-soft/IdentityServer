@@ -20,7 +20,7 @@ namespace IdentityServer.Services
             _referenceTokens = referenceTokens;
         }
 
-        public async Task<string> CreateAsync(IToken token)
+        public async Task<string> CreateAsync(IAccessToken token)
         {
             var id = _idGenerator.GeneratorId();
             var creationTime = _clock.UtcNow.UtcDateTime;

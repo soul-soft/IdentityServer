@@ -15,7 +15,7 @@ namespace IdentityServer.Serialization
                 DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             };
-            JsonSerializerOptions.Converters.Add(new TokenJsonConverter());
+            JsonSerializerOptions.Converters.Add(new AccessTokenJsonConverter());
             JsonSerializerOptions.Converters.Add(new RefreshTokenJsonConverter());
             JsonSerializerOptions.Converters.Add(new ReferenceTokenJsonConverter());
         }

@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Models
 {
-    public interface IToken
+    public interface IAccessToken
     {
         string? Id { get; }
         string? Type { get; }

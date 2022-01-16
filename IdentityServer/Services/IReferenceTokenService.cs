@@ -5,7 +5,7 @@ namespace IdentityServer.Services
     public interface IReferenceTokenService
     {
         Task<IReferenceToken?> GetAsync(string id);
-        Task<string> CreateAsync(IToken token);
+        Task<string> CreateAsync(IAccessToken token);
         ClaimsPrincipal CreateClaimsPrincipal(IReferenceToken token);
     }
 }

@@ -21,26 +21,26 @@ namespace IdentityServer.Validation
             var refreshToken = await _refreshTokenService.GetAsync(context.RefreshToken);
             if (refreshToken == null)
             {
-                return GrantValidationResult.Error("Refresh token does not exist");
+                throw new InvalidGrantException("Refresh token does not exist");
             }
             if (_clock.UtcNow.UtcDateTime > refreshToken.Expiration)
             {
                 await _refreshTokenService.DeleteAsync(refreshToken);
-                return GrantValidationResult.Error("Refresh token has expired");
+                throw new InvalidGrantException("Refresh token has expired");
             }
             if (refreshToken.AccessToken.ClientId != context.Request.Client.ClientId)
             {
-                return GrantValidationResult.Error("The client ID of refreshtoken is wrong");
+                throw new InvalidGrantException("The client ID of refreshtoken is change");
             }
             foreach (var item in context.Request.Scopes)
             {
                 if (!refreshToken.AccessToken.Scopes.Contains(item))
                 {
-                    return GrantValidationResult.Error("Exceeded allowed scope");
+                    throw new InvalidGrantException("Exceeded allowed scope");
                 }
             }
             await _refreshTokenService.DeleteAsync(refreshToken);
-            return GrantValidationResult.Success();
+            return new GrantValidationResult();
         }
     }
 }

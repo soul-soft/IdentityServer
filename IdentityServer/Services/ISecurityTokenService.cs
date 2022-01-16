@@ -2,6 +2,6 @@
 {
     public interface ISecurityTokenService
     {
-        Task<string> CreateAsync(IToken token);
+        Task<string> CreateAsync(IAccessToken token);
     }
 }

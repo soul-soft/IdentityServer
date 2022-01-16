@@ -4,7 +4,7 @@
     {
         public string Id { get; }
 
-        public IToken AccessToken { get; }
+        public IAccessToken AccessToken { get; }
 
         public int Lifetime { get; }
 
@@ -12,7 +12,7 @@
        
         public DateTime CreationTime { get; }
 
-        public RefreshToken(string id, IToken accessToken, int lifetime, DateTime creationTime)
+        public RefreshToken(string id, IAccessToken accessToken, int lifetime, DateTime creationTime)
         {
             Id = id;
             AccessToken = accessToken;

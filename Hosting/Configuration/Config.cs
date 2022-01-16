@@ -18,7 +18,7 @@ namespace Hosting.Configuration
                 {
                     new Secret("secret".Sha512())
                 },
-                AccessTokenType=AccessTokenType.Jwt,
+                //AccessTokenType=AccessTokenType.Reference,
                 AllowedScopes = new[]
                 {
                     "api",

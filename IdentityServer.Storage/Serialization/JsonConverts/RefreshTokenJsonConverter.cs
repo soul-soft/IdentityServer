@@ -8,12 +8,12 @@ namespace IdentityServer.Serialization
     {
         public override IRefreshToken? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return JsonSerializer.Deserialize<RefreshToken>(ref reader);
+            return JsonSerializer.Deserialize<RefreshToken>(ref reader, options);
         }
 
         public override void Write(Utf8JsonWriter writer, IRefreshToken value, JsonSerializerOptions options)
         {
-            var json = JsonSerializer.Serialize(value);
+            var json = JsonSerializer.Serialize(value, options);
             writer.WriteRawValue(json);
         }
     }

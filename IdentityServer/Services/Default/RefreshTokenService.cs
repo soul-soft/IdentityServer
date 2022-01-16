@@ -19,7 +19,7 @@ namespace IdentityServer.Services
             _refreshTokenStore = refreshTokenStore;
         }
 
-        public async Task<string> CreateAsync(IToken token, int lifetime)
+        public async Task<string> CreateAsync(IAccessToken token, int lifetime)
         {
             var id = _idGenerator.GeneratorId();
             var nowTime = _clock.UtcNow.UtcDateTime;

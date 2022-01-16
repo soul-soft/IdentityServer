@@ -6,10 +6,5 @@
         {
             return Task.CompletedTask;
         }
-
-        public Task IsActiveAsync(IsActiveContext context)
-        {
-            return Task.CompletedTask;
-        }
     }
 }

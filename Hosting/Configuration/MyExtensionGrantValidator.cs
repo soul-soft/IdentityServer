@@ -8,7 +8,8 @@ namespace Hosting.Configuration
 
         public Task<GrantValidationResult> ValidateAsync(ExtensionGrantValidationContext context)
         {
-            return GrantValidationResult.SuccessAsync("2");
+            var result = new GrantValidationResult("2");
+            return Task.FromResult(result);
         }
     }
 }

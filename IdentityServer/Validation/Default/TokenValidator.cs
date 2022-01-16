@@ -78,12 +78,13 @@ namespace IdentityServer.Validation
                 throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "The access token has expired");
             }
             var issuer = _urls.GetIdentityServerIssuerUri();
-            if (referenceToken.Token.Issuer != issuer)
+            if (referenceToken.AccessToken.Issuer != issuer)
             {
                 throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "Invalid issuer");
             }
-            var claims = referenceToken.Token.ToClaims(_options);
-            return new ClaimsPrincipal(new ClaimsIdentity(claims));
+            var claims = referenceToken.AccessToken.ToClaims(_options);
+            var identity = new ClaimsIdentity(claims,"Reference");
+            return new ClaimsPrincipal(identity);
         }
     }
 }

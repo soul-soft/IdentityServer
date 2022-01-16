@@ -11,6 +11,7 @@
         int RefreshTokenLifetime { get; }
         int IdentityTokenLifetime { get; }
         AccessTokenType AccessTokenType { get; }
+        bool RequireClientSecret { get; }
         IReadOnlyCollection<string> AllowedScopes { get; }
         IReadOnlyCollection<ISecret> ClientSecrets { get; }
         IReadOnlyCollection<string> AllowedGrantTypes { get; }

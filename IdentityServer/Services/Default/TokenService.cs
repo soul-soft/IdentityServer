@@ -27,7 +27,7 @@ namespace IdentityServer.Services
             _referenceTokenService = referenceTokenService;
         }
 
-        public async Task<IToken> CreateAccessTokenAsync(TokenRequest request)
+        public async Task<IAccessToken> CreateAccessTokenAsync(TokenRequest request)
         {
             var id = _idGenerator.GeneratorId();
             var issuer = _urls.GetIdentityServerIssuerUri();
@@ -39,7 +39,7 @@ namespace IdentityServer.Services
             var subjectId = request.Subject.FindFirst(JwtClaimTypes.Subject)?.Value;
             var claims = await _claimsService.GetAccessTokenClaimsAsync(request);
             var claimLites = claims.ToClaimLites().ToArray();
-            var token = new Token
+            var token = new AccessToken
             {
                 Id = id,
                 Type = TokenTypes.AccessToken,
@@ -61,7 +61,7 @@ namespace IdentityServer.Services
             return token;
         }
 
-        public async Task<IToken> CreateIdentityTokenAsync(TokenRequest request)
+        public async Task<IAccessToken> CreateIdentityTokenAsync(TokenRequest request)
         {
             var id = _idGenerator.GeneratorId();
             var issuer = _urls.GetIdentityServerIssuerUri();
@@ -73,7 +73,7 @@ namespace IdentityServer.Services
             var subjectId = request.Subject.FindFirst(JwtClaimTypes.Subject)?.Value;
             var claims = await _claimsService.GetAccessTokenClaimsAsync(request);
             var claimLites = claims.ToClaimLites().ToArray();
-            var token = new Token
+            var token = new AccessToken
             {
                 Id = id,
                 Type = TokenTypes.AccessToken,
@@ -95,7 +95,7 @@ namespace IdentityServer.Services
             return token;
         }
 
-        public async Task<string> CreateSecurityTokenAsync(IToken token)
+        public async Task<string> CreateSecurityTokenAsync(IAccessToken token)
         {
             string tokenResult;
             if (token.Type == TokenTypes.AccessToken)

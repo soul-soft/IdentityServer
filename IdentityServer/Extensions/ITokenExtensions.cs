@@ -4,7 +4,7 @@ namespace IdentityServer.Models
 {
     public static class ITokenExtensions
     {
-        public static IEnumerable<Claim> ToClaims(this IToken token, IdentityServerOptions options)
+        public static IEnumerable<Claim> ToClaims(this IAccessToken token, IdentityServerOptions options)
         {
             var claims = new List<Claim>();
             if (!string.IsNullOrWhiteSpace(token.Id))

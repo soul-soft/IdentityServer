@@ -2,7 +2,7 @@
 
 namespace IdentityServer.Models
 {
-    public class Token : IToken
+    public class AccessToken : IAccessToken
     {
         public string? Id { get; set; }
 

@@ -1,5 +1,4 @@
-﻿using IdentityServer.Extensions;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
@@ -52,7 +51,7 @@ namespace IdentityServer.Endpoints
             }
             if (!context.Request.HasFormContentType)
             {
-                return BadRequest(OpenIdConnectTokenErrors.InvalidRequest);
+                return BadRequest(OpenIdConnectTokenErrors.InvalidRequest, "Invalid context type");
             }
             #endregion
 
@@ -67,7 +66,10 @@ namespace IdentityServer.Endpoints
             {
                 return BadRequest(OpenIdConnectTokenErrors.InvalidClient, "No client found");
             }
-            await _secretsValidator.ValidateAsync(clientSecret, client.ClientSecrets);
+            if (client.RequireClientSecret)
+            {
+                await _secretsValidator.ValidateAsync(clientSecret, client.ClientSecrets);
+            }
             #endregion
 
             #region Validate Scopes

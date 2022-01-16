@@ -12,7 +12,7 @@
         public async Task<IReferenceToken?> FindReferenceTokenByIdAsync(string id)
         {
             var key = CreateKey(id);
-            return await _storage.GetAsync<IReferenceToken>(key);
+            return await _storage.GetAsync<ReferenceToken>(key);
         }
 
         public async Task SaveAsync(IReferenceToken token)

@@ -4,7 +4,7 @@
     {
         public string Id { get; }
 
-        public IToken Token { get; }
+        public IAccessToken AccessToken { get; }
 
         public int Lifetime { get; }
 
@@ -12,10 +12,10 @@
 
         public DateTime Expiration => CreationTime.AddSeconds(Lifetime);
 
-        public ReferenceToken(string id, IToken accessToken, int lifetime, DateTime creationTime)
+        public ReferenceToken(string id, IAccessToken accessToken, int lifetime, DateTime creationTime)
         {
             Id = id;
-            Token = accessToken;
+            AccessToken = accessToken;
             Lifetime = lifetime;
             CreationTime = creationTime;
         }

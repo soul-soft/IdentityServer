@@ -24,7 +24,6 @@ namespace IdentityServer.Models
         public IReadOnlyCollection<string> AllowedSigningAlgorithms { get; set; } = new HashSet<string>();
         public IReadOnlyCollection<string> AllowedScopes { get; set; } = new HashSet<string>();
 
-
         public Client(string clientId)
         {
             ClientId = clientId;
