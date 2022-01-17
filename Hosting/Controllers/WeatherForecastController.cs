@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static IdentityServer.IdentityServerConstants;
 
 namespace Hosting.Controllers
 {
@@ -15,7 +16,7 @@ namespace Hosting.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize(LocalApi.PolicyName)]
         public string Test()
         {
             return "111";

@@ -14,7 +14,7 @@ namespace Hosting.Configuration
                 var identity = new ClaimsIdentity();
                 identity.AddClaim(new Claim(JwtClaimTypes.Subject, "1"));
                 identity.AddClaim(new Claim(JwtClaimTypes.Role, "admin"));
-                var result = new GrantValidationResult(identity);
+                var result = new GrantValidationResult(identity.Claims);
                 return Task.FromResult(result);
             }
             throw new InvalidGrantException("用户名或密码错误");

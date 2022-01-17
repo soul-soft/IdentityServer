@@ -6,6 +6,5 @@ namespace IdentityServer.Services
     {
         Task<IReferenceToken?> GetAsync(string id);
         Task<string> CreateAsync(IAccessToken token);
-        ClaimsPrincipal CreateClaimsPrincipal(IReferenceToken token);
     }
 }

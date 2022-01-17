@@ -1,4 +1,5 @@
 using Hosting.Configuration;
+using IdentityServer;
 using IdentityServer.Endpoints;
 using IdentityServer.Validation;
 using System.Security.Cryptography.X509Certificates;
@@ -24,7 +25,14 @@ builder.Services.AddIdentityServer()
             setup.AddSigningCredentials(new X509Certificate2("idsvr.pfx","nbjc"));
             //setup.AddSigningCredentials(CryptoRandom.CreateRsaSecurityKey());
         });
-
+builder.Services.AddAuthorization(options => 
+{
+    options.AddPolicy(IdentityServerConstants.LocalApi.PolicyName, policy =>
+    {
+        policy.AddAuthenticationSchemes(IdentityServerConstants.LocalApi.AuthenticationScheme);
+        policy.RequireAuthenticatedUser();
+    });
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -12,6 +12,8 @@ namespace IdentityServer.Endpoints
         private readonly ITokenResponseGenerator _generator;
         private readonly ISecretsListParser _secretsParser;
         private readonly IScopeValidator _scopeValidator;
+        private readonly IClaimsService _claimsService;
+        private readonly IClaimsValidator _claimsValidator;
         private readonly ISecretsListValidator _secretsValidator;
         private readonly IResourceValidator _resourceValidator;
         private readonly IGrantTypeValidator _grantTypeValidator;
@@ -23,6 +25,8 @@ namespace IdentityServer.Endpoints
             IdentityServerOptions options,
             ITokenResponseGenerator generator,
             IScopeValidator scopeValidator,
+            IClaimsService claimsService,
+            IClaimsValidator claimsValidator,
             ISecretsListValidator secretsValidator,
             IResourceValidator resourceValidator,
             IGrantTypeValidator grantTypeValidator)
@@ -33,6 +37,8 @@ namespace IdentityServer.Endpoints
             _generator = generator;
             _secretsParser = secretsParser;
             _scopeValidator = scopeValidator;
+            _claimsService = claimsService;
+            _claimsValidator = claimsValidator;
             _secretsValidator = secretsValidator;
             _resourceValidator = resourceValidator;
             _grantTypeValidator = grantTypeValidator;
@@ -98,7 +104,7 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Validate Grant
-            var validatedRequest = new TokenValidatedRequest(
+            var grantRequest = new GrantValidationRequest(
                 client: client,
                 clientSecret: clientSecret,
                 options: _options,
@@ -106,11 +112,16 @@ namespace IdentityServer.Endpoints
                 resources: resources,
                 grantType: grantType,
                 raw: form);
-            var grantResult = await ValidateGrantAsync(context, validatedRequest);
+            var grantResult = await ValidateGrantAsync(context, grantRequest);
+            #endregion
+
+            #region Validate Claims
+            var subject = await _claimsService.CreateSubjectAsync(grantRequest, grantResult);
+            await _claimsValidator.ValidateAsync(subject, resources);
             #endregion
 
             #region Generator Response
-            var response = await _generator.ProcessAsync(new ValidatedTokenRequest(grantResult.Subject, client, resources)
+            var response = await _generator.ProcessAsync(new ValidatedTokenRequest(subject, client, resources)
             {
                 Scopes = scopes,
                 GrantType = grantType,
@@ -119,7 +130,7 @@ namespace IdentityServer.Endpoints
             #endregion
         }
 
-        private async Task<GrantValidationResult> ValidateGrantAsync(HttpContext context, TokenValidatedRequest request)
+        private async Task<GrantValidationResult> ValidateGrantAsync(HttpContext context, GrantValidationRequest request)
         {
             //验证刷新令牌
             if (GrantTypes.RefreshToken.Equals(request.GrantType))
@@ -184,5 +195,6 @@ namespace IdentityServer.Endpoints
             }
 
         }
+
     }
 }

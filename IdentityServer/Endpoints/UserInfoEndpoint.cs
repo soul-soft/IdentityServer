@@ -6,7 +6,6 @@ namespace IdentityServer.Endpoints
 {
     internal class UserInfoEndpoint : EndpointBase
     {
-
         private readonly IClientStore _clients;
         private readonly IResourceStore _resources;
         private readonly IUserInfoResponseGenerator _generator;
@@ -15,10 +14,7 @@ namespace IdentityServer.Endpoints
         public UserInfoEndpoint(
             IClientStore clients,
             IResourceStore resources,
-            ITokenValidator tokenValidator,
-            IProfileService profileService,
             IResourceValidator resourceValidator,
-            IBearerTokenUsageParser bearerTokenUsageParser,
             IUserInfoResponseGenerator generator)
         {
             _clients = clients;
@@ -45,7 +41,9 @@ namespace IdentityServer.Endpoints
             {
                 return BadRequest(OpenIdConnectTokenErrors.InvalidToken, "ClientId claim is missing");
             }
-            var scopes = subject.FindAll(JwtClaimTypes.Scope).Select(s => s.Value).Where(a => !string.IsNullOrWhiteSpace(a));
+            var scopes = subject
+                .FindAll(JwtClaimTypes.Scope).Select(s => s.Value)
+                .Where(a => !string.IsNullOrWhiteSpace(a));
             var client = await _clients.GetAsync(clientId);
             if (client == null)
             {

@@ -2,14 +2,15 @@
 {
     public class IdentityServerOptions
     {
+        public string? IssuerUri { get; set; }
+        public string IdentityServerName { get; set; } = "local";
         public bool IncludeErrorDetails { get; set; } = true;
         public InputLengthRestrictions InputLengthRestrictions { get; set; } = new InputLengthRestrictions();
         public DiscoveryOptions Discovery { get; set; } = new DiscoveryOptions();
         public EndpointsOptions Endpoints { get; set; } = new EndpointsOptions();
-        public string? IssuerUri { get; set; }
         public bool LowerCaseIssuerUri { get; set; } = true;
         public string? AccessTokenJwtType { get; set; } = "at+jwt";
-        public bool EmitScopesAsSpaceDelimitedStringInJwt { get; set; } = false;
         public string TokenEndpointAuthMethod { get; set; } = TokenEndpointAuthMethods.PostBody;
+        public bool EmitScopesAsSpaceDelimitedStringInJwt { get; set; } = true;
     }
 }

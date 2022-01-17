@@ -7,7 +7,6 @@ namespace IdentityServer.Services
         private readonly IServerUrl _urls;
         private readonly ISystemClock _clock;
         private readonly IIdGenerator _idGenerator;
-        private readonly IClaimsService _claimsService;
         private readonly ISecurityTokenService _jwtTokenService;
         private readonly IReferenceTokenService _referenceTokenService;
 
@@ -15,30 +14,26 @@ namespace IdentityServer.Services
             IServerUrl urls,
             ISystemClock clock,
             IIdGenerator idGenerator,
-            IClaimsService claimsService,
             ISecurityTokenService jwtTokenService,
             IReferenceTokenService referenceTokenService)
         {
             _urls = urls;
             _clock = clock;
             _idGenerator = idGenerator;
-            _claimsService = claimsService;
             _jwtTokenService = jwtTokenService;
             _referenceTokenService = referenceTokenService;
         }
 
-        public async Task<IAccessToken> CreateAccessTokenAsync(ValidatedTokenRequest request)
+        public Task<IAccessToken> CreateAccessTokenAsync(ValidatedTokenRequest request)
         {
             var id = _idGenerator.GeneratorId();
             var issuer = _urls.GetIdentityServerIssuerUri();
             var client = request.Client;
-            var resources = request.Resources;
             var notBefore = _clock.UtcNow.UtcDateTime;
-            var authTime = _clock.UtcNow.UtcDateTime;
             var expiration = notBefore.AddSeconds(client.AccessTokenLifetime);
+            var resources = request.Resources;
             var audiences = resources.ApiResources.Select(s => s.Name).ToList();
-            var claims = await _claimsService.GetAccessTokenClaimsAsync(request);
-            var claimLites = claims.ToClaimLites().ToArray();
+            var claimLites = request.Subject.Claims.ToClaimLites().ToList();
             var subjectId = request.Subject.GetSubjectId();
             var token = new AccessToken
             {
@@ -59,10 +54,10 @@ namespace IdentityServer.Services
                 Expiration = expiration,
                 Claims = claimLites,
             };
-            return token;
+            return Task.FromResult<IAccessToken>(token);
         }
 
-        public async Task<IAccessToken> CreateIdentityTokenAsync(ValidatedTokenRequest request)
+        public Task<IAccessToken> CreateIdentityTokenAsync(ValidatedTokenRequest request)
         {
             var id = _idGenerator.GeneratorId();
             var issuer = _urls.GetIdentityServerIssuerUri();
@@ -72,8 +67,7 @@ namespace IdentityServer.Services
             var authTime = _clock.UtcNow.UtcDateTime;
             var expiration = notBefore.AddSeconds(client.AccessTokenLifetime);
             var audiences = resources.ApiResources.Select(s => s.Name).ToList();
-            var claims = await _claimsService.GetAccessTokenClaimsAsync(request);
-            var claimLites = claims.ToClaimLites().ToArray();
+            var claimLites = request.Subject.Claims.ToClaimLites().ToArray();
             var subjectId = request.Subject.GetSubjectId();
             var token = new AccessToken
             {
@@ -94,7 +88,7 @@ namespace IdentityServer.Services
                 Expiration = expiration,
                 Claims = claimLites,
             };
-            return token;
+            return Task.FromResult<IAccessToken>(token);
         }
 
         public async Task<string> CreateSecurityTokenAsync(IAccessToken token)

@@ -1,98 +1,43 @@
-﻿using System.Security.Claims;
+﻿using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
 
 namespace IdentityServer.Services
 {
-    public class ClaimsService : IClaimsService
+    internal class ClaimsService : IClaimsService
     {
-        private readonly IProfileService _profileService;
+        private readonly ISystemClock _clock;
+        private readonly IdentityServerOptions _options;
 
-        private static string[] _filterClaimTypes =
+        public ClaimsService(
+            ISystemClock clock,
+            IdentityServerOptions options)
         {
-            JwtClaimTypes.AccessTokenHash,
-            JwtClaimTypes.Audience,
-            JwtClaimTypes.AuthenticationMethod,
-            JwtClaimTypes.AuthenticationTime,
-            JwtClaimTypes.AuthorizedParty,
-            JwtClaimTypes.IdentityProvider,
-            JwtClaimTypes.AuthorizationCodeHash,
-            JwtClaimTypes.ClientId,
-            JwtClaimTypes.Expiration,
-            JwtClaimTypes.IssuedAt,
-            JwtClaimTypes.Issuer,
-            JwtClaimTypes.JwtId,
-            JwtClaimTypes.Nonce,
-            JwtClaimTypes.NotBefore,
-            JwtClaimTypes.SessionId,
-            JwtClaimTypes.IdentityProvider,
-            JwtClaimTypes.Subject,
-            JwtClaimTypes.Scope,
-            JwtClaimTypes.Confirmation
-        };
-
-        public ClaimsService(IProfileService profileService)
-        {
-            _profileService = profileService;
+            _clock = clock;
+            _options = options;
         }
 
-        public async Task<IEnumerable<Claim>> GetAccessTokenClaimsAsync(ValidatedTokenRequest request)
+        public Task<ClaimsPrincipal> CreateSubjectAsync(GrantValidationRequest request, GrantValidationResult result)
         {
-            var list = new List<Claim>();
-            var profileContext = new ProfileDataRequestContext(
-                request.Client,
-                request.Subject,
-                ProfileDataCaller.ClaimsProviderIdentityToken,
-                FilterRequestedClaimTypes(request.Resources.UserClaims));
-            await _profileService.GetProfileDataAsync(profileContext);
-            list.AddRange(profileContext.IssuedClaims);
-            if (request.GrantType != GrantTypes.ClientCredentials)
+            var resources = request.Resources;
+            var identity = new ClaimsIdentity(request.GrantType);
+            identity.AddClaims(result.Claims);
+            if (resources.UserClaims.Contains(JwtClaimTypes.AuthenticationTime))
             {
-                var standardClaims = GetStandardClaims(request.Subject);
-                list.AddRange(standardClaims);
+                var timestamp = _clock.UtcNow.ToUnixTimeSeconds().ToString();
+                identity.AddClaim(new Claim(JwtClaimTypes.AuthenticationTime, timestamp));
             }
-            return list;
-        }
-
-        public async Task<IEnumerable<Claim>> GetIdentityTokenClaimsAsync(ValidatedTokenRequest request)
-        {
-            var list = new List<Claim>();
-            var profileContext = new ProfileDataRequestContext(
-                request.Client,
-                request.Subject,
-                ProfileDataCaller.ClaimsProviderIdentityToken,
-                FilterRequestedClaimTypes(request.Resources.UserClaims));
-            await _profileService.GetProfileDataAsync(profileContext);
-            list.AddRange(profileContext.IssuedClaims);
-            if (request.GrantType != GrantTypes.ClientCredentials)
+            if (resources.UserClaims.Contains(JwtClaimTypes.IdentityProvider))
             {
-                var standardClaims = GetStandardClaims(request.Subject);
-                list.AddRange(standardClaims);
+                identity.AddClaim(new Claim(JwtClaimTypes.IdentityProvider, _options.IdentityServerName));
             }
-            return list;
-        }
-
-        protected virtual IEnumerable<Claim> GetStandardClaims(ClaimsPrincipal subject)
-        {
-            var claims = subject.Claims
-                .Where(a =>
-                       a.Type == JwtClaimTypes.Subject
-                    || a.Type == JwtClaimTypes.IdentityProvider
-                    || a.Type == JwtClaimTypes.AuthenticationTime).ToList();
-            if (!string.IsNullOrWhiteSpace(subject.Identity?.AuthenticationType))
+            if (resources.UserClaims.Contains(JwtClaimTypes.Subject))
             {
-                claims.Add(new Claim(JwtClaimTypes.AuthenticationMethod, subject.Identity.AuthenticationType));
-            }
-            return claims;
-        }
-
-        private IEnumerable<string> FilterRequestedClaimTypes(IEnumerable<string> claims)
-        {
-            foreach (var item in claims)
-            {
-                if (!_filterClaimTypes.Contains(item))
+                if (!string.IsNullOrEmpty(result.Subject) && !identity.Claims.Any(a => a.Type == JwtClaimTypes.Subject))
                 {
-                    yield return item;
+                    identity.AddClaim(new Claim(JwtClaimTypes.Subject, result.Subject));
                 }
             }
+            return Task.FromResult(new ClaimsPrincipal(identity));
         }
     }
 }

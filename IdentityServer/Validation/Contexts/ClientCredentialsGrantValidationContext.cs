@@ -1,10 +1,12 @@
-﻿namespace IdentityServer.Validation
+﻿using System.Security.Claims;
+
+namespace IdentityServer.Validation
 {
     public class ClientCredentialsGrantValidationContext
     {
-        public TokenValidatedRequest Request { get; }
-       
-        public ClientCredentialsGrantValidationContext(TokenValidatedRequest request)
+        public GrantValidationRequest Request { get; }
+      
+        public ClientCredentialsGrantValidationContext(GrantValidationRequest request)
         {
             Request = request;
         }

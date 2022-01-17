@@ -2,7 +2,7 @@
 {
     public static class IdentityServerConstants
     {
-        public const string LocalIdentityProvider="local";
+        public const string LocalIdentityProvider = "local";
 
         public static class TokenTypes
         {
@@ -56,7 +56,13 @@
             {
                 DisplayName = "Your user identifier",
                 Required = true,
-                UserClaims = new string[] { JwtClaimTypes.Subject }
+                UserClaims = new string[]
+                {
+                    JwtClaimTypes.Subject,
+                    JwtClaimTypes.IdentityProvider,
+                    JwtClaimTypes.AuthenticationTime,
+                    JwtClaimTypes.AuthenticationMethod,
+                }
             };
 
             public static IdentityResource Profile => new IdentityResource(StandardScopes.Profile)
@@ -64,11 +70,11 @@
                 DisplayName = "User profile",
                 UserClaims = new string[]
                 {
-                JwtClaimTypes.NickName,
-                JwtClaimTypes.Profile,
-                JwtClaimTypes.Picture,
-                JwtClaimTypes.Gender,
-                JwtClaimTypes.BirthDate,
+                    JwtClaimTypes.NickName,
+                    JwtClaimTypes.Profile,
+                    JwtClaimTypes.Picture,
+                    JwtClaimTypes.Gender,
+                    JwtClaimTypes.BirthDate,
                 }
             };
 

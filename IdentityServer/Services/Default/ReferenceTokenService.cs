@@ -33,11 +33,6 @@ namespace IdentityServer.Services
             return Base64UrlEncoder.Encode(id);
         }
 
-        public ClaimsPrincipal CreateClaimsPrincipal(IReferenceToken token)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<IReferenceToken?> GetAsync(string id)
         {
             id = Base64UrlEncoder.Decode(id);
