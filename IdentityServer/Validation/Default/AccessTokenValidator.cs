@@ -77,7 +77,7 @@ namespace IdentityServer.Validation
                 {
                     ValidateAudience = false,
                     ValidateLifetime = true,
-                    ValidIssuer = issuer,
+                    ValidIssuer = _options.Issuer,
                     IssuerSigningKeys = securityKeys,
                 };
                 var subject = handler.ValidateToken(token, parameters, out var securityToken);

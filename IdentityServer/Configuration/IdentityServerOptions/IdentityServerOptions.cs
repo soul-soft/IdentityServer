@@ -2,6 +2,7 @@
 {
     public class IdentityServerOptions
     {
+        public string Issuer { get; set; } = "idsv";
         public string? IssuerUri { get; set; }
         public string IdentityServerName { get; set; } = "local";
         public bool IncludeErrorDetails { get; set; } = true;

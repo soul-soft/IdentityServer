@@ -44,6 +44,7 @@ namespace IdentityServer.Models
             {
                 return _resources
                    .SelectMany(s => s.UserClaims)
+                   .Distinct()
                    .ToList();
             }
         }
