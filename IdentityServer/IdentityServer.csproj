@@ -4,6 +4,15 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<AssemblyName>Soul.$(MSBuildProjectName)</AssemblyName>
+		<Version>6.0.0-bate3</Version>
+		<PackageTags>OAuth2;OAuth 2.0;OpenID Connect;Security;Identity;IdentityServer</PackageTags>
+		<Copyright>MIT</Copyright>
+		<PackageProjectUrl>https://github.com/1448376744/IdentityServer</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/1448376744/IdentityServer</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageReleaseNotes>预览版</PackageReleaseNotes>
+		<Description>身份认证服务</Description>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -10,7 +10,16 @@ namespace Microsoft.Extensions.DependencyInjection
         #region CoreServices
         public static IIdentityServerBuilder AddLocalApiAuthentication(this IIdentityServerBuilder builder)
         {
-            builder.Services.AddAuthentication().AddLoaclApiAuthentication();
+            builder.Services.AddAuthentication()
+                .AddLoaclApiAuthentication();
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy(LocalApi.PolicyName, policy =>
+                {
+                    policy.AddAuthenticationSchemes(LocalApi.AuthenticationScheme);
+                    policy.RequireAuthenticatedUser();
+                });
+            });
             return builder;
         }
         #endregion       
@@ -43,7 +52,6 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<IServerUrl, ServerUrl>();
             builder.Services.TryAddTransient<IIdGenerator, IdGenerator>();
             builder.Services.TryAddTransient<IClaimsService, ClaimsService>();
-            builder.Services.TryAddTransient<IProfileService, ProfileService>();
             builder.Services.TryAddTransient<IObjectStorage, ObjectStorage>();
             builder.Services.TryAddTransient<ITokenService, TokenService>();
             builder.Services.TryAddTransient<ISecurityTokenService, JwtTokenService>();
@@ -57,7 +65,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IIdentityServerBuilder AddValidators(this IIdentityServerBuilder builder)
         {
             builder.Services.TryAddTransient<IScopeValidator, ScopeValidator>();
-            builder.Services.TryAddTransient<ITokenValidator, TokenValidator>();
+            builder.Services.TryAddTransient<IClaimsValidator, ClaimsValidator>();
+            builder.Services.TryAddTransient<IAccessTokenValidator, AccessTokenValidator>();
             builder.Services.TryAddTransient<IResourceValidator, ResourceValidator>();
             builder.Services.TryAddTransient<IGrantTypeValidator, GrantTypeValidator>();            
             builder.Services.TryAddTransient<ISecretsListValidator, SecretsValidator>();

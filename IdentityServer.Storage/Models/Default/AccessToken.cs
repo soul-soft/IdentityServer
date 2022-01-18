@@ -10,11 +10,11 @@
         public string? Nonce { get; set; }
         public string? SubjectId { get; set; }
         public string? SessionId { get; set; }
-        public AccessTokenType AccessTokenType { get; set; }
         public string? Description { get; set; }
         public string? GrantType { get; set; }
         public DateTime? NotBefore { get; set; }
         public DateTime? Expiration { get; set; }
+        public AccessTokenType AccessTokenType { get; set; }
         public IReadOnlyCollection<string> Scopes { get; set; } = new HashSet<string>();
         public IReadOnlyCollection<ClaimLite> Claims { get; set; } = new List<ClaimLite>();
         public IReadOnlyCollection<string> Audiences { get; set; } = new HashSet<string>();

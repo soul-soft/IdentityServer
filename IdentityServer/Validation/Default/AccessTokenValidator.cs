@@ -5,7 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityServer.Validation
 {
-    internal class TokenValidator : ITokenValidator
+    internal class AccessTokenValidator : IAccessTokenValidator
     {
         private readonly IServerUrl _urls;
         private readonly ISystemClock _systemClock;
@@ -13,7 +13,7 @@ namespace IdentityServer.Validation
         private readonly ISigningCredentialStore _credentials;
         private readonly IReferenceTokenService _referenceTokenService;
 
-        public TokenValidator(
+        public AccessTokenValidator(
             IServerUrl urls,
             ISystemClock systemClock,
             IdentityServerOptions options,
@@ -27,8 +27,9 @@ namespace IdentityServer.Validation
             _referenceTokenService = referenceTokenService;
         }
 
-        public async Task<ClaimsPrincipal> ValidateAccessTokenAsync(string? token)
+        public async Task<IEnumerable<Claim>> ValidateAsync(string? token)
         {
+            IEnumerable<Claim> claims;
             if (string.IsNullOrWhiteSpace(token))
             {
                 throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "Access token is missing");
@@ -39,15 +40,32 @@ namespace IdentityServer.Validation
             }
             if (token.Contains('.'))
             {
-                return await ValidateJwtTokenAsync(token);
+                claims = await ValidateJwtTokenAsync(token);
             }
             else
             {
-                return await ValidateReferenceTokenAsync(token);
-            }           
+                claims = await ValidateReferenceTokenAsync(token);
+            }
+            if (_options.EmitScopesAsSpaceDelimitedStringInJwt)
+            {
+                var scope = claims
+                    .Where(a => a.Type == JwtClaimTypes.Scope)
+                    .FirstOrDefault()?.Value;
+                if (!string.IsNullOrEmpty(scope))
+                {
+                    var scopes = scope.Split(',');
+                    var list = claims.Where(a => a.Type != JwtClaimTypes.Scope).ToList();
+                    foreach (var item in scopes)
+                    {
+                        list.Add(new Claim(JwtClaimTypes.Scope, item));
+                    }
+                    claims = list;
+                }
+            }
+            return claims;
         }
 
-        private async Task<ClaimsPrincipal> ValidateJwtTokenAsync(string token)
+        private async Task<IEnumerable<Claim>> ValidateJwtTokenAsync(string token)
         {
             try
             {
@@ -59,10 +77,11 @@ namespace IdentityServer.Validation
                 {
                     ValidateAudience = false,
                     ValidateLifetime = true,
-                    ValidIssuer = issuer,
+                    ValidIssuer = _options.Issuer,
                     IssuerSigningKeys = securityKeys,
                 };
-                return handler.ValidateToken(token, parameters, out var securityToken);
+                var subject = handler.ValidateToken(token, parameters, out var securityToken);
+                return subject.Claims;
             }
             catch (Exception ex)
             {
@@ -70,7 +89,7 @@ namespace IdentityServer.Validation
             }
         }
 
-        private async Task<ClaimsPrincipal> ValidateReferenceTokenAsync(string token)
+        private async Task<IEnumerable<Claim>> ValidateReferenceTokenAsync(string token)
         {
             var referenceToken = await _referenceTokenService.GetAsync(token);
             if (referenceToken == null || referenceToken.Expiration < _systemClock.UtcNow.UtcDateTime)
@@ -82,9 +101,7 @@ namespace IdentityServer.Validation
             {
                 throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "Invalid issuer");
             }
-            var claims = referenceToken.AccessToken.ToClaims(_options);
-            var identity = new ClaimsIdentity(claims,"Reference");
-            return new ClaimsPrincipal(identity);
+            return referenceToken.AccessToken.ToClaims(_options);
         }
     }
 }

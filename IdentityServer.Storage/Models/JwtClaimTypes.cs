@@ -30,9 +30,9 @@
         public const string Gender = "gender";
         public const string BirthDate = "birthdate";
         public const string Profile = "profile";
-        public static string Address = "address";
-        public static string Email = "email";
-        public static string Phone = "phone";
+        public const string Address = "address";
+        public const string Email = "email";
+        public const string Phone = "phone";
         public const string Events = "events";
 
     }

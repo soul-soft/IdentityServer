@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Security.Claims;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
@@ -9,11 +10,11 @@ namespace IdentityServer.Authentication
     internal class IdentityServerAuthenticationHandler
         : AuthenticationHandler<IdentityServerAuthenticationOptions>
     {
-        private readonly ITokenValidator _tokenValidator;
+        private readonly IAccessTokenValidator _tokenValidator;
         private readonly IBearerTokenUsageParser _bearerTokenUsageParser;
 
         public IdentityServerAuthenticationHandler(
-            ITokenValidator tokenValidator,
+            IAccessTokenValidator tokenValidator,
             IBearerTokenUsageParser bearerTokenUsageParser,
             IOptionsMonitor<IdentityServerAuthenticationOptions> options,
             ILoggerFactory logger,
@@ -34,7 +35,7 @@ namespace IdentityServer.Authentication
             }
             try
             {
-                var subject = await _tokenValidator.ValidateAccessTokenAsync(token);
+                var claims = await _tokenValidator.ValidateAsync(token);
                 var properties = new AuthenticationProperties();
                 if (Options.SaveToken)
                 {
@@ -43,6 +44,9 @@ namespace IdentityServer.Authentication
                         new AuthenticationToken { Name = "access_token", Value = token }
                     });
                 }
+                var identity = new ClaimsIdentity(Scheme.Name);
+                identity.AddClaims(claims);
+                var subject = new ClaimsPrincipal(identity);
                 var ticket = new AuthenticationTicket(subject, properties, Scheme.Name);
                 return AuthenticateResult.Success(ticket);
             }

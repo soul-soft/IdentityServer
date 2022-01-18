@@ -13,9 +13,8 @@ namespace Hosting.Configuration
                 AllowedGrantTypes = new []
                 {
                     "myGrant",
-                    GrantTypes.RefreshToken
                 },
-                ClientSecrets=new ISecret[]
+                ClientSecrets = new ISecret[]
                 {
                     new Secret("secret".Sha512())
                 },
@@ -24,14 +23,16 @@ namespace Hosting.Configuration
                 {
                     "api",
                     StandardScopes.OpenId,
-                    StandardScopes.OfflineAccess,
                 }
             }
         };
 
         public static IEnumerable<IApiScope> ApiScopes => new IApiScope[]
         {
-            new ApiScope("api"),
+            new ApiScope("api")
+            {
+                UserClaims = new string[]{ JwtClaimTypes.Role}
+            },
             new ApiScope("rpc")
         };
 
