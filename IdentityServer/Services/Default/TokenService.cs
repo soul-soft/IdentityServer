@@ -7,6 +7,7 @@ namespace IdentityServer.Services
         private readonly IServerUrl _urls;
         private readonly ISystemClock _clock;
         private readonly IIdGenerator _idGenerator;
+        private readonly IdentityServerOptions _options;
         private readonly ISecurityTokenService _jwtTokenService;
         private readonly IReferenceTokenService _referenceTokenService;
 
@@ -14,11 +15,13 @@ namespace IdentityServer.Services
             IServerUrl urls,
             ISystemClock clock,
             IIdGenerator idGenerator,
+            IdentityServerOptions options,
             ISecurityTokenService jwtTokenService,
             IReferenceTokenService referenceTokenService)
         {
             _urls = urls;
             _clock = clock;
+            _options = options;
             _idGenerator = idGenerator;
             _jwtTokenService = jwtTokenService;
             _referenceTokenService = referenceTokenService;
@@ -27,7 +30,7 @@ namespace IdentityServer.Services
         public Task<IAccessToken> CreateAccessTokenAsync(ValidatedTokenRequest request)
         {
             var id = _idGenerator.GeneratorId();
-            var issuer = _urls.GetIdentityServerIssuerUri();
+            var issuer = _options.Issuer;
             var client = request.Client;
             var notBefore = _clock.UtcNow.UtcDateTime;
             var expiration = notBefore.AddSeconds(client.AccessTokenLifetime);
@@ -60,7 +63,7 @@ namespace IdentityServer.Services
         public Task<IAccessToken> CreateIdentityTokenAsync(ValidatedTokenRequest request)
         {
             var id = _idGenerator.GeneratorId();
-            var issuer = _urls.GetIdentityServerIssuerUri();
+            var issuer = _options.Issuer;
             var client = request.Client;
             var resources = request.Resources;
             var notBefore = _clock.UtcNow.UtcDateTime;
