@@ -2,9 +2,9 @@
 {
     internal class InMemoryReferenceTokenStore : IReferenceTokenStore
     {
-        private readonly IObjectStorage _storage;
+        private readonly IPersistentStore _storage;
 
-        public InMemoryReferenceTokenStore(IObjectStorage storage)
+        public InMemoryReferenceTokenStore(IPersistentStore storage)
         {
             _storage = storage;
         }

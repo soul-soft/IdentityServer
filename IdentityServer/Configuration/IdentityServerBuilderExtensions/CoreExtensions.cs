@@ -51,8 +51,9 @@ namespace Microsoft.Extensions.DependencyInjection
 
             builder.Services.TryAddTransient<IServerUrl, ServerUrl>();
             builder.Services.TryAddTransient<IIdGenerator, IdGenerator>();
+            builder.Services.TryAddTransient<IProfileService, ProfileService>();
             builder.Services.TryAddTransient<IClaimsService, ClaimsService>();
-            builder.Services.TryAddTransient<IObjectStorage, ObjectStorage>();
+            builder.Services.TryAddTransient<IPersistentStore, PersistentStore>();
             builder.Services.TryAddTransient<ITokenService, TokenService>();
             builder.Services.TryAddTransient<ISecurityTokenService, JwtTokenService>();
             builder.Services.TryAddTransient<IRefreshTokenService, RefreshTokenService>();
@@ -73,7 +74,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<ISecretValidator, SharedSecretValidator>();
             builder.Services.TryAddTransient<IRefreshTokenGrantValidator, RefreshTokenGrantValidator>();
             builder.Services.TryAddTransient<IClientCredentialsGrantValidator, ClientCredentialsGrantValidator>();
-            builder.Services.TryAddTransient<IResourceOwnerPasswordGrantValidator, ResourceOwnerPasswordGrantValidator>();
+            builder.Services.TryAddTransient<IPasswordGrantValidator, PasswordGrantValidator>();
             builder.Services.TryAddTransient<IExtensionGrantsListValidator, ExtensionGrantsListValidator>();
             return builder;
         }
@@ -94,9 +95,9 @@ namespace Microsoft.Extensions.DependencyInjection
         #region ResponseGenerators
         public static IIdentityServerBuilder AddResponseGenerators(this IIdentityServerBuilder builder)
         {
-            builder.Services.TryAddTransient<IUserInfoResponseGenerator, UserInfoResponseGenerator>();
-            builder.Services.TryAddTransient<ITokenResponseGenerator, TokenResponseGenerator>();
-            builder.Services.TryAddTransient<IDiscoveryResponseGenerator, DiscoveryResponseGenerator>();
+            builder.Services.TryAddTransient<IUserInfoGenerator, UserInfoGenerator>();
+            builder.Services.TryAddTransient<ITokenGenerator, TokenGenerator>();
+            builder.Services.TryAddTransient<IDiscoveryGenerator, DiscoveryGenerator>();
             return builder;
         }
         #endregion

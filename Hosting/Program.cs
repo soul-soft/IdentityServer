@@ -14,8 +14,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddTransient<IExtensionGrantValidator, MyExtensionGrantValidator>();
-builder.Services.AddTransient<IUserInfoResponseGenerator, UserInfoResponseGenerator>();
-builder.Services.AddTransient<IResourceOwnerPasswordGrantValidator, ResourceOwnerPasswordGrantValidator>();
+builder.Services.AddTransient<IUserInfoGenerator, UserInfoResponseGenerator>();
+builder.Services.AddTransient<IPasswordGrantValidator, ResourceOwnerPasswordGrantValidator>();
 builder.Services.AddIdentityServer()
         .AddInMemoryStores(setup =>
         {

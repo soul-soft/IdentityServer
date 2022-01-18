@@ -1,12 +1,12 @@
 ﻿namespace IdentityServer.Endpoints
 {
-    public class TokenResponseGenerator : ITokenResponseGenerator
+    public class TokenGenerator : ITokenGenerator
     {
         private readonly ITokenService _tokenService;
 
         private readonly IRefreshTokenService _refreshTokenService;
 
-        public TokenResponseGenerator(
+        public TokenGenerator(
             ITokenService tokenService,
             IRefreshTokenService refreshTokenService)
         {

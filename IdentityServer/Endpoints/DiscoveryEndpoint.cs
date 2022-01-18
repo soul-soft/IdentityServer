@@ -9,12 +9,12 @@ namespace IdentityServer.Endpoints
     {
         private readonly IServerUrl _urls;
         private readonly IdentityServerOptions _options;
-        private readonly IDiscoveryResponseGenerator _generator;
+        private readonly IDiscoveryGenerator _generator;
 
         public DiscoveryEndpoint(
             IServerUrl urls,
             IdentityServerOptions options,
-            IDiscoveryResponseGenerator generator)
+            IDiscoveryGenerator generator)
         {
             _urls = urls;
             _options = options;

@@ -9,7 +9,7 @@ namespace IdentityServer.Endpoints
         private readonly IClientStore _clients;
         private readonly IResourceStore _resources;
         private readonly IdentityServerOptions _options;
-        private readonly ITokenResponseGenerator _generator;
+        private readonly ITokenGenerator _generator;
         private readonly ISecretsListParser _secretsParser;
         private readonly IScopeValidator _scopeValidator;
         private readonly IClaimsService _claimsService;
@@ -23,7 +23,7 @@ namespace IdentityServer.Endpoints
             IResourceStore resources,
             ISecretsListParser secretsParser,
             IdentityServerOptions options,
-            ITokenResponseGenerator generator,
+            ITokenGenerator generator,
             IScopeValidator scopeValidator,
             IClaimsService claimsService,
             IClaimsValidator claimsValidator,
@@ -104,7 +104,7 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Validate Grant
-            var grantRequest = new GrantValidationRequest(
+            var grantValidationRequest = new GrantValidationRequest(
                 client: client,
                 clientSecret: clientSecret,
                 options: _options,
@@ -112,11 +112,11 @@ namespace IdentityServer.Endpoints
                 resources: resources,
                 grantType: grantType,
                 raw: form);
-            var grantResult = await ValidateGrantAsync(context, grantRequest);
+            var grantValidationResult = await ValidateGrantAsync(context, grantValidationRequest);
             #endregion
 
             #region Validate Claims
-            var subject = await _claimsService.CreateSubjectAsync(grantRequest, grantResult);
+            var subject = await _claimsService.CreateSubjectAsync(grantValidationRequest, grantValidationResult);
             await _claimsValidator.ValidateAsync(subject, resources);
             #endregion
 
@@ -182,7 +182,7 @@ namespace IdentityServer.Endpoints
                     username: username,
                     password: password);
                 var grantValidator = context.RequestServices
-                   .GetRequiredService<IResourceOwnerPasswordGrantValidator>();
+                   .GetRequiredService<IPasswordGrantValidator>();
                 return await grantValidator.ValidateAsync(grantContext);
             }
             //验证自定义授权

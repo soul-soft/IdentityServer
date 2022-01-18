@@ -3,7 +3,7 @@
 namespace Hosting.Configuration
 {
     public class UserInfoResponseGenerator
-        : IUserInfoResponseGenerator
+        : IUserInfoGenerator
     {
         public Task<UserInfoResponse> ProcessAsync(UserInfoRequest request)
         {

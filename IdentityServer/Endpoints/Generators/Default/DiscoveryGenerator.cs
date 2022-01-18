@@ -2,15 +2,15 @@
 
 namespace IdentityServer.Endpoints
 {
-    internal class DiscoveryResponseGenerator
-        : IDiscoveryResponseGenerator
+    internal class DiscoveryGenerator
+        : IDiscoveryGenerator
     {
         private readonly IResourceStore _resources;
         private readonly ISecretsListParser _secretParsers;
         private readonly IExtensionGrantsListValidator _grantTypeService;
         private readonly ISigningCredentialStore _credentials;
 
-        public DiscoveryResponseGenerator(
+        public DiscoveryGenerator(
             IResourceStore resources,
             ISecretsListParser secretParsers,
             IExtensionGrantsListValidator grantTypeService,

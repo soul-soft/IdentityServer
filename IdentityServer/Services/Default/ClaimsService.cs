@@ -6,17 +6,20 @@ namespace IdentityServer.Services
     internal class ClaimsService : IClaimsService
     {
         private readonly ISystemClock _clock;
+        private readonly IProfileService _profileService;
         private readonly IdentityServerOptions _options;
 
         public ClaimsService(
             ISystemClock clock,
+            IProfileService profileService,
             IdentityServerOptions options)
         {
             _clock = clock;
             _options = options;
+            _profileService = profileService;
         }
 
-        public Task<ClaimsPrincipal> CreateSubjectAsync(GrantValidationRequest request, GrantValidationResult result)
+        public async Task<ClaimsPrincipal> CreateSubjectAsync(GrantValidationRequest request, GrantValidationResult result)
         {
             var resources = request.Resources;
             var identity = new ClaimsIdentity(request.GrantType);
@@ -37,7 +40,9 @@ namespace IdentityServer.Services
                     identity.AddClaim(new Claim(JwtClaimTypes.Subject, result.Subject));
                 }
             }
-            return Task.FromResult(new ClaimsPrincipal(identity));
+            var claims = await _profileService.GetProfileDataAsync(resources);
+            identity.AddClaims(claims);
+            return new ClaimsPrincipal(identity);
         }
     }
 }

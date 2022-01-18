@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Validation
 {
-    internal class ResourceOwnerPasswordGrantValidator : IResourceOwnerPasswordGrantValidator
+    internal class PasswordGrantValidator : IPasswordGrantValidator
     {
         public Task<GrantValidationResult> ValidateAsync(ResourceOwnerPasswordGrantValidationContext context)
         {

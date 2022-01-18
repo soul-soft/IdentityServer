@@ -8,11 +8,11 @@ namespace IdentityServer.Endpoints
     public class DiscoveryKeyEndpoint : EndpointBase
     {
         private readonly IdentityServerOptions _options;
-        private readonly IDiscoveryResponseGenerator _generator;
+        private readonly IDiscoveryGenerator _generator;
 
         public DiscoveryKeyEndpoint(
             IdentityServerOptions options,
-            IDiscoveryResponseGenerator generator)
+            IDiscoveryGenerator generator)
         {
             _options = options;
             _generator = generator;

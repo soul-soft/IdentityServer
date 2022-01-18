@@ -8,14 +8,14 @@ namespace IdentityServer.Endpoints
     {
         private readonly IClientStore _clients;
         private readonly IResourceStore _resources;
-        private readonly IUserInfoResponseGenerator _generator;
+        private readonly IUserInfoGenerator _generator;
         private readonly IResourceValidator _resourceValidator;
 
         public UserInfoEndpoint(
             IClientStore clients,
             IResourceStore resources,
             IResourceValidator resourceValidator,
-            IUserInfoResponseGenerator generator)
+            IUserInfoGenerator generator)
         {
             _clients = clients;
             _resources = resources;

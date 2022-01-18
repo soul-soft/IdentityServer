@@ -4,9 +4,9 @@ namespace IdentityServer.Endpoints
 {
     public class UserInfoResponse
     {
-        private readonly Dictionary<string, object> _items = new Dictionary<string, object>();
+        private readonly Dictionary<string, object?> _items = new Dictionary<string, object?>();
 
-        public void Add(string name, object value)
+        public void Add(string name, object? value)
         {
             _items.TryAdd(name, value);
         }
