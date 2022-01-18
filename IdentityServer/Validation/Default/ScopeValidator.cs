@@ -22,7 +22,7 @@
             var scope = string.Join("", requestedScopes);
             if (scope.Length > _options.InputLengthRestrictions.Scope)
             {
-                throw new InvalidScopeException("Scope parameter exceeds max allowed length");
+                throw new InvalidScopeException("Scope too long");
             }
             foreach (var item in requestedScopes)
             {

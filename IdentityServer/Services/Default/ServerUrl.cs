@@ -26,7 +26,7 @@ namespace IdentityServer.Services
             return url;
         }
         
-        public string GetIdentityServerIssuerUri()
+        public string GetIssuerUri()
         {
             var url = _options.IssuerUri;
             if (string.IsNullOrEmpty(url))

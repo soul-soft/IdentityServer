@@ -54,7 +54,7 @@ namespace IdentityServer.Validation
                 var handler = new JwtSecurityTokenHandler();
                 handler.InboundClaimTypeMap.Clear();
                 var securityKeys = await _credentials.GetSecurityKeysAsync();
-                var issuer = _urls.GetIdentityServerIssuerUri();
+                var issuer = _urls.GetIssuerUri();
                 var parameters = new TokenValidationParameters
                 {
                     ValidateAudience = false,
@@ -77,7 +77,7 @@ namespace IdentityServer.Validation
             {
                 throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "The access token has expired");
             }
-            var issuer = _urls.GetIdentityServerIssuerUri();
+            var issuer = _urls.GetIssuerUri();
             if (referenceToken.AccessToken.Issuer != issuer)
             {
                 throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "Invalid issuer");

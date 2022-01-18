@@ -31,7 +31,7 @@ namespace IdentityServer.Endpoints
             {
                 return MethodNotAllowed();
             }
-            var issuer = _urls.GetIdentityServerIssuerUri();
+            var issuer = _urls.GetIssuerUri();
             var response = await _generator.CreateDiscoveryDocumentAsync(issuer);
             return DiscoveryResult(response);
         }

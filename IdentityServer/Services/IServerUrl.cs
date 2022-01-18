@@ -2,6 +2,6 @@
 {
     public interface IServerUrl
     {
-        string GetIdentityServerIssuerUri();
+        string GetIssuerUri();
     }
 }

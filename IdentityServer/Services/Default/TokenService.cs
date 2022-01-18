@@ -30,7 +30,7 @@ namespace IdentityServer.Services
         public async Task<IAccessToken> CreateAccessTokenAsync(ValidatedTokenRequest request)
         {
             var id = _idGenerator.GeneratorId();
-            var issuer = _urls.GetIdentityServerIssuerUri();
+            var issuer = _urls.GetIssuerUri();
             var client = request.Client;
             var resources = request.Resources;
             var notBefore = _clock.UtcNow.UtcDateTime;
@@ -65,7 +65,7 @@ namespace IdentityServer.Services
         public async Task<IAccessToken> CreateIdentityTokenAsync(ValidatedTokenRequest request)
         {
             var id = _idGenerator.GeneratorId();
-            var issuer = _urls.GetIdentityServerIssuerUri();
+            var issuer = _urls.GetIssuerUri();
             var client = request.Client;
             var resources = request.Resources;
             var notBefore = _clock.UtcNow.UtcDateTime;
