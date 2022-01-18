@@ -25,14 +25,6 @@ builder.Services.AddIdentityServer(o=>o.EmitScopesAsSpaceDelimitedStringInJwt=fa
             setup.AddSigningCredentials(new X509Certificate2("idsvr.pfx","nbjc"));
             //setup.AddSigningCredentials(CryptoRandom.CreateRsaSecurityKey());
         });
-builder.Services.AddAuthorization(options => 
-{
-    options.AddPolicy(IdentityServerConstants.IdentityServerDefaults.PolicyName, policy =>
-    {
-        policy.AddAuthenticationSchemes(IdentityServerConstants.IdentityServerDefaults.AuthenticationScheme);
-        policy.RequireAuthenticatedUser();
-    });
-});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

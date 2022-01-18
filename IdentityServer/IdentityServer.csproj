@@ -25,6 +25,7 @@
 		<Using Include="IdentityServer.Validation" />
 		<Using Include="IdentityServer.Configuration" />
 		<Using Include="IdentityServer.Infrastructure" />
+		<Using Include="IdentityServer.Authentication" />
 		<Using Include="IdentityServer.IdentityServerConstants" Static="true" />
 	</ItemGroup>
 	

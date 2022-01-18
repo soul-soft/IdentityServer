@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using IdentityServer.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
@@ -8,17 +9,20 @@ using System.Diagnostics;
 
 namespace IdentityServer.Hosting
 {
-    internal class IdentityServerEndpointBuilder : EndpointDataSource
+    internal class IdentityServerEndpointDataSource : EndpointDataSource
     {
-        private readonly object _lock = new object();
         private List<Endpoint>? _endpoints;
         private IChangeToken? _changeToken;
         private CancellationTokenSource? _cancellationTokenSource;
-
+        private readonly object _lock = new object();
+        private readonly IdentityServerOptions _options;
         private readonly IEnumerable<EndpointDescriptor> _descriptors;
 
-        public IdentityServerEndpointBuilder(IEnumerable<EndpointDescriptor> descriptors)
+        public IdentityServerEndpointDataSource(
+            IdentityServerOptions options,
+            IEnumerable<EndpointDescriptor> descriptors)
         {
+            _options = options;
             _descriptors = descriptors;
         }
 
@@ -93,7 +97,7 @@ namespace IdentityServer.Hosting
                 var builder = new RouteEndpointBuilder(requestDelegate, routePattern, 0);
                 if (item.Name == Constants.EndpointNames.UserInfo)
                 {
-                    builder.Metadata.Add(new AuthorizeAttribute(IdentityServerDefaults.PolicyName));
+                    builder.Metadata.Add(new AuthorizeAttribute(_options.AuthenticationPolicyName));
                 }
                 yield return builder.Build();
             }

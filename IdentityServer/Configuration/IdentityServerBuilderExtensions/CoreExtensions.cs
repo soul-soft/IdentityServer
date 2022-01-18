@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using IdentityServer.Authentication;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -14,9 +15,9 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddLoaclApiAuthentication();
             builder.Services.AddAuthorization(options =>
             {
-                options.AddPolicy(IdentityServerDefaults.PolicyName, policy =>
+                options.AddPolicy(IdentityServerAuthenticationDefaults.PolicyName, policy =>
                 {
-                    policy.AddAuthenticationSchemes(IdentityServerDefaults.AuthenticationScheme);
+                    policy.AddAuthenticationSchemes(IdentityServerAuthenticationDefaults.AuthenticationScheme);
                     policy.RequireAuthenticatedUser();
                 });
             });

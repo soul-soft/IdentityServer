@@ -5,7 +5,7 @@ namespace Microsoft.AspNetCore.Builder
 {
     public static class ApplicationBuilderExtensions
     {
-        public static IApplicationBuilder UseIdentityServer(this WebApplication app)
+        public static IApplicationBuilder UseIdentityServer(this WebApplication app, IdentityServerMiddlewareOptions? options = null)
         {
             app.UseMiddleware<IdentityServerMiddleware>();
             app.UseAuthentication();
@@ -17,7 +17,7 @@ namespace Microsoft.AspNetCore.Builder
         internal static void MapEndpoints(this IEndpointRouteBuilder endpoints)
         {
             var endpointDataSource = ActivatorUtilities
-                .CreateInstance<IdentityServerEndpointBuilder>(endpoints.ServiceProvider);
+                .CreateInstance<IdentityServerEndpointDataSource>(endpoints.ServiceProvider);
             endpoints.DataSources.Add(endpointDataSource);
         }
     }
