@@ -30,7 +30,7 @@ namespace IdentityServer.Endpoints
             context.Response.StatusCode = (int)StatusCode;
             var options = context.RequestServices
                 .GetRequiredService<IdentityServerOptions>();
-            if (!options.IncludeErrorDetails)
+            if (!options.IncludeEndpointErrorDetails)
             {
                 ErrorDescription = null;
             }

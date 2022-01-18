@@ -1,3 +1,4 @@
+using IdentityServer.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static IdentityServer.IdentityServerConstants;
@@ -15,8 +16,8 @@ namespace Hosting.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        [Authorize(IdentityServerDefaults.PolicyName)]
+        [HttpGet]        
+        [Authorize(IdentityServerAuthenticationDefaults.PolicyName)]
         public string Test()
         {
             return "111";

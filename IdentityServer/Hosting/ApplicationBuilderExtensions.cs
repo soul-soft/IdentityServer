@@ -5,20 +5,21 @@ namespace Microsoft.AspNetCore.Builder
 {
     public static class ApplicationBuilderExtensions
     {
-        public static IApplicationBuilder UseIdentityServer(this WebApplication app, IdentityServerMiddlewareOptions? options = null)
+        public static EndpointDescriptorCollectionProvider UseIdentityServer(this WebApplication app)
         {
             app.UseMiddleware<IdentityServerMiddleware>();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.MapEndpoints();
-            return app;
+            return app.MapEndpoints();
         }
 
-        internal static void MapEndpoints(this IEndpointRouteBuilder endpoints)
+        internal static EndpointDescriptorCollectionProvider MapEndpoints(this IEndpointRouteBuilder endpoints)
         {
+            var pro = endpoints.ServiceProvider.GetRequiredService<EndpointDescriptorCollectionProvider>();
             var endpointDataSource = ActivatorUtilities
                 .CreateInstance<IdentityServerEndpointDataSource>(endpoints.ServiceProvider);
             endpoints.DataSources.Add(endpointDataSource);
+            return pro;
         }
     }
 }

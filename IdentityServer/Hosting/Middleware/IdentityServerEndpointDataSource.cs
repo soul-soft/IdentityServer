@@ -9,21 +9,22 @@ using System.Diagnostics;
 
 namespace IdentityServer.Hosting
 {
-    internal class IdentityServerEndpointDataSource : EndpointDataSource
+    internal class IdentityServerEndpointDataSource : EndpointDataSource, IDisposable
     {
         private List<Endpoint>? _endpoints;
         private IChangeToken? _changeToken;
+        private IDisposable? _disposable;
         private CancellationTokenSource? _cancellationTokenSource;
         private readonly object _lock = new object();
         private readonly IdentityServerOptions _options;
-        private readonly IEnumerable<EndpointDescriptor> _descriptors;
+        private readonly EndpointDescriptorCollectionProvider _provider;
 
         public IdentityServerEndpointDataSource(
             IdentityServerOptions options,
-            IEnumerable<EndpointDescriptor> descriptors)
+            EndpointDescriptorCollectionProvider provider)
         {
             _options = options;
-            _descriptors = descriptors;
+            _provider = provider;
         }
 
         public override IReadOnlyList<Endpoint> Endpoints
@@ -44,6 +45,17 @@ namespace IdentityServer.Hosting
             return _changeToken;
         }
 
+        public void Subscribe()
+        {
+            // IMPORTANT: this needs to be called by the derived class to avoid the fragile base class
+            // problem. We can't call this in the base-class constuctor because it's too early.
+            //
+            // It's possible for someone to override the collection provider without providing
+            // change notifications. If that's the case we won't process changes.
+            _disposable = ChangeToken.OnChange(
+                     () => _provider.GetChangeToken(),
+                     UpdateEndpoints);
+        }
         private void Initialize()
         {
             if (_endpoints == null)
@@ -84,15 +96,15 @@ namespace IdentityServer.Hosting
 
         private IEnumerable<Endpoint> CreateEndpoints()
         {
-            foreach (var item in _descriptors)
+            foreach (var item in _provider)
             {
-                RequestDelegate requestDelegate = async (context) =>
+                async Task requestDelegate(HttpContext context)
                 {
                     var handler = (IEndpointHandler)context.RequestServices
                             .GetRequiredService(item.Handler);
                     var result = await handler.ProcessAsync(context);
                     await result.ExecuteAsync(context);
-                };
+                }
                 var routePattern = RoutePatternFactory.Parse(item.RoutePattern);
                 var builder = new RouteEndpointBuilder(requestDelegate, routePattern, 0);
                 if (item.Name == Constants.EndpointNames.UserInfo)
@@ -101,6 +113,13 @@ namespace IdentityServer.Hosting
                 }
                 yield return builder.Build();
             }
+        }
+
+        public void Dispose()
+        {
+            // Once disposed we won't process updates anymore, but we still allow access to the endpoints.
+            _disposable?.Dispose();
+            _disposable = null;
         }
     }
 }

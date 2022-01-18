@@ -90,6 +90,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.AddEndpoint<UserInfoEndpoint>(Constants.EndpointNames.UserInfo, Constants.EndpointRoutePaths.UserInfo);
             builder.AddEndpoint<DiscoveryEndpoint>(Constants.EndpointNames.Discovery, Constants.EndpointRoutePaths.Discovery);
             builder.AddEndpoint<DiscoveryKeyEndpoint>(Constants.EndpointNames.DiscoveryJwks, Constants.EndpointRoutePaths.DiscoveryJwks);
+            builder.Services.AddSingleton<EndpointDescriptorCollectionProvider>();
             return builder;
         }
         #endregion

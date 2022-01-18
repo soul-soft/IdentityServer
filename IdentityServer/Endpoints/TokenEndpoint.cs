@@ -11,7 +11,6 @@ namespace IdentityServer.Endpoints
         private readonly IdentityServerOptions _options;
         private readonly ITokenGenerator _generator;
         private readonly ISecretsListParser _secretsParser;
-        private readonly IScopeParser _scopeParser;
         private readonly IScopeValidator _scopeValidator;
         private readonly IClaimsService _claimsService;
         private readonly IClaimsValidator _claimsValidator;
@@ -25,7 +24,6 @@ namespace IdentityServer.Endpoints
             ISecretsListParser secretsParser,
             IdentityServerOptions options,
             ITokenGenerator generator,
-            IScopeParser scopeParser,
             IScopeValidator scopeValidator,
             IClaimsService claimsService,
             IClaimsValidator claimsValidator,
@@ -38,7 +36,6 @@ namespace IdentityServer.Endpoints
             _resources = resources;
             _generator = generator;
             _secretsParser = secretsParser;
-            _scopeParser = scopeParser;
             _scopeValidator = scopeValidator;
             _claimsService = claimsService;
             _claimsValidator = claimsValidator;

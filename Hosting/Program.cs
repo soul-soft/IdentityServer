@@ -16,13 +16,16 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddTransient<IExtensionGrantValidator, MyExtensionGrantValidator>();
 builder.Services.AddTransient<IUserInfoGenerator, UserInfoResponseGenerator>();
 builder.Services.AddTransient<IPasswordGrantValidator, PasswordGrantValidator>();
-builder.Services.AddIdentityServer(o=>o.EmitScopesAsSpaceDelimitedStringInJwt=false)
+builder.Services.AddIdentityServer(o =>
+        {
+            o.EmitScopesAsSpaceDelimitedStringInJwt = false;
+        })
         .AddInMemoryStores(setup =>
         {
             setup.AddClients(Config.Clients);
             setup.AddResources(Config.ApiScopes);
             setup.AddResources(Config.IdentityResources);
-            setup.AddSigningCredentials(new X509Certificate2("idsvr.pfx","nbjc"));
+            setup.AddSigningCredentials(new X509Certificate2("idsvr.pfx", "nbjc"));
             //setup.AddSigningCredentials(CryptoRandom.CreateRsaSecurityKey());
         });
 var app = builder.Build();
@@ -36,6 +39,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseIdentityServer();
+app.UseIdentityServer()
+    .RequireCors("p", (n) => true);
 app.MapControllers();
 app.Run();
