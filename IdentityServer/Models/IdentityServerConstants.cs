@@ -44,7 +44,7 @@
             public const string TlsClientAuth = "tls_client_auth";
             public const string SelfSignedTlsClientAuth = "self_signed_tls_client_auth";
         }
-        public static class LocalApi
+        public static class IdentityServerDefaults
         {
             public const string AuthenticationScheme = "IdentityServer";
             public const string ScopeName = "IdentityServerApi";

@@ -4,7 +4,7 @@ using System.Security.Claims;
 
 namespace Hosting.Configuration
 {
-    public class ResourceOwnerPasswordGrantValidator
+    public class PasswordGrantValidator
         : IPasswordGrantValidator
     {
         public Task<GrantValidationResult> ValidateAsync(ResourceOwnerPasswordGrantValidationContext context)

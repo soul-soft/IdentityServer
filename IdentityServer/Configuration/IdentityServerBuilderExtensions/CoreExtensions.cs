@@ -8,15 +8,15 @@ namespace Microsoft.Extensions.DependencyInjection
     internal static class CoreExtensions
     {
         #region CoreServices
-        public static IIdentityServerBuilder AddLocalApiAuthentication(this IIdentityServerBuilder builder)
+        public static IIdentityServerBuilder AddLocalAuthentication(this IIdentityServerBuilder builder)
         {
             builder.Services.AddAuthentication()
                 .AddLoaclApiAuthentication();
             builder.Services.AddAuthorization(options =>
             {
-                options.AddPolicy(LocalApi.PolicyName, policy =>
+                options.AddPolicy(IdentityServerDefaults.PolicyName, policy =>
                 {
-                    policy.AddAuthenticationSchemes(LocalApi.AuthenticationScheme);
+                    policy.AddAuthenticationSchemes(IdentityServerDefaults.AuthenticationScheme);
                     policy.RequireAuthenticatedUser();
                 });
             });
@@ -45,8 +45,9 @@ namespace Microsoft.Extensions.DependencyInjection
         #region PluggableServices
         public static IIdentityServerBuilder AddPluggableServices(this IIdentityServerBuilder builder)
         {
-            builder.Services.TryAddTransient<ISecretsListParser, SecretsListParser>();
+            builder.Services.TryAddTransient<IScopeParser, ScopeParser>();
             builder.Services.TryAddTransient<ISecretParser, PostBodySecretParser>();
+            builder.Services.TryAddTransient<ISecretsListParser, SecretsListParser>();
             builder.Services.TryAddTransient<IBearerTokenUsageParser, BearerTokenUsageParser>();
 
             builder.Services.TryAddTransient<IServerUrl, ServerUrl>();

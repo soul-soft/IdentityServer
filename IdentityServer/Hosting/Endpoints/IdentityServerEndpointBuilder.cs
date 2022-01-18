@@ -93,7 +93,7 @@ namespace IdentityServer.Hosting
                 var builder = new RouteEndpointBuilder(requestDelegate, routePattern, 0);
                 if (item.Name == Constants.EndpointNames.UserInfo)
                 {
-                    builder.Metadata.Add(new AuthorizeAttribute(LocalApi.PolicyName));
+                    builder.Metadata.Add(new AuthorizeAttribute(IdentityServerDefaults.PolicyName));
                 }
                 yield return builder.Build();
             }

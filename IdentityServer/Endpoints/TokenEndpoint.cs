@@ -11,6 +11,7 @@ namespace IdentityServer.Endpoints
         private readonly IdentityServerOptions _options;
         private readonly ITokenGenerator _generator;
         private readonly ISecretsListParser _secretsParser;
+        private readonly IScopeParser _scopeParser;
         private readonly IScopeValidator _scopeValidator;
         private readonly IClaimsService _claimsService;
         private readonly IClaimsValidator _claimsValidator;
@@ -24,6 +25,7 @@ namespace IdentityServer.Endpoints
             ISecretsListParser secretsParser,
             IdentityServerOptions options,
             ITokenGenerator generator,
+            IScopeParser scopeParser,
             IScopeValidator scopeValidator,
             IClaimsService claimsService,
             IClaimsValidator claimsValidator,
@@ -36,6 +38,7 @@ namespace IdentityServer.Endpoints
             _resources = resources;
             _generator = generator;
             _secretsParser = secretsParser;
+            _scopeParser = scopeParser;
             _scopeValidator = scopeValidator;
             _claimsService = claimsService;
             _claimsValidator = claimsValidator;
@@ -65,12 +68,12 @@ namespace IdentityServer.Endpoints
             var clientSecret = await _secretsParser.ParseAsync(context);
             if (clientSecret == null)
             {
-                return BadRequest(OpenIdConnectTokenErrors.InvalidClient, "No client credentials found");
+                throw new InvalidGrantException("No client credentials found");
             }
             var client = await _clients.GetAsync(clientSecret.Id);
             if (client == null)
             {
-                return BadRequest(OpenIdConnectTokenErrors.InvalidClient, "No client found");
+                throw new InvalidClientException("No client found");
             }
             if (client.RequireClientSecret)
             {
@@ -93,7 +96,7 @@ namespace IdentityServer.Endpoints
             var grantType = form[OpenIdConnectParameterNames.GrantType];
             if (string.IsNullOrEmpty(grantType))
             {
-                return BadRequest(OpenIdConnectTokenErrors.InvalidGrant, "Grant Type is missing");
+                throw new InvalidGrantException("Grant Type is missing");
             }
             await _grantTypeValidator.ValidateAsync(grantType, client.AllowedGrantTypes);
             #endregion
@@ -195,6 +198,5 @@ namespace IdentityServer.Endpoints
             }
 
         }
-
     }
 }

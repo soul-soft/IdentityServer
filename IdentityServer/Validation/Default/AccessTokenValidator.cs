@@ -7,20 +7,17 @@ namespace IdentityServer.Validation
 {
     internal class AccessTokenValidator : IAccessTokenValidator
     {
-        private readonly IServerUrl _urls;
         private readonly ISystemClock _systemClock;
         private readonly IdentityServerOptions _options;
         private readonly ISigningCredentialStore _credentials;
         private readonly IReferenceTokenService _referenceTokenService;
 
         public AccessTokenValidator(
-            IServerUrl urls,
             ISystemClock systemClock,
             IdentityServerOptions options,
             ISigningCredentialStore credentials,
             IReferenceTokenService referenceTokenService)
         {
-            _urls = urls;
             _options = options;
             _systemClock = systemClock;
             _credentials = credentials;
@@ -46,22 +43,6 @@ namespace IdentityServer.Validation
             {
                 claims = await ValidateReferenceTokenAsync(token);
             }
-            if (_options.EmitScopesAsSpaceDelimitedStringInJwt)
-            {
-                var scope = claims
-                    .Where(a => a.Type == JwtClaimTypes.Scope)
-                    .FirstOrDefault()?.Value;
-                if (!string.IsNullOrEmpty(scope))
-                {
-                    var scopes = scope.Split(',');
-                    var list = claims.Where(a => a.Type != JwtClaimTypes.Scope).ToList();
-                    foreach (var item in scopes)
-                    {
-                        list.Add(new Claim(JwtClaimTypes.Scope, item));
-                    }
-                    claims = list;
-                }
-            }
             return claims;
         }
 
@@ -72,7 +53,7 @@ namespace IdentityServer.Validation
                 var handler = new JwtSecurityTokenHandler();
                 handler.InboundClaimTypeMap.Clear();
                 var securityKeys = await _credentials.GetSecurityKeysAsync();
-                var issuer = _urls.GetIssuerUri();
+                var issuer = _options.Issuer;
                 var parameters = new TokenValidationParameters
                 {
                     ValidateAudience = false,
@@ -96,7 +77,7 @@ namespace IdentityServer.Validation
             {
                 throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "The access token has expired");
             }
-            var issuer = _urls.GetIssuerUri();
+            var issuer = _options.Issuer;
             if (referenceToken.AccessToken.Issuer != issuer)
             {
                 throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "Invalid issuer");

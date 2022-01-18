@@ -4,14 +4,6 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class IdentityServerServiceCollectionExtensions
     {
-        internal static IServiceCollection ReplaceTransient<TService, TImplementation>(this IServiceCollection services)
-            where TService : class
-            where TImplementation : class, TService
-        {
-            services.Replace(ServiceDescriptor.Transient<TService, TImplementation>());
-            return services;
-        }
-      
         public static IIdentityServerBuilder AddIdentityServerBuilder(this IServiceCollection services)
         {
             return new IdentityServerBuilder(services);
@@ -24,7 +16,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder
                 .AddRequiredPlatformServices()
                 .AddValidators()
-                .AddLocalApiAuthentication()
+                .AddLocalAuthentication()
                 .AddPluggableServices()
                 .AddDefaultEndpoints()
                 .AddResponseGenerators();

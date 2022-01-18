@@ -15,8 +15,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddTransient<IExtensionGrantValidator, MyExtensionGrantValidator>();
 builder.Services.AddTransient<IUserInfoGenerator, UserInfoResponseGenerator>();
-builder.Services.AddTransient<IPasswordGrantValidator, ResourceOwnerPasswordGrantValidator>();
-builder.Services.AddIdentityServer()
+builder.Services.AddTransient<IPasswordGrantValidator, PasswordGrantValidator>();
+builder.Services.AddIdentityServer(o=>o.EmitScopesAsSpaceDelimitedStringInJwt=false)
         .AddInMemoryStores(setup =>
         {
             setup.AddClients(Config.Clients);
@@ -27,9 +27,9 @@ builder.Services.AddIdentityServer()
         });
 builder.Services.AddAuthorization(options => 
 {
-    options.AddPolicy(IdentityServerConstants.LocalApi.PolicyName, policy =>
+    options.AddPolicy(IdentityServerConstants.IdentityServerDefaults.PolicyName, policy =>
     {
-        policy.AddAuthenticationSchemes(IdentityServerConstants.LocalApi.AuthenticationScheme);
+        policy.AddAuthenticationSchemes(IdentityServerConstants.IdentityServerDefaults.AuthenticationScheme);
         policy.RequireAuthenticatedUser();
     });
 });

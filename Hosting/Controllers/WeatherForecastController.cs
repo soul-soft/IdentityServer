@@ -16,7 +16,7 @@ namespace Hosting.Controllers
         }
 
         [HttpGet]
-        [Authorize(LocalApi.PolicyName)]
+        [Authorize(IdentityServerDefaults.PolicyName)]
         public string Test()
         {
             return "111";

@@ -9,8 +9,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static AuthenticationBuilder AddLoaclApiAuthentication(this AuthenticationBuilder builder)
         {           
             return builder.AddScheme<IdentityServerAuthenticationOptions, IdentityServerAuthenticationHandler>(
-                LocalApi.AuthenticationScheme,
-                LocalApi.AuthenticationScheme,
+                IdentityServerDefaults.AuthenticationScheme,
+                IdentityServerDefaults.AuthenticationScheme,
                 configure => { });
         }
     }

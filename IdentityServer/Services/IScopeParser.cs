@@ -1,7 +1,9 @@
-﻿namespace IdentityServer.Validation
+﻿using System.Security.Claims;
+
+namespace IdentityServer.Validation
 {
     public interface IScopeParser
     {
-        Task<IEnumerable<string>> ParseAsync(IEnumerable<string> scopes);
+        Task<IEnumerable<string>> ParseAsync(ClaimsPrincipal subject);
     }
 }
