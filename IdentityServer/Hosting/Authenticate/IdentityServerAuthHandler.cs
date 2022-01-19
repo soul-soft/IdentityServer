@@ -5,18 +5,18 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace IdentityServer.Authentication
+namespace IdentityServer.Hosting
 {
-    internal class IdentityServerAuthenticationHandler
-        : AuthenticationHandler<IdentityServerAuthenticationOptions>
+    internal class IdentityServerAuthHandler
+        : AuthenticationHandler<IdentityServerAuthOptions>
     {
         private readonly IAccessTokenValidator _tokenValidator;
         private readonly IBearerTokenUsageParser _bearerTokenUsageParser;
 
-        public IdentityServerAuthenticationHandler(
+        public IdentityServerAuthHandler(
             IAccessTokenValidator tokenValidator,
             IBearerTokenUsageParser bearerTokenUsageParser,
-            IOptionsMonitor<IdentityServerAuthenticationOptions> options,
+            IOptionsMonitor<IdentityServerAuthOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
             ISystemClock clock)

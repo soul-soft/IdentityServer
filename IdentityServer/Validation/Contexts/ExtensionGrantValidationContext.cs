@@ -2,9 +2,9 @@
 {
     public class ExtensionGrantValidationContext
     {
-        public GrantValidationRequest Request { get; }
+        public GrantRequest Request { get; }
      
-        public ExtensionGrantValidationContext(GrantValidationRequest request)
+        public ExtensionGrantValidationContext(GrantRequest request)
         {
             Request = request;
         }

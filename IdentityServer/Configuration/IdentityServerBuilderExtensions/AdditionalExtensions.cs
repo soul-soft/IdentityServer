@@ -4,7 +4,16 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class AdditionalExtensions
-    {     
+    {
+        #region IPersistentStore
+        public static IIdentityServerBuilder AddPersistentStore<T>(this IIdentityServerBuilder builder)
+            where T : class, IPersistentStore
+        {
+            builder.Services.TryAddTransient<IPersistentStore, T>();
+            return builder;
+        }
+        #endregion
+
         #region IClientStore
         public static IIdentityServerBuilder AddClientStore<T>(this IIdentityServerBuilder builder)
             where T : class, IClientStore
@@ -83,7 +92,7 @@ namespace Microsoft.Extensions.DependencyInjection
         }
         #endregion
 
-        #region InMemoryStores
+        #region InMemoryStoreBuilder
         public static IIdentityServerBuilder AddInMemoryStores(this IIdentityServerBuilder builder, Action<InMemoryStoreBuilder> configure)
         {
             builder.Services.AddDistributedMemoryCache();
@@ -96,7 +105,7 @@ namespace Microsoft.Extensions.DependencyInjection
         }
         #endregion
 
-        #region Endpoint
+        #region IEndpoint
         public static IIdentityServerBuilder AddEndpoint<T>(this IIdentityServerBuilder builder, string name, PathString path)
           where T : class, IEndpointHandler
         {
@@ -109,6 +118,33 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             builder.Services.AddTransient(implementationFactory);
             builder.Services.AddSingleton(new EndpointDescriptor(name, path, typeof(T)));
+            return builder;
+        }
+        #endregion
+
+        #region IProfilefile
+        public static IIdentityServerBuilder AddProfileService<T>(this IIdentityServerBuilder builder)
+           where T : class, IProfileService
+        {
+            builder.Services.ReplaceTransient<IProfileService, T>();
+            return builder;
+        }
+        #endregion
+
+        #region IPasswordGrantValidator
+        public static IIdentityServerBuilder AddPasswordGrantValidator<T>(this IIdentityServerBuilder builder)
+           where T : class, IPasswordGrantValidator
+        {
+            builder.Services.ReplaceTransient<IPasswordGrantValidator, T>();
+            return builder;
+        }
+        #endregion
+
+        #region IExtensionGrantValidator
+        public static IIdentityServerBuilder AddExtensionGrantValidator<T>(this IIdentityServerBuilder builder)
+           where T : class, IExtensionGrantValidator
+        {
+            builder.Services.ReplaceTransient<IExtensionGrantValidator, T>();
             return builder;
         }
         #endregion

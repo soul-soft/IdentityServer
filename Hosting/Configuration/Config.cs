@@ -12,7 +12,7 @@ namespace Hosting.Configuration
             {
                 AllowedGrantTypes = new []
                 {
-                    "myGrant",
+                    "myGrant",GrantTypes.Password
                 },
                 ClientSecrets = new ISecret[]
                 {

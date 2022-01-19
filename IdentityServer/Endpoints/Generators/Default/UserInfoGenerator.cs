@@ -2,10 +2,21 @@
 {
     internal class UserInfoGenerator : IUserInfoGenerator
     {
-        public Task<UserInfoResponse> ProcessAsync(UserInfoRequest request)
+        private readonly IProfileService _profileService;
+
+        public UserInfoGenerator(IProfileService profileService)
         {
-            var response = new UserInfoResponse();
-            return Task.FromResult(response);
+            _profileService = profileService;
+        }
+
+        public async Task<UserInfoResponse> ProcessAsync(UserInfoRequest request)
+        {
+            var userinfo = await _profileService.GetUserInfoAsync(new UserInfoProfileRequest(
+                request.Subject,
+                request.Client,
+                request.Resources));
+            var response = new UserInfoResponse(userinfo);
+            return response;
         }
     }
 }

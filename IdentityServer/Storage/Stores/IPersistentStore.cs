@@ -1,4 +1,4 @@
-﻿namespace IdentityServer.Services
+﻿namespace IdentityServer.Storage
 {
     public interface IPersistentStore
     {

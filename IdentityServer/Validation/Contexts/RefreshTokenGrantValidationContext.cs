@@ -3,9 +3,9 @@
     public class RefreshTokenGrantValidationContext
     {
         public string RefreshToken { get; }
-        public GrantValidationRequest Request { get; }
+        public GrantRequest Request { get; }
 
-        public RefreshTokenGrantValidationContext(string refreshToken, GrantValidationRequest request)
+        public RefreshTokenGrantValidationContext(string refreshToken, GrantRequest request)
         {
             RefreshToken = refreshToken;
             Request = request;

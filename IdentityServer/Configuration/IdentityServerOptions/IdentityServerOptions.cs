@@ -2,7 +2,7 @@
 {
     public class IdentityServerOptions
     {
-        public string Issuer { get; set; } = "idsv";
+        public string Issuer { get; set; } = "identityserver";
         public string? IssuerUri { get; set; }
         public string IdentityServerName { get; set; } = "local";
         public bool IncludeEndpointErrorDetails { get; set; } = true;
@@ -13,6 +13,7 @@
         public string? AccessTokenJwtType { get; set; } = "at+jwt";
         public bool EmitScopesAsSpaceDelimitedStringInJwt { get; set; } = true;
         public string TokenEndpointAuthMethod { get; set; } = TokenEndpointAuthMethods.PostBody;
-        public string AuthenticationPolicyName { get; set; } = IdentityServerAuthenticationDefaults.PolicyName;
+        public TokenValidationOptions TokenValidations { get; set; } = new TokenValidationOptions();
+        public string AuthorizationPolicyName { get; set; } = IdentityServerAuthDefaults.PolicyName;
     }
 }

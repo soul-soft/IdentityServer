@@ -4,9 +4,9 @@ namespace IdentityServer.Validation
 {
     public class ClientCredentialsGrantValidationContext
     {
-        public GrantValidationRequest Request { get; }
+        public GrantRequest Request { get; }
       
-        public ClientCredentialsGrantValidationContext(GrantValidationRequest request)
+        public ClientCredentialsGrantValidationContext(GrantRequest request)
         {
             Request = request;
         }

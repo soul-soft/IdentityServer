@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication;
-using IdentityServer.Authentication;
+using IdentityServer.Hosting;
 
 namespace IdentityServer.Endpoints
 {
@@ -18,20 +18,20 @@ namespace IdentityServer.Endpoints
             IResourceStore resources,
             IScopeParser scopeParser,
             IScopeValidator scopeValidator,
-            IResourceValidator resourceValidator,
-            IUserInfoGenerator generator)
+            IUserInfoGenerator generator,
+            IResourceValidator resourceValidator)
         {
             _clients = clients;
             _resources = resources;
             _generator = generator;
             _scopeParser = scopeParser;
-            _scopeValidator = scopeValidator;
+            _scopeValidator = scopeValidator;   
             _resourceValidator = resourceValidator;
         }
 
         public override async Task<IEndpointResult> ProcessAsync(HttpContext context)
         {
-            var authenticateResult = await context.AuthenticateAsync(IdentityServerAuthenticationDefaults.AuthenticationScheme);
+            var authenticateResult = await context.AuthenticateAsync(IdentityServerAuthDefaults.Scheme);
             if (authenticateResult == null || !authenticateResult.Succeeded)
             {
                 return Unauthorized(OpenIdConnectTokenErrors.InvalidRequest, "authentication failed");

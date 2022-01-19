@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 
-namespace IdentityServer.Authentication
+namespace IdentityServer.Hosting
 {
-    public class IdentityServerAuthenticationOptions
+    public class IdentityServerAuthOptions
         : AuthenticationSchemeOptions
     {
         public bool SaveToken { get; set; } = true;

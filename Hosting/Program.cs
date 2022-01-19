@@ -1,8 +1,5 @@
 using Hosting.Configuration;
 using IdentityServer;
-using IdentityServer.Endpoints;
-using IdentityServer.Validation;
-using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,20 +9,22 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddTransient<IExtensionGrantValidator, MyExtensionGrantValidator>();
-builder.Services.AddTransient<IUserInfoGenerator, UserInfoResponseGenerator>();
-builder.Services.AddTransient<IPasswordGrantValidator, PasswordGrantValidator>();
 builder.Services.AddIdentityServer(o =>
         {
-            o.EmitScopesAsSpaceDelimitedStringInJwt = false;
+            o.Issuer = "microsoft";
+            o.TokenValidations.ValidateScope = true;
+            o.TokenValidations.Scope = "api,openid";
         })
+        .AddPasswordGrantValidator<PasswordGrantValidator>()
+        .AddExtensionGrantValidator<MyExtensionGrantValidator>()
+        .AddProfileService<ProfileService>()
         .AddInMemoryStores(setup =>
         {
             setup.AddClients(Config.Clients);
             setup.AddResources(Config.ApiScopes);
             setup.AddResources(Config.IdentityResources);
-            setup.AddSigningCredentials(new X509Certificate2("idsvr.pfx", "nbjc"));
+            setup.AddDeveloperSigningCredential();
+            //setup.AddSigningCredential(new X509Certificate2("idsvr.pfx", "nbjc"));
             //setup.AddSigningCredentials(CryptoRandom.CreateRsaSecurityKey());
         });
 var app = builder.Build();
@@ -39,7 +38,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseIdentityServer()
-    .RequireCors("p", (n) => true);
-app.MapControllers();
+app.UseIdentityServer();
+app.MapControllers()
+    .RequireAuthorization(IdentityServerAuthDefaults.PolicyName);
 app.Run();

@@ -4,13 +4,13 @@ namespace IdentityServer.Endpoints
 {
     public class UserInfoResponse
     {
-        private readonly Dictionary<string, object?> _items = new Dictionary<string, object?>();
+        private readonly Dictionary<string, object?> _items;
 
-        public void Add(string name, object? value)
+        public UserInfoResponse(Dictionary<string, object?> items)
         {
-            _items.TryAdd(name, value);
+            _items = items;
         }
-
+      
         internal string Serialize()
         {
             return ObjectSerializer.Serialize(_items);

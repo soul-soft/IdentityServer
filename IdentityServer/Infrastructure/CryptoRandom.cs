@@ -38,7 +38,7 @@ namespace IdentityServer.Infrastructure
                 KeyId = CreateUniqueId(16, OutputFormat.Hex)
             };
         }
-
+      
         public enum OutputFormat
         {
             Base64Url,

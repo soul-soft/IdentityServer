@@ -53,15 +53,25 @@ namespace IdentityServer.Validation
                 var handler = new JwtSecurityTokenHandler();
                 handler.InboundClaimTypeMap.Clear();
                 var securityKeys = await _credentials.GetSecurityKeysAsync();
-                var issuer = _options.Issuer;
                 var parameters = new TokenValidationParameters
                 {
-                    ValidateAudience = false,
-                    ValidateLifetime = true,
+                    ValidateAudience = _options.TokenValidations.ValidateAudience,
+                    ValidAudience = _options.TokenValidations.Audience,
+                    ValidateLifetime = _options.TokenValidations.ValidateLifetime,
                     ValidIssuer = _options.Issuer,
+                    ValidateIssuer = _options.TokenValidations.ValidateIssuer,
                     IssuerSigningKeys = securityKeys,
                 };
                 var subject = handler.ValidateToken(token, parameters, out var securityToken);
+                if (_options.TokenValidations.ValidateScope)
+                {
+                    var scopes = subject.Claims
+                        .Where(a => a.Type == JwtClaimTypes.Scope).Select(s => s.Value);
+                    if (!scopes.Contains(_options.TokenValidations.Scope))
+                    {
+                        throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "Invalid scope");
+                    }
+                }
                 return subject.Claims;
             }
             catch (Exception ex)
@@ -75,12 +85,23 @@ namespace IdentityServer.Validation
             var referenceToken = await _referenceTokenService.GetAsync(token);
             if (referenceToken == null || referenceToken.Expiration < _systemClock.UtcNow.UtcDateTime)
             {
+                throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "Invalid token");
+            }
+            if (_options.TokenValidations.ValidateLifetime && referenceToken.Expiration < _systemClock.UtcNow.UtcDateTime)
+            {
                 throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "The access token has expired");
             }
-            var issuer = _options.Issuer;
-            if (referenceToken.AccessToken.Issuer != issuer)
+            if (_options.TokenValidations.ValidateAudience && !referenceToken.AccessToken.Audiences.Contains(_options.TokenValidations.Audience))
+            {
+                throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "Invalid audience");
+            }
+            if (_options.TokenValidations.ValidateIssuer && referenceToken.AccessToken.Issuer != _options.Issuer)
             {
                 throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "Invalid issuer");
+            }
+            if (_options.TokenValidations.ValidateScope && !referenceToken.AccessToken.Scopes.Contains(_options.TokenValidations.Scope))
+            {
+                throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "Invalid scope");
             }
             return referenceToken.AccessToken.ToClaims(_options);
         }

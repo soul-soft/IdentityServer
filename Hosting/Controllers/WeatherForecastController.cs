@@ -1,4 +1,4 @@
-using IdentityServer.Authentication;
+using IdentityServer.Hosting;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static IdentityServer.IdentityServerConstants;
@@ -17,7 +17,6 @@ namespace Hosting.Controllers
         }
 
         [HttpGet]        
-        [Authorize(IdentityServerAuthenticationDefaults.PolicyName)]
         public string Test()
         {
             return "111";

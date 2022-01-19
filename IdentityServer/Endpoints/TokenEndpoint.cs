@@ -104,7 +104,7 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Validate Grant
-            var grantValidationRequest = new GrantValidationRequest(
+            var grantValidationRequest = new GrantRequest(
                 client: client,
                 clientSecret: clientSecret,
                 options: _options,
@@ -130,7 +130,7 @@ namespace IdentityServer.Endpoints
             #endregion
         }
 
-        private async Task<GrantValidationResult> ValidateGrantAsync(HttpContext context, GrantValidationRequest request)
+        private async Task<GrantValidationResult> ValidateGrantAsync(HttpContext context, GrantRequest request)
         {
             //验证刷新令牌
             if (GrantTypes.RefreshToken.Equals(request.GrantType))

@@ -4,6 +4,6 @@ namespace IdentityServer.Services
 {
     public interface IClaimsService
     {
-        Task<ClaimsPrincipal> CreateSubjectAsync(GrantValidationRequest request, GrantValidationResult result);
+        Task<ClaimsPrincipal> CreateSubjectAsync(GrantRequest request, GrantValidationResult result);
     }
 }

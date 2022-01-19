@@ -1,13 +1,13 @@
 ﻿using IdentityServer.Serialization;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace IdentityServer.Services
+namespace IdentityServer.Storage
 {
-    internal class PersistentStore : IPersistentStore
+    internal class InMemoryPersistentStore : IPersistentStore
     {
         private readonly IDistributedCache _distributedCache;
 
-        public PersistentStore(IDistributedCache distributedCache)
+        public InMemoryPersistentStore(IDistributedCache distributedCache)
         {
             _distributedCache = distributedCache;
         }

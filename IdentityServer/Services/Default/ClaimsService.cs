@@ -19,7 +19,7 @@ namespace IdentityServer.Services
             _profileService = profileService;
         }
 
-        public async Task<ClaimsPrincipal> CreateSubjectAsync(GrantValidationRequest request, GrantValidationResult result)
+        public async Task<ClaimsPrincipal> CreateSubjectAsync(GrantRequest request, GrantValidationResult result)
         {
             var resources = request.Resources;
             var identity = new ClaimsIdentity(request.GrantType);
@@ -40,7 +40,10 @@ namespace IdentityServer.Services
                     identity.AddClaim(new Claim(JwtClaimTypes.Subject, result.Subject));
                 }
             }
-            var claims = await _profileService.GetProfileDataAsync(resources);
+            var claims = await _profileService.GetUserClaimsAsync(new UserClaimsProfileRequest(
+                request.Client,
+                request.Resources,
+                request.GrantType));
             identity.AddClaims(claims);
             return new ClaimsPrincipal(identity);
         }

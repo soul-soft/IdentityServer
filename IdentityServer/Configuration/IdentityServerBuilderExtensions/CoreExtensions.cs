@@ -1,4 +1,5 @@
-﻿using IdentityServer.Authentication;
+﻿using IdentityServer;
+using IdentityServer.Hosting;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -15,9 +16,9 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddLoaclApiAuthentication();
             builder.Services.AddAuthorization(options =>
             {
-                options.AddPolicy(IdentityServerAuthenticationDefaults.PolicyName, policy =>
+                options.AddPolicy(IdentityServerAuthDefaults.PolicyName, policy =>
                 {
-                    policy.AddAuthenticationSchemes(IdentityServerAuthenticationDefaults.AuthenticationScheme);
+                    policy.AddAuthenticationSchemes(IdentityServerAuthDefaults.Scheme);
                     policy.RequireAuthenticatedUser();
                 });
             });
@@ -55,7 +56,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<IIdGenerator, IdGenerator>();
             builder.Services.TryAddTransient<IProfileService, ProfileService>();
             builder.Services.TryAddTransient<IClaimsService, ClaimsService>();
-            builder.Services.TryAddTransient<IPersistentStore, PersistentStore>();
+            builder.Services.TryAddTransient<IPersistentStore, InMemoryPersistentStore>();
             builder.Services.TryAddTransient<ITokenService, TokenService>();
             builder.Services.TryAddTransient<ISecurityTokenService, JwtTokenService>();
             builder.Services.TryAddTransient<IRefreshTokenService, RefreshTokenService>();
