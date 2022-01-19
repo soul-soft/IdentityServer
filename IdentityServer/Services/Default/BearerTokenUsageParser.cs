@@ -28,6 +28,14 @@ namespace IdentityServer.Services
                     return token;
                 }
             }
+            else
+            {
+                var token = context.Request.Query[OpenIdConnectParameterNames.AccessToken].FirstOrDefault();
+                if (!string.IsNullOrEmpty(token))
+                {
+                    return token;
+                }
+            }
             return null;
         }
     }
