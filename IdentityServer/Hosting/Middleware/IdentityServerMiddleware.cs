@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using System.Net;
 
 namespace IdentityServer.Hosting
@@ -12,7 +13,7 @@ namespace IdentityServer.Hosting
             _next = next;
         }
 
-        public async Task InvokeAsync(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, ILoggerFactory loggerFactory)
         {
             var endpoint = context.GetEndpoint();
             try
@@ -30,6 +31,7 @@ namespace IdentityServer.Hosting
                             validationException.ErrorDescription,
                             HttpStatusCode.BadRequest);
                         await result.ExecuteAsync(context);
+                        loggerFactory.CreateLogger("IdentityServer").LogError(ex, ex.Message);
                     }
                 }
                 else

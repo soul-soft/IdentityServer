@@ -1,28 +1,31 @@
-﻿using System.Net;
-using System.Security.Claims;
-using System.Text.Encodings.Web;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Net;
+using System.Security.Claims;
+using System.Text.Encodings.Web;
 
 namespace IdentityServer.Hosting
 {
     internal class IdentityServerAuthHandler
         : AuthenticationHandler<IdentityServerAuthOptions>
     {
+        private readonly ILoggerFactory _loggerFactory;
         private readonly IAccessTokenValidator _tokenValidator;
         private readonly IBearerTokenUsageParser _bearerTokenUsageParser;
 
         public IdentityServerAuthHandler(
             IAccessTokenValidator tokenValidator,
             IBearerTokenUsageParser bearerTokenUsageParser,
+            ILoggerFactory loggerFactory,
             IOptionsMonitor<IdentityServerAuthOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
             ISystemClock clock)
             : base(options, logger, encoder, clock)
         {
+            _loggerFactory = loggerFactory;
             _tokenValidator = tokenValidator;
             _bearerTokenUsageParser = bearerTokenUsageParser;
         }
@@ -70,6 +73,7 @@ namespace IdentityServer.Hosting
                     authenticateResult.Failure?.Message,
                     HttpStatusCode.Unauthorized);
                     await result.ExecuteAsync(Context);
+                    _loggerFactory.CreateLogger("IdentityServer").LogError(authenticateResult.Failure, authenticateResult.Failure?.Message);
                 }
             }
         }
