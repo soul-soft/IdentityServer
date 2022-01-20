@@ -70,6 +70,7 @@ namespace IdentityServer.Hosting
                 {
                     builder.Metadata.Add(new AuthorizeAttribute(_options.AuthorizationPolicyName));
                 }
+                builder.Metadata.Add(new IdentityServerEndpoint());
                 yield return builder.Build();
             }
         }

@@ -1,6 +1,5 @@
-﻿using System.Net;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Http;
+using System.Net;
 
 namespace IdentityServer.Hosting
 {
@@ -13,32 +12,31 @@ namespace IdentityServer.Hosting
             _next = next;
         }
 
-        public async Task InvokeAsync(HttpContext context, ILogger<IdentityServerMiddleware> logger)
+        public async Task InvokeAsync(HttpContext context)
         {
+            var endpoint = context.GetEndpoint();
             try
             {
                 await _next(context);
             }
             catch (Exception ex)
             {
-                if (ex is InvalidException validationException)
+                if (endpoint != null && endpoint.IsIdentityEndpoint())
                 {
-                    var result = new ErrorResult(
-                        validationException.Error,
-                        validationException.ErrorDescription,
-                        HttpStatusCode.BadRequest);
-                    await result.ExecuteAsync(context);
+                    if (ex is InvalidException validationException)
+                    {
+                        var result = new ErrorResult(
+                            validationException.Error,
+                            validationException.ErrorDescription,
+                            HttpStatusCode.BadRequest);
+                        await result.ExecuteAsync(context);
+                    }
                 }
                 else
                 {
-                    var result = new ErrorResult(
-                       OpenIdConnectTokenErrors.InvalidRequest,
-                       HttpStatusCode.BadRequest);
-                    await result.ExecuteAsync(context);
+                    throw;
                 }
-                logger.LogError(ex, ex.Message);
             }
-
         }
     }
 }
