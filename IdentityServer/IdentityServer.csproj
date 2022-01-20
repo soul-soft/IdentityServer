@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<AssemblyName>Soul.$(MSBuildProjectName)</AssemblyName>
-		<Version>6.0.0-bate3</Version>
+		<Version>6.0.0-bate4</Version>
 		<PackageTags>OAuth2;OAuth 2.0;OpenID Connect;Security;Identity;IdentityServer</PackageTags>
 		<Copyright>MIT</Copyright>
 		<PackageProjectUrl>https://github.com/1448376744/IdentityServer</PackageProjectUrl>
