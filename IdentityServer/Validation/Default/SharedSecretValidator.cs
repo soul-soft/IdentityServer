@@ -19,7 +19,7 @@ namespace IdentityServer.Validation
 
             if (string.IsNullOrWhiteSpace(credential))
             {
-                throw new UnauthorizedClientException("Client credential is missing");
+                throw new InvalidRequestException("Client credential is missing");
             }
 
             var credentials = new string[]
@@ -37,11 +37,11 @@ namespace IdentityServer.Validation
             }
             else if (secets.Any(a => a.Expiration != null || a.Expiration < _clock.UtcNow.UtcDateTime))
             {
-                throw new UnauthorizedClientException("The Client credential has expired");
+                throw new InvalidRequestException("The Client credential has expired");
             }
             else
             {
-                throw new UnauthorizedClientException("Invalid client or credential");
+                throw new InvalidRequestException("Invalid client or credential");
             }
         }
     }

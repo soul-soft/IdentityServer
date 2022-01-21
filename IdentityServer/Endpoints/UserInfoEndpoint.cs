@@ -40,18 +40,18 @@ namespace IdentityServer.Endpoints
             var sub = subject.GetSubjectId();
             if (string.IsNullOrWhiteSpace(sub))
             {
-                return BadRequest(OpenIdConnectTokenErrors.InvalidToken, "Sub claim is missing");
+                return Unauthorized(OpenIdConnectTokenErrors.InvalidToken, "Sub claim is missing");
             }
             var clientId = subject.GetClientId();
             if (string.IsNullOrWhiteSpace(clientId))
             {
-                return BadRequest(OpenIdConnectTokenErrors.InvalidToken, "ClientId claim is missing");
+                return Unauthorized(OpenIdConnectTokenErrors.InvalidToken, "ClientId claim is missing");
             }
             var scopes = await _scopeParser.ParseAsync(subject);
             var client = await _clients.GetAsync(clientId);
             if (client == null)
             {
-                return BadRequest(OpenIdConnectTokenErrors.InvalidToken, "Invalid client");
+                return Unauthorized(OpenIdConnectTokenErrors.InvalidToken, "Invalid client");
             }
             await _scopeValidator.ValidateAsync(client.AllowedScopes,scopes);
             var resources = await _resources.FindByScopeAsync(scopes);
