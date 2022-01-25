@@ -84,6 +84,10 @@ namespace IdentityServer.Endpoints
             #region Validate Scopes
             var form = await context.Request.ReadFormAsNameValueCollectionAsync();
             var scope = form[OpenIdConnectParameterNames.Scope];
+            if (string.IsNullOrEmpty(scope))
+            {
+                scope = string.Join(",", client.AllowedScopes);
+            }
             var scopes = await _scopeParser.ParseAsync(scope);
             await _scopeValidator.ValidateAsync(client.AllowedScopes, scopes);
             #endregion

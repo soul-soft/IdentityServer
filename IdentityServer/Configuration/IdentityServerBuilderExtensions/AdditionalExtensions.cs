@@ -113,13 +113,6 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.AddSingleton(new EndpointDescriptor(name, path, typeof(T)));
             return builder;
         }
-        public static IIdentityServerBuilder AddEndpoint<T>(this IIdentityServerBuilder builder, string name, PathString path, Func<IServiceProvider, T> implementationFactory)
-         where T : class, IEndpointHandler
-        {
-            builder.Services.AddTransient(implementationFactory);
-            builder.Services.AddSingleton(new EndpointDescriptor(name, path, typeof(T)));
-            return builder;
-        }
         #endregion
 
         #region IProfilefile
