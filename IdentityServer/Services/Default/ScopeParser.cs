@@ -4,10 +4,14 @@ namespace IdentityServer.Services
 {
     internal class ScopeParser : IScopeParser
     {
+        private readonly IClient _client;
         private readonly IdentityServerOptions _options;
 
-        public ScopeParser(IdentityServerOptions options)
+        public ScopeParser(
+            IClient client,
+            IdentityServerOptions options)
         {
+            _client = client;
             _options = options;
         }
 
@@ -32,8 +36,18 @@ namespace IdentityServer.Services
             else
             {
                 var scopes = subject.FindAll(JwtClaimTypes.Scope).Select(s => s.Value);
-                return Task.FromResult<IEnumerable<string>>(scopes);
+                return Task.FromResult(scopes);
             }
+        }
+
+        public Task<IEnumerable<string>> ParseAsync(string? scope)
+        {
+            if (string.IsNullOrWhiteSpace(scope))
+            {
+                return Task.FromResult<IEnumerable<string>>(_client.AllowedScopes);
+            }
+            var scopes = scope.Split(',');
+            return Task.FromResult<IEnumerable<string>>(scopes);
         }
     }
 }

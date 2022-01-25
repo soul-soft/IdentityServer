@@ -8,19 +8,21 @@ namespace IdentityServer.Endpoints
     {
         private readonly IClientStore _clients;
         private readonly IResourceStore _resources;
-        private readonly IdentityServerOptions _options;
+        private readonly IScopeParser _scopeParser;
         private readonly ITokenGenerator _generator;
-        private readonly SecretParserCollection _secretParsers;
-        private readonly IScopeValidator _scopeValidator;
         private readonly IClaimsService _claimsService;
+        private readonly IdentityServerOptions _options;
+        private readonly IScopeValidator _scopeValidator;
         private readonly IClaimsValidator _claimsValidator;
-        private readonly SecretValidatorCollection _secretValidators;
+        private readonly SecretParserCollection _secretParsers;
         private readonly IResourceValidator _resourceValidator;
         private readonly IGrantTypeValidator _grantTypeValidator;
+        private readonly SecretValidatorCollection _secretValidators;
 
         public TokenEndpoint(
             IClientStore clients,
             IResourceStore resources,
+            IScopeParser scopeParser,
             ITokenGenerator generator,
             IClaimsService claimsService,
             IdentityServerOptions options,
@@ -35,6 +37,7 @@ namespace IdentityServer.Endpoints
             _options = options;
             _resources = resources;
             _generator = generator;
+            _scopeParser = scopeParser;
             _secretParsers = secretParsers;
             _scopeValidator = scopeValidator;
             _claimsService = claimsService;
@@ -81,11 +84,7 @@ namespace IdentityServer.Endpoints
             #region Validate Scopes
             var form = await context.Request.ReadFormAsNameValueCollectionAsync();
             var scope = form[OpenIdConnectParameterNames.Scope];
-            if (string.IsNullOrWhiteSpace(scope))
-            {
-                scope = string.Join(",", client.AllowedScopes);
-            }
-            var scopes = scope.Split(",").Where(a => !string.IsNullOrWhiteSpace(a)).ToArray();
+            var scopes = await _scopeParser.ParseAsync(scope);
             await _scopeValidator.ValidateAsync(client.AllowedScopes, scopes);
             #endregion
 
