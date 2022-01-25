@@ -12,11 +12,11 @@ namespace IdentityServer.Hosting
         : AuthenticationHandler<IdentityServerAuthOptions>
     {
         private readonly ILoggerFactory _loggerFactory;
-        private readonly IAccessTokenValidator _tokenValidator;
+        private readonly ITokenValidator _tokenValidator;
         private readonly IBearerTokenUsageParser _bearerTokenUsageParser;
 
         public IdentityServerAuthHandler(
-            IAccessTokenValidator tokenValidator,
+            ITokenValidator tokenValidator,
             IBearerTokenUsageParser bearerTokenUsageParser,
             ILoggerFactory loggerFactory,
             IOptionsMonitor<IdentityServerAuthOptions> options,

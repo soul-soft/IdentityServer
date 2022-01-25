@@ -70,7 +70,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             builder.Services.TryAddTransient<IScopeValidator, ScopeValidator>();
             builder.Services.TryAddTransient<IClaimsValidator, ClaimsValidator>();
-            builder.Services.TryAddTransient<IAccessTokenValidator, AccessTokenValidator>();
+            builder.Services.TryAddTransient<ITokenValidator, TokenValidator>();
             builder.Services.TryAddTransient<IResourceValidator, ResourceValidator>();
             builder.Services.TryAddTransient<IGrantTypeValidator, GrantTypeValidator>();            
             builder.Services.TryAddTransient<SecretValidatorCollection>();

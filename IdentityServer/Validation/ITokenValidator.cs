@@ -2,7 +2,7 @@
 
 namespace IdentityServer.Validation
 {
-    public interface IAccessTokenValidator
+    public interface ITokenValidator
     {
         Task<IEnumerable<Claim>> ValidateAsync(string? token);
     }

@@ -22,7 +22,7 @@ namespace Hosting.Configuration
                 AllowedScopes = new[]
                 {
                     "api",
-                    "open",
+                    "openid",
                     "address"
                 }
             }

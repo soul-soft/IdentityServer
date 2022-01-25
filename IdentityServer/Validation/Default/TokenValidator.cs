@@ -5,14 +5,14 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityServer.Validation
 {
-    internal class AccessTokenValidator : IAccessTokenValidator
+    internal class TokenValidator : ITokenValidator
     {
         private readonly ISystemClock _systemClock;
         private readonly IdentityServerOptions _options;
         private readonly ISigningCredentialsStore _credentials;
         private readonly IReferenceTokenService _referenceTokenService;
 
-        public AccessTokenValidator(
+        public TokenValidator(
             ISystemClock systemClock,
             IdentityServerOptions options,
             ISigningCredentialsStore credentials,
