@@ -2,11 +2,11 @@
 
 namespace IdentityServer.Storage
 {
-    internal class InMemorySigningCredentialStore : ISigningCredentialStore
+    internal class InMemorySigningCredentialsStore : ISigningCredentialsStore
     {
         private readonly IEnumerable<SigningCredentialsDescriptor> _descriptor;
 
-        public InMemorySigningCredentialStore(IEnumerable<SigningCredentialsDescriptor> descriptor)
+        public InMemorySigningCredentialsStore(IEnumerable<SigningCredentialsDescriptor> descriptor)
         {
             _descriptor = descriptor;
         }

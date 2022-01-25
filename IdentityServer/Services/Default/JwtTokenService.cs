@@ -7,11 +7,11 @@ namespace IdentityServer.Services
     {
         private readonly IdentityServerOptions _options;
 
-        private readonly ISigningCredentialStore _credentials;
+        private readonly ISigningCredentialsStore _credentials;
 
         public JwtTokenService(
             IdentityServerOptions options,
-            ISigningCredentialStore credentials)
+            ISigningCredentialsStore credentials)
         {
             _options = options;
             _credentials = credentials;

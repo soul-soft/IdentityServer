@@ -1,12 +1,24 @@
-﻿namespace IdentityServer.Validation
+﻿using System.Collections;
+
+namespace IdentityServer.Validation
 {
-    internal class ExtensionGrantsListValidator : IExtensionGrantsListValidator
+    internal class ExtensionGrantValidatorCollection : IEnumerable<IExtensionGrantValidator>
     {
         private readonly IEnumerable<IExtensionGrantValidator> _extensions;
 
-        public ExtensionGrantsListValidator(IEnumerable<IExtensionGrantValidator> extensions)
+        public ExtensionGrantValidatorCollection(IEnumerable<IExtensionGrantValidator> extensions)
         {
             _extensions = extensions;
+        }
+
+        public IEnumerator<IExtensionGrantValidator> GetEnumerator()
+        {
+            return _extensions.GetEnumerator();
+        }
+       
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable)_extensions).GetEnumerator();
         }
 
         public IEnumerable<string> GetExtensionGrantTypes()

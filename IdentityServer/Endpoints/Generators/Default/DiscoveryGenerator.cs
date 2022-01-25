@@ -6,20 +6,20 @@ namespace IdentityServer.Endpoints
         : IDiscoveryGenerator
     {
         private readonly IResourceStore _resources;
-        private readonly ISecretsListParser _secretParsers;
-        private readonly IExtensionGrantsListValidator _grantTypeService;
-        private readonly ISigningCredentialStore _credentials;
+        private readonly SecretParserCollection _secretParsers;
+        private readonly ExtensionGrantValidatorCollection _extensionGrantValidator;
+        private readonly ISigningCredentialsStore _credentials;
 
         public DiscoveryGenerator(
             IResourceStore resources,
-            ISecretsListParser secretParsers,
-            IExtensionGrantsListValidator grantTypeService,
-            ISigningCredentialStore credentials)
+            SecretParserCollection secretParsers,
+            ISigningCredentialsStore credentials,
+            ExtensionGrantValidatorCollection extensionGrantValidator)
         {
             _resources = resources;
             _credentials = credentials;
             _secretParsers = secretParsers;
-            _grantTypeService = grantTypeService;
+            _extensionGrantValidator = extensionGrantValidator;
         }
 
         public async Task<DiscoveryResponse> CreateDiscoveryDocumentAsync(string issuer)
@@ -30,7 +30,7 @@ namespace IdentityServer.Endpoints
             configuration.AuthorizationEndpoint = issuer + Constants.EndpointRoutePaths.Authorize;
             configuration.TokenEndpoint = issuer + Constants.EndpointRoutePaths.Token;
             configuration.UserInfoEndpoint = issuer + Constants.EndpointRoutePaths.UserInfo;
-            var grantTypes = _grantTypeService.GetExtensionGrantTypes();
+            var grantTypes = _extensionGrantValidator.GetExtensionGrantTypes();
             foreach (var item in grantTypes)
             {
                 configuration.GrantTypesSupported.Add(item);

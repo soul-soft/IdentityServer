@@ -1,10 +1,10 @@
 ﻿namespace IdentityServer.Validation
 {
-    public class SecretsValidator: ISecretsListValidator
+    public class SecretValidatorCollection
     {
         private readonly IEnumerable<ISecretValidator> _secretValidators;
 
-        public SecretsValidator(IEnumerable<ISecretValidator> secretValidators)
+        public SecretValidatorCollection(IEnumerable<ISecretValidator> secretValidators)
         {
             _secretValidators = secretValidators;
         }

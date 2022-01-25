@@ -9,13 +9,13 @@ namespace IdentityServer.Validation
     {
         private readonly ISystemClock _systemClock;
         private readonly IdentityServerOptions _options;
-        private readonly ISigningCredentialStore _credentials;
+        private readonly ISigningCredentialsStore _credentials;
         private readonly IReferenceTokenService _referenceTokenService;
 
         public AccessTokenValidator(
             ISystemClock systemClock,
             IdentityServerOptions options,
-            ISigningCredentialStore credentials,
+            ISigningCredentialsStore credentials,
             IReferenceTokenService referenceTokenService)
         {
             _options = options;

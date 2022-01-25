@@ -48,16 +48,16 @@ namespace Microsoft.Extensions.DependencyInjection
 
         #region ISigningCredentialStore
         public static IIdentityServerBuilder AddSigningCredentialStore<T>(this IIdentityServerBuilder builder)
-            where T : class, ISigningCredentialStore
+            where T : class, ISigningCredentialsStore
         {
-            builder.Services.TryAddTransient<ISigningCredentialStore, T>();
+            builder.Services.TryAddTransient<ISigningCredentialsStore, T>();
             return builder;
         }
 
         public static IIdentityServerBuilder AddSigningCredentialStore<T>(this IIdentityServerBuilder builder, Func<IServiceProvider, T> implementationFactory)
-            where T : class, ISigningCredentialStore
+            where T : class, ISigningCredentialsStore
         {
-            builder.Services.TryAddTransient<ISigningCredentialStore>(implementationFactory);
+            builder.Services.TryAddTransient<ISigningCredentialsStore>(implementationFactory);
             return builder;
         }
         #endregion
@@ -126,7 +126,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IIdentityServerBuilder AddProfileService<T>(this IIdentityServerBuilder builder)
            where T : class, IProfileService
         {
-            builder.Services.ReplaceTransient<IProfileService, T>();
+            builder.Services.AddOrUpdateTransient<IProfileService, T>();
             return builder;
         }
         #endregion
@@ -135,7 +135,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IIdentityServerBuilder AddPasswordGrantValidator<T>(this IIdentityServerBuilder builder)
            where T : class, IPasswordGrantValidator
         {
-            builder.Services.ReplaceTransient<IPasswordGrantValidator, T>();
+            builder.Services.AddOrUpdateTransient<IPasswordGrantValidator, T>();
             return builder;
         }
         #endregion
@@ -144,7 +144,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IIdentityServerBuilder AddExtensionGrantValidator<T>(this IIdentityServerBuilder builder)
            where T : class, IExtensionGrantValidator
         {
-            builder.Services.ReplaceTransient<IExtensionGrantValidator, T>();
+            builder.Services.AddOrUpdateTransient<IExtensionGrantValidator, T>();
             return builder;
         }
         #endregion

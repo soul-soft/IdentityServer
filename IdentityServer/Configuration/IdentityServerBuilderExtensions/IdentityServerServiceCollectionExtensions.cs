@@ -4,11 +4,17 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class IdentityServerServiceCollectionExtensions
     {
-
-        public static IServiceCollection ReplaceTransient<TService, TImplementation>(this IServiceCollection services)
+        internal static IServiceCollection AddOrUpdateTransient<TService, TImplementation>(this IServiceCollection services)
            where TService : class where TImplementation : class, TService
         {
-            services.Replace(ServiceDescriptor.Transient<TService, TImplementation>());
+            if (services.Any(a => a.ServiceType == typeof(TService)))
+            {
+                services.Replace(ServiceDescriptor.Transient<TService, TImplementation>());
+            }
+            else
+            {
+                services.Add(ServiceDescriptor.Transient<TService, TImplementation>());
+            }
             return services;
         }
 

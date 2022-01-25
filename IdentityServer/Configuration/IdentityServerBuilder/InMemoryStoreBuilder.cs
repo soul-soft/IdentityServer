@@ -14,18 +14,18 @@ namespace IdentityServer.Configuration
         #endregion
 
         #region SigningCredentials
-        public InMemoryStoreBuilder AddSigningCredential(SigningCredentials credential, string signingAlgorithm)
+        public InMemoryStoreBuilder AddSigningCredentials(SigningCredentials credential, string signingAlgorithm)
         {
             SigningCredentials.Add(new SigningCredentialsDescriptor(credential, signingAlgorithm));
             return this;
         }
-        public InMemoryStoreBuilder AddSigningCredential(SecurityKey securityKey, string signingAlgorithm = SecurityAlgorithms.RsaSha256)
+        public InMemoryStoreBuilder AddSigningCredentials(SecurityKey securityKey, string signingAlgorithm = SecurityAlgorithms.RsaSha256)
         {
             var credential = new SigningCredentials(securityKey, signingAlgorithm);
-            AddSigningCredential(credential, signingAlgorithm);
+            AddSigningCredentials(credential, signingAlgorithm);
             return this;
         }
-        public InMemoryStoreBuilder AddSigningCredential(X509Certificate2 certificate, string signingAlgorithm = SecurityAlgorithms.RsaSha256)
+        public InMemoryStoreBuilder AddSigningCredentials(X509Certificate2 certificate, string signingAlgorithm = SecurityAlgorithms.RsaSha256)
         {
             if (!certificate.HasPrivateKey)
             {
@@ -34,10 +34,10 @@ namespace IdentityServer.Configuration
             var securityKey = new X509SecurityKey(certificate);
             securityKey.KeyId += signingAlgorithm;
             var credential = new SigningCredentials(securityKey, signingAlgorithm);
-            AddSigningCredential(credential, signingAlgorithm);
+            AddSigningCredentials(credential, signingAlgorithm);
             return this;
         }
-        public InMemoryStoreBuilder AddDeveloperSigningCredential(bool persistKey = true,string? filename = null,string signingAlgorithm = SecurityAlgorithms.RsaSha256)
+        public InMemoryStoreBuilder AddDeveloperSigningCredentials(bool persistKey = true,string? filename = null,string signingAlgorithm = SecurityAlgorithms.RsaSha256)
         {
             if (filename == null)
             {
@@ -47,7 +47,7 @@ namespace IdentityServer.Configuration
             {
                 var json = File.ReadAllText(filename);
                 var jwk = new JsonWebKey(json);
-                AddSigningCredential(jwk, jwk.Alg);
+                AddSigningCredentials(jwk, jwk.Alg);
                 return this;
             }
             else
@@ -59,7 +59,7 @@ namespace IdentityServer.Configuration
                 {
                     File.WriteAllText(filename, JsonSerializer.Serialize(jwk));
                 }
-                AddSigningCredential(key, signingAlgorithm);
+                AddSigningCredentials(key, signingAlgorithm);
                 return this;
             }
         }
@@ -102,7 +102,7 @@ namespace IdentityServer.Configuration
             {
                 services.AddSigningCredentialStore(sp =>
                 {
-                    return new InMemorySigningCredentialStore(SigningCredentials);
+                    return new InMemorySigningCredentialsStore(SigningCredentials);
                 });
             }
         }

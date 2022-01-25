@@ -10,36 +10,36 @@ namespace IdentityServer.Endpoints
         private readonly IResourceStore _resources;
         private readonly IdentityServerOptions _options;
         private readonly ITokenGenerator _generator;
-        private readonly ISecretsListParser _secretsParser;
+        private readonly SecretParserCollection _secretParsers;
         private readonly IScopeValidator _scopeValidator;
         private readonly IClaimsService _claimsService;
         private readonly IClaimsValidator _claimsValidator;
-        private readonly ISecretsListValidator _secretsValidator;
+        private readonly SecretValidatorCollection _secretValidators;
         private readonly IResourceValidator _resourceValidator;
         private readonly IGrantTypeValidator _grantTypeValidator;
 
         public TokenEndpoint(
             IClientStore clients,
             IResourceStore resources,
-            ISecretsListParser secretsParser,
-            IdentityServerOptions options,
             ITokenGenerator generator,
-            IScopeValidator scopeValidator,
             IClaimsService claimsService,
+            IdentityServerOptions options,
+            IScopeValidator scopeValidator,
             IClaimsValidator claimsValidator,
-            ISecretsListValidator secretsValidator,
             IResourceValidator resourceValidator,
-            IGrantTypeValidator grantTypeValidator)
+            SecretParserCollection secretParsers,
+            IGrantTypeValidator grantTypeValidator,
+            SecretValidatorCollection secretValidators)
         {
             _clients = clients;
             _options = options;
             _resources = resources;
             _generator = generator;
-            _secretsParser = secretsParser;
+            _secretParsers = secretParsers;
             _scopeValidator = scopeValidator;
             _claimsService = claimsService;
             _claimsValidator = claimsValidator;
-            _secretsValidator = secretsValidator;
+            _secretValidators = secretValidators;
             _resourceValidator = resourceValidator;
             _grantTypeValidator = grantTypeValidator;
         }
@@ -62,7 +62,7 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Validate ClientSecret
-            var clientSecret = await _secretsParser.ParseAsync(context);
+            var clientSecret = await _secretParsers.ParseAsync(context);
             if (clientSecret == null)
             {
                 throw new InvalidGrantException("No client credentials found");
@@ -74,7 +74,7 @@ namespace IdentityServer.Endpoints
             }
             if (client.RequireClientSecret)
             {
-                await _secretsValidator.ValidateAsync(clientSecret, client.ClientSecrets);
+                await _secretValidators.ValidateAsync(clientSecret, client.ClientSecrets);
             }
             #endregion
 
@@ -190,7 +190,7 @@ namespace IdentityServer.Endpoints
             {
                 var grantContext = new ExtensionGrantValidationContext(request);
                 var grantValidator = context.RequestServices
-                    .GetRequiredService<IExtensionGrantsListValidator>();
+                    .GetRequiredService<ExtensionGrantValidatorCollection>();
                 return await grantValidator.ValidateAsync(grantContext);
             }
 
