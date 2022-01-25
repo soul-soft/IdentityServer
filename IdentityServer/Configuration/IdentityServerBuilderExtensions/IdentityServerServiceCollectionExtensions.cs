@@ -7,7 +7,9 @@ namespace Microsoft.Extensions.DependencyInjection
         internal static IServiceCollection AddOrUpdateTransient<TService, TImplementation>(this IServiceCollection services)
            where TService : class where TImplementation : class, TService
         {
-            if (services.Any(a => a.ServiceType == typeof(TService)))
+            if (services.Any(a => a.ServiceType == typeof(TService)
+                && a.ImplementationType == typeof(TImplementation) 
+                && a.Lifetime == ServiceLifetime.Transient))
             {
                 services.Replace(ServiceDescriptor.Transient<TService, TImplementation>());
             }
