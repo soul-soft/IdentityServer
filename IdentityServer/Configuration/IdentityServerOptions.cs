@@ -13,7 +13,7 @@
         public string? AccessTokenJwtType { get; set; } = "at+jwt";
         public bool EmitScopesAsSpaceDelimitedStringInJwt { get; set; } = true;
         public string TokenEndpointAuthMethod { get; set; } = TokenEndpointAuthMethods.PostBody;
-        public TokenValidationOptions TokenValidations { get; set; } = new TokenValidationOptions();
+        public TokenValidationOptions TokenValidationParameters { get; set; } = new TokenValidationOptions();
         public string AuthorizationPolicyName { get; set; } = IdentityServerAuthDefaults.PolicyName;
     }
 }

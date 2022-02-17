@@ -8,8 +8,26 @@ namespace Hosting.Configuration
     {
         public static IEnumerable<IClient> Clients => new IClient[]
         {
-            new Client("client")
+            new Client()
             {
+                ClientId="client",
+                AllowedGrantTypes = new []
+                {
+                    "myGrant",GrantTypes.ClientCredentials
+                },
+                ClientSecrets = new ISecret[]
+                {
+                    new Secret("secret".Sha512())
+                },
+                //AccessTokenType=AccessTokenType.Reference,
+                AllowedScopes = new[]
+                {
+                    "api",
+                }
+            },
+            new Client()
+            {
+                ClientId="client",
                 AllowedGrantTypes = new []
                 {
                     "myGrant",GrantTypes.Password

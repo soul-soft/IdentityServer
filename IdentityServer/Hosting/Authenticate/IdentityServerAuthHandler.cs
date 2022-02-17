@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net;
@@ -65,15 +64,12 @@ namespace IdentityServer.Hosting
             var authenticateResult = await AuthenticateAsync();
             if (!authenticateResult.Succeeded)
             {
-                var endpoint = Context.GetEndpoint();
-                if (endpoint != null && endpoint.IsIdentityEndpoint())
+                var result = new StatusCodeResult(HttpStatusCode.Unauthorized);
+                await result.ExecuteAsync(Context);
+                if (authenticateResult.Failure != null)
                 {
-                    var result = new ErrorResult(
-                    OpenIdConnectTokenErrors.InvalidToken,
-                    authenticateResult.Failure?.Message,
-                    HttpStatusCode.Unauthorized);
-                    await result.ExecuteAsync(Context);
-                    _loggerFactory.CreateLogger("IdentityServer").LogError(authenticateResult.Failure, authenticateResult.Failure?.Message);
+                    var logger = _loggerFactory.CreateLogger<IdentityServerAuthHandler>();
+                    logger.LogError(authenticateResult.Failure, authenticateResult.Failure.Message);
                 }
             }
         }

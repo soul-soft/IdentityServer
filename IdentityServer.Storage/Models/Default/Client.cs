@@ -2,7 +2,7 @@
 {
     public class Client : IClient
     {
-        public string ClientId { get; }
+        public string ClientId { get; set; } = null!;
         public string? ClientName { get; set; }
         public string? Description { get; set; }
         public string? ClientUri { get; set; }
@@ -18,9 +18,19 @@
         public IReadOnlyCollection<string> AllowedSigningAlgorithms { get; set; } = new HashSet<string>();
         public IReadOnlyCollection<string> AllowedScopes { get; set; } = new HashSet<string>();
 
-        public Client(string clientId)
+        public Client()
+        {
+
+        }
+
+        public Client(string clientId, ISecret secret)
         {
             ClientId = clientId;
+            ClientSecrets = new ISecret[] 
+            {
+                secret 
+            };
         }
     }
+
 }

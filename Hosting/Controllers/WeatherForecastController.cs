@@ -21,5 +21,11 @@ namespace Hosting.Controllers
         {
             return "111";
         }
+        [AllowAnonymous]
+        [HttpGet("test")]
+        public string Test2()
+        {
+            return "111";
+        }
     }
 }

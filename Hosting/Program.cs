@@ -12,8 +12,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddIdentityServer(o =>
         {
             o.Issuer = "microsoft";
-            o.TokenValidations.ValidateScope = true;
-            o.TokenValidations.Scope = "api,openid";
+            o.TokenValidationParameters.ValidateScope = true;
+            o.TokenValidationParameters.ValidScope = "api";
         })
         .AddPasswordGrantValidator<PasswordGrantValidator>()
         .AddExtensionGrantValidator<MyExtensionGrantValidator>()

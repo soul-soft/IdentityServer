@@ -31,14 +31,7 @@ namespace IdentityServer.Hosting
                             validationException.ErrorDescription,
                             HttpStatusCode.BadRequest);
                         await result.ExecuteAsync(context);
-                        loggerFactory.CreateLogger("IdentityServer").LogError(ex, ex.Message);
-                        return;
-                    }
-                    else if (ex is UnauthorizedException)
-                    {
-                        var result = new StatusCodeResult(
-                           HttpStatusCode.Unauthorized);
-                        await result.ExecuteAsync(context);
+                        loggerFactory.CreateLogger<IdentityServerMiddleware>().LogError(ex, ex.Message);
                         return;
                     }
                 }
