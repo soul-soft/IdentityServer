@@ -5,12 +5,13 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<AssemblyName>Soul.$(MSBuildProjectName)</AssemblyName>
-		<Version>6.0.0-bate8</Version>
+		<Version>6.0.0-bate9</Version>
 		<PackageTags>OAuth2;OAuth 2.0;OpenID Connect;Security;Identity;IdentityServer</PackageTags>
 		<Copyright>MIT</Copyright>
 		<PackageProjectUrl>https://github.com/1448376744/IdentityServer</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/1448376744/IdentityServer</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageReleaseNotes>预览版</PackageReleaseNotes>
+		<Description>Simple identityServer storage.</Description>
 	</PropertyGroup>
 </Project>
