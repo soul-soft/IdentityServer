@@ -8,7 +8,7 @@ using Microsoft.Extensions.Primitives;
 
 namespace IdentityServer.Hosting
 {
-    internal class IdentityServerEndpointDataSource : EndpointDataSource
+    internal class IdentityServerEndpointBuilder : EndpointDataSource
     {
         private List<Endpoint>? _endpoints;
         
@@ -18,7 +18,7 @@ namespace IdentityServer.Hosting
       
         private readonly EndpointDescriptorCollectionProvider _provider;
 
-        public IdentityServerEndpointDataSource(
+        public IdentityServerEndpointBuilder(
             IdentityServerOptions options,
             EndpointDescriptorCollectionProvider provider)
         {
