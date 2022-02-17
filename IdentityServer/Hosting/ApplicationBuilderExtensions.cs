@@ -17,7 +17,7 @@ namespace Microsoft.AspNetCore.Builder
         internal static void MapEndpoints(this IEndpointRouteBuilder endpoints)
         {
             var endpointDataSource = ActivatorUtilities
-                .CreateInstance<IdentityServerEndpointBuilder>(endpoints.ServiceProvider);
+                .CreateInstance<IdentityServerEndpointDatasource>(endpoints.ServiceProvider);
             endpoints.DataSources.Add(endpointDataSource);
         }
     }

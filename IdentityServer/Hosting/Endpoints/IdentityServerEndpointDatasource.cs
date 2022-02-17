@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
@@ -8,17 +7,18 @@ using Microsoft.Extensions.Primitives;
 
 namespace IdentityServer.Hosting
 {
-    internal class IdentityServerEndpointBuilder : EndpointDataSource
+    internal class IdentityServerEndpointDatasource : EndpointDataSource
     {
         private List<Endpoint>? _endpoints;
         
         private CancellationTokenSource? _cts;
-        
+        private CancellationChangeToken? _cct;
+
         private readonly IdentityServerOptions _options;
       
         private readonly EndpointDescriptorCollectionProvider _provider;
 
-        public IdentityServerEndpointBuilder(
+        public IdentityServerEndpointDatasource(
             IdentityServerOptions options,
             EndpointDescriptorCollectionProvider provider)
         {
@@ -30,16 +30,14 @@ namespace IdentityServer.Hosting
         {
             get
             {
-                Initialize();
-                Debug.Assert(_endpoints != null);
-                return _endpoints;
+                Initialize();                
+                return _endpoints!;
             }
         }
 
         public override IChangeToken GetChangeToken()
         {
-            _cts = new CancellationTokenSource();
-            return new CancellationChangeToken(_cts.Token);
+            return _cct!;
         }
 
         private void Initialize()
@@ -48,12 +46,12 @@ namespace IdentityServer.Hosting
             {
                 if (_endpoints == null)
                 {
-                    _endpoints = CreateEndpoints().ToList();
+                    _endpoints = UpdateEndpoints().ToList();
                 }
             }
         }
 
-        private IEnumerable<Endpoint> CreateEndpoints()
+        private IEnumerable<Endpoint> UpdateEndpoints()
         {
             foreach (var item in _provider)
             {
@@ -71,6 +69,10 @@ namespace IdentityServer.Hosting
                     builder.Metadata.Add(new AuthorizeAttribute(_options.AuthorizationPolicyName));
                 }
                 builder.Metadata.Add(new IdentityServerEndpoint());
+                var oldCts = _cts;
+                _cts = new CancellationTokenSource();
+                _cct = new CancellationChangeToken(_cts.Token);
+                oldCts?.Cancel();
                 yield return builder.Build();
             }
         }
