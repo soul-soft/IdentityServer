@@ -31,7 +31,7 @@ namespace IdentityServer.Services
             }
             if (resources.UserClaims.Contains(JwtClaimTypes.IdentityProvider))
             {
-                identity.AddClaim(new Claim(JwtClaimTypes.IdentityProvider, _options.IdentityServerName));
+                identity.AddClaim(new Claim(JwtClaimTypes.IdentityProvider, _options.IdentityProvider));
             }
             if (resources.UserClaims.Contains(JwtClaimTypes.Subject))
             {

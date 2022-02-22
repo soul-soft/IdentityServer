@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection.Extensions;
+﻿using IdentityServer;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class IdentityServerServiceCollectionExtensions
+    public static class ServiceCollectionExtensions
     {
         internal static IServiceCollection AddOrUpdateTransient<TService, TImplementation>(this IServiceCollection services)
            where TService : class where TImplementation : class, TService
@@ -20,6 +21,13 @@ namespace Microsoft.Extensions.DependencyInjection
             return services;
         }
 
+        public static IServiceCollection AddLoaclApiAuthentication(this IServiceCollection services)
+        {
+            services.AddAuthentication(LocalAuthenticationDefaults.Scheme)
+                .AddLoaclApiAuthentication();
+            return services;
+        }
+
         public static IIdentityServerBuilder AddIdentityServerBuilder(this IServiceCollection services)
         {
             return new IdentityServerBuilder(services);
@@ -32,7 +40,6 @@ namespace Microsoft.Extensions.DependencyInjection
             builder
                 .AddRequiredPlatformServices()
                 .AddValidators()
-                .AddLocalAuthentication()
                 .AddPluggableServices()
                 .AddDefaultEndpoints()
                 .AddResponseGenerators();

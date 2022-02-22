@@ -1,7 +1,6 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using Microsoft.AspNetCore.Authentication;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityServer.Validation
 {
@@ -24,16 +23,16 @@ namespace IdentityServer.Validation
             _referenceTokenService = referenceTokenService;
         }
 
-        public async Task<IEnumerable<Claim>> ValidateAsync(string? token)
+        public async Task<ClaimsPrincipal> ValidateAsync(string? token)
         {
             IEnumerable<Claim> claims;
             if (string.IsNullOrWhiteSpace(token))
             {
-                throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "Access token is missing");
+                throw new InvalidTokenException("Access token is missing");
             }
             if (token.Length > _options.InputLengthRestrictions.AccessToken)
             {
-                throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "Access token too long");
+                throw new InvalidTokenException("Access token too long");
             }
             if (token.Contains('.'))
             {
@@ -43,7 +42,9 @@ namespace IdentityServer.Validation
             {
                 claims = await ValidateReferenceTokenAsync(token);
             }
-            return claims;
+            var identity = new ClaimsIdentity(_options.Authentications.Scheme);
+            identity.AddClaims(claims);
+            return new ClaimsPrincipal(identity);
         }
 
         private async Task<IEnumerable<Claim>> ValidateJwtTokenAsync(string token)
@@ -53,80 +54,46 @@ namespace IdentityServer.Validation
                 var handler = new JwtSecurityTokenHandler();
                 handler.InboundClaimTypeMap.Clear();
                 var securityKeys = await _credentials.GetSecurityKeysAsync();
-                var parameters = new TokenValidationParameters
+                var tokenValidationParameters = _options.Authentications.TokenValidationParameters;
+                var parameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
                     ValidIssuer = _options.Issuer,
-                    ValidateIssuer = _options.TokenValidationParameters.ValidateIssuer,
-                    ValidateAudience = _options.TokenValidationParameters.ValidateAudience,
-                    ValidAudience = _options.TokenValidationParameters.Audience,
-                    ValidateLifetime = _options.TokenValidationParameters.ValidateLifetime,
+                    ValidateIssuer = _options.Authentications.TokenValidationParameters.ValidateIssuer,
+                    ValidateAudience = _options.Authentications.TokenValidationParameters.ValidateAudience,
+                    ValidAudience = _options.Authentications.TokenValidationParameters.ValidAudience,
+                    ValidateLifetime = _options.Authentications.TokenValidationParameters.ValidateLifetime,
                     IssuerSigningKeys = securityKeys,
                 };
                 var subject = handler.ValidateToken(token, parameters, out var securityToken);
-                if (_options.TokenValidationParameters.ValidateScope)
-                {
-                    var scopes = subject.Claims
-                        .Where(a => a.Type == JwtClaimTypes.Scope).Select(s => s.Value);
-                    var validScopes = new List<string>(_options.TokenValidationParameters.ValidScopes);
-                    if (!string.IsNullOrEmpty(_options.TokenValidationParameters.ValidScope))
-                    {
-                        validScopes.Add(_options.TokenValidationParameters.ValidScope);
-                    }
-                    foreach (var item in validScopes)
-                    {
-                        if (!scopes.Contains(item))
-                        {
-                            throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "Invalid scope");
-                        }
-                    }
-                }
                 return subject.Claims;
             }
             catch (Exception ex)
             {
-                throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, ex.Message);
+                throw new InvalidTokenException(ex.Message);
             }
         }
 
         private async Task<IEnumerable<Claim>> ValidateReferenceTokenAsync(string token)
         {
             var referenceToken = await _referenceTokenService.GetAsync(token);
+            var tokenValidationParameters = _options.Authentications.TokenValidationParameters;
             if (referenceToken == null || referenceToken.Expiration < _systemClock.UtcNow.UtcDateTime)
             {
-                throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "Invalid token");
+                throw new InvalidTokenException("Invalid token");
             }
-            if (_options.TokenValidationParameters.ValidateLifetime && referenceToken.Expiration < _systemClock.UtcNow.UtcDateTime)
+            if (tokenValidationParameters.ValidateLifetime && referenceToken.Expiration < _systemClock.UtcNow.UtcDateTime)
             {
-                throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "The access token has expired");
+                throw new InvalidTokenException("The access token has expired");
             }
-            if (_options.TokenValidationParameters.ValidateAudience && !referenceToken.AccessToken.Audiences.Contains(_options.TokenValidationParameters.Audience))
+            if (tokenValidationParameters.ValidateAudience && !referenceToken.AccessToken.Audiences.Contains(tokenValidationParameters.ValidAudience))
             {
-                throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "Invalid audience");
+                throw new InvalidTokenException("Invalid audience");
             }
-            if (_options.TokenValidationParameters.ValidateIssuer && referenceToken.AccessToken.Issuer != _options.Issuer)
+            if (tokenValidationParameters.ValidateIssuer && referenceToken.AccessToken.Issuer != _options.Issuer)
             {
-                throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "Invalid issuer");
+                throw new InvalidTokenException("Invalid issuer");
             }
-            if (_options.TokenValidationParameters.ValidateScope)
-            {
-                if (_options.TokenValidationParameters.ValidateScope)
-                {
-                    var scopes = referenceToken.AccessToken.Scopes;
-                    var validScopes = new List<string>(_options.TokenValidationParameters.ValidScopes);
-                    if (!string.IsNullOrEmpty(_options.TokenValidationParameters.ValidScope))
-                    {
-                        validScopes.Add(_options.TokenValidationParameters.ValidScope);
-                    }
-                    foreach (var item in validScopes)
-                    {
-                        if (!scopes.Contains(item))
-                        {
-                            throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "Invalid scope");
-                        }
-                    }
-                }
-                throw new InvalidException(OpenIdConnectTokenErrors.InvalidToken, "Invalid scope");
-            }
+            
             return referenceToken.AccessToken.ToClaims(_options);
         }
     }

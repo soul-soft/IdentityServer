@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication;
 using IdentityServer.Hosting;
+using System.Security.Claims;
 
 namespace IdentityServer.Endpoints
 {
@@ -9,14 +10,18 @@ namespace IdentityServer.Endpoints
         private readonly IClientStore _clients;
         private readonly IResourceStore _resources;
         private readonly IScopeParser _scopeParser;
-        private readonly IScopeValidator _scopeValidator;
         private readonly IUserInfoGenerator _generator;
+        private readonly ITokenParser _tokenParser;
+        private readonly ITokenValidator _tokenValidator;
+        private readonly IScopeValidator _scopeValidator;
         private readonly IResourceValidator _resourceValidator;
 
         public UserInfoEndpoint(
             IClientStore clients,
             IResourceStore resources,
+            ITokenParser tokenParser,
             IScopeParser scopeParser,
+            ITokenValidator tokenValidator,
             IScopeValidator scopeValidator,
             IUserInfoGenerator generator,
             IResourceValidator resourceValidator)
@@ -24,40 +29,49 @@ namespace IdentityServer.Endpoints
             _clients = clients;
             _resources = resources;
             _generator = generator;
+            _tokenParser = tokenParser;
             _scopeParser = scopeParser;
-            _scopeValidator = scopeValidator;   
+            _tokenValidator = tokenValidator;
+            _scopeValidator = scopeValidator;
             _resourceValidator = resourceValidator;
         }
 
         public override async Task<IEndpointResult> ProcessAsync(HttpContext context)
         {
-            var authenticateResult = await context.AuthenticateAsync(IdentityServerAuthDefaults.Scheme);
-            if (authenticateResult == null || !authenticateResult.Succeeded)
+            try
             {
-                return Unauthorized(OpenIdConnectTokenErrors.InvalidRequest, "authentication failed");
+                var token = await _tokenParser.ParserAsync(context);
+                if (string.IsNullOrEmpty(token))
+                {
+                    throw new InvalidRequestException("Token is miss");
+                }
+                var subject = await _tokenValidator.ValidateAsync(token);
+                var sub = subject.GetSubjectId();
+                if (string.IsNullOrWhiteSpace(sub))
+                {
+                    throw new InvalidTokenException("Sub claim is missing");
+                }
+                var clientId = subject.GetClientId();
+                if (string.IsNullOrWhiteSpace(clientId))
+                {
+                    throw new InvalidTokenException("ClientId claim is missing");
+                }
+                var scopes = await _scopeParser.ParseAsync(subject);
+                var client = await _clients.GetAsync(clientId);
+                if (client == null)
+                {
+                    throw new InvalidClientException("Invalid client");
+                }
+                await _scopeValidator.ValidateAsync(client.AllowedScopes, scopes);
+                var resources = await _resources.FindByScopeAsync(scopes);
+                await _resourceValidator.ValidateAsync(resources, scopes);
+                var response = await _generator.ProcessAsync(new UserInfoRequest(subject, client, resources));
+                return new UserInfoResult(response);
             }
-            var subject = authenticateResult.Principal;
-            var sub = subject.GetSubjectId();
-            if (string.IsNullOrWhiteSpace(sub))
+            catch (InvalidException ex)
             {
-                return Unauthorized(OpenIdConnectTokenErrors.InvalidToken, "Sub claim is missing");
+                return Unauthorized(ex.Error, ex.ErrorDescription);
             }
-            var clientId = subject.GetClientId();
-            if (string.IsNullOrWhiteSpace(clientId))
-            {
-                return Unauthorized(OpenIdConnectTokenErrors.InvalidToken, "ClientId claim is missing");
-            }
-            var scopes = await _scopeParser.ParseAsync(subject);
-            var client = await _clients.GetAsync(clientId);
-            if (client == null)
-            {
-                return Unauthorized(OpenIdConnectTokenErrors.InvalidToken, "Invalid client");
-            }
-            await _scopeValidator.ValidateAsync(client.AllowedScopes,scopes);
-            var resources = await _resources.FindByScopeAsync(scopes);
-            await _resourceValidator.ValidateAsync(resources, scopes);
-            var response = await _generator.ProcessAsync(new UserInfoRequest(subject, client, resources));
-            return new UserInfoResult(response);
         }
     }
 }

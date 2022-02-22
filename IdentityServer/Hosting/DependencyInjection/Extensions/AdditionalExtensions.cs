@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class AdditionalExtensions
-    {
+    {       
         #region IPersistentStore
         public static IIdentityServerBuilder AddPersistentStore<T>(this IIdentityServerBuilder builder)
             where T : class, IPersistentStore
@@ -110,7 +110,7 @@ namespace Microsoft.Extensions.DependencyInjection
           where T : class, IEndpointHandler
         {
             builder.Services.AddTransient<T>();
-            builder.Services.AddSingleton(new EndpointDescriptor(name, path, typeof(T)));
+            builder.Services.AddSingleton(new IdentityServer.Hosting.Endpoint(name, path, typeof(T)));
             return builder;
         }
         #endregion

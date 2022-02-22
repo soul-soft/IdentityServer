@@ -1,44 +1,44 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using System.Net;
 
 namespace IdentityServer.Hosting
 {
     internal class IdentityServerMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly IEndpointRouter _router;
 
-        public IdentityServerMiddleware(RequestDelegate next)
+        public IdentityServerMiddleware(
+            RequestDelegate next,
+            IEndpointRouter router)
         {
             _next = next;
+            _router = router;
         }
 
-        public async Task InvokeAsync(HttpContext context, ILoggerFactory loggerFactory)
+        public async Task InvokeAsync(HttpContext context)
         {
-            var endpoint = context.GetEndpoint();
-            try
+            var endpoint = _router.Find(context);
+            if (endpoint != null)
+            {
+                await ProcessAsync(context, endpoint);
+            }
+            else
             {
                 await _next(context);
             }
-            catch (Exception ex)
+        }
+
+        private async Task ProcessAsync(HttpContext context, IEndpointHandler endpoint)
+        {
+            try
             {
-                if (endpoint != null && endpoint.IsIdentityEndpoint())
-                {
-                    if (ex is InvalidException validationException)
-                    {
-                        var result = new ErrorResult(
-                            validationException.Error,
-                            validationException.ErrorDescription,
-                            HttpStatusCode.BadRequest);
-                        await result.ExecuteAsync(context);
-                        loggerFactory.CreateLogger<IdentityServerMiddleware>().LogError(ex, ex.Message);
-                        return;
-                    }
-                }
-                else
-                {
-                    throw;
-                }
+                var result = await endpoint.ProcessAsync(context);
+                await result.ExecuteAsync(context);
+            }
+            catch (InvalidException ex)
+            {
+                var result = new ErrorResult(ex.Error, ex.ErrorDescription, System.Net.HttpStatusCode.BadRequest);
+                await result.ExecuteAsync(context);
             }
         }
     }

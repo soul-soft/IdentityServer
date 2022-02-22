@@ -4,6 +4,6 @@ namespace IdentityServer.Validation
 {
     public interface ITokenValidator
     {
-        Task<IEnumerable<Claim>> ValidateAsync(string? token);
+        Task<ClaimsPrincipal> ValidateAsync(string? token);
     }
 }

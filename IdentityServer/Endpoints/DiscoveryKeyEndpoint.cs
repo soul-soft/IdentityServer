@@ -20,7 +20,7 @@ namespace IdentityServer.Endpoints
 
         public override async Task<IEndpointResult> ProcessAsync(HttpContext context)
         {
-            if (!_options.Endpoints.EnableJwtRequestUri)
+            if (!_options.Endpoints.EnableDiscoveryJwksEndpoint)
             {
                 return MethodNotAllowed();
             }

@@ -1,6 +1,4 @@
-﻿using IdentityServer;
-using IdentityServer.Hosting;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -9,23 +7,6 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     internal static class CoreExtensions
     {
-        #region CoreServices
-        public static IIdentityServerBuilder AddLocalAuthentication(this IIdentityServerBuilder builder)
-        {
-            builder.Services.AddAuthentication()
-                .AddLoaclApiAuthentication();
-            builder.Services.AddAuthorization(options =>
-            {
-                options.AddPolicy(IdentityServerAuthDefaults.PolicyName, policy =>
-                {
-                    policy.AddAuthenticationSchemes(IdentityServerAuthDefaults.Scheme);
-                    policy.RequireAuthenticatedUser();
-                });
-            });
-            return builder;
-        }
-        #endregion       
-
         #region PlatformServices
         /// <summary>
         /// 必要的平台服务
@@ -50,7 +31,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<IScopeParser, ScopeParser>();
             builder.Services.TryAddTransient<ISecretParser, PostBodySecretParser>();
             builder.Services.TryAddTransient<SecretParserCollection>();
-            builder.Services.TryAddTransient<IBearerTokenUsageParser, BearerTokenUsageParser>();
+            builder.Services.TryAddTransient<ITokenParser, BearerTokenUsageParser>();
 
             builder.Services.TryAddTransient<IServerUrl, ServerUrl>();
             builder.Services.TryAddTransient<IIdGenerator, IdGenerator>();
@@ -86,12 +67,12 @@ namespace Microsoft.Extensions.DependencyInjection
         #region Endpoints
         public static IIdentityServerBuilder AddDefaultEndpoints(this IIdentityServerBuilder builder)
         {
+            builder.Services.AddTransient<IEndpointRouter, EndpointRouter>();
             builder.AddEndpoint<TokenEndpoint>(Constants.EndpointNames.Token, Constants.EndpointRoutePaths.Token);
             builder.AddEndpoint<TokenEndpoint>(Constants.EndpointNames.Authorize, Constants.EndpointRoutePaths.Authorize);
             builder.AddEndpoint<UserInfoEndpoint>(Constants.EndpointNames.UserInfo, Constants.EndpointRoutePaths.UserInfo);
             builder.AddEndpoint<DiscoveryEndpoint>(Constants.EndpointNames.Discovery, Constants.EndpointRoutePaths.Discovery);
             builder.AddEndpoint<DiscoveryKeyEndpoint>(Constants.EndpointNames.DiscoveryJwks, Constants.EndpointRoutePaths.DiscoveryJwks);
-            builder.Services.AddSingleton<EndpointDescriptorCollectionProvider>();
             return builder;
         }
         #endregion

@@ -10,7 +10,7 @@ namespace Hosting.Configuration
         {
             new Client()
             {
-                ClientId="client",
+                ClientId="client1",
                 AllowedGrantTypes = new []
                 {
                     "myGrant",GrantTypes.ClientCredentials
@@ -27,7 +27,7 @@ namespace Hosting.Configuration
             },
             new Client()
             {
-                ClientId="client",
+                ClientId="client2",
                 AllowedGrantTypes = new []
                 {
                     "myGrant",GrantTypes.Password

@@ -3,7 +3,7 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace IdentityServer.Services
 {
-    internal class BearerTokenUsageParser : IBearerTokenUsageParser
+    internal class BearerTokenUsageParser : ITokenParser
     {
         public async Task<string?> ParserAsync(HttpContext context)
         {

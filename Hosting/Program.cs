@@ -9,11 +9,14 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddLoaclApiAuthentication();
+builder.Services.AddAuthorization().AddAuthorization(configure =>
+{
+    configure.AddPolicy("default", p => p.RequireAuthenticatedUser());
+});
 builder.Services.AddIdentityServer(o =>
         {
             o.Issuer = "microsoft";
-            o.TokenValidationParameters.ValidateScope = true;
-            o.TokenValidationParameters.ValidScope = "api";
         })
         .AddPasswordGrantValidator<PasswordGrantValidator>()
         .AddExtensionGrantValidator<MyExtensionGrantValidator>()
@@ -39,6 +42,10 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseIdentityServer();
+
+//app.UseAuthentication();
+//app.UseAuthorization();
+
 app.MapControllers()
-    .RequireAuthorization(IdentityServerAuthDefaults.PolicyName);
+    .RequireAuthorization("default");
 app.Run();
