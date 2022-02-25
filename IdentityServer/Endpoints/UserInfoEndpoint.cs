@@ -14,7 +14,6 @@ namespace IdentityServer.Endpoints
         private readonly ITokenParser _tokenParser;
         private readonly ITokenValidator _tokenValidator;
         private readonly IScopeValidator _scopeValidator;
-        private readonly IResourceValidator _resourceValidator;
 
         public UserInfoEndpoint(
             IClientStore clients,
@@ -23,8 +22,7 @@ namespace IdentityServer.Endpoints
             IScopeParser scopeParser,
             ITokenValidator tokenValidator,
             IScopeValidator scopeValidator,
-            IUserInfoGenerator generator,
-            IResourceValidator resourceValidator)
+            IUserInfoGenerator generator)
         {
             _clients = clients;
             _resources = resources;
@@ -33,7 +31,6 @@ namespace IdentityServer.Endpoints
             _scopeParser = scopeParser;
             _tokenValidator = tokenValidator;
             _scopeValidator = scopeValidator;
-            _resourceValidator = resourceValidator;
         }
 
         public override async Task<IEndpointResult> ProcessAsync(HttpContext context)
@@ -62,9 +59,7 @@ namespace IdentityServer.Endpoints
                 {
                     throw new InvalidClientException("Invalid client");
                 }
-                await _scopeValidator.ValidateAsync(client.AllowedScopes, scopes);
-                var resources = await _resources.FindByScopeAsync(scopes);
-                await _resourceValidator.ValidateAsync(resources, scopes);
+                var resources = await _scopeValidator.ValidateAsync(client, scopes);
                 var response = await _generator.ProcessAsync(new UserInfoRequest(subject, client, resources));
                 return new UserInfoResult(response);
             }

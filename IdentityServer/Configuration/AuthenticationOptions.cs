@@ -1,7 +1,8 @@
 ﻿namespace IdentityServer.Configuration
 {
-    public class TokenValidationParameters
+    public class AuthenticationOptions
     {
+        public string Scheme { get; set; } = LocalAuthenticationDefaults.Scheme;
         public string? ValidAudience { get; set; }
         public bool ValidateAudience { get; set; } = false;
         public bool ValidateIssuer { get; set; } = true;

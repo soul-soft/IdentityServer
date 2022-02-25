@@ -29,8 +29,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IIdentityServerBuilder AddPluggableServices(this IIdentityServerBuilder builder)
         {
             builder.Services.TryAddTransient<IScopeParser, ScopeParser>();
-            builder.Services.TryAddTransient<ISecretParser, PostBodySecretParser>();
-            builder.Services.TryAddTransient<SecretParserCollection>();
+            builder.Services.TryAddTransient<IClientSecretParser, PostBodySecretParser>();
+            builder.Services.TryAddTransient<ClientSecretParserCollection>();
             builder.Services.TryAddTransient<ITokenParser, BearerTokenUsageParser>();
 
             builder.Services.TryAddTransient<IServerUrl, ServerUrl>();
@@ -52,7 +52,6 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<IScopeValidator, ScopeValidator>();
             builder.Services.TryAddTransient<IClaimsValidator, ClaimsValidator>();
             builder.Services.TryAddTransient<ITokenValidator, TokenValidator>();
-            builder.Services.TryAddTransient<IResourceValidator, ResourceValidator>();
             builder.Services.TryAddTransient<IGrantTypeValidator, GrantTypeValidator>();            
             builder.Services.TryAddTransient<SecretValidatorCollection>();
             builder.Services.TryAddTransient<ISecretValidator, SharedSecretValidator>();

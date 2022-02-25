@@ -42,7 +42,7 @@ namespace IdentityServer.Validation
             {
                 claims = await ValidateReferenceTokenAsync(token);
             }
-            var identity = new ClaimsIdentity(_options.Authentications.Scheme);
+            var identity = new ClaimsIdentity(_options.AuthenticationOptions.Scheme);
             identity.AddClaims(claims);
             return new ClaimsPrincipal(identity);
         }
@@ -53,15 +53,14 @@ namespace IdentityServer.Validation
             {
                 var handler = new JwtSecurityTokenHandler();
                 handler.InboundClaimTypeMap.Clear();
-                var securityKeys = await _credentials.GetSecurityKeysAsync();
-                var tokenValidationParameters = _options.Authentications.TokenValidationParameters;
+                var securityKeys = await _credentials.GetSecurityKeysAsync();                
                 var parameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
                     ValidIssuer = _options.Issuer,
-                    ValidateIssuer = _options.Authentications.TokenValidationParameters.ValidateIssuer,
-                    ValidateAudience = _options.Authentications.TokenValidationParameters.ValidateAudience,
-                    ValidAudience = _options.Authentications.TokenValidationParameters.ValidAudience,
-                    ValidateLifetime = _options.Authentications.TokenValidationParameters.ValidateLifetime,
+                    ValidateIssuer = _options.AuthenticationOptions.ValidateIssuer,
+                    ValidateAudience = _options.AuthenticationOptions.ValidateAudience,
+                    ValidAudience = _options.AuthenticationOptions.ValidAudience,
+                    ValidateLifetime = _options.AuthenticationOptions.ValidateLifetime,
                     IssuerSigningKeys = securityKeys,
                 };
                 var subject = handler.ValidateToken(token, parameters, out var securityToken);
@@ -76,24 +75,22 @@ namespace IdentityServer.Validation
         private async Task<IEnumerable<Claim>> ValidateReferenceTokenAsync(string token)
         {
             var referenceToken = await _referenceTokenService.GetAsync(token);
-            var tokenValidationParameters = _options.Authentications.TokenValidationParameters;
             if (referenceToken == null || referenceToken.Expiration < _systemClock.UtcNow.UtcDateTime)
             {
                 throw new InvalidTokenException("Invalid token");
             }
-            if (tokenValidationParameters.ValidateLifetime && referenceToken.Expiration < _systemClock.UtcNow.UtcDateTime)
+            if (_options.AuthenticationOptions.ValidateLifetime && referenceToken.Expiration < _systemClock.UtcNow.UtcDateTime)
             {
                 throw new InvalidTokenException("The access token has expired");
             }
-            if (tokenValidationParameters.ValidateAudience && !referenceToken.AccessToken.Audiences.Contains(tokenValidationParameters.ValidAudience))
+            if (_options.AuthenticationOptions.ValidateAudience && !referenceToken.AccessToken.Audiences.Contains(_options.AuthenticationOptions.ValidAudience))
             {
                 throw new InvalidTokenException("Invalid audience");
             }
-            if (tokenValidationParameters.ValidateIssuer && referenceToken.AccessToken.Issuer != _options.Issuer)
+            if (_options.AuthenticationOptions.ValidateIssuer && referenceToken.AccessToken.Issuer != _options.Issuer)
             {
                 throw new InvalidTokenException("Invalid issuer");
             }
-            
             return referenceToken.AccessToken.ToClaims(_options);
         }
     }

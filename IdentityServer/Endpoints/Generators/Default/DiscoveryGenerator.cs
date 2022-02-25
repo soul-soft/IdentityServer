@@ -6,13 +6,13 @@ namespace IdentityServer.Endpoints
         : IDiscoveryGenerator
     {
         private readonly IResourceStore _resources;
-        private readonly SecretParserCollection _secretParsers;
+        private readonly ClientSecretParserCollection _secretParsers;
         private readonly ExtensionGrantValidatorCollection _extensionGrantValidator;
         private readonly ISigningCredentialsStore _credentials;
 
         public DiscoveryGenerator(
             IResourceStore resources,
-            SecretParserCollection secretParsers,
+            ClientSecretParserCollection secretParsers,
             ISigningCredentialsStore credentials,
             ExtensionGrantValidatorCollection extensionGrantValidator)
         {

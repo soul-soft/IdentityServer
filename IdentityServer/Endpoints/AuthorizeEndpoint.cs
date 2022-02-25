@@ -15,10 +15,6 @@ namespace IdentityServer.Endpoints
         public override async Task<IEndpointResult> ProcessAsync(HttpContext context)
         {
             await Task.CompletedTask;
-            if (!_options.Endpoints.EnableAuthorizeEndpoint)
-            {
-                return MethodNotAllowed();
-            }
             throw new NotImplementedException();
         }
     }

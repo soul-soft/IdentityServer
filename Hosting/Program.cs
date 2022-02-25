@@ -24,8 +24,7 @@ builder.Services.AddIdentityServer(o =>
         .AddInMemoryStores(setup =>
         {
             setup.AddClients(Config.Clients);
-            setup.AddResources(Config.ApiScopes);
-            setup.AddResources(Config.IdentityResources);
+            setup.AddResources(Config.Resources);
             setup.AddDeveloperSigningCredentials();
             //setup.AddSigningCredential(new X509Certificate2("idsvr.pfx", "nbjc"));
             //setup.AddSigningCredentials(CryptoRandom.CreateRsaSecurityKey());

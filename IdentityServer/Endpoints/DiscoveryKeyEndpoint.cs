@@ -7,24 +7,15 @@ namespace IdentityServer.Endpoints
     /// </summary>
     public class DiscoveryKeyEndpoint : EndpointBase
     {
-        private readonly IdentityServerOptions _options;
         private readonly IDiscoveryGenerator _generator;
 
-        public DiscoveryKeyEndpoint(
-            IdentityServerOptions options,
-            IDiscoveryGenerator generator)
+        public DiscoveryKeyEndpoint(IDiscoveryGenerator generator)
         {
-            _options = options;
             _generator = generator;
         }
 
         public override async Task<IEndpointResult> ProcessAsync(HttpContext context)
         {
-            if (!_options.Endpoints.EnableDiscoveryJwksEndpoint)
-            {
-                return MethodNotAllowed();
-            }
-
             var response = await _generator.CreateJwkDiscoveryDocumentAsync();
 
             return DiscoveryResult(response);

@@ -13,6 +13,6 @@
         public string? AccessTokenJwtType { get; set; } = "at+jwt";
         public bool EmitScopesAsSpaceDelimitedStringInJwt { get; set; } = true;
         public string TokenEndpointAuthMethod { get; set; } = TokenEndpointAuthMethods.PostBody;
-        public LocalAuthenticationOptions Authentications { get; set; } = new LocalAuthenticationOptions();
+        public AuthenticationOptions AuthenticationOptions { get; set; } = new AuthenticationOptions();
     }
 }

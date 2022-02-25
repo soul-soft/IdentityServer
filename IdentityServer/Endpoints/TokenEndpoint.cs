@@ -7,35 +7,30 @@ namespace IdentityServer.Endpoints
     public class TokenEndpoint : EndpointBase
     {
         private readonly IClientStore _clients;
-        private readonly IResourceStore _resources;
         private readonly IScopeParser _scopeParser;
         private readonly ITokenGenerator _generator;
         private readonly IClaimsService _claimsService;
         private readonly IdentityServerOptions _options;
         private readonly IScopeValidator _scopeValidator;
         private readonly IClaimsValidator _claimsValidator;
-        private readonly SecretParserCollection _secretParsers;
-        private readonly IResourceValidator _resourceValidator;
+        private readonly ClientSecretParserCollection _secretParsers;
         private readonly IGrantTypeValidator _grantTypeValidator;
         private readonly SecretValidatorCollection _secretValidators;
 
         public TokenEndpoint(
             IClientStore clients,
-            IResourceStore resources,
             IScopeParser scopeParser,
             ITokenGenerator generator,
             IClaimsService claimsService,
             IdentityServerOptions options,
             IScopeValidator scopeValidator,
             IClaimsValidator claimsValidator,
-            IResourceValidator resourceValidator,
-            SecretParserCollection secretParsers,
+            ClientSecretParserCollection secretParsers,
             IGrantTypeValidator grantTypeValidator,
             SecretValidatorCollection secretValidators)
         {
             _clients = clients;
             _options = options;
-            _resources = resources;
             _generator = generator;
             _scopeParser = scopeParser;
             _secretParsers = secretParsers;
@@ -43,17 +38,12 @@ namespace IdentityServer.Endpoints
             _claimsService = claimsService;
             _claimsValidator = claimsValidator;
             _secretValidators = secretValidators;
-            _resourceValidator = resourceValidator;
             _grantTypeValidator = grantTypeValidator;
         }
 
         public override async Task<IEndpointResult> ProcessAsync(HttpContext context)
         {
             #region ValidateRequest
-            if (!_options.Endpoints.EnableTokenEndpoint)
-            {
-                return MethodNotAllowed();
-            }
             if (!HttpMethods.IsPost(context.Request.Method))
             {
                 return MethodNotAllowed();
@@ -66,14 +56,10 @@ namespace IdentityServer.Endpoints
 
             #region Validate ClientSecret
             var clientSecret = await _secretParsers.ParseAsync(context);
-            if (clientSecret == null)
-            {
-                throw new InvalidGrantException("No client credentials found");
-            }
             var client = await _clients.GetAsync(clientSecret.Id);
             if (client == null)
             {
-                throw new InvalidClientException("No client found");
+                throw new InvalidClientException("Invalid client credentials");
             }
             if (client.RequireClientSecret)
             {
@@ -89,7 +75,7 @@ namespace IdentityServer.Endpoints
                 scope = string.Join(",", client.AllowedScopes);
             }
             var scopes = await _scopeParser.ParseAsync(scope);
-            await _scopeValidator.ValidateAsync(client.AllowedScopes, scopes);
+            var resources = await _scopeValidator.ValidateAsync(client, scopes);
             #endregion
 
             #region Validate GrantType
@@ -99,11 +85,6 @@ namespace IdentityServer.Endpoints
                 throw new InvalidGrantException("Grant Type is missing");
             }
             await _grantTypeValidator.ValidateAsync(grantType, client.AllowedGrantTypes);
-            #endregion
-
-            #region Validate Resources
-            var resources = await _resources.FindByScopeAsync(scopes);
-            await _resourceValidator.ValidateAsync(resources, scopes);
             #endregion
 
             #region Validate Grant

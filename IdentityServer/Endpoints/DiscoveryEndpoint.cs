@@ -27,10 +27,6 @@ namespace IdentityServer.Endpoints
             {
                 return MethodNotAllowed();
             }
-            if (!_options.Endpoints.EnableDiscoveryEndpoint)
-            {
-                return MethodNotAllowed();
-            }
             var issuer = _urls.GetIssuerUri();
             var response = await _generator.CreateDiscoveryDocumentAsync(issuer);
             return DiscoveryResult(response);
