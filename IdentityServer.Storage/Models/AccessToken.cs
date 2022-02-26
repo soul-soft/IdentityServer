@@ -1,4 +1,6 @@
-﻿namespace IdentityServer.Models
+﻿using System.Security.Claims;
+
+namespace IdentityServer.Models
 {
     public class AccessToken
     {
@@ -16,7 +18,7 @@
         public DateTime? Expiration { get; set; }
         public AccessTokenType AccessTokenType { get; set; }
         public IReadOnlyCollection<string> Scopes { get; set; } = new HashSet<string>();
-        public IReadOnlyCollection<Profile> Profiles { get; set; } = new List<Profile>();
+        public IReadOnlyCollection<Claim> Claims { get; set; } = new List<Claim>();
         public IReadOnlyCollection<string> Audiences { get; set; } = new HashSet<string>();
         public IReadOnlyCollection<string> AllowedSigningAlgorithms { get; set; } = new HashSet<string>();
     }

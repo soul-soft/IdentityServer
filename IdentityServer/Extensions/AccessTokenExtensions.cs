@@ -56,7 +56,7 @@ namespace IdentityServer.Models
                     claims.Add(new Claim(JwtClaimTypes.Scope, scope));
                 }
             }
-            foreach (var item in token.Profiles)
+            foreach (var item in token.Claims)
             {
                 if (!claims.Exists(a => a.Type == item.Name))
                 {

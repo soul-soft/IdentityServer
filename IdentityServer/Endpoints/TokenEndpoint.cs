@@ -91,11 +91,11 @@ namespace IdentityServer.Endpoints
                 resources: resources,
                 grantType: grantType,
                 raw: form);
-            var subject = await ValidateGrantAsync(context, grantValidationRequest);
+            var subject = await TokenValidateGrantAsync(context, grantValidationRequest);
             #endregion
 
             #region Generator Response
-            var response = await _generator.ProcessAsync(new ValidatedTokenRequest(subject, client, resources)
+            var response = await _generator.ProcessAsync(new ValidatedTokenRequest(_options, subject, client, resources)
             {
                 Scopes = scopes,
                 GrantType = grantType,
@@ -104,7 +104,7 @@ namespace IdentityServer.Endpoints
             #endregion
         }
 
-        private async Task<ClaimsPrincipal> ValidateGrantAsync(HttpContext context, TokenGrantValidationRequest request)
+        private async Task<ClaimsPrincipal> TokenValidateGrantAsync(HttpContext context, TokenGrantValidationRequest request)
         {
             //验证刷新令牌
             if (GrantTypes.RefreshToken.Equals(request.GrantType))
