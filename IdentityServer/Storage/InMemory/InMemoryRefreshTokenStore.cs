@@ -29,7 +29,7 @@
 
         private string CreateKey(string id)
         {
-            return $"{Constants.IdentityServerName}:RefreshToken:{id}";
+            return $"{Constants.IdentityServerProvider}:RefreshToken:{id}";
         }
     }
 }

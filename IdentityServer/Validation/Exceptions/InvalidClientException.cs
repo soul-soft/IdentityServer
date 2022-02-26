@@ -3,7 +3,7 @@
     public class InvalidClientException : InvalidException
     {
         public InvalidClientException(string errorDescription)
-            : base(OpenIdConnectTokenErrors.InvalidClient, errorDescription)
+            : base(OpenIdConnectErrors.InvalidClient, errorDescription)
         {
 
         }

@@ -10,7 +10,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddLoaclApiAuthentication();
-builder.Services.AddAuthorization().AddAuthorization(configure =>
+builder.Services.AddAuthorization()
+    .AddAuthorization(configure =>
 {
     configure.AddPolicy("default", p => p.RequireAuthenticatedUser());
 });
@@ -26,8 +27,6 @@ builder.Services.AddIdentityServer(o =>
             setup.AddClients(Config.Clients);
             setup.AddResources(Config.Resources);
             setup.AddDeveloperSigningCredentials();
-            //setup.AddSigningCredential(new X509Certificate2("idsvr.pfx", "nbjc"));
-            //setup.AddSigningCredentials(CryptoRandom.CreateRsaSecurityKey());
         });
 var app = builder.Build();
 
@@ -42,8 +41,9 @@ app.UseHttpsRedirection();
 
 app.UseIdentityServer();
 
-//app.UseAuthentication();
-//app.UseAuthorization();
+app.UseAuthentication();
+
+app.UseAuthorization();
 
 app.MapControllers()
     .RequireAuthorization("default");

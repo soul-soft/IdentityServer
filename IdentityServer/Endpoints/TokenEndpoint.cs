@@ -50,7 +50,7 @@ namespace IdentityServer.Endpoints
             }
             if (!context.Request.HasFormContentType)
             {
-                return BadRequest(OpenIdConnectTokenErrors.InvalidRequest, "Invalid context type");
+                return BadRequest();
             }
             #endregion
 

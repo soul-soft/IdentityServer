@@ -23,7 +23,7 @@
 
         private string CreateKey(string id)
         {
-            return $"{Constants.IdentityServerName}:ReferenceToken:{id}";
+            return $"{Constants.IdentityServerProvider}:ReferenceToken:{id}";
         }
     }
 }

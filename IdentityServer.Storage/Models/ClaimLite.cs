@@ -13,10 +13,5 @@ namespace IdentityServer.Models
             Value = value;
             ValueType = valueType;
         }
-        public ClaimLite(string type, string value)
-            : this(type, value, ClaimValueTypes.String)
-        {
-
-        }
     }
 }

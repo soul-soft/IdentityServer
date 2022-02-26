@@ -1,14 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Authentication;
-using IdentityServer.Hosting;
-using System.Security.Claims;
 
 namespace IdentityServer.Endpoints
 {
     internal class UserInfoEndpoint : EndpointBase
     {
         private readonly IClientStore _clients;
-        private readonly IResourceStore _resources;
         private readonly IScopeParser _scopeParser;
         private readonly IUserInfoGenerator _generator;
         private readonly ITokenParser _tokenParser;
@@ -25,7 +21,6 @@ namespace IdentityServer.Endpoints
             IUserInfoGenerator generator)
         {
             _clients = clients;
-            _resources = resources;
             _generator = generator;
             _tokenParser = tokenParser;
             _scopeParser = scopeParser;
@@ -65,7 +60,7 @@ namespace IdentityServer.Endpoints
             }
             catch (InvalidException ex)
             {
-                return Unauthorized(ex.Error, ex.ErrorDescription);
+                return Unauthorized();
             }
         }
     }

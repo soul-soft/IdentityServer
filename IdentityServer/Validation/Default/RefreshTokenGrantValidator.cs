@@ -21,7 +21,7 @@ namespace IdentityServer.Validation
             var refreshToken = await _refreshTokenService.GetAsync(context.RefreshToken);
             if (refreshToken == null)
             {
-                throw new InvalidGrantException("Refresh token does not exist");
+                throw new InvalidGrantException("Invalid refresh token");
             }
             if (_clock.UtcNow.UtcDateTime > refreshToken.Expiration)
             {
@@ -36,7 +36,7 @@ namespace IdentityServer.Validation
             {
                 if (!refreshToken.AccessToken.Scopes.Contains(item))
                 {
-                    throw new InvalidGrantException("Exceeded allowed scope");
+                    throw new InvalidGrantException("Unable to expand scope");
                 }
             }
             await _refreshTokenService.DeleteAsync(refreshToken);

@@ -22,29 +22,19 @@ namespace IdentityServer.Endpoints
             return new TokenResult(response);
         }
 
-        protected IEndpointResult Result(HttpStatusCode statusCode)
+        protected IEndpointResult BadRequest()
         {
-            return new StatusCodeResult(statusCode);
+            return new StatusCodeResult(HttpStatusCode.BadRequest);
         }
 
-        protected IEndpointResult BadRequest(string error, string? description = null)
+        protected IEndpointResult Unauthorized()
         {
-            return new ErrorResult(error, description, HttpStatusCode.BadRequest);
-        }
-
-        protected IEndpointResult Unauthorized(string error, string? description = null)
-        {
-            return new ErrorResult(error, description, HttpStatusCode.Unauthorized);
+            return new StatusCodeResult(HttpStatusCode.Unauthorized);
         }
 
         protected IEndpointResult MethodNotAllowed()
         {
             return new StatusCodeResult(HttpStatusCode.MethodNotAllowed);
-        }
-
-        protected IEndpointResult NotFound()
-        {
-            return new StatusCodeResult(HttpStatusCode.NotFound);
         }
     }
 }

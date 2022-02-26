@@ -2,7 +2,7 @@
 {
     internal static class Constants
     {
-        public const string IdentityServerName = "IdentityServer";
+        public const string IdentityServerProvider = "IdentityServer";
 
         public static class EndpointNames
         {

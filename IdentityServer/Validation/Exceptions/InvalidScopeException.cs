@@ -3,7 +3,7 @@
     public class InvalidScopeException : InvalidException
     {
         public InvalidScopeException(string errorDescription)
-            : base(OpenIdConnectTokenErrors.InvalidScope, errorDescription)
+            : base(OpenIdConnectErrors.InvalidScope, errorDescription)
         {
 
         }
