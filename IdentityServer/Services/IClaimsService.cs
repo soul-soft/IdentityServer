@@ -4,6 +4,7 @@ namespace IdentityServer.Services
 {
     public interface IClaimsService
     {
-        Task<ClaimsPrincipal> CreateSubjectAsync(GrantRequest request, GrantValidationResult result);
+        Task<IEnumerable<Claim>> GetAccessTokenClaimsAsync(Client client, ResourceCollection resources);
+        Task<IEnumerable<Claim>> GetIdentityTokenClaimsAsync(Client client, ResourceCollection resources);
     }
 }

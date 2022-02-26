@@ -7,32 +7,32 @@ namespace IdentityServer.Endpoints
     {
         public abstract Task<IEndpointResult> ProcessAsync(HttpContext context);
 
-        protected IEndpointResult DiscoveryEndpointResult(DiscoveryResponse response)
+        protected static IEndpointResult DiscoveryEndpointResult(DiscoveryResponse response)
         {
             return new DiscoveryResult(response);
         }
 
-        protected IEndpointResult JwkDiscoveryEndpointResult(JwkDiscoveryResponse response)
+        protected static IEndpointResult JwkDiscoveryEndpointResult(JwkDiscoveryResponse response)
         {
             return new JwkDiscoveryResult(response);
         }
 
-        protected IEndpointResult TokenEndpointResult(TokenResponse response)
+        protected static IEndpointResult TokenEndpointResult(TokenResponse response)
         {
             return new TokenResult(response);
         }
 
-        protected IEndpointResult BadRequest()
+        protected static IEndpointResult BadRequest(string error, string? errorDescription)
         {
-            return new StatusCodeResult(HttpStatusCode.BadRequest);
+            return new BadRequestResult(error, errorDescription);
         }
 
-        protected IEndpointResult Unauthorized()
+        protected static IEndpointResult Unauthorized(string error, string? errorDescription)
         {
-            return new StatusCodeResult(HttpStatusCode.Unauthorized);
+            return new UnauthorizedResult(error, errorDescription);
         }
 
-        protected IEndpointResult MethodNotAllowed()
+        protected static IEndpointResult MethodNotAllowed()
         {
             return new StatusCodeResult(HttpStatusCode.MethodNotAllowed);
         }

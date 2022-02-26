@@ -4,6 +4,6 @@ namespace IdentityServer.Validation
 {
     public interface IClaimsValidator
     {
-        Task ValidateAsync(ClaimsPrincipal subject, Resources resources);
+        Task ValidateAsync(IEnumerable<Claim> claims, IEnumerable<string> claimTypes);
     }
 }

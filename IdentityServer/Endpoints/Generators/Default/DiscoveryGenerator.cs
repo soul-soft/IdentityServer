@@ -6,31 +6,33 @@ namespace IdentityServer.Endpoints
         : IDiscoveryGenerator
     {
         private readonly IResourceStore _resources;
-        private readonly ClientSecretParserCollection _secretParsers;
-        private readonly ExtensionGrantValidatorCollection _extensionGrantValidator;
         private readonly ISigningCredentialsStore _credentials;
+        private readonly ClientSecretParserCollection _secretParsers;
+        private readonly ExtensionGrantValidatorCollection _extensionGrantValidators;
 
         public DiscoveryGenerator(
             IResourceStore resources,
             ClientSecretParserCollection secretParsers,
             ISigningCredentialsStore credentials,
-            ExtensionGrantValidatorCollection extensionGrantValidator)
+            ExtensionGrantValidatorCollection extensionGrantValidators)
         {
             _resources = resources;
             _credentials = credentials;
             _secretParsers = secretParsers;
-            _extensionGrantValidator = extensionGrantValidator;
+            _extensionGrantValidators = extensionGrantValidators;
         }
 
         public async Task<DiscoveryResponse> CreateDiscoveryDocumentAsync(string issuer)
         {
-            var configuration = new OpenIdConnectConfiguration();
-            configuration.Issuer = issuer;
-            configuration.JwksUri = issuer + Constants.EndpointRoutePaths.DiscoveryJwks;
-            configuration.AuthorizationEndpoint = issuer + Constants.EndpointRoutePaths.Authorize;
-            configuration.TokenEndpoint = issuer + Constants.EndpointRoutePaths.Token;
-            configuration.UserInfoEndpoint = issuer + Constants.EndpointRoutePaths.UserInfo;
-            var grantTypes = _extensionGrantValidator.GetExtensionGrantTypes();
+            var configuration = new OpenIdConnectConfiguration
+            {
+                Issuer = issuer,
+                JwksUri = issuer + Constants.EndpointRoutePaths.DiscoveryJwks,
+                AuthorizationEndpoint = issuer + Constants.EndpointRoutePaths.Authorize,
+                TokenEndpoint = issuer + Constants.EndpointRoutePaths.Token,
+                UserInfoEndpoint = issuer + Constants.EndpointRoutePaths.UserInfo
+            };
+            var grantTypes = _extensionGrantValidators.GetCustomGrantTypes();
             foreach (var item in grantTypes)
             {
                 configuration.GrantTypesSupported.Add(item);

@@ -2,14 +2,14 @@
 {
     internal class InMemoryClientStore : IClientStore
     {
-        private readonly IEnumerable<IClient> _clients;
+        private readonly IEnumerable<Client> _clients;
 
-        public InMemoryClientStore(IEnumerable<IClient> clients)
+        public InMemoryClientStore(IEnumerable<Client> clients)
         {
             _clients = clients;
         }
 
-        public Task<IClient?> GetAsync(string clientId)
+        public Task<Client?> FindByClientIdAsync(string clientId)
         {
             var client = _clients
                 .Where(a => a.ClientId == clientId)

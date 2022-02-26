@@ -9,14 +9,11 @@
             _profileService = profileService;
         }
 
-        public async Task<UserInfoResponse> ProcessAsync(UserInfoRequest request)
+        public async Task<UserInfoResponse> ProcessAsync(UserInfoGeneratorRequest request)
         {
-            var userinfo = await _profileService.GetUserInfoAsync(new UserInfoProfileRequest(
-                request.Subject,
-                request.Client,
-                request.Resources));
-            var response = new UserInfoResponse(userinfo);
-            return response;
+            var profileDataRequestContext = new ProfileDataRequestContext(ProfileDataCallers.UserInfoEndpoint, request.Client, request.Resources.ClaimTypes);
+            var profiles = await _profileService.GetProfileDataAsync(profileDataRequestContext);
+            return new UserInfoResponse(profiles);
         }
     }
 }

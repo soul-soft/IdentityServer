@@ -4,14 +4,13 @@ namespace IdentityServer.Validation
 {
     public class ClaimsValidator : IClaimsValidator
     {
-        public Task ValidateAsync(ClaimsPrincipal subject, Resources resources)
+        public Task ValidateAsync(IEnumerable<Claim> claims, IEnumerable<string> claimTypes)
         {
-            var allowedClaimTypes = resources.UserClaims;
-            foreach (var item in subject.Claims)
+            foreach (var item in claims)
             {
-                if (!allowedClaimTypes.Contains(item.Type))
+                if (!claimTypes.Contains(item.Type))
                 {
-                    throw new InvalidGrantException(string.Format("Invalid claim: {0}", item.Type));
+                    throw new InvalidGrantException(string.Format("Claim not granted: {0}", item.Type));
                 }
             }
             return Task.CompletedTask;

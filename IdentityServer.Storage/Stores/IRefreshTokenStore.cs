@@ -4,8 +4,8 @@ namespace IdentityServer.Storage
 {
     public interface IRefreshTokenStore
     {
-        Task SaveAsync(IRefreshToken token);
-        Task RevomeAsync(IRefreshToken token);
-        Task<IRefreshToken?> GetAsync(string id);
+        Task AddAsync(RefreshToken token);
+        Task RevomeAsync(RefreshToken token);
+        Task<RefreshToken?> FindByIdAsync(string id);
     }
 }

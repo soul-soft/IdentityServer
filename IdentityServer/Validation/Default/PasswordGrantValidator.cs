@@ -2,7 +2,7 @@
 {
     internal class PasswordGrantValidator : IPasswordGrantValidator
     {
-        public Task<GrantValidationResult> ValidateAsync(ResourceOwnerPasswordGrantValidationContext context)
+        public Task ValidateAsync(PasswordGrantValidationRequest context)
         {
             throw new InvalidGrantException("Invalid username or password");
         }

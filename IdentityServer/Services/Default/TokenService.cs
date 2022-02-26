@@ -24,7 +24,7 @@ namespace IdentityServer.Services
             _referenceTokenService = referenceTokenService;
         }
 
-        public Task<IAccessToken> CreateAccessTokenAsync(ValidatedTokenRequest request)
+        public Task<AccessToken> CreateAccessTokenAsync(ValidatedTokenRequest request)
         {
             var id = _idGenerator.GeneratorId();
             var issuer = _options.Issuer;
@@ -33,7 +33,6 @@ namespace IdentityServer.Services
             var expiration = notBefore.AddSeconds(client.AccessTokenLifetime);
             var resources = request.Resources;
             var audiences = resources.ApiResources.Select(s => s.Name).ToList();
-            var claimLites = request.Subject.Claims.ToClaimLites().ToList();
             var subjectId = request.Subject.GetSubjectId();
             var token = new AccessToken
             {
@@ -52,12 +51,12 @@ namespace IdentityServer.Services
                 Audiences = audiences,
                 NotBefore = notBefore,
                 Expiration = expiration,
-                Claims = claimLites,
+                Profiles = request.Subject.Claims.ToProfiles().ToList()
             };
-            return Task.FromResult<IAccessToken>(token);
+            return Task.FromResult(token);
         }
 
-        public Task<IAccessToken> CreateIdentityTokenAsync(ValidatedTokenRequest request)
+        public Task<AccessToken> CreateIdentityTokenAsync(ValidatedTokenRequest request)
         {
             var id = _idGenerator.GeneratorId();
             var issuer = _options.Issuer;
@@ -67,7 +66,6 @@ namespace IdentityServer.Services
             var authTime = _clock.UtcNow.UtcDateTime;
             var expiration = notBefore.AddSeconds(client.AccessTokenLifetime);
             var audiences = resources.ApiResources.Select(s => s.Name).ToList();
-            var claimLites = request.Subject.Claims.ToClaimLites().ToArray();
             var subjectId = request.Subject.GetSubjectId();
             var token = new AccessToken
             {
@@ -86,30 +84,30 @@ namespace IdentityServer.Services
                 Audiences = audiences,
                 NotBefore = notBefore,
                 Expiration = expiration,
-                Claims = claimLites,
+                Profiles = request.Subject.Claims.ToProfiles().ToList(),
             };
-            return Task.FromResult<IAccessToken>(token);
+            return Task.FromResult(token);
         }
 
-        public async Task<string> CreateSecurityTokenAsync(IAccessToken token)
+        public async Task<string> CreateSecurityTokenAsync(AccessToken token)
         {
             string tokenResult;
             if (token.Type == TokenTypes.AccessToken)
             {
                 if (token.AccessTokenType == AccessTokenType.Jwt)
                 {
-                    tokenResult = await _jwtTokenService.CreateAsync(token);
+                    tokenResult = await _jwtTokenService.CreateJwtTokenAsync(token);
                 }
                 else
                 {
-                    var handle = await _referenceTokenService.CreateAsync(token);
+                    var handle = await _referenceTokenService.CreateReferenceTokenAsync(token);
                     tokenResult = handle;
                 }
             }
             else if (token.Type == TokenTypes.IdentityToken)
             {
 
-                tokenResult = await _jwtTokenService.CreateAsync(token);
+                tokenResult = await _jwtTokenService.CreateJwtTokenAsync(token);
             }
             else
             {

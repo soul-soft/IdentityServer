@@ -1,8 +1,6 @@
-﻿using System.Collections;
-
-namespace IdentityServer.Validation
+﻿namespace IdentityServer.Validation
 {
-    internal class ExtensionGrantValidatorCollection : IEnumerable<IExtensionGrantValidator>
+    internal class ExtensionGrantValidatorCollection
     {
         private readonly IEnumerable<IExtensionGrantValidator> _extensions;
 
@@ -11,44 +9,21 @@ namespace IdentityServer.Validation
             _extensions = extensions;
         }
 
-        public IEnumerator<IExtensionGrantValidator> GetEnumerator()
+        public Task ValidateAsync(ExtensionGrantValidationRequest context)
         {
-            return _extensions.GetEnumerator();
-        }
-       
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return ((IEnumerable)_extensions).GetEnumerator();
-        }
-
-        public IEnumerable<string> GetExtensionGrantTypes()
-        {
-            foreach (var item in _extensions)
-            {
-                yield return item.GrantType;
-            }
-        }
-
-        public Task<GrantValidationResult> ValidateAsync(ExtensionGrantValidationContext context)
-        {
-            var validator = GetValidator(context.Request.GrantType);
+            var validator = _extensions
+                .Where(a => a.GrantType == context.Request.GrantType)
+                .FirstOrDefault();
             if (validator == null)
             {
-                throw new InvalidRequestException(string.Format("The identityserver does not support '{0}' authentication", context.Request.GrantType));
+                throw new InvalidRequestException(string.Format("Unrealized grant type:", context.Request.GrantType));
             }
             return validator.ValidateAsync(context);
         }
 
-        private IExtensionGrantValidator? GetValidator(string grantType)
+        public IEnumerable<string> GetCustomGrantTypes()
         {
-            foreach (var item in _extensions)
-            {
-                if (item.GrantType == grantType)
-                {
-                    return item;
-                }
-            }
-            return null;
+            return _extensions.Select(a => a.GrantType).ToList();
         }
     }
 }

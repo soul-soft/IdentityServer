@@ -17,35 +17,42 @@ namespace IdentityServer.Services
             _clock = clock;
             _options = options;
             _profileService = profileService;
-        }
+        }       
 
-        public async Task<ClaimsPrincipal> CreateSubjectAsync(GrantRequest request, GrantValidationResult result)
+        public async Task<IEnumerable<Claim>> GetAccessTokenClaimsAsync(Client client,ResourceCollection resources)
         {
-            var resources = request.Resources;
-            var identity = new ClaimsIdentity(request.GrantType);
-            identity.AddClaims(result.Claims);
-            if (resources.UserClaims.Contains(JwtClaimTypes.AuthenticationTime))
+            var claims = new List<Claim>();
+            if (resources.ClaimTypes.Contains(JwtClaimTypes.AuthenticationTime))
             {
                 var timestamp = _clock.UtcNow.ToUnixTimeSeconds().ToString();
-                identity.AddClaim(new Claim(JwtClaimTypes.AuthenticationTime, timestamp));
+                claims.Add(new Claim(JwtClaimTypes.AuthenticationTime, timestamp));
             }
-            if (resources.UserClaims.Contains(JwtClaimTypes.IdentityProvider))
+            if (resources.ClaimTypes.Contains(JwtClaimTypes.IdentityProvider))
             {
-                identity.AddClaim(new Claim(JwtClaimTypes.IdentityProvider, _options.IdentityProvider));
+                claims.Add(new Claim(JwtClaimTypes.IdentityProvider, _options.IdentityProvider));
             }
-            if (resources.UserClaims.Contains(JwtClaimTypes.Subject))
+            var profileDataRequestContext = new ProfileDataRequestContext(ProfileDataCallers.ClaimsProviderAccessToken, client, resources.ClaimTypes);
+            var profiles = await _profileService.GetProfileDataAsync(profileDataRequestContext);
+            claims.AddRange(profiles.ToClaims());
+            return claims;
+        }
+
+        public async Task<IEnumerable<Claim>> GetIdentityTokenClaimsAsync(Client client, ResourceCollection resources)
+        {
+            var claims = new List<Claim>();
+            if (resources.ClaimTypes.Contains(JwtClaimTypes.AuthenticationTime))
             {
-                if (!string.IsNullOrEmpty(result.Subject) && !identity.Claims.Any(a => a.Type == JwtClaimTypes.Subject))
-                {
-                    identity.AddClaim(new Claim(JwtClaimTypes.Subject, result.Subject));
-                }
+                var timestamp = _clock.UtcNow.ToUnixTimeSeconds().ToString();
+                claims.Add(new Claim(JwtClaimTypes.AuthenticationTime, timestamp));
             }
-            var claims = await _profileService.GetUserClaimsAsync(new UserClaimsProfileRequest(
-                request.Client,
-                request.Resources,
-                request.GrantType));
-            identity.AddClaims(claims);
-            return new ClaimsPrincipal(identity);
+            if (resources.ClaimTypes.Contains(JwtClaimTypes.IdentityProvider))
+            {
+                claims.Add(new Claim(JwtClaimTypes.IdentityProvider, _options.IdentityProvider));
+            }
+            var profileDataRequestContext = new ProfileDataRequestContext(ProfileDataCallers.ClaimsProviderIdentityToken, client, resources.ClaimTypes);
+            var profiles = await _profileService.GetProfileDataAsync(profileDataRequestContext);
+            claims.AddRange(profiles.ToClaims());
+            return claims;
         }
     }
 }

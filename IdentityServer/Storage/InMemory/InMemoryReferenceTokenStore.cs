@@ -9,19 +9,19 @@
             _storage = storage;
         }
 
-        public async Task<IReferenceToken?> FindReferenceTokenByIdAsync(string id)
+        public async Task<ReferenceToken?> FindByIdAsync(string id)
         {
-            var key = CreateKey(id);
+            var key = BuildStoreKey(id);
             return await _storage.GetAsync<ReferenceToken>(key);
         }
 
-        public async Task SaveAsync(IReferenceToken token)
+        public async Task AddAsync(ReferenceToken token)
         {
-            var key = CreateKey(token.Id);
+            var key = BuildStoreKey(token.Id);
             await _storage.SaveAsync(key, token, TimeSpan.FromSeconds(token.Lifetime));
         }
 
-        private string CreateKey(string id)
+        private static string BuildStoreKey(string id)
         {
             return $"{Constants.IdentityServerProvider}:ReferenceToken:{id}";
         }

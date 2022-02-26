@@ -74,7 +74,7 @@ namespace IdentityServer.Validation
 
         private async Task<IEnumerable<Claim>> ValidateReferenceTokenAsync(string token)
         {
-            var referenceToken = await _referenceTokenService.GetAsync(token);
+            var referenceToken = await _referenceTokenService.GetReferenceTokenAsync(token);
             if (referenceToken == null || referenceToken.Expiration < _systemClock.UtcNow.UtcDateTime)
             {
                 throw new InvalidTokenException("Invalid token");

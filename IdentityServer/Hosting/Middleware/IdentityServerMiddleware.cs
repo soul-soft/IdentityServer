@@ -20,7 +20,7 @@ namespace IdentityServer.Hosting
             var endpoint = _router.Find(context);
             if (endpoint != null)
             {
-                await ProcessAsync(context, endpoint);
+                await EndpointHandlerAsync(context, endpoint);
             }
             else
             {
@@ -28,7 +28,7 @@ namespace IdentityServer.Hosting
             }
         }
 
-        private async Task ProcessAsync(HttpContext context, IEndpointHandler endpoint)
+        private static async Task EndpointHandlerAsync(HttpContext context, IEndpointHandler endpoint)
         {
             try
             {
@@ -37,7 +37,7 @@ namespace IdentityServer.Hosting
             }
             catch (InvalidException ex)
             {
-                var result = new ErrorResult(ex.Error, ex.ErrorDescription, System.Net.HttpStatusCode.BadRequest);
+                var result = new BadRequestResult(ex.Error, ex.ErrorDescription);
                 await result.ExecuteAsync(context);
             }
         }

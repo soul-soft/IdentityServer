@@ -7,6 +7,6 @@
         string? DisplayName { get; }
         string? Description { get; }
         bool ShowInDiscoveryDocument { get; }
-        IReadOnlyCollection<string> UserClaims { get; }
+        IReadOnlyCollection<string> ClaimTypes { get; }
     }
 }

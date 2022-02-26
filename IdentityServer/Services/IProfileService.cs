@@ -1,10 +1,7 @@
-﻿using System.Security.Claims;
-
-namespace IdentityServer.Services
+﻿namespace IdentityServer.Services
 {
     public interface IProfileService
     {
-        Task<IEnumerable<Claim>> GetUserClaimsAsync(UserClaimsProfileRequest request);
-        Task<Dictionary<string, object?>> GetUserInfoAsync(UserInfoProfileRequest request);
+        Task<IEnumerable<Profile>> GetProfileDataAsync(ProfileDataRequestContext context);
     }
 }

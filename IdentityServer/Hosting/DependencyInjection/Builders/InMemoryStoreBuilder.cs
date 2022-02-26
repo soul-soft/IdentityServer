@@ -8,7 +8,7 @@ namespace IdentityServer.Configuration
     public class InMemoryStoreBuilder
     {
         #region fields
-        private readonly List<IClient> Clients = new List<IClient>();
+        private readonly List<Client> Clients = new List<Client>();
         private readonly List<IResource> Resources = new List<IResource>();
         private readonly List<SigningCredentialsDescriptor> SigningCredentials = new List<SigningCredentialsDescriptor>();
         #endregion
@@ -74,7 +74,7 @@ namespace IdentityServer.Configuration
         #endregion
 
         #region Client
-        public InMemoryStoreBuilder AddClients(IEnumerable<IClient> clients)
+        public InMemoryStoreBuilder AddClients(IEnumerable<Client> clients)
         {
             Clients.AddRange(clients);
             return this;
@@ -95,7 +95,7 @@ namespace IdentityServer.Configuration
             {
                 services.AddResourceStore(sp =>
                 {
-                    return new InMemoryResourceStore(new Resources(Resources));
+                    return new InMemoryResourceStore(new ResourceCollection(Resources));
                 });
             }
             if (SigningCredentials.Any())

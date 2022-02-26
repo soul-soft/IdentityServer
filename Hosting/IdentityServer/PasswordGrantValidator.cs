@@ -1,21 +1,14 @@
-﻿using IdentityServer.Models;
-using IdentityServer.Validation;
-using System.Security.Claims;
+﻿using IdentityServer.Validation;
 
 namespace Hosting.Configuration
 {
-    public class PasswordGrantValidator
-        : IPasswordGrantValidator
+    public class PasswordGrantValidator : IPasswordGrantValidator
     {
-        public Task<GrantValidationResult> ValidateAsync(ResourceOwnerPasswordGrantValidationContext context)
+        public Task ValidateAsync(PasswordGrantValidationRequest context)
         {
             if (context.Username == "test" && context.Password == "test")
             {
-                var identity = new ClaimsIdentity();
-                identity.AddClaim(new Claim(JwtClaimTypes.Subject, "1"));
-                identity.AddClaim(new Claim(JwtClaimTypes.Role, "admin"));
-                var result = new GrantValidationResult(identity.Claims);
-                return Task.FromResult(result);
+                return Task.CompletedTask;
             }
             throw new InvalidGrantException("用户名或密码错误");
         }

@@ -13,7 +13,7 @@
             _resources = resources;
         }
 
-        public async Task<Resources> ValidateAsync(IClient client, IEnumerable<string> requestedScopes)
+        public async Task<ResourceCollection> ValidateAsync(IEnumerable<string> allowedScopes, IEnumerable<string> requestedScopes)
         {
             if (!requestedScopes.Any())
             {
@@ -23,10 +23,10 @@
             {
                 throw new InvalidScopeException("Scope too long");
             }
-            var resources = await _resources.FindByScopeAsync(requestedScopes);
+            var resources = await _resources.GetByScopeAsync(requestedScopes);
             foreach (var item in requestedScopes)
             {
-                if (!client.AllowedScopes.Contains(item))
+                if (!allowedScopes.Contains(item))
                 {
                     throw new InvalidScopeException(string.Format("Invalid scope:{0}", item));
                 }

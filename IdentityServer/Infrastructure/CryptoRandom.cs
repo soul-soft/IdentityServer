@@ -17,18 +17,14 @@ namespace IdentityServer.Infrastructure
         public static string CreateUniqueId(int length = 32, OutputFormat format= OutputFormat.Base64Url)
         {
             byte[] array = CreateRandomKey(length);
-       
-            switch (format)
+
+            return format switch
             {
-                case OutputFormat.Base64Url:
-                    return Base64UrlEncoder.Encode(array);
-                case OutputFormat.Base64:
-                    return Convert.ToBase64String(array);
-                case OutputFormat.Hex:
-                    return BitConverter.ToString(array).Replace("-", "");
-                default:
-                    throw new ArgumentException("Invalid output format", "format");
-            }
+                OutputFormat.Base64Url => Base64UrlEncoder.Encode(array),
+                OutputFormat.Base64 => Convert.ToBase64String(array),
+                OutputFormat.Hex => BitConverter.ToString(array).Replace("-", ""),
+                _ => throw new ArgumentException("Invalid output format", nameof(format)),
+            };
         }
 
         public static RsaSecurityKey CreateRsaSecurityKey(int keySize = 2048)

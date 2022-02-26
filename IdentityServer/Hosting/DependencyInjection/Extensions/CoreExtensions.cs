@@ -29,7 +29,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IIdentityServerBuilder AddPluggableServices(this IIdentityServerBuilder builder)
         {
             builder.Services.TryAddTransient<IScopeParser, ScopeParser>();
-            builder.Services.TryAddTransient<IClientSecretParser, PostBodySecretParser>();
+            builder.Services.TryAddTransient<IClientCredentialsParser, PostBodyClientCredentialsParser>();
             builder.Services.TryAddTransient<ClientSecretParserCollection>();
             builder.Services.TryAddTransient<ITokenParser, BearerTokenUsageParser>();
 
@@ -39,7 +39,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<IClaimsService, ClaimsService>();
             builder.Services.TryAddTransient<IPersistentStore, InMemoryPersistentStore>();
             builder.Services.TryAddTransient<ITokenService, TokenService>();
-            builder.Services.TryAddTransient<ISecurityTokenService, JwtTokenService>();
+            builder.Services.TryAddTransient<ISecurityTokenService, JwtSecurityTokenService>();
             builder.Services.TryAddTransient<IRefreshTokenService, RefreshTokenService>();
             builder.Services.TryAddTransient<IReferenceTokenService, ReferenceTokenService>();
             return builder;
@@ -54,9 +54,9 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<ITokenValidator, TokenValidator>();
             builder.Services.TryAddTransient<IGrantTypeValidator, GrantTypeValidator>();            
             builder.Services.TryAddTransient<SecretValidatorCollection>();
-            builder.Services.TryAddTransient<ISecretValidator, SharedSecretValidator>();
+            builder.Services.TryAddTransient<IClientCredentialsValidator, SharedClientCredentialsValidator>();
             builder.Services.TryAddTransient<IRefreshTokenGrantValidator, RefreshTokenGrantValidator>();
-            builder.Services.TryAddTransient<IClientCredentialsGrantValidator, ClientCredentialsGrantValidator>();
+            builder.Services.TryAddTransient<IClientGrantValidator, ClientGrantValidator>();
             builder.Services.TryAddTransient<IPasswordGrantValidator, PasswordGrantValidator>();
             builder.Services.TryAddTransient<ExtensionGrantValidatorCollection>();
             return builder;

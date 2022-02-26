@@ -2,6 +2,6 @@
 {
     public interface IUserInfoGenerator
     {
-        Task<UserInfoResponse> ProcessAsync(UserInfoRequest request);
+        Task<UserInfoResponse> ProcessAsync(UserInfoGeneratorRequest request);
     }
 }

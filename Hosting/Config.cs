@@ -4,7 +4,7 @@ namespace Hosting.Configuration
 {
     public static class Config
     {
-        public static IEnumerable<IClient> Clients => new IClient[]
+        public static IEnumerable<Client> Clients => new Client[]
         {
             new Client()
             {
@@ -14,7 +14,7 @@ namespace Hosting.Configuration
                     "myGrant",
                     GrantTypes.ClientCredentials
                 },
-                ClientSecrets = new ISecret[]
+                ClientSecrets = new Secret[]
                 {
                     new Secret("secret".Sha512())
                 },
@@ -47,7 +47,7 @@ namespace Hosting.Configuration
                     GrantTypes.RefreshToken,
                     GrantTypes.Password
                 },
-                ClientSecrets = new ISecret[]
+                ClientSecrets = new Secret[]
                 {
                     new Secret("secret".Sha512())
                 },
@@ -65,7 +65,7 @@ namespace Hosting.Configuration
                 {
                     "myGrant",GrantTypes.Password
                 },
-                ClientSecrets = new ISecret[]
+                ClientSecrets = new Secret[]
                 {
                     new Secret("secret".Sha512())
                 },
@@ -84,7 +84,7 @@ namespace Hosting.Configuration
             //用来给api资源进行分组，apiResource和apiScope是多对多的关系
             new ApiScope("api")
             {
-                UserClaims = new string[]
+                ClaimTypes = new string[]
                 { 
                     JwtClaimTypes.Role,
                     JwtClaimTypes.Email
@@ -93,7 +93,10 @@ namespace Hosting.Configuration
             //name要和client_id相同，还需要配置secret
             new ApiResource("orderapi")
             {
-                UserClaims = new string[]{ JwtClaimTypes.Role},
+                ClaimTypes = new string[]
+                { 
+                    JwtClaimTypes.Role
+                },
                 Scopes = new string[]
                 {
                     "api",//属于api组
@@ -101,9 +104,6 @@ namespace Hosting.Configuration
             },
             new ApiResource("emailapi")
             {
-                UserClaims = new string[]
-                { 
-                },
                 Scopes = new string[]
                 {
                     "api"//属于api组
@@ -114,7 +114,7 @@ namespace Hosting.Configuration
             new IdentityResource("address")
             {
                //表示该身份资源允许签发phone和address给access_token
-               UserClaims = new string[]
+               ClaimTypes = new string[]
                {
                    JwtClaimTypes.Phone,
                    JwtClaimTypes.Address

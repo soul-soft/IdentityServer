@@ -2,14 +2,14 @@
 {
     internal class InMemoryResourceStore : IResourceStore
     {
-        private readonly Resources _resources;
+        private readonly ResourceCollection _resources;
 
-        public InMemoryResourceStore(Resources resources)
+        public InMemoryResourceStore(ResourceCollection resources)
         {
             _resources = resources;
         }
 
-        public Task<Resources> FindByScopeAsync(IEnumerable<string> scopes)
+        public Task<ResourceCollection> GetByScopeAsync(IEnumerable<string> scopes)
         {
             var identityResources = _resources.IdentityResources
                 .Where(a => a.Enabled)
@@ -23,7 +23,7 @@
                 .Where(a => a.Enabled)
                 .Where(a => scopes.Contains(a.Name));
 
-            var resources = new Resources(identityResources, apiScopes, apiResources);
+            var resources = new ResourceCollection(identityResources, apiScopes, apiResources);
             return Task.FromResult(resources);
         }
 

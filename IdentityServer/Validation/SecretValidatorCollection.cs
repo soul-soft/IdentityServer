@@ -2,24 +2,24 @@
 {
     public class SecretValidatorCollection
     {
-        private readonly IEnumerable<ISecretValidator> _secretValidators;
+        private readonly IEnumerable<IClientCredentialsValidator> _secretValidators;
 
-        public SecretValidatorCollection(IEnumerable<ISecretValidator> secretValidators)
+        public SecretValidatorCollection(IEnumerable<IClientCredentialsValidator> secretValidators)
         {
             _secretValidators = secretValidators;
         }
 
-        public ISecretValidator GetSecretValidator(string secretType)
+        public IClientCredentialsValidator GetSecretValidator(string credentialsType)
         {
             return _secretValidators
-                .Where(a => a.SecretType == secretType)
+                .Where(a => a.CredentialsType == credentialsType)
                 .First();
         }
 
-        public Task ValidateAsync(ClientSecret clientSecret, IEnumerable<ISecret> allowedSecrets)
+        public Task ValidateAsync(ClientCredentials ClientCredentials, IEnumerable<Secret> allowedSecrets)
         {
-            var validator = GetSecretValidator(clientSecret.Type);
-            return validator.ValidateAsync(clientSecret, allowedSecrets);
+            var validator = GetSecretValidator(ClientCredentials.Type);
+            return validator.ValidateAsync(ClientCredentials, allowedSecrets);
         }
     }
 }

@@ -1,10 +1,8 @@
-﻿using System.Security.Claims;
-
-namespace IdentityServer.Services
+﻿namespace IdentityServer.Services
 {
     public interface IReferenceTokenService
     {
-        Task<IReferenceToken?> GetAsync(string id);
-        Task<string> CreateAsync(IAccessToken token);
+        Task<ReferenceToken?> GetReferenceTokenAsync(string id);
+        Task<string> CreateReferenceTokenAsync(AccessToken token);
     }
 }

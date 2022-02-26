@@ -1,6 +1,4 @@
-﻿using IdentityServer.Models;
-using IdentityServer.Validation;
-using System.Security.Claims;
+﻿using IdentityServer.Validation;
 
 namespace Hosting.Configuration
 {
@@ -8,13 +6,9 @@ namespace Hosting.Configuration
     {
         public string GrantType => "myGrant";
 
-        public Task<GrantValidationResult> ValidateAsync(ExtensionGrantValidationContext context)
+        public Task ValidateAsync(ExtensionGrantValidationRequest context)
         {
-            var identity = new ClaimsIdentity();
-            identity.AddClaim(new Claim(JwtClaimTypes.Subject, "1"));
-            identity.AddClaim(new Claim(JwtClaimTypes.Role, "admin"));
-            var result = new GrantValidationResult(identity.Claims);
-            return Task.FromResult(result);
+            return Task.CompletedTask;
         }
     }
 }

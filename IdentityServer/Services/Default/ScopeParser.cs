@@ -11,7 +11,7 @@ namespace IdentityServer.Services
             _options = options;
         }
 
-        public Task<IEnumerable<string>> ParseAsync(string scope)
+        public Task<IEnumerable<string>> RequestScopeAsync(string scope)
         {
             var result = scope.Split(",")
                 .Where(a => !string.IsNullOrWhiteSpace(a));

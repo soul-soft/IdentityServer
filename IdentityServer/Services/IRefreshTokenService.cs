@@ -2,8 +2,8 @@
 {
     public interface IRefreshTokenService
     {
-        Task<string> CreateAsync(IAccessToken token, int lifetime);
-        Task DeleteAsync(IRefreshToken refreshToken);
-        Task<IRefreshToken?> GetAsync(string id);
+        Task<string> CreateRefreshTokenAsync(AccessToken token, int lifetime);
+        Task DeleteRefreshTokenAsync(RefreshToken refreshToken);
+        Task<RefreshToken?> GetRefreshTokenAsync(string id);
     }
 }

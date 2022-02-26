@@ -1,7 +1,5 @@
-using IdentityServer.Hosting;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static IdentityServer.IdentityServerConstants;
 
 namespace Hosting.Controllers
 {

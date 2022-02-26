@@ -16,16 +16,16 @@ namespace IdentityServer.Validation
             _refreshTokenService = refreshTokenService;
         }
 
-        public async Task<GrantValidationResult> ValidateAsync(RefreshTokenGrantValidationContext context)
+        public async Task ValidateAsync(RefreshTokenGrantValidationRequest context)
         {
-            var refreshToken = await _refreshTokenService.GetAsync(context.RefreshToken);
+            var refreshToken = await _refreshTokenService.GetRefreshTokenAsync(context.RefreshToken);
             if (refreshToken == null)
             {
                 throw new InvalidGrantException("Invalid refresh token");
             }
             if (_clock.UtcNow.UtcDateTime > refreshToken.Expiration)
             {
-                await _refreshTokenService.DeleteAsync(refreshToken);
+                await _refreshTokenService.DeleteRefreshTokenAsync(refreshToken);
                 throw new InvalidGrantException("Refresh token has expired");
             }
             if (refreshToken.AccessToken.ClientId != context.Request.Client.ClientId)
@@ -39,8 +39,7 @@ namespace IdentityServer.Validation
                     throw new InvalidGrantException("Unable to expand scope");
                 }
             }
-            await _refreshTokenService.DeleteAsync(refreshToken);
-            return new GrantValidationResult();
+            await _refreshTokenService.DeleteRefreshTokenAsync(refreshToken);
         }
     }
 }

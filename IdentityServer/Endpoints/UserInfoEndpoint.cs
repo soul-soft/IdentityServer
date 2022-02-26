@@ -13,7 +13,6 @@ namespace IdentityServer.Endpoints
 
         public UserInfoEndpoint(
             IClientStore clients,
-            IResourceStore resources,
             ITokenParser tokenParser,
             IScopeParser scopeParser,
             ITokenValidator tokenValidator,
@@ -49,18 +48,18 @@ namespace IdentityServer.Endpoints
                     throw new InvalidTokenException("ClientId claim is missing");
                 }
                 var scopes = await _scopeParser.ParseAsync(subject);
-                var client = await _clients.GetAsync(clientId);
+                var client = await _clients.FindByClientIdAsync(clientId);
                 if (client == null)
                 {
                     throw new InvalidClientException("Invalid client");
                 }
-                var resources = await _scopeValidator.ValidateAsync(client, scopes);
-                var response = await _generator.ProcessAsync(new UserInfoRequest(subject, client, resources));
+                var resources = await _scopeValidator.ValidateAsync(client.AllowedScopes, scopes);
+                var response = await _generator.ProcessAsync(new UserInfoGeneratorRequest(client, subject,  resources));
                 return new UserInfoResult(response);
             }
             catch (InvalidException ex)
             {
-                return Unauthorized();
+                return Unauthorized(ex.Error, ex.ErrorDescription);
             }
         }
     }

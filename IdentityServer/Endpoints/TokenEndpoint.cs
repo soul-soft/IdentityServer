@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using System.Security.Claims;
 
 namespace IdentityServer.Endpoints
 {
@@ -9,10 +10,8 @@ namespace IdentityServer.Endpoints
         private readonly IClientStore _clients;
         private readonly IScopeParser _scopeParser;
         private readonly ITokenGenerator _generator;
-        private readonly IClaimsService _claimsService;
         private readonly IdentityServerOptions _options;
         private readonly IScopeValidator _scopeValidator;
-        private readonly IClaimsValidator _claimsValidator;
         private readonly ClientSecretParserCollection _secretParsers;
         private readonly IGrantTypeValidator _grantTypeValidator;
         private readonly SecretValidatorCollection _secretValidators;
@@ -21,10 +20,8 @@ namespace IdentityServer.Endpoints
             IClientStore clients,
             IScopeParser scopeParser,
             ITokenGenerator generator,
-            IClaimsService claimsService,
             IdentityServerOptions options,
             IScopeValidator scopeValidator,
-            IClaimsValidator claimsValidator,
             ClientSecretParserCollection secretParsers,
             IGrantTypeValidator grantTypeValidator,
             SecretValidatorCollection secretValidators)
@@ -35,8 +32,6 @@ namespace IdentityServer.Endpoints
             _scopeParser = scopeParser;
             _secretParsers = secretParsers;
             _scopeValidator = scopeValidator;
-            _claimsService = claimsService;
-            _claimsValidator = claimsValidator;
             _secretValidators = secretValidators;
             _grantTypeValidator = grantTypeValidator;
         }
@@ -50,20 +45,20 @@ namespace IdentityServer.Endpoints
             }
             if (!context.Request.HasFormContentType)
             {
-                return BadRequest();
+                return BadRequest(ProtectedResourceErrors.InvalidRequest, "Invalid contextType");
             }
             #endregion
 
             #region Validate ClientSecret
-            var clientSecret = await _secretParsers.ParseAsync(context);
-            var client = await _clients.GetAsync(clientSecret.Id);
+            var clientCredentials = await _secretParsers.ParseAsync(context);
+            var client = await _clients.FindByClientIdAsync(clientCredentials.ClientId);
             if (client == null)
             {
                 throw new InvalidClientException("Invalid client credentials");
             }
             if (client.RequireClientSecret)
             {
-                await _secretValidators.ValidateAsync(clientSecret, client.ClientSecrets);
+                await _secretValidators.ValidateAsync(clientCredentials, client.ClientSecrets);
             }
             #endregion
 
@@ -74,8 +69,8 @@ namespace IdentityServer.Endpoints
             {
                 scope = string.Join(",", client.AllowedScopes);
             }
-            var scopes = await _scopeParser.ParseAsync(scope);
-            var resources = await _scopeValidator.ValidateAsync(client, scopes);
+            var scopes = await _scopeParser.RequestScopeAsync(scope);
+            var resources = await _scopeValidator.ValidateAsync(client.AllowedScopes, scopes);
             #endregion
 
             #region Validate GrantType
@@ -88,20 +83,15 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Validate Grant
-            var grantValidationRequest = new GrantRequest(
+            var grantValidationRequest = new TokenGrantValidationRequest(
                 client: client,
-                clientSecret: clientSecret,
+                clientSecret: clientCredentials,
                 options: _options,
                 scopes: scopes,
                 resources: resources,
                 grantType: grantType,
                 raw: form);
-            var grantValidationResult = await ValidateGrantAsync(context, grantValidationRequest);
-            #endregion
-
-            #region Validate Claims
-            var subject = await _claimsService.CreateSubjectAsync(grantValidationRequest, grantValidationResult);
-            await _claimsValidator.ValidateAsync(subject, resources);
+            var subject = await ValidateGrantAsync(context, grantValidationRequest);
             #endregion
 
             #region Generator Response
@@ -114,7 +104,7 @@ namespace IdentityServer.Endpoints
             #endregion
         }
 
-        private async Task<GrantValidationResult> ValidateGrantAsync(HttpContext context, GrantRequest request)
+        private async Task<ClaimsPrincipal> ValidateGrantAsync(HttpContext context, TokenGrantValidationRequest request)
         {
             //验证刷新令牌
             if (GrantTypes.RefreshToken.Equals(request.GrantType))
@@ -128,17 +118,16 @@ namespace IdentityServer.Endpoints
                 {
                     throw new InvalidRequestException("RefreshToken too long");
                 }
-                var grantContext = new RefreshTokenGrantValidationContext(refreshToken, request);
+                var grantContext = new RefreshTokenGrantValidationRequest(refreshToken, request);
                 var grantValidator = context.RequestServices.GetRequiredService<IRefreshTokenGrantValidator>();
-                return await grantValidator.ValidateAsync(grantContext);
+                await grantValidator.ValidateAsync(grantContext);
             }
             //验证客户端凭据授权
             else if (GrantTypes.ClientCredentials.Equals(request.GrantType))
             {
-                var grantContext = new ClientCredentialsGrantValidationContext(request);
-                var grantValidator = context.RequestServices
-                    .GetRequiredService<IClientCredentialsGrantValidator>();
-                return await grantValidator.ValidateAsync(grantContext);
+                var grantContext = new ClientGrantValidationRequest(request);
+                var grantValidator = context.RequestServices.GetRequiredService<IClientGrantValidator>();
+                await grantValidator.ValidateAsync(grantContext);
             }
             //验证资源所有者密码授权
             else if (GrantTypes.Password.Equals(request.GrantType))
@@ -161,23 +150,22 @@ namespace IdentityServer.Endpoints
                 {
                     throw new InvalidRequestException("Password too long");
                 }
-                var grantContext = new ResourceOwnerPasswordGrantValidationContext(
+                var grantContext = new PasswordGrantValidationRequest(
                     request: request,
                     username: username,
                     password: password);
-                var grantValidator = context.RequestServices
-                   .GetRequiredService<IPasswordGrantValidator>();
-                return await grantValidator.ValidateAsync(grantContext);
+                var grantValidator = context.RequestServices.GetRequiredService<IPasswordGrantValidator>();
+                await grantValidator.ValidateAsync(grantContext);
             }
             //验证自定义授权
             else
             {
-                var grantContext = new ExtensionGrantValidationContext(request);
-                var grantValidator = context.RequestServices
-                    .GetRequiredService<ExtensionGrantValidatorCollection>();
-                return await grantValidator.ValidateAsync(grantContext);
+                var grantContext = new ExtensionGrantValidationRequest(request);
+                var grantValidator = context.RequestServices.GetRequiredService<ExtensionGrantValidatorCollection>();
+                await grantValidator.ValidateAsync(grantContext);
             }
-
+            var identity = new ClaimsIdentity(request.GrantType);
+            return new ClaimsPrincipal(identity);
         }
     }
 }
