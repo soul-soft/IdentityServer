@@ -7,17 +7,17 @@ namespace IdentityServer.Endpoints
     {
         public abstract Task<IEndpointResult> ProcessAsync(HttpContext context);
 
-        protected IEndpointResult DiscoveryResult(DiscoveryResponse response)
+        protected IEndpointResult DiscoveryEndpointResult(DiscoveryResponse response)
         {
             return new DiscoveryResult(response);
         }
 
-        protected IEndpointResult DiscoveryResult(JwkDiscoveryResponse response)
+        protected IEndpointResult JwkDiscoveryEndpointResult(JwkDiscoveryResponse response)
         {
             return new JwkDiscoveryResult(response);
         }
 
-        protected IEndpointResult TokenResult(TokenResponse response)
+        protected IEndpointResult TokenEndpointResult(TokenResponse response)
         {
             return new TokenResult(response);
         }

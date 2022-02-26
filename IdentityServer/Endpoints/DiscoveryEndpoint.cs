@@ -26,7 +26,7 @@ namespace IdentityServer.Endpoints
             }
             var issuer = _urls.GetIssuerUri();
             var response = await _generator.CreateDiscoveryDocumentAsync(issuer);
-            return DiscoveryResult(response);
+            return DiscoveryEndpointResult(response);
         }
 
     }

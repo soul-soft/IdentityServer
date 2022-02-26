@@ -110,7 +110,7 @@ namespace IdentityServer.Endpoints
                 Scopes = scopes,
                 GrantType = grantType,
             });
-            return TokenResult(response);
+            return TokenEndpointResult(response);
             #endregion
         }
 
