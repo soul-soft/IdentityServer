@@ -13,7 +13,6 @@ namespace IdentityServer.Endpoints
         private readonly IdentityServerOptions _options;
         private readonly IScopeValidator _scopeValidator;
         private readonly ClientSecretParserCollection _secretParsers;
-        private readonly IGrantTypeValidator _grantTypeValidator;
         private readonly SecretValidatorCollection _secretValidators;
 
         public TokenEndpoint(
@@ -23,7 +22,6 @@ namespace IdentityServer.Endpoints
             IdentityServerOptions options,
             IScopeValidator scopeValidator,
             ClientSecretParserCollection secretParsers,
-            IGrantTypeValidator grantTypeValidator,
             SecretValidatorCollection secretValidators)
         {
             _clients = clients;
@@ -33,7 +31,6 @@ namespace IdentityServer.Endpoints
             _secretParsers = secretParsers;
             _scopeValidator = scopeValidator;
             _secretValidators = secretValidators;
-            _grantTypeValidator = grantTypeValidator;
         }
 
         public override async Task<IEndpointResult> ProcessAsync(HttpContext context)
@@ -79,7 +76,14 @@ namespace IdentityServer.Endpoints
             {
                 throw new InvalidGrantException("Grant Type is missing");
             }
-            await _grantTypeValidator.ValidateAsync(grantType, client.AllowedGrantTypes);
+            if (grantType.Length > _options.InputLengthRestrictions.GrantType)
+            {
+                throw new InvalidGrantException("Grant type is too long");
+            }
+            if (!client.AllowedGrantTypes.Contains(grantType))
+            {
+                throw new InvalidGrantException(string.Format("The client does not allow '{0}' authorization", grantType));
+            }
             #endregion
 
             #region Validate Grant

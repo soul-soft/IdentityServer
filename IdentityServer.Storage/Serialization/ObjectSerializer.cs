@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using IdentityServer.Storage.Serialization;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace IdentityServer.Serialization
@@ -15,6 +16,7 @@ namespace IdentityServer.Serialization
                 DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             };
+            JsonSerializerOptions.Converters.Add(new ClaimJsonConverter());
         }
 
         public static string Serialize(object obj)
