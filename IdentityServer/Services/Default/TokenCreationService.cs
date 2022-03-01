@@ -1,15 +1,15 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityServer.Services
 {
-    internal class JwtSecurityTokenService : ISecurityTokenService
+    internal class TokenCreationService : ITokenCreationService
     {
         private readonly IdentityServerOptions _options;
-
         private readonly ISigningCredentialsStore _credentials;
 
-        public JwtSecurityTokenService(
+        public TokenCreationService(
             IdentityServerOptions options,
             ISigningCredentialsStore credentials)
         {
@@ -17,17 +17,17 @@ namespace IdentityServer.Services
             _credentials = credentials;
         }
 
-        public async Task<string> CreateJwtTokenAsync(AccessToken token)
+        public async Task<string> CreateTokenAsync(Token token)
         {
             var credential = await _credentials
-              .GetSigningCredentialsByAlgorithmsAsync(token.AllowedSigningAlgorithms);
+                    .GetSigningCredentialsByAlgorithmsAsync(Array.Empty<string>());
             var header = CreateJwtHeader(token, credential);
             var payload = CreateJwtPayload(token);
             var handler = new JwtSecurityTokenHandler();
             return handler.WriteToken(new JwtSecurityToken(header, payload));
         }
 
-        private JwtHeader CreateJwtHeader(AccessToken token, SigningCredentials credentials)
+        private JwtHeader CreateJwtHeader(Token token, SigningCredentials credentials)
         {
             var header = new JwtHeader(credentials);
             if (credentials.Key is X509SecurityKey x509Key)
@@ -45,9 +45,20 @@ namespace IdentityServer.Services
             return header;
         }
 
-        private JwtPayload CreateJwtPayload(AccessToken token)
+        private JwtPayload CreateJwtPayload(Token token)
         {
-            var claims = token.ToClaims(_options);
+            var claims = new List<Claim>();
+            if (token.Subject != null)
+            {
+                claims.AddRange(token.Subject.Claims);
+            }
+            var time = token.CreationTime;
+            var now = new DateTimeOffset(time).ToUnixTimeSeconds().ToString();
+            var exp = now + token.Lifetime;
+            claims.Add(new Claim(JwtClaimTypes.JwtId, token.Id));
+            claims.Add(new Claim(JwtClaimTypes.NotBefore, now));
+            claims.Add(new Claim(JwtClaimTypes.IssuedAt, now));
+            claims.Add(new Claim(JwtClaimTypes.Expiration, exp));
             var payload = new JwtPayload(claims);
             return payload;
         }

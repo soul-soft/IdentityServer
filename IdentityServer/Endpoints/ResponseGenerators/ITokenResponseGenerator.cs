@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Endpoints
 {
-    public interface ITokenGenerator
+    public interface ITokenResponseGenerator
     {
         Task<TokenResponse> ProcessAsync(ValidatedTokenRequest request);
     }

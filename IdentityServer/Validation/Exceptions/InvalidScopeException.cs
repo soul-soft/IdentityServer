@@ -3,7 +3,7 @@
     public class InvalidScopeException : InvalidException
     {
         public InvalidScopeException(string errorDescription)
-            : base(ProtectedResourceErrors.InvalidScope, errorDescription)
+            : base(ProtectedErrors.InvalidScope, errorDescription)
         {
 
         }

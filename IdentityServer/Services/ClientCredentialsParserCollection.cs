@@ -2,13 +2,13 @@
 
 namespace IdentityServer.Services
 {
-    public class ClientSecretParserCollection
+    public class ClientCredentialsParserCollection
     {
         private readonly IdentityServerOptions _options;
 
         private readonly IEnumerable<IClientCredentialsParser> _parsers;
 
-        public ClientSecretParserCollection(
+        public ClientCredentialsParserCollection(
             IdentityServerOptions options,
             IEnumerable<IClientCredentialsParser> parsers)
         {

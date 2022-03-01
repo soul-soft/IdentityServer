@@ -2,26 +2,32 @@
 {
     internal class InMemoryReferenceTokenStore : IReferenceTokenStore
     {
-        private readonly IPersistentStore _storage;
+        private readonly IIdGenerator _idGenerator;
+        private readonly ICache _storage;
 
-        public InMemoryReferenceTokenStore(IPersistentStore storage)
+        public InMemoryReferenceTokenStore(
+            IIdGenerator idGenerator,
+            ICache storage)
         {
             _storage = storage;
+            _idGenerator = idGenerator;
         }
 
-        public async Task<ReferenceToken?> FindByIdAsync(string id)
+        public async Task<ReferenceToken?> FindReferenceTokenAsync(string id)
         {
-            var key = BuildStoreKey(id);
+            var key = GenerateStoreKey(id);
             return await _storage.GetAsync<ReferenceToken>(key);
         }
 
-        public async Task AddAsync(ReferenceToken token)
+        public async Task<string> StoreReferenceTokenAsync(Token token)
         {
-            var key = BuildStoreKey(token.Id);
-            await _storage.SaveAsync(key, token, TimeSpan.FromSeconds(token.Lifetime));
+            var id = await _idGenerator.GenerateAsync();
+            var key = GenerateStoreKey(id);
+            await _storage.SetAsync(key, token, TimeSpan.FromSeconds(token.Lifetime));
+            return key;
         }
 
-        private static string BuildStoreKey(string id)
+        private static string GenerateStoreKey(string id)
         {
             return $"{Constants.IdentityServerProvider}:ReferenceToken:{id}";
         }

@@ -106,10 +106,9 @@
         };
     }
 
-    public static class ProfileDataCallers
+    public static class ClaimsProviders
     {
-        public const string UserInfoEndpoint = "UserInfoEndpoint";
-        public const string ClaimsProviderIdentityToken = "ClaimsProviderIdentityToken";
-        public const string ClaimsProviderAccessToken = "ClaimsProviderAccessToken";
+        public const string IdentityToken = "ClaimsProviderIdentityToken";
+        public const string AccessToken = "ClaimsProviderAccessToken";
     }
 }

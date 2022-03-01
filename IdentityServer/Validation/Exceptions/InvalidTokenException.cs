@@ -3,7 +3,7 @@
     public class InvalidTokenException : InvalidException
     {
         public InvalidTokenException(string errorDescription)
-            : base(ProtectedResourceErrors.InvalidToken, errorDescription)
+            : base(ProtectedErrors.InvalidToken, errorDescription)
         {
 
         }

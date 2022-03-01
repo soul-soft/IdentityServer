@@ -5,6 +5,6 @@ namespace IdentityServer.Storage
     public interface IResourceStore
     {
         Task<IEnumerable<string>> GetShowInDiscoveryDocumentScopesAsync();
-        Task<ResourceCollection> GetByScopeAsync(IEnumerable<string> scopes);
+        Task<ResourceCollection> GetResourceByScopesAsync(IEnumerable<string> scopes);
     }
 }

@@ -8,29 +8,26 @@ namespace IdentityServer.Endpoints
     public class TokenEndpoint : EndpointBase
     {
         private readonly IClientStore _clients;
-        private readonly IScopeParser _scopeParser;
-        private readonly ITokenGenerator _generator;
+        private readonly ITokenResponseGenerator _generator;
         private readonly IdentityServerOptions _options;
         private readonly IScopeValidator _scopeValidator;
-        private readonly ClientSecretParserCollection _secretParsers;
         private readonly SecretValidatorCollection _secretValidators;
+        private readonly ClientCredentialsParserCollection _clientCredentialsParsers;
 
         public TokenEndpoint(
             IClientStore clients,
-            IScopeParser scopeParser,
-            ITokenGenerator generator,
+            ITokenResponseGenerator generator,
             IdentityServerOptions options,
             IScopeValidator scopeValidator,
-            ClientSecretParserCollection secretParsers,
-            SecretValidatorCollection secretValidators)
+            SecretValidatorCollection secretValidators,
+            ClientCredentialsParserCollection clientCredentialsParsers)
         {
             _clients = clients;
             _options = options;
             _generator = generator;
-            _scopeParser = scopeParser;
-            _secretParsers = secretParsers;
             _scopeValidator = scopeValidator;
             _secretValidators = secretValidators;
+            _clientCredentialsParsers = clientCredentialsParsers;
         }
 
         public override async Task<IEndpointResult> ProcessAsync(HttpContext context)
@@ -42,12 +39,12 @@ namespace IdentityServer.Endpoints
             }
             if (!context.Request.HasFormContentType)
             {
-                return BadRequest(ProtectedResourceErrors.InvalidRequest, "Invalid contextType");
+                return BadRequest(ProtectedErrors.InvalidRequest, "Invalid contextType");
             }
             #endregion
 
             #region Validate ClientSecret
-            var clientCredentials = await _secretParsers.ParseAsync(context);
+            var clientCredentials = await _clientCredentialsParsers.ParseAsync(context);
             var client = await _clients.FindByClientIdAsync(clientCredentials.ClientId);
             if (client == null)
             {
@@ -60,13 +57,14 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Validate Scopes
-            var form = await context.Request.ReadFormAsNameValueCollectionAsync();
+            var form = (await context.Request.ReadFormAsync()).AsNameValueCollection();
             var scope = form[OpenIdConnectParameterNames.Scope];
             if (string.IsNullOrEmpty(scope))
             {
                 scope = string.Join(",", client.AllowedScopes);
             }
-            var scopes = await _scopeParser.RequestScopeAsync(scope);
+            var scopes = scope.Split(",")
+                .Where(a => !string.IsNullOrWhiteSpace(a));
             var resources = await _scopeValidator.ValidateAsync(client.AllowedScopes, scopes);
             #endregion
 
@@ -86,8 +84,8 @@ namespace IdentityServer.Endpoints
             }
             #endregion
 
-            #region Validate Grant
-            var grantValidationRequest = new TokenGrantValidationRequest(
+            #region Validation Token
+            var validationTokenRequest = new TokenValidationRequest(
                 client: client,
                 clientSecret: clientCredentials,
                 options: _options,
@@ -95,20 +93,17 @@ namespace IdentityServer.Endpoints
                 resources: resources,
                 grantType: grantType,
                 raw: form);
-            var subject = await TokenValidateGrantAsync(context, grantValidationRequest);
+            await RunTokenValidationAsync(context, validationTokenRequest);
             #endregion
 
             #region Generator Response
-            var response = await _generator.ProcessAsync(new ValidatedTokenRequest(_options, subject, client, resources)
-            {
-                Scopes = scopes,
-                GrantType = grantType,
-            });
+            var validatedTokenRequest = new ValidatedTokenRequest(grantType, client, resources, _options);
+            var response = await _generator.ProcessAsync(validatedTokenRequest);
             return TokenEndpointResult(response);
             #endregion
         }
 
-        private async Task<ClaimsPrincipal> TokenValidateGrantAsync(HttpContext context, TokenGrantValidationRequest request)
+        private async Task RunTokenValidationAsync(HttpContext context, TokenValidationRequest request)
         {
             //验证刷新令牌
             if (GrantTypes.RefreshToken.Equals(request.GrantType))
@@ -168,8 +163,6 @@ namespace IdentityServer.Endpoints
                 var grantValidator = context.RequestServices.GetRequiredService<ExtensionGrantValidatorCollection>();
                 await grantValidator.ValidateAsync(grantContext);
             }
-            var identity = new ClaimsIdentity(request.GrantType);
-            return new ClaimsPrincipal(identity);
         }
     }
 }

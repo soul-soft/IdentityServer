@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Models
 {
-    public class ProtectedResourceErrors
+    public class ProtectedErrors
     {
         public const string InvalidRequest = "invalid_request";
         public const string InvalidClient = "invalid_client";

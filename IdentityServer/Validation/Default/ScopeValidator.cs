@@ -23,7 +23,7 @@
             {
                 throw new InvalidScopeException("Scope too long");
             }
-            var resources = await _resources.GetByScopeAsync(requestedScopes);
+            var resources = await _resources.GetResourceByScopesAsync(requestedScopes);
             foreach (var item in requestedScopes)
             {
                 if (!allowedScopes.Contains(item))

@@ -30,18 +30,16 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             builder.Services.TryAddTransient<IScopeParser, ScopeParser>();
             builder.Services.TryAddTransient<IClientCredentialsParser, PostBodyClientCredentialsParser>();
-            builder.Services.TryAddTransient<ClientSecretParserCollection>();
+            builder.Services.TryAddTransient<ClientCredentialsParserCollection>();
             builder.Services.TryAddTransient<ITokenParser, BearerTokenUsageParser>();
 
             builder.Services.TryAddTransient<IServerUrl, ServerUrl>();
             builder.Services.TryAddTransient<IIdGenerator, IdGenerator>();
             builder.Services.TryAddTransient<IProfileService, ProfileService>();
             builder.Services.TryAddTransient<IClaimsService, ClaimsService>();
-            builder.Services.TryAddTransient<IPersistentStore, InMemoryPersistentStore>();
+            builder.Services.TryAddTransient<ICache, DistributedCache>();
             builder.Services.TryAddTransient<ITokenService, TokenService>();
-            builder.Services.TryAddTransient<ISecurityTokenService, JwtSecurityTokenService>();
-            builder.Services.TryAddTransient<IRefreshTokenService, RefreshTokenService>();
-            builder.Services.TryAddTransient<IReferenceTokenService, ReferenceTokenService>();
+            builder.Services.TryAddTransient<ITokenCreationService, TokenCreationService>();
             return builder;
         }
         #endregion
@@ -49,16 +47,14 @@ namespace Microsoft.Extensions.DependencyInjection
         #region Validators
         public static IIdentityServerBuilder AddValidators(this IIdentityServerBuilder builder)
         {
+            builder.Services.AddTransient<SecretValidatorCollection>();
+            builder.Services.AddTransient<ExtensionGrantValidatorCollection>();
             builder.Services.TryAddTransient<IScopeValidator, ScopeValidator>();
-            builder.Services.TryAddTransient<IClaimsValidator, ClaimsValidator>();
             builder.Services.TryAddTransient<ITokenValidator, TokenValidator>();
-            builder.Services.TryAddTransient<IGrantTypeValidator, GrantTypeValidator>();            
-            builder.Services.TryAddTransient<SecretValidatorCollection>();
             builder.Services.TryAddTransient<IClientCredentialsValidator, SharedClientCredentialsValidator>();
             builder.Services.TryAddTransient<IRefreshTokenGrantValidator, RefreshTokenGrantValidator>();
             builder.Services.TryAddTransient<IClientGrantValidator, ClientGrantValidator>();
             builder.Services.TryAddTransient<IPasswordGrantValidator, PasswordGrantValidator>();
-            builder.Services.TryAddTransient<ExtensionGrantValidatorCollection>();
             return builder;
         }
         #endregion
@@ -79,9 +75,9 @@ namespace Microsoft.Extensions.DependencyInjection
         #region ResponseGenerators
         public static IIdentityServerBuilder AddResponseGenerators(this IIdentityServerBuilder builder)
         {
-            builder.Services.TryAddTransient<IUserInfoGenerator, UserInfoGenerator>();
-            builder.Services.TryAddTransient<ITokenGenerator, TokenGenerator>();
-            builder.Services.TryAddTransient<IDiscoveryGenerator, DiscoveryGenerator>();
+            builder.Services.TryAddTransient<IUserInfoResponseGenerator, UserInfoResponseGenerator>();
+            builder.Services.TryAddTransient<ITokenResponseGenerator, TokenResponseGenerator>();
+            builder.Services.TryAddTransient<IDiscoveryResponseGenerator, DiscoveryResponseGenerator>();
             return builder;
         }
         #endregion

@@ -11,7 +11,6 @@
         public int RefreshTokenLifetime { get; set; } = 3600 * 24 * 30;
         public int IdentityTokenLifetime { get; set; } = 300;
         public bool RequireClientSecret { get; set; } = true;
-        public bool IncludeJwtId { get; set; } = true;
         public IReadOnlyCollection<Secret> ClientSecrets { get; set; } = new HashSet<Secret>();
         public IReadOnlyCollection<string> AllowedGrantTypes { get; set; } = new HashSet<string>();
         public AccessTokenType AccessTokenType { get; set; } = AccessTokenType.Jwt;

@@ -2,6 +2,6 @@
 {
     public interface IIdGenerator
     {
-        string GeneratorId();
+        Task<string> GenerateAsync(int length = 32);
     }
 }

@@ -2,8 +2,8 @@
 {
     public interface ITokenService
     {        
-        Task<string> CreateSecurityTokenAsync(AccessToken request);
-        Task<AccessToken> CreateAccessTokenAsync(ValidatedTokenRequest request);
-        Task<AccessToken> CreateIdentityTokenAsync(ValidatedTokenRequest request);
+        Task<string> CreateSecurityTokenAsync(Token request);
+        Task<Token> CreateAccessTokenAsync(ValidatedTokenRequest request);
+        Task<Token> CreateIdentityTokenAsync(ValidatedTokenRequest request);
     }
 }

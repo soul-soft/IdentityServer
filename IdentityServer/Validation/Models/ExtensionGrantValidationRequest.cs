@@ -2,9 +2,9 @@
 {
     public class ExtensionGrantValidationRequest
     {
-        public TokenGrantValidationRequest Request { get; }
+        public TokenValidationRequest Request { get; }
      
-        public ExtensionGrantValidationRequest(TokenGrantValidationRequest request)
+        public ExtensionGrantValidationRequest(TokenValidationRequest request)
         {
             Request = request;
         }

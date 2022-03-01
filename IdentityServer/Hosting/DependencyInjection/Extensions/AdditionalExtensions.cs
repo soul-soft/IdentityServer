@@ -7,9 +7,9 @@ namespace Microsoft.Extensions.DependencyInjection
     {       
         #region IPersistentStore
         public static IIdentityServerBuilder AddPersistentStore<T>(this IIdentityServerBuilder builder)
-            where T : class, IPersistentStore
+            where T : class, ICache
         {
-            builder.Services.TryAddTransient<IPersistentStore, T>();
+            builder.Services.TryAddTransient<ICache, T>();
             return builder;
         }
         #endregion

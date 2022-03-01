@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
 
 namespace IdentityServer.Services
 {
@@ -8,116 +9,84 @@ namespace IdentityServer.Services
         private readonly IIdGenerator _idGenerator;
         private readonly IClaimsService _claimsService;
         private readonly IdentityServerOptions _options;
-        private readonly ISecurityTokenService _jwtTokenService;
-        private readonly IReferenceTokenService _referenceTokenService;
+        private readonly IReferenceTokenStore _referenceTokenStore;
+        private readonly ITokenCreationService _tokenCreationService;
 
         public TokenService(
             ISystemClock clock,
             IIdGenerator idGenerator,
             IClaimsService claimsService,
             IdentityServerOptions options,
-            ISecurityTokenService jwtTokenService,
-            IReferenceTokenService referenceTokenService)
+            IReferenceTokenStore referenceTokenService,
+            ITokenCreationService tokenCreationService)
         {
             _clock = clock;
             _options = options;
             _idGenerator = idGenerator;
             _claimsService = claimsService;
-            _jwtTokenService = jwtTokenService;
-            _referenceTokenService = referenceTokenService;
+            _referenceTokenStore = referenceTokenService;
+            _tokenCreationService = tokenCreationService;
         }
 
-        public async Task<AccessToken> CreateAccessTokenAsync(ValidatedTokenRequest request)
+        public async Task<Token> CreateAccessTokenAsync(ValidatedTokenRequest request)
         {
-            var id = _idGenerator.GeneratorId();
-            var issuer = _options.Issuer;
-            var client = request.Client;
-            var notBefore = _clock.UtcNow.UtcDateTime;
-            var expiration = notBefore.AddSeconds(client.AccessTokenLifetime);
-            var resources = request.Resources;
-            var audiences = resources.ApiResources.Select(s => s.Name).ToList();
-            var subjectId = request.Subject.GetSubjectId();
+            var id = await _idGenerator.GenerateAsync();
             var claims = await _claimsService.GetAccessTokenClaimsAsync(request);
-            var token = new AccessToken
+            var subject = new ClaimsPrincipal(new ClaimsIdentity(claims, request.GrantType));
+            var token = new Token
             {
                 Id = id,
                 Type = TokenTypes.AccessToken,
-                Issuer = issuer,
-                ClientId = client.ClientId,
-                GrantType = request.GrantType,
-                Nonce = request.Nonce,
-                Scopes = request.Scopes.ToArray(),
-                SessionId = request.SessionId,
-                AccessTokenType = client.AccessTokenType,
-                Description = request.Description,
-                Lifetime = client.AccessTokenLifetime,
-                SubjectId = subjectId,
-                Audiences = audiences,
-                NotBefore = notBefore,
-                Expiration = expiration,
-                Claims = claims.ToList()
+                Subject = subject,
+                Lifetime = request.Client.AccessTokenLifetime,
+                CreationTime = _clock.UtcNow.UtcDateTime,
+                AccessTokenType = request.Client.AccessTokenType,
             };
             return token;
         }
 
-        public async Task<AccessToken> CreateIdentityTokenAsync(ValidatedTokenRequest request)
+        public async Task<Token> CreateIdentityTokenAsync(ValidatedTokenRequest request)
         {
-            var id = _idGenerator.GeneratorId();
-            var issuer = _options.Issuer;
-            var client = request.Client;
-            var notBefore = _clock.UtcNow.UtcDateTime;
-            var expiration = notBefore.AddSeconds(client.AccessTokenLifetime);
-            var resources = request.Resources;
-            var audiences = resources.ApiResources.Select(s => s.Name).ToList();
-            var subjectId = request.Subject.GetSubjectId();
+            var id = await _idGenerator.GenerateAsync();
             var claims = await _claimsService.GetAccessTokenClaimsAsync(request);
-            var token = new AccessToken
+            var subject = new ClaimsPrincipal(new ClaimsIdentity(claims, request.GrantType));
+            var token = new Token
             {
                 Id = id,
                 Type = TokenTypes.AccessToken,
-                Issuer = issuer,
-                ClientId = client.ClientId,
-                GrantType = request.GrantType,
-                Nonce = request.Nonce,
-                Scopes = request.Scopes.ToArray(),
-                SessionId = request.SessionId,
-                AccessTokenType = client.AccessTokenType,
-                Description = request.Description,
-                Lifetime = client.AccessTokenLifetime,
-                SubjectId = subjectId,
-                Audiences = audiences,
-                NotBefore = notBefore,
-                Expiration = expiration,
-                Claims = claims.ToList()
+                Subject = subject,
+                Lifetime = request.Client.AccessTokenLifetime,
+                CreationTime = _clock.UtcNow.UtcDateTime,
+                AccessTokenType = request.Client.AccessTokenType,
             };
             return token;
         }
 
-        public async Task<string> CreateSecurityTokenAsync(AccessToken token)
+        public async Task<string> CreateSecurityTokenAsync(Token token)
         {
-            string tokenResult;
+            string securityToken;
             if (token.Type == TokenTypes.AccessToken)
             {
                 if (token.AccessTokenType == AccessTokenType.Jwt)
                 {
-                    tokenResult = await _jwtTokenService.CreateJwtTokenAsync(token);
+                    securityToken = await _tokenCreationService.CreateTokenAsync(token);
                 }
                 else
                 {
-                    var handle = await _referenceTokenService.CreateReferenceTokenAsync(token);
-                    tokenResult = handle;
+                    var handle = await _referenceTokenStore.StoreReferenceTokenAsync(token);
+                    securityToken = handle;
                 }
             }
             else if (token.Type == TokenTypes.IdentityToken)
             {
 
-                tokenResult = await _jwtTokenService.CreateJwtTokenAsync(token);
+                securityToken = await _tokenCreationService.CreateTokenAsync(token);
             }
             else
             {
                 throw new InvalidOperationException("Invalid token type.");
             }
-            return tokenResult;
+            return securityToken;
         }
 
     }

@@ -2,9 +2,9 @@
 {
     public class ClientGrantValidationRequest
     {
-        public TokenGrantValidationRequest Request { get; }
+        public TokenValidationRequest Request { get; }
       
-        public ClientGrantValidationRequest(TokenGrantValidationRequest request)
+        public ClientGrantValidationRequest(TokenValidationRequest request)
         {
             Request = request;
         }

@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Endpoints
 {
-    public interface IUserInfoGenerator
+    public interface IUserInfoResponseGenerator
     {
         Task<UserInfoResponse> ProcessAsync(UserInfoGeneratorRequest request);
     }

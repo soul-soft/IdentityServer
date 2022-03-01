@@ -1,16 +1,16 @@
-﻿namespace IdentityServer.Models
+﻿using System.Security.Claims;
+
+namespace IdentityServer.Models
 {
     public class ProfileDataRequestContext
     {
-        public string Caller { get; }
         public Client Client { get; }
-        public IEnumerable<string> ClaimTypes { get; }
+        public ClaimsPrincipal Subject { get; }
 
-        public ProfileDataRequestContext(string caller, Client client, IEnumerable<string> claimTypes)
+        public ProfileDataRequestContext(Client client, ClaimsPrincipal subject)
         {
-            Caller = caller;
             Client = client;
-            ClaimTypes = claimTypes;
+            Subject = subject;
         }
     }
 }

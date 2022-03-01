@@ -1,9 +1,9 @@
 ﻿namespace IdentityServer.Storage
 {
-    public interface IPersistentStore
+    public interface ICache
     {
         Task<T?> GetAsync<T>(string key);
-        Task SaveAsync(string key, object value, TimeSpan timeSpan);
+        Task SetAsync(string key, object value, TimeSpan timeSpan);
         Task RevomeAsync(string key);
     }
 }

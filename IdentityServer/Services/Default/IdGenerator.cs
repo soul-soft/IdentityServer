@@ -2,10 +2,9 @@
 {
     internal class IdGenerator : IIdGenerator
     {
-        public string GeneratorId()
+        public Task<string> GenerateAsync(int length = 32)
         {
-            var array = Guid.NewGuid().ToByteArray();
-            return BitConverter.ToString(array).Replace("-", "");
+            return Task.FromResult(CryptoRandom.CreateUniqueId(length, CryptoRandom.OutputFormat.Hex));
         }
     }
 }

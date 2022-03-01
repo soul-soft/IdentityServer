@@ -3,9 +3,9 @@
     public class RefreshTokenGrantValidationRequest
     {
         public string RefreshToken { get; }
-        public TokenGrantValidationRequest Request { get; }
+        public TokenValidationRequest Request { get; }
 
-        public RefreshTokenGrantValidationRequest(string refreshToken, TokenGrantValidationRequest request)
+        public RefreshTokenGrantValidationRequest(string refreshToken, TokenValidationRequest request)
         {
             RefreshToken = refreshToken;
             Request = request;

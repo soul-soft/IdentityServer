@@ -4,7 +4,7 @@
     {
         public string Id { get; }
 
-        public AccessToken AccessToken { get; }
+        public Token AccessToken { get; }
 
         public int Lifetime { get; }
 
@@ -12,7 +12,7 @@
 
         public DateTime CreationTime { get; }
 
-        public ReferenceToken(string id, AccessToken accessToken, int lifetime, DateTime creationTime)
+        public ReferenceToken(string id, Token accessToken, int lifetime, DateTime creationTime)
         {
             Id = id;
             AccessToken = accessToken;

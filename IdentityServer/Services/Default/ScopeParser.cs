@@ -11,13 +11,6 @@ namespace IdentityServer.Services
             _options = options;
         }
 
-        public Task<IEnumerable<string>> RequestScopeAsync(string scope)
-        {
-            var result = scope.Split(",")
-                .Where(a => !string.IsNullOrWhiteSpace(a));
-            return Task.FromResult(result);
-        }
-
         public Task<IEnumerable<string>> ParseAsync(ClaimsPrincipal subject)
         {
             if (_options.EmitScopesAsSpaceDelimitedStringInJwt)

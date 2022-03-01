@@ -1,10 +1,18 @@
-﻿namespace IdentityServer.Services
+﻿using System.Security.Claims;
+
+namespace IdentityServer.Services
 {
     internal class ProfileService : IProfileService
     {
-        public Task<IEnumerable<Profile>> GetProfileDataAsync(ProfileDataRequestContext request)
+        public Task<IEnumerable<Claim>> GetClaimDataAsync(ClaimDataRequestContext context)
         {
-            IEnumerable<Profile> result = Array.Empty<Profile>();
+            IEnumerable<Claim> result = Array.Empty<Claim>();
+            return Task.FromResult(result);
+        }
+
+        public Task<Dictionary<string, object?>> GetProfileDataAsync(ProfileDataRequestContext context)
+        {
+            var result = new Dictionary<string, object?>();
             return Task.FromResult(result);
         }
     }

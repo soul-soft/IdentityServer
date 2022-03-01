@@ -1,32 +1,31 @@
 ﻿using IdentityServer.Models;
 using IdentityServer.Services;
+using System.Security.Claims;
 
 namespace Hosting.Configuration
 {
     public class ProfileService : IProfileService
     {
-        Task<IEnumerable<Profile>> IProfileService.GetProfileDataAsync(ProfileDataRequestContext context)
+        public Task<IEnumerable<Claim>> GetClaimDataAsync(ClaimDataRequestContext context)
         {
-            var profiles = new List<Profile>();
-            if (context.Caller == ProfileDataCallers.UserInfoEndpoint)
+            var profiles = new List<Claim>();
+            if (context.AllowedClaimTypes.Contains(JwtClaimTypes.Subject))
             {
-                profiles.Add(new Profile("name", "zs"));
-                profiles.Add(new Profile("age", 50));
-                profiles.Add(new Profile("birthday", DateTime.Now));
-                profiles.Add(new Profile("isok", true));
+                profiles.Add(new Claim(JwtClaimTypes.Subject, "10"));
             }
-            else
+            if (context.AllowedClaimTypes.Contains(JwtClaimTypes.Role))
             {
-                if (context.ClaimTypes.Contains(JwtClaimTypes.Subject))
-                {
-                    profiles.Add(new Profile(JwtClaimTypes.Subject, 10));
-                }
-                if (context.ClaimTypes.Contains(JwtClaimTypes.Role))
-                {
-                    profiles.Add(new Profile(JwtClaimTypes.Role, "admin"));
-                }
+                profiles.Add(new Claim(JwtClaimTypes.Role, "admin"));
             }
-            return Task.FromResult<IEnumerable<Profile>>(profiles);
+            return Task.FromResult<IEnumerable<Claim>>(profiles);
+        }
+
+        public Task<Dictionary<string,object?>> GetProfileDataAsync(ProfileDataRequestContext context)
+        {
+            var data = new Dictionary<string, object?>();
+            data.Add(JwtClaimTypes.Subject, "10");
+            data.Add(JwtClaimTypes.Role, "admin");
+            return Task.FromResult(data);
         }
     }
 }

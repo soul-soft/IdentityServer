@@ -8,11 +8,11 @@ namespace IdentityServer.Endpoints
     internal class DiscoveryEndpoint : EndpointBase
     {
         private readonly IServerUrl _urls;
-        private readonly IDiscoveryGenerator _generator;
+        private readonly IDiscoveryResponseGenerator _generator;
 
         public DiscoveryEndpoint(
             IServerUrl urls,
-            IDiscoveryGenerator generator)
+            IDiscoveryResponseGenerator generator)
         {
             _urls = urls;
             _generator = generator;

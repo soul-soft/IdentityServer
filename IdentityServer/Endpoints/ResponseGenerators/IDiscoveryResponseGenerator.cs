@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Endpoints
 {
-    public interface IDiscoveryGenerator
+    public interface IDiscoveryResponseGenerator
     {
         Task<JwkDiscoveryResponse> CreateJwkDiscoveryDocumentAsync();
         Task<DiscoveryResponse> CreateDiscoveryDocumentAsync(string issuer);

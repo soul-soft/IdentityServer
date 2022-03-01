@@ -7,9 +7,9 @@ namespace IdentityServer.Endpoints
     /// </summary>
     public class DiscoveryKeyEndpoint : EndpointBase
     {
-        private readonly IDiscoveryGenerator _generator;
+        private readonly IDiscoveryResponseGenerator _generator;
 
-        public DiscoveryKeyEndpoint(IDiscoveryGenerator generator)
+        public DiscoveryKeyEndpoint(IDiscoveryResponseGenerator generator)
         {
             _generator = generator;
         }

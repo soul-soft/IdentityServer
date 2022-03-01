@@ -3,16 +3,16 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace IdentityServer.Storage
 {
-    internal class InMemoryPersistentStore : IPersistentStore
+    internal class DistributedCache : ICache
     {
         private readonly IDistributedCache _distributedCache;
 
-        public InMemoryPersistentStore(IDistributedCache distributedCache)
+        public DistributedCache(IDistributedCache distributedCache)
         {
             _distributedCache = distributedCache;
         }
 
-        public async Task SaveAsync(string key, object value, TimeSpan timeSpan)
+        public async Task SetAsync(string key, object value, TimeSpan timeSpan)
         {
             var json = ObjectSerializer.Serialize(value);
             await _distributedCache.SetStringAsync(key, json, new DistributedCacheEntryOptions

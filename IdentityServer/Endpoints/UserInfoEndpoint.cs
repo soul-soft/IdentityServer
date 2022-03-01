@@ -6,7 +6,7 @@ namespace IdentityServer.Endpoints
     {
         private readonly IClientStore _clients;
         private readonly IScopeParser _scopeParser;
-        private readonly IUserInfoGenerator _generator;
+        private readonly IUserInfoResponseGenerator _generator;
         private readonly ITokenParser _tokenParser;
         private readonly ITokenValidator _tokenValidator;
         private readonly IScopeValidator _scopeValidator;
@@ -17,7 +17,7 @@ namespace IdentityServer.Endpoints
             IScopeParser scopeParser,
             ITokenValidator tokenValidator,
             IScopeValidator scopeValidator,
-            IUserInfoGenerator generator)
+            IUserInfoResponseGenerator generator)
         {
             _clients = clients;
             _generator = generator;

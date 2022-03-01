@@ -1,24 +1,22 @@
 ﻿namespace IdentityServer.Endpoints
 {
-    public class TokenGenerator : ITokenGenerator
+    public class TokenResponseGenerator : ITokenResponseGenerator
     {
         private readonly ITokenService _tokenService;
-        private readonly IRefreshTokenService _refreshTokenService;
+        private readonly IReferenceTokenStore _refreshTokenStore;
 
-        public TokenGenerator(
+        public TokenResponseGenerator(
             ITokenService tokenService,
-            IRefreshTokenService refreshTokenService)
+            IReferenceTokenStore refreshTokenStore)
         {
             _tokenService = tokenService;
-            _refreshTokenService = refreshTokenService;
+            _refreshTokenStore = refreshTokenStore;
         }
 
         public async Task<TokenResponse> ProcessAsync(ValidatedTokenRequest request)
         {
             (string accessToken, string? refreshToken) = await CreateAccessTokenAsync(request);
-
-            var scope = string.Join(",", request.Scopes);
-
+            var scope = string.Join(",", request.Resources.Scopes);
             var response = new TokenResponse()
             {
                 AccessToken = accessToken,
@@ -26,7 +24,6 @@
                 AccessTokenLifetime = request.Client.AccessTokenLifetime,
                 Scope = scope,
             };
-
             return response;
         }
 
@@ -38,7 +35,7 @@
 
             if (request.Resources.OfflineAccess)
             {
-                var refreshToken = await _refreshTokenService.CreateRefreshTokenAsync(token, request.Client.RefreshTokenLifetime);
+                var refreshToken = await _refreshTokenStore.StoreReferenceTokenAsync(token);
                 return (accessToken, refreshToken);
             }
             return (accessToken, null);
