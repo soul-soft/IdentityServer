@@ -4,7 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityServer.Services
 {
-    internal class TokenCreationService : ITokenCreationService
+    internal class TokenCreationService : ISecurityTokenService
     {
         private readonly IdentityServerOptions _options;
         private readonly ISigningCredentialsStore _credentials;
@@ -53,12 +53,12 @@ namespace IdentityServer.Services
                 claims.AddRange(token.Subject.Claims);
             }
             var time = token.CreationTime;
-            var now = new DateTimeOffset(time).ToUnixTimeSeconds().ToString();
+            var now = new DateTimeOffset(time).ToUnixTimeSeconds();
             var exp = now + token.Lifetime;
             claims.Add(new Claim(JwtClaimTypes.JwtId, token.Id));
-            claims.Add(new Claim(JwtClaimTypes.NotBefore, now));
-            claims.Add(new Claim(JwtClaimTypes.IssuedAt, now));
-            claims.Add(new Claim(JwtClaimTypes.Expiration, exp));
+            claims.Add(new Claim(JwtClaimTypes.NotBefore, now.ToString()));
+            claims.Add(new Claim(JwtClaimTypes.IssuedAt, now.ToString()));
+            claims.Add(new Claim(JwtClaimTypes.Expiration, exp.ToString()));
             var payload = new JwtPayload(claims);
             return payload;
         }

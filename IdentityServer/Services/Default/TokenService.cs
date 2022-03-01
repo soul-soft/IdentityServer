@@ -6,31 +6,31 @@ namespace IdentityServer.Services
     internal class TokenService : ITokenService
     {
         private readonly ISystemClock _clock;
-        private readonly IIdGenerator _idGenerator;
         private readonly IClaimsService _claimsService;
-        private readonly IdentityServerOptions _options;
+        private readonly IHandleGenerator _identifyGenerator;
+        private readonly IRefreshTokenStore _refreshTokenStore;
         private readonly IReferenceTokenStore _referenceTokenStore;
-        private readonly ITokenCreationService _tokenCreationService;
+        private readonly ISecurityTokenService _securityTokenService;
 
         public TokenService(
             ISystemClock clock,
-            IIdGenerator idGenerator,
             IClaimsService claimsService,
-            IdentityServerOptions options,
+            IHandleGenerator identifyGenerator,
+            IRefreshTokenStore refreshTokenStore,
             IReferenceTokenStore referenceTokenService,
-            ITokenCreationService tokenCreationService)
+            ISecurityTokenService securityTokenService)
         {
             _clock = clock;
-            _options = options;
-            _idGenerator = idGenerator;
             _claimsService = claimsService;
+            _refreshTokenStore = refreshTokenStore;
+            _identifyGenerator = identifyGenerator;
             _referenceTokenStore = referenceTokenService;
-            _tokenCreationService = tokenCreationService;
+            _securityTokenService = securityTokenService;
         }
 
         public async Task<Token> CreateAccessTokenAsync(ValidatedTokenRequest request)
         {
-            var id = await _idGenerator.GenerateAsync();
+            var id = await _identifyGenerator.GenerateAsync();
             var claims = await _claimsService.GetAccessTokenClaimsAsync(request);
             var subject = new ClaimsPrincipal(new ClaimsIdentity(claims, request.GrantType));
             var token = new Token
@@ -47,7 +47,7 @@ namespace IdentityServer.Services
 
         public async Task<Token> CreateIdentityTokenAsync(ValidatedTokenRequest request)
         {
-            var id = await _idGenerator.GenerateAsync();
+            var id = await _identifyGenerator.GenerateAsync();
             var claims = await _claimsService.GetAccessTokenClaimsAsync(request);
             var subject = new ClaimsPrincipal(new ClaimsIdentity(claims, request.GrantType));
             var token = new Token
@@ -69,24 +69,32 @@ namespace IdentityServer.Services
             {
                 if (token.AccessTokenType == AccessTokenType.Jwt)
                 {
-                    securityToken = await _tokenCreationService.CreateTokenAsync(token);
+                    securityToken = await _securityTokenService.CreateTokenAsync(token);
                 }
                 else
                 {
-                    var handle = await _referenceTokenStore.StoreReferenceTokenAsync(token);
-                    securityToken = handle;
+                    await _referenceTokenStore.StoreReferenceTokenAsync(token);
+                    securityToken = token.Id;
                 }
             }
             else if (token.Type == TokenTypes.IdentityToken)
             {
-
-                securityToken = await _tokenCreationService.CreateTokenAsync(token);
+                securityToken = await _securityTokenService.CreateTokenAsync(token);
             }
             else
             {
                 throw new InvalidOperationException("Invalid token type.");
             }
             return securityToken;
+        }
+
+        public async Task<string> CreateSecurityRefreshTokenAsync(Token token, int lifetime)
+        {
+            var id = await _identifyGenerator.GenerateAsync();
+            var creationTime = _clock.UtcNow.UtcDateTime;
+            var refreshToken = new RefreshToken(id, token, lifetime, creationTime);
+            await _refreshTokenStore.StoreRefreshTokenAsync(refreshToken);
+            return id;
         }
 
     }

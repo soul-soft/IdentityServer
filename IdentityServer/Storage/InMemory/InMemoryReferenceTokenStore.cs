@@ -2,15 +2,11 @@
 {
     internal class InMemoryReferenceTokenStore : IReferenceTokenStore
     {
-        private readonly IIdGenerator _idGenerator;
         private readonly ICache _storage;
 
-        public InMemoryReferenceTokenStore(
-            IIdGenerator idGenerator,
-            ICache storage)
+        public InMemoryReferenceTokenStore(ICache storage)
         {
             _storage = storage;
-            _idGenerator = idGenerator;
         }
 
         public async Task<ReferenceToken?> FindReferenceTokenAsync(string id)
@@ -19,12 +15,10 @@
             return await _storage.GetAsync<ReferenceToken>(key);
         }
 
-        public async Task<string> StoreReferenceTokenAsync(Token token)
+        public async Task StoreReferenceTokenAsync(Token token)
         {
-            var id = await _idGenerator.GenerateAsync();
-            var key = GenerateStoreKey(id);
+            var key = GenerateStoreKey(token.Id);
             await _storage.SetAsync(key, token, TimeSpan.FromSeconds(token.Lifetime));
-            return key;
         }
 
         private static string GenerateStoreKey(string id)

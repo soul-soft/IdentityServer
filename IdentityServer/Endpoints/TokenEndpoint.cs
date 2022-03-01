@@ -58,7 +58,11 @@ namespace IdentityServer.Endpoints
 
             #region Validate Scopes
             var form = (await context.Request.ReadFormAsync()).AsNameValueCollection();
-            var scope = form[OpenIdConnectParameterNames.Scope];
+            var scope = form[OpenIdConnectParameterNames.Scope] ?? string.Empty;
+            if (scope.Length > _options.InputLengthRestrictions.Scope)
+            {
+                throw new InvalidGrantException("Scope is too long");
+            }
             if (string.IsNullOrEmpty(scope))
             {
                 scope = string.Join(",", client.AllowedScopes);

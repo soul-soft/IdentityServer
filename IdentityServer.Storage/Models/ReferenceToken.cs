@@ -12,10 +12,10 @@
 
         public DateTime CreationTime { get; }
 
-        public ReferenceToken(string id, Token accessToken, int lifetime, DateTime creationTime)
+        public ReferenceToken(string id, Token token, int lifetime, DateTime creationTime)
         {
             Id = id;
-            AccessToken = accessToken;
+            AccessToken = token;
             Lifetime = lifetime;
             CreationTime = creationTime;
         }

@@ -3,7 +3,7 @@
     internal class InMemoryRefreshTokenStore : IRefreshTokenStore
     {
         private readonly ICache _storage;
-
+       
         public InMemoryRefreshTokenStore(ICache storage)
         {
             _storage = storage;
@@ -15,10 +15,10 @@
             return await _storage.GetAsync<RefreshToken>(key);
         }
 
-        public async Task StoreRefreshTokenAsync(RefreshToken token)
+        public async Task StoreRefreshTokenAsync(RefreshToken refreshToken)
         {
-            var key = BuildStoreKey(token.Id);
-            await _storage.SetAsync(key, token, TimeSpan.FromSeconds(token.Lifetime));
+            var key = BuildStoreKey(refreshToken.Id);
+            await _storage.SetAsync(key, refreshToken, TimeSpan.FromSeconds(refreshToken.Lifetime));
         }
 
         public async Task RevomeRefreshTokenAsync(RefreshToken token)

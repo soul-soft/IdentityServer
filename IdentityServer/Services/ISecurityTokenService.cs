@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Services
 {
-    public interface ITokenCreationService
+    public interface ISecurityTokenService
     {
         Task<string> CreateTokenAsync(Token token);
     }

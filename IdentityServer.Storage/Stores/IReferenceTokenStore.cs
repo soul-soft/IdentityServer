@@ -4,7 +4,7 @@ namespace IdentityServer.Storage
 {
     public interface IReferenceTokenStore
     {
-        Task<string> StoreReferenceTokenAsync(Token token);
+        Task StoreReferenceTokenAsync(Token token);
         Task<ReferenceToken?> FindReferenceTokenAsync(string id);
     }
 }
