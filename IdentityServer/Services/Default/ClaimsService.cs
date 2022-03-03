@@ -8,9 +8,7 @@ namespace IdentityServer.Services
         private readonly ISystemClock _clock;
         private readonly IProfileService _profileService;
 
-        public ClaimsService(
-            ISystemClock clock,
-            IProfileService profileService)
+        public ClaimsService(ISystemClock clock, IProfileService profileService)
         {
             _clock = clock;
             _profileService = profileService;
@@ -18,72 +16,66 @@ namespace IdentityServer.Services
 
         public async Task<IEnumerable<Claim>> GetAccessTokenClaimsAsync(ValidatedTokenRequest request)
         {
-            var identity = await GetStandardClaimsAsync(request);
-            identity.AddClaim(new Claim(JwtClaimTypes.ClientId, request.Client.ClientId));
-            identity.AddClaim(new Claim(JwtClaimTypes.Issuer, request.Options.Issuer));
-            //audience
-            foreach (var item in request.Resources.ApiResources)
-            {
-                identity.AddClaim(new Claim(JwtClaimTypes.Audience, item.Name));
-            }
-            //scope
-            if (request.Options.EmitScopesAsSpaceDelimitedStringInJwt)
-            {
-                var scope = request.Resources.Scopes.Aggregate((x, y) => $"{x},{y}");
-                identity.AddClaim(new Claim(JwtClaimTypes.Scope, scope));
-            }
-            else
-            {
-                var scopes = request.Resources.Scopes
-                    .Select(scope => new Claim(JwtClaimTypes.Scope, scope));
-                identity.AddClaims(scopes);
-            }
-            return identity.Claims;
+            var claims = await GetRequestedClaimsAsync(request);
+            return claims;
         }
 
         public async Task<IEnumerable<Claim>> GetIdentityTokenClaimsAsync(ValidatedTokenRequest request)
         {
-            var identity = await GetStandardClaimsAsync(request);
-            identity.AddClaim(new Claim(JwtClaimTypes.ClientId, request.Client.ClientId));
-            identity.AddClaim(new Claim(JwtClaimTypes.Issuer, request.Options.Issuer));
+            var claims = await GetRequestedClaimsAsync(request);
+            return claims;
+        }
+
+        private async Task<List<Claim>> GetRequestedClaimsAsync(ValidatedTokenRequest request)
+        {
+            var claims = new List<Claim>();
+
+            //profile
+            var allowClaimTypes = request.Resources.ClaimTypes;
+            var issueClaims = await _profileService.GetClaimDataAsync(new ClaimDataRequestContext(
+                ClaimsProviders.AccessToken,
+                request.Client,
+                allowClaimTypes));
+            //filter
+            claims.AddRange(issueClaims.Where(a => allowClaimTypes.Contains(a.Type)));
+            //issuer
+            claims.Add(new Claim(JwtClaimTypes.Issuer, request.Options.Issuer));
+            //clientId
+            claims.Add(new Claim(JwtClaimTypes.ClientId, request.Client.ClientId));
             //audience
             foreach (var item in request.Resources.ApiResources)
             {
-                identity.AddClaim(new Claim(JwtClaimTypes.Audience, item.Name));
+                claims.Add(new Claim(JwtClaimTypes.Audience, item.Name));
             }
             //scope
             if (request.Options.EmitScopesAsSpaceDelimitedStringInJwt)
             {
                 var scope = request.Resources.Scopes.Aggregate((x, y) => $"{x},{y}");
-                identity.AddClaim(new Claim(JwtClaimTypes.Scope, scope));
+                claims.Add(new Claim(JwtClaimTypes.Scope, scope));
             }
             else
             {
                 var scopes = request.Resources.Scopes
                     .Select(scope => new Claim(JwtClaimTypes.Scope, scope));
-                identity.AddClaims(scopes);
+                claims.AddRange(scopes);
             }
-            return identity.Claims;
+
+            if (claims.Any(a => a.Type == JwtClaimTypes.Subject))
+            {
+                claims.AddRange(GetStandardSubjectClaims(request));
+            }
+            return claims;
         }
 
-        public async Task<ClaimsIdentity> GetStandardClaimsAsync(ValidatedTokenRequest request)
+        private IEnumerable<Claim> GetStandardSubjectClaims(ValidatedTokenRequest request)
         {
-            var allowClaimTypes = request.Resources.ClaimTypes;
-            var claimDataRequestContext = new ClaimDataRequestContext(
-               ClaimsProviders.AccessToken,
-               request.Client,
-               allowClaimTypes);
-            var identity = new ClaimsIdentity();
-            var claims = await _profileService.GetClaimDataAsync(claimDataRequestContext);
-            identity.AddClaims(claims);
-            if (identity.HasClaim(a => a.Type == JwtClaimTypes.Subject))
-            {
-                var timestamp = _clock.UtcNow.ToUnixTimeSeconds().ToString();
-                identity.AddClaim(new Claim(JwtClaimTypes.IdentityProvider, request.Options.IdentityProvider));
-                identity.AddClaim(new Claim(JwtClaimTypes.AuthenticationTime, timestamp));
-                identity.AddClaim(new Claim(JwtClaimTypes.AuthenticationMethod, request.GrantType));
-            }
-            return identity;
+            var claims = new List<Claim>();
+            var identityProvider = request.Options.IdentityProvider;
+            var timestamp = _clock.UtcNow.ToUnixTimeSeconds().ToString();
+            claims.Add(new Claim(JwtClaimTypes.AuthenticationTime, timestamp));
+            claims.Add(new Claim(JwtClaimTypes.IdentityProvider, identityProvider));
+            claims.Add(new Claim(JwtClaimTypes.AuthenticationMethod, request.GrantType));
+            return claims;
         }
     }
 }

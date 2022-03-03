@@ -78,16 +78,16 @@ namespace Microsoft.Extensions.DependencyInjection
         #endregion
 
         #region ReferenceTokenStore
-        public static IIdentityServerBuilder AddReferenceTokenStore<T>(this IIdentityServerBuilder builder)
-          where T : class, IReferenceTokenStore
+        public static IIdentityServerBuilder AddTokenStore<T>(this IIdentityServerBuilder builder)
+          where T : class, ITokenStore
         {
-            builder.Services.TryAddTransient<IReferenceTokenStore, T>();
+            builder.Services.TryAddTransient<ITokenStore, T>();
             return builder;
         }
         public static IIdentityServerBuilder AddReferenceTokenStore<T>(this IIdentityServerBuilder builder, Func<IServiceProvider, T> implementationFactory)
-            where T : class, IReferenceTokenStore
+            where T : class, ITokenStore
         {
-            builder.Services.TryAddTransient<IReferenceTokenStore>(implementationFactory);
+            builder.Services.TryAddTransient<ITokenStore>(implementationFactory);
             return builder;
         }
         #endregion
@@ -95,9 +95,9 @@ namespace Microsoft.Extensions.DependencyInjection
         #region InMemoryStoreBuilder
         public static IIdentityServerBuilder AddInMemoryStores(this IIdentityServerBuilder builder, Action<InMemoryStoreBuilder> configure)
         {
-            builder.Services.AddDistributedMemoryCache();
+            builder.AddTokenStore<InMemoryTokenStore>();
             builder.AddRefreshTokenStore<InMemoryRefreshTokenStore>();
-            builder.AddReferenceTokenStore<InMemoryReferenceTokenStore>();
+            builder.Services.AddDistributedMemoryCache();
             var inMemoryStoreBuilder = new InMemoryStoreBuilder();
             configure(inMemoryStoreBuilder);
             inMemoryStoreBuilder.Build(builder);

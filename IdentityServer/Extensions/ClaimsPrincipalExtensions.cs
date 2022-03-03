@@ -15,15 +15,5 @@ namespace IdentityServer.Extensions
             var claim = principal.FindFirst(JwtClaimTypes.Subject);
             return claim?.Value;
         }
-
-        public static string GetAuthenticationTime(this ClaimsPrincipal principal)
-        {
-            return principal.FindFirstValue(JwtClaimTypes.AuthenticationTime);
-        }
-      
-        public static string GetIdentityProvider(this ClaimsPrincipal principal)
-        {
-            return principal.FindFirstValue(JwtClaimTypes.IdentityProvider);
-        }
     }
 }

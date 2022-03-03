@@ -33,7 +33,7 @@
 
             if (request.Resources.OfflineAccess)
             {
-                var refreshToken = await _tokenService.CreateSecurityRefreshTokenAsync(token, request.Client.RefreshTokenLifetime);
+                var refreshToken = await _tokenService.CreateRefreshTokenAsync(token, request.Client.RefreshTokenLifetime);
                 return (accessToken, refreshToken);
             }
             return (accessToken, null);

@@ -1,21 +1,21 @@
 ﻿namespace IdentityServer.Storage
 {
-    internal class InMemoryReferenceTokenStore : IReferenceTokenStore
+    internal class InMemoryTokenStore : ITokenStore
     {
         private readonly ICache _storage;
 
-        public InMemoryReferenceTokenStore(ICache storage)
+        public InMemoryTokenStore(ICache storage)
         {
             _storage = storage;
         }
 
-        public async Task<ReferenceToken?> FindReferenceTokenAsync(string id)
+        public async Task<Token?> FindTokenAsync(string id)
         {
             var key = GenerateStoreKey(id);
-            return await _storage.GetAsync<ReferenceToken>(key);
+            return await _storage.GetAsync<Token>(key);
         }
 
-        public async Task StoreReferenceTokenAsync(Token token)
+        public async Task StoreTokenAsync(Token token)
         {
             var key = GenerateStoreKey(token.Id);
             await _storage.SetAsync(key, token, TimeSpan.FromSeconds(token.Lifetime));

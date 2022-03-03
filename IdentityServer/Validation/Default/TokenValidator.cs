@@ -9,13 +9,13 @@ namespace IdentityServer.Validation
         private readonly ISystemClock _systemClock;
         private readonly IdentityServerOptions _options;
         private readonly ISigningCredentialsStore _credentials;
-        private readonly IReferenceTokenStore _referenceTokenStore;
+        private readonly ITokenStore _referenceTokenStore;
 
         public TokenValidator(
             ISystemClock systemClock,
             IdentityServerOptions options,
             ISigningCredentialsStore credentials,
-            IReferenceTokenStore referenceTokenStore)
+            ITokenStore referenceTokenStore)
         {
             _options = options;
             _systemClock = systemClock;
@@ -72,26 +72,22 @@ namespace IdentityServer.Validation
             }
         }
 
-        private async Task<IEnumerable<Claim>> ValidateReferenceTokenAsync(string token)
+        private async Task<IEnumerable<Claim>> ValidateReferenceTokenAsync(string tokenReference)
         {
-            var referenceToken = await _referenceTokenStore.FindReferenceTokenAsync(token);
-            if (referenceToken == null || referenceToken.Expiration < _systemClock.UtcNow.UtcDateTime)
+            var token = await _referenceTokenStore.FindTokenAsync(tokenReference);
+            if (token == null || token.Expiration < _systemClock.UtcNow.UtcDateTime)
             {
                 throw new InvalidTokenException("Invalid token");
             }
-            if (_options.AuthenticationOptions.ValidateLifetime && referenceToken.Expiration < _systemClock.UtcNow.UtcDateTime)
+            if (_options.AuthenticationOptions.ValidateLifetime && token.Expiration < _systemClock.UtcNow.UtcDateTime)
             {
                 throw new InvalidTokenException("The access token has expired");
             }
-            //if (_options.AuthenticationOptions.ValidateAudience && !referenceToken.AccessToken.Audiences.Contains(_options.AuthenticationOptions.ValidAudience))
-            //{
-            //    throw new InvalidTokenException("Invalid audience");
-            //}
-            //if (_options.AuthenticationOptions.ValidateIssuer && referenceToken.AccessToken.Issuer != _options.Issuer)
-            //{
-            //    throw new InvalidTokenException("Invalid issuer");
-            //}
-            return referenceToken.AccessToken.Subject.Claims;
+            if (_options.AuthenticationOptions.ValidateIssuer && token.Issuer != _options.Issuer)
+            {
+                throw new InvalidTokenException("Invalid issuer");
+            }
+            return token.GetJwtPayloadClaims();
         }
     }
 }

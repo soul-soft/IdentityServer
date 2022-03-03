@@ -9,11 +9,11 @@ namespace Hosting.Configuration
         public Task<IEnumerable<Claim>> GetClaimDataAsync(ClaimDataRequestContext context)
         {
             var profiles = new List<Claim>();
-            if (context.AllowedClaimTypes.Contains(JwtClaimTypes.Subject))
+            if (context.ClaimTypes.Contains(JwtClaimTypes.Subject))
             {
                 profiles.Add(new Claim(JwtClaimTypes.Subject, "10"));
             }
-            if (context.AllowedClaimTypes.Contains(JwtClaimTypes.Role))
+            if (context.ClaimTypes.Contains(JwtClaimTypes.Role))
             {
                 profiles.Add(new Claim(JwtClaimTypes.Role, "admin"));
             }

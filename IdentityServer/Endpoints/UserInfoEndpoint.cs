@@ -47,12 +47,12 @@ namespace IdentityServer.Endpoints
                 {
                     throw new InvalidTokenException("ClientId claim is missing");
                 }
-                var scopes = await _scopeParser.ParseAsync(subject);
                 var client = await _clients.FindByClientIdAsync(clientId);
                 if (client == null)
                 {
                     throw new InvalidClientException("Invalid client");
                 }
+                var scopes = await _scopeParser.ParseAsync(subject);
                 var resources = await _scopeValidator.ValidateAsync(client.AllowedScopes, scopes);
                 var response = await _generator.ProcessAsync(new UserInfoGeneratorRequest(client, subject,  resources));
                 return new UserInfoResult(response);

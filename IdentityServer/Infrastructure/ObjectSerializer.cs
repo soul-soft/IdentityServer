@@ -1,5 +1,4 @@
-﻿using IdentityServer.Storage.Serialization;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace IdentityServer.Serialization
@@ -12,13 +11,10 @@ namespace IdentityServer.Serialization
         {
             JsonSerializerOptions = new JsonSerializerOptions
             {
-                IgnoreReadOnlyFields = true,
-                IgnoreReadOnlyProperties = true,
                 DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             };
-            JsonSerializerOptions.Converters.Add(new ClaimJsonConverter());
         }
 
         public static string Serialize(object obj)
