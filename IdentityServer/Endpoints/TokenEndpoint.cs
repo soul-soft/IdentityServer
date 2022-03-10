@@ -51,7 +51,7 @@ namespace IdentityServer.Endpoints
             var client = await _clients.FindByClientIdAsync(clientCredentials.ClientId);
             if (client == null)
             {
-                return BadRequest(OpenIdConnectTokenErrors.InvalidClient, "Invalid client credentials");
+                return BadRequest(OpenIdConnectErrors.InvalidClient, "Invalid client credentials");
             }
             if (client.RequireClientSecret)
             {
@@ -64,7 +64,7 @@ namespace IdentityServer.Endpoints
             var scope = form[OpenIdConnectParameterNames.Scope] ?? string.Empty;
             if (scope.Length > _options.InputLengthRestrictions.Scope)
             {
-                return BadRequest(OpenIdConnectTokenErrors.InvalidScope, "Scope is too long");
+                return BadRequest(OpenIdConnectErrors.InvalidScope, "Scope is too long");
             }
             var scopes = scope.Split(",").Where(a => !string.IsNullOrWhiteSpace(a));
             if (scopes.Any())
@@ -73,7 +73,7 @@ namespace IdentityServer.Endpoints
                 {
                     if (!client.AllowedScopes.Contains(item))
                     {
-                        return BadRequest(OpenIdConnectTokenErrors.InvalidScope, $"Scope '{item}' not allowed");
+                        return BadRequest(OpenIdConnectErrors.InvalidScope, $"Scope '{item}' not allowed");
                     }
                 }
             }
@@ -83,7 +83,7 @@ namespace IdentityServer.Endpoints
             }
             if (!scopes.Any())
             {
-                return BadRequest(OpenIdConnectTokenErrors.InvalidScope, "No allowed scopes configured for client");
+                return BadRequest(OpenIdConnectErrors.InvalidScope, "No allowed scopes configured for client");
             }
             var resources = await _resourceStore.FindResourceByScopesAsync(scopes);
             await _resourceValidator.ValidateAsync(scopes, resources);
@@ -93,15 +93,15 @@ namespace IdentityServer.Endpoints
             var grantType = form[OpenIdConnectParameterNames.GrantType];
             if (string.IsNullOrEmpty(grantType))
             {
-                return BadRequest(OpenIdConnectTokenErrors.UnsupportedGrantType, "Grant type is missing");
+                return BadRequest(OpenIdConnectErrors.UnsupportedGrantType, "Grant type is missing");
             }
             if (grantType.Length > _options.InputLengthRestrictions.GrantType)
             {
-                return BadRequest(OpenIdConnectTokenErrors.UnsupportedGrantType, "Grant type is too long");
+                return BadRequest(OpenIdConnectErrors.UnsupportedGrantType, "Grant type is too long");
             }
             if (!client.AllowedGrantTypes.Contains(grantType))
             {
-                return BadRequest(OpenIdConnectTokenErrors.UnsupportedGrantType, "Grant type not allowed");
+                return BadRequest(OpenIdConnectErrors.UnsupportedGrantType, "Grant type not allowed");
             }
             #endregion
 
@@ -132,11 +132,11 @@ namespace IdentityServer.Endpoints
                 var refreshToken = request.Raw[OpenIdConnectParameterNames.RefreshToken];
                 if (refreshToken == null)
                 {
-                    throw new InvalidRequestException("RefreshToken is missing");
+                    throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "RefreshToken is missing");
                 }
                 if (refreshToken.Length > _options.InputLengthRestrictions.RefreshToken)
                 {
-                    throw new InvalidRequestException("RefreshToken too long");
+                    throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "RefreshToken too long");
                 }
                 var grantContext = new RefreshTokenGrantValidationRequest(refreshToken, request);
                 var grantValidator = context.RequestServices.GetRequiredService<IRefreshTokenGrantValidator>();
@@ -156,19 +156,19 @@ namespace IdentityServer.Endpoints
                 var password = request.Raw[OpenIdConnectParameterNames.Password];
                 if (string.IsNullOrEmpty(username))
                 {
-                    throw new InvalidRequestException("Username is missing");
+                    throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "Username is missing");
                 }
                 if (username.Length > _options.InputLengthRestrictions.UserName)
                 {
-                    throw new InvalidRequestException("Username too long");
+                    throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "Username too long");
                 }
                 if (string.IsNullOrEmpty(password))
                 {
-                    throw new InvalidRequestException("Password is missing");
+                    throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "Password is missing");
                 }
                 if (password.Length > _options.InputLengthRestrictions.Password)
                 {
-                    throw new InvalidRequestException("Password too long");
+                    throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "Password too long");
                 }
                 var grantContext = new PasswordGrantValidationRequest(
                     request: request,

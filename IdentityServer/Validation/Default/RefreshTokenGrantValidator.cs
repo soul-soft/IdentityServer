@@ -20,24 +20,13 @@ namespace IdentityServer.Validation
             var refreshToken = await _refreshTokenStore.FindRefreshTokenAsync(context.RefreshToken);
             if (refreshToken == null)
             {
-                throw new InvalidGrantException("Invalid refresh token");
+                throw new ValidationException(OpenIdConnectErrors.InvalidGrant, "Invalid refresh token");
             }
             if (_clock.UtcNow.UtcDateTime > refreshToken.Expiration)
             {
                 await _refreshTokenStore.RevomeRefreshTokenAsync(refreshToken);
-                throw new InvalidGrantException("Refresh token has expired");
+                throw new ValidationException(OpenIdConnectErrors.InvalidGrant, "Refresh token has expired");
             }
-            //if (refreshToken.AccessToken.ClientId != context.Request.Client.ClientId)
-            //{
-            //    throw new InvalidGrantException("The client ID of refreshtoken is change");
-            //}
-            //foreach (var item in context.Request.Scopes)
-            //{
-            //    if (!refreshToken.AccessToken.Scopes.Contains(item))
-            //    {
-            //        throw new InvalidGrantException("Unable to expand scope");
-            //    }
-            //}
             await _refreshTokenStore.RevomeRefreshTokenAsync(refreshToken);
         }
     }

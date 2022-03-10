@@ -45,7 +45,7 @@ namespace IdentityServer.Endpoints
             var clientId = subject.GetClientId();
             if (string.IsNullOrWhiteSpace(clientId))
             {
-                return Unauthorized(OpenIdConnectErrors.InvalidGrant, "ClientId claim is missing");
+                return Unauthorized(OpenIdConnectErrors.InsufficientScope, "ClientId claim is missing");
             }
             var client = await _clients.FindByClientIdAsync(clientId);
             if (client == null)

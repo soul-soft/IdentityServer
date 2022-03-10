@@ -4,7 +4,7 @@
     {
         public Task ValidateAsync(PasswordGrantValidationRequest context)
         {
-            throw new InvalidGrantException("Invalid username or password");
+            throw new ValidationException(OpenIdConnectErrors.InvalidGrant, "Invalid username or password");
         }
     }
 }

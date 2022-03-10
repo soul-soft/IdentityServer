@@ -1,4 +1,5 @@
-﻿using IdentityServer.Validation;
+﻿using IdentityServer.Models;
+using IdentityServer.Validation;
 
 namespace Hosting.Configuration
 {
@@ -10,7 +11,7 @@ namespace Hosting.Configuration
             {
                 return Task.CompletedTask;
             }
-            throw new InvalidGrantException("用户名或密码错误");
+            throw new ValidationException(OpenIdConnectErrors.InvalidGrant, "用户名或密码错误");
         }
     }
 }

@@ -32,7 +32,7 @@ namespace IdentityServer.Endpoints
                 TokenEndpoint = baseUrl + Constants.EndpointRoutePaths.Token,
                 UserInfoEndpoint = baseUrl + Constants.EndpointRoutePaths.UserInfo
             };
-            var grantTypes = _extensionGrantValidators.GetCustomGrantTypes();
+            var grantTypes = _extensionGrantValidators.GetExtensionGrantTypes();
             foreach (var item in grantTypes)
             {
                 configuration.GrantTypesSupported.Add(item);

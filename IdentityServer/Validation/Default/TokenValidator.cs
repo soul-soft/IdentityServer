@@ -32,7 +32,7 @@ namespace IdentityServer.Validation
             IEnumerable<Claim> claims;
             if (token.Length > _options.InputLengthRestrictions.AccessToken)
             {
-                throw new InvalidTokenException("Access token too long");
+                throw new ValidationException(OpenIdConnectErrors.InvalidToken, "Access token too long");
             }
             if (token.Contains('.'))
             {
@@ -61,11 +61,11 @@ namespace IdentityServer.Validation
             {
                 if (result.Exception is SecurityTokenExpiredException securityTokenExpiredException)
                 {
-                    throw new ExpiredTokenException(securityTokenExpiredException.Message);
+                    throw new ValidationException(OpenIdConnectErrors.ExpiredToken, securityTokenExpiredException.Message);
                 }
                 else
                 {
-                    throw new InvalidTokenException(result.Exception.Message);
+                    throw new ValidationException(OpenIdConnectErrors.InvalidToken, result.Exception.Message);
                 }
             }
             return result.ClaimsIdentity.Claims;
@@ -76,15 +76,15 @@ namespace IdentityServer.Validation
             var token = await _referenceTokenStore.FindTokenAsync(tokenReference);
             if (token == null)
             {
-                throw new InvalidTokenException("Invalid token");
+                throw new ValidationException(OpenIdConnectErrors.InvalidToken, "Invalid reference token");
             }
             if (token.Expiration < _systemClock.UtcNow.UtcDateTime)
             {
-                throw new ExpiredTokenException("The access token has expired");
+                throw new ValidationException(OpenIdConnectErrors.ExpiredToken, "The access token has expired");
             }
             if (token.Issuer != _serverUrl.GetIssuerUrl())
             {
-                throw new InvalidTokenException("Invalid issuer");
+                throw new ValidationException(OpenIdConnectErrors.InvalidToken, "Invalid issuer");
             }
             return token.GetJwtClaims();
         }

@@ -22,9 +22,9 @@ namespace IdentityServer.Storage
             var jwks = _descriptor.Select(descriptor =>
             {
                 JsonWebKey jwk;
-                if (descriptor.Key is JsonWebKey)
+                if (descriptor.Key is JsonWebKey jsonWebKey)
                 {
-                    jwk = (JsonWebKey)descriptor.Key;
+                    jwk = jsonWebKey;
                 }
                 else
                 {
@@ -43,16 +43,14 @@ namespace IdentityServer.Storage
 
         public Task<SigningCredentials> GetSigningCredentialsByAlgorithmsAsync(IEnumerable<string> algorithms)
         {
-            if (algorithms.Count() == 0)
+            if (!algorithms.Any())
             {
                 return Task.FromResult(_descriptor.First().SigningCredentials);
             }
-
             var credential = _descriptor
                     .Where(a => algorithms.Contains(a.SigningAlgorithm))
                     .FirstOrDefault()
                     ?? _descriptor.First();
-
             return Task.FromResult(credential.SigningCredentials);
         }
     }

@@ -16,12 +16,12 @@
                 .FirstOrDefault();
             if (validator == null)
             {
-                throw new InvalidRequestException(string.Format("Unrealized grant type:", context.Request.GrantType));
+                throw new ValidationException(OpenIdConnectErrors.InvalidRequest, $"Unsupported grant type '{context.Request.GrantType}'");
             }
             return validator.ValidateAsync(context);
         }
 
-        public IEnumerable<string> GetCustomGrantTypes()
+        public IEnumerable<string> GetExtensionGrantTypes()
         {
             return _extensions.Select(a => a.GrantType).ToList();
         }

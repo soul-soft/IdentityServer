@@ -37,7 +37,7 @@ namespace IdentityServer.Hosting
             }
             catch (ValidationException ex)
             {
-                if (ex is InvalidTokenException || ex is ExpiredTokenException)
+                if (ex.Error == OpenIdConnectErrors.ExpiredToken|| ex.Error == OpenIdConnectErrors.InvalidToken)
                 {
                     var result = new UnauthorizedResult(ex.Error, ex.ErrorDescription);
                     await result.ExecuteAsync(context);
