@@ -11,6 +11,7 @@
             public const string Discovery = "Discovery";
             public const string DiscoveryJwks = "Jwks";
             public const string UserInfo = "Userinfo";
+            public const string Introspection = "Introspection";
         }
 
         public static class EndpointRoutePaths
@@ -26,6 +27,8 @@
             public const string Token = ConnectPathPrefix + "/token";
 
             public const string UserInfo = ConnectPathPrefix + "/userinfo";
+
+            public const string Introspection = ConnectPathPrefix + "/introspect";
         }
 
         public static class AuthenticationSchemes

@@ -7,6 +7,7 @@
         public bool EnableTokenEndpoint { get; set; } = true;
         public bool EnableUserInfoEndpoint { get; set; } = true;
         public bool EnableAuthorizeEndpoint { get; set; } = true;
+        public bool EnableIntrospectionEndpoint { get; set; } = true;
 
         public bool IsEndpointEnabled(Endpoint endpoint)
         {
@@ -25,6 +26,10 @@
             else if (endpoint.Name == Constants.EndpointNames.UserInfo)
             {
                 return EnableUserInfoEndpoint;
+            }
+            else if (endpoint.Name == Constants.EndpointNames.Introspection)
+            {
+                return EnableIntrospectionEndpoint;
             }
             return false;
         }
