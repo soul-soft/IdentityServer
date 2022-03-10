@@ -20,6 +20,10 @@ namespace IdentityServer.Endpoints
         public Task ExecuteAsync(HttpContext context)
         {
             context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            if (Error == OpenIdConnectErrors.InsufficientScope)
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+            }
             var errorString = string.Format($"error=\"{Error}\"");
             if (string.IsNullOrEmpty(ErrorDescription))
             {

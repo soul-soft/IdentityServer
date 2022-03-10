@@ -8,25 +8,28 @@ namespace IdentityServer.Endpoints
     public class TokenEndpoint : EndpointBase
     {
         private readonly IClientStore _clients;
-        private readonly ITokenResponseGenerator _generator;
+        private readonly IResourceStore _resourceStore;
         private readonly IdentityServerOptions _options;
-        private readonly IScopeValidator _scopeValidator;
+        private readonly ITokenResponseGenerator _generator;
+        private readonly IResourceValidator _resourceValidator;
         private readonly SecretValidatorCollection _secretValidators;
         private readonly ClientCredentialsParserCollection _clientCredentialsParsers;
 
         public TokenEndpoint(
             IClientStore clients,
-            ITokenResponseGenerator generator,
+            IResourceStore resourceStore,
             IdentityServerOptions options,
-            IScopeValidator scopeValidator,
+            ITokenResponseGenerator generator,
+            IResourceValidator resourceValidator,
             SecretValidatorCollection secretValidators,
             ClientCredentialsParserCollection clientCredentialsParsers)
         {
             _clients = clients;
             _options = options;
             _generator = generator;
-            _scopeValidator = scopeValidator;
+            _resourceStore = resourceStore;
             _secretValidators = secretValidators;
+            _resourceValidator = resourceValidator;
             _clientCredentialsParsers = clientCredentialsParsers;
         }
 
@@ -56,20 +59,34 @@ namespace IdentityServer.Endpoints
             }
             #endregion
 
-            #region Validate Scopes
+            #region Validate Resources
             var form = (await context.Request.ReadFormAsync()).AsNameValueCollection();
             var scope = form[OpenIdConnectParameterNames.Scope] ?? string.Empty;
             if (scope.Length > _options.InputLengthRestrictions.Scope)
             {
                 return BadRequest(OpenIdConnectTokenErrors.InvalidScope, "Scope is too long");
             }
-            if (string.IsNullOrEmpty(scope))
+            var scopes = scope.Split(",").Where(a => !string.IsNullOrWhiteSpace(a));
+            if (scopes.Any())
             {
-                scope = string.Join(",", client.AllowedScopes);
+                foreach (var item in scopes)
+                {
+                    if (!client.AllowedScopes.Contains(item))
+                    {
+                        return BadRequest(OpenIdConnectTokenErrors.InvalidScope, $"Scope '{item}' not allowed");
+                    }
+                }
             }
-            var scopes = scope.Split(",")
-                .Where(a => !string.IsNullOrWhiteSpace(a));
-            var resources = await _scopeValidator.ValidateAsync(client.AllowedScopes, scopes);
+            else
+            {
+                scopes = client.AllowedScopes;
+            }
+            if (!scopes.Any())
+            {
+                return BadRequest(OpenIdConnectTokenErrors.InvalidScope, "No allowed scopes configured for client");
+            }
+            var resources = await _resourceStore.FindResourceByScopesAsync(scopes);
+            await _resourceValidator.ValidateAsync(scopes, resources);
             #endregion
 
             #region Validate GrantType

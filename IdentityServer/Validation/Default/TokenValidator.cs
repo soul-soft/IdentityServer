@@ -27,7 +27,7 @@ namespace IdentityServer.Validation
             _referenceTokenStore = referenceTokenStore;
         }
 
-        public async Task<IEnumerable<Claim>> ValidateAsync(string token)
+        public async Task<IEnumerable<Claim>> ValidateAccessTokenAsync(string token)
         {
             IEnumerable<Claim> claims;
             if (token.Length > _options.InputLengthRestrictions.AccessToken)

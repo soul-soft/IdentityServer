@@ -14,7 +14,9 @@
         public const string ExpiredToken = "expired_token";
         public const string InvalidTarget = "invalid_target";
         public const string InvalidToken = "invalid_token";
+        public const string InsufficientScope = "insufficient_scope";
     }
+   
     public class OpenIdConnectTokenErrors
     {
         public const string InvalidRequest = "invalid_request";

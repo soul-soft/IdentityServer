@@ -49,7 +49,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             builder.Services.AddTransient<SecretValidatorCollection>();
             builder.Services.AddTransient<ExtensionGrantValidatorCollection>();
-            builder.Services.TryAddTransient<IScopeValidator, ScopeValidator>();
+            builder.Services.TryAddTransient<IResourceValidator, ResourceValidator>();
             builder.Services.TryAddTransient<ITokenValidator, TokenValidator>();
             builder.Services.TryAddTransient<ISecretValidator, SharedSecretValidator>();
             builder.Services.TryAddTransient<IRefreshTokenGrantValidator, RefreshTokenGrantValidator>();

@@ -34,7 +34,7 @@ namespace IdentityServer.Hosting
                 {
                     return AuthenticateResult.NoResult();
                 }
-                var claims = await _tokenValidator.ValidateAsync(token);
+                var claims = await _tokenValidator.ValidateAccessTokenAsync(token);
                 var properties = new AuthenticationProperties();
                 if (Options.SaveToken)
                 {
