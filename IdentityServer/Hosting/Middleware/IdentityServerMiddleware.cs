@@ -35,7 +35,7 @@ namespace IdentityServer.Hosting
                 var result = await endpoint.ProcessAsync(context);
                 await result.ExecuteAsync(context);
             }
-            catch (InvalidException ex)
+            catch (ValidationException ex)
             {
                 var result = new BadRequestResult(ex.Error, ex.ErrorDescription);
                 await result.ExecuteAsync(context);

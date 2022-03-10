@@ -11,7 +11,7 @@
             _tokenService = tokenService;
         }
 
-        public async Task<TokenResponse> ProcessAsync(ValidatedTokenRequest request)
+        public async Task<TokenResponse> ProcessAsync(TokenValidatedRequest request)
         {
             (string accessToken, string? refreshToken) = await CreateAccessTokenAsync(request);
             var scope = string.Join(",", request.Resources.Scopes);
@@ -25,7 +25,7 @@
             return response;
         }
 
-        private async Task<(string accessToken, string? refreshToken)> CreateAccessTokenAsync(ValidatedTokenRequest request)
+        private async Task<(string accessToken, string? refreshToken)> CreateAccessTokenAsync(TokenValidatedRequest request)
         {
             var token = await _tokenService.CreateAccessTokenAsync(request);
 

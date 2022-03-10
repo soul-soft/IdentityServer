@@ -30,23 +30,22 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
-
 builder.Services.AddAuthentication("Bearer")
-.AddJwtBearer("Bearer", options =>
-{
-    options.Authority = "https://localhost:7150/";
-    options.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents
+    .AddJwtBearer("Bearer", options =>
     {
-        OnMessageReceived = async (c) =>
+        options.Authority = "https://localhost:7150/";
+        options.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents
         {
-            await Task.CompletedTask;
-        }
-    };
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateAudience = false
-    };
-});
+            OnMessageReceived = async (c) =>
+            {
+                await Task.CompletedTask;
+            }
+        };
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = false
+        };
+    });
 
 var app = builder.Build();
 

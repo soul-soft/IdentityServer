@@ -1,4 +1,5 @@
 using IdentityModel.Client;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiHost.Controllers
@@ -15,6 +16,7 @@ namespace ApiHost.Controllers
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
+        [Authorize]
         public async Task<object> GetAsync()
         {
             var client = new HttpClient();

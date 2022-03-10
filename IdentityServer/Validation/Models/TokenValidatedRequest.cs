@@ -2,14 +2,14 @@
 
 namespace IdentityServer.Models
 {
-    public class ValidatedTokenRequest
+    public class TokenValidatedRequest
     {
         public string GrantType { get; }
         public Client Client { get; }
         public ResourceCollection Resources { get; }
         public IdentityServerOptions Options { get; }
 
-        public ValidatedTokenRequest(string grantType, Client client, ResourceCollection resources, IdentityServerOptions options)
+        public TokenValidatedRequest(string grantType, Client client, ResourceCollection resources, IdentityServerOptions options)
         {
             GrantType = grantType;
             Client = client;

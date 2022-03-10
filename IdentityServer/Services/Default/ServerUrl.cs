@@ -17,12 +17,7 @@ namespace IdentityServer.Services
                 ?? throw new ArgumentNullException(nameof(accessor));
         }
 
-        public string GetBasePath()
-        {
-            throw new NotImplementedException();
-        }
-
-        public string GetDefaultOriginUrl()
+        public string GetServerUrl()
         {
             var request = _context.Request;
             var url = request.Scheme + "://" + request.Host.ToUriComponent();
@@ -31,12 +26,12 @@ namespace IdentityServer.Services
             return url;
         }
         
-        public string GetOriginUrl()
+        public string GetIssuerUrl()
         {
             var url = _options.IssuerUri;
             if (string.IsNullOrEmpty(url))
             {
-                url = GetDefaultOriginUrl();
+                url = GetServerUrl();
             }
             if (_options.LowerCaseIssuerUri)
             {

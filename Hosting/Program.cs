@@ -18,8 +18,6 @@ builder.Services.AddAuthorization()
     });
 builder.Services.AddIdentityServer(o =>
     {
-        o.Issuer = "microsoft";
-        o.IssuerUri = null;
     })
     .AddPasswordGrantValidator<PasswordGrantValidator>()
     .AddExtensionGrantValidator<MyExtensionGrantValidator>()

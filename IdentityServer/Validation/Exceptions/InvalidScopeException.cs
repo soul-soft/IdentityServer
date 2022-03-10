@@ -1,9 +1,9 @@
 ﻿namespace IdentityServer.Validation
 {
-    public class InvalidScopeException : InvalidException
+    public class InvalidScopeException : ValidationException
     {
         public InvalidScopeException(string errorDescription)
-            : base(ProtectedErrors.InvalidScope, errorDescription)
+            : base(OpenIdConnectErrors.InvalidScope, errorDescription)
         {
 
         }

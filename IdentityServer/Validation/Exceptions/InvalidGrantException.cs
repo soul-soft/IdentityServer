@@ -1,9 +1,9 @@
 ﻿namespace IdentityServer.Validation
 {
-    public class InvalidGrantException : InvalidException
+    public class InvalidGrantException : ValidationException
     {
         public InvalidGrantException(string errorDescription)
-            : base(ProtectedErrors.InvalidGrant, errorDescription)
+            : base(OpenIdConnectErrors.InvalidGrant, errorDescription)
         {
 
         }

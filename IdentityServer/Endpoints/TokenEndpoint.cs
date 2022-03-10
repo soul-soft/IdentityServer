@@ -39,7 +39,7 @@ namespace IdentityServer.Endpoints
             }
             if (!context.Request.HasFormContentType)
             {
-                return BadRequest(ProtectedErrors.InvalidRequest, "Invalid contextType");
+                return BadRequest(OpenIdConnectErrors.InvalidRequest, "Invalid contextType");
             }
             #endregion
 
@@ -101,7 +101,7 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Generator Response
-            var validatedTokenRequest = new ValidatedTokenRequest(grantType, client, resources, _options);
+            var validatedTokenRequest = new TokenValidatedRequest(grantType, client, resources, _options);
             var response = await _generator.ProcessAsync(validatedTokenRequest);
             return TokenEndpointResult(response);
             #endregion
@@ -129,7 +129,7 @@ namespace IdentityServer.Endpoints
             else if (GrantTypes.ClientCredentials.Equals(request.GrantType))
             {
                 var grantContext = new ClientGrantValidationRequest(request);
-                var grantValidator = context.RequestServices.GetRequiredService<IClientGrantValidator>();
+                var grantValidator = context.RequestServices.GetRequiredService<IClientCredentialsGrantValidator>();
                 await grantValidator.ValidateAsync(grantContext);
             }
             //验证资源所有者密码授权

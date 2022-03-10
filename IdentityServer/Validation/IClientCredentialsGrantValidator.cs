@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Validation
 {
-    public interface IClientGrantValidator
+    public interface IClientCredentialsGrantValidator
     {
         Task ValidateAsync(ClientGrantValidationRequest context);
     }

@@ -2,13 +2,13 @@
 
 namespace IdentityServer.Validation
 {
-    internal class SharedClientCredentialsValidator : IClientCredentialsValidator
+    internal class SharedSecretValidator : ISecretValidator
     {
         public string CredentialsType => ClientSecretTypes.SharedSecret;
 
         private readonly ISystemClock _clock;
 
-        public SharedClientCredentialsValidator(ISystemClock clock)
+        public SharedSecretValidator(ISystemClock clock)
         {
             _clock = clock;
         }

@@ -28,7 +28,7 @@ namespace IdentityServer.Services
             _securityTokenService = securityTokenService;
         }
 
-        public async Task<Token> CreateAccessTokenAsync(ValidatedTokenRequest request)
+        public async Task<Token> CreateAccessTokenAsync(TokenValidatedRequest request)
         {
             var id = await _handleGenerator.GenerateAsync();
             var claims = await _claimsService.GetAccessTokenClaimsAsync(request);
@@ -46,7 +46,7 @@ namespace IdentityServer.Services
             return token;
         }
 
-        public async Task<Token> CreateIdentityTokenAsync(ValidatedTokenRequest request)
+        public async Task<Token> CreateIdentityTokenAsync(TokenValidatedRequest request)
         {
             var handle = await _handleGenerator.GenerateAsync();
             var claims = await _claimsService.GetIdentityTokenClaimsAsync(request);

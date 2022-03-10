@@ -1,12 +1,12 @@
 ﻿namespace IdentityServer.Validation
 {
-    public class InvalidException : Exception
+    public class ValidationException : Exception
     {
         public string Error { get; }
 
         public string? ErrorDescription { get; }
 
-        public InvalidException(string error, string errorDescription)
+        public ValidationException(string error, string errorDescription)
             : base(errorDescription)
         {
             Error = error;

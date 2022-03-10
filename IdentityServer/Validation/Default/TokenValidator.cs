@@ -1,35 +1,35 @@
 ﻿using Microsoft.AspNetCore.Authentication;
-using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 
 namespace IdentityServer.Validation
 {
     internal class TokenValidator : ITokenValidator
     {
+        private readonly IServerUrl _serverUrl;
         private readonly ISystemClock _systemClock;
         private readonly IdentityServerOptions _options;
         private readonly ISigningCredentialStore _credentials;
         private readonly ITokenStore _referenceTokenStore;
 
         public TokenValidator(
+            IServerUrl serverUrl,
             ISystemClock systemClock,
             IdentityServerOptions options,
             ISigningCredentialStore credentials,
             ITokenStore referenceTokenStore)
         {
             _options = options;
+            _serverUrl = serverUrl;
             _systemClock = systemClock;
             _credentials = credentials;
             _referenceTokenStore = referenceTokenStore;
         }
 
-        public async Task<ClaimsPrincipal> ValidateAsync(string? token)
+        public async Task<IEnumerable<Claim>> ValidateAsync(string token)
         {
             IEnumerable<Claim> claims;
-            if (string.IsNullOrWhiteSpace(token))
-            {
-                throw new InvalidTokenException("Access token is missing");
-            }
             if (token.Length > _options.InputLengthRestrictions.AccessToken)
             {
                 throw new InvalidTokenException("Access token too long");
@@ -42,34 +42,33 @@ namespace IdentityServer.Validation
             {
                 claims = await ValidateReferenceTokenAsync(token);
             }
-            var identity = new ClaimsIdentity(_options.AuthenticationOptions.Scheme);
-            identity.AddClaims(claims);
-            return new ClaimsPrincipal(identity);
+            return claims;
         }
 
         private async Task<IEnumerable<Claim>> ValidateJwtTokenAsync(string token)
         {
-            try
+            var handler = new JsonWebTokenHandler();
+            var securityKeys = await _credentials.GetSecurityKeysAsync();
+            var parameters = new TokenValidationParameters
             {
-                var handler = new JwtSecurityTokenHandler();
-                handler.InboundClaimTypeMap.Clear();
-                var securityKeys = await _credentials.GetSecurityKeysAsync();                
-                var parameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                ValidateIssuer = true,
+                ValidateAudience = false,
+                ValidIssuer = _serverUrl.GetIssuerUrl(),
+                IssuerSigningKeys = securityKeys,
+            };
+            var result = handler.ValidateToken(token, parameters);
+            if (!result.IsValid)
+            {
+                if (result.Exception is SecurityTokenExpiredException securityTokenExpiredException)
                 {
-                    ValidIssuer = _options.Issuer,
-                    IssuerSigningKeys = securityKeys,
-                    ValidAudience = _options.AuthenticationOptions.ValidAudience,
-                    ValidateIssuer = _options.AuthenticationOptions.ValidateIssuer,
-                    ValidateAudience = _options.AuthenticationOptions.ValidateAudience,
-                    ValidateLifetime = _options.AuthenticationOptions.ValidateLifetime,
-                };
-                var subject = handler.ValidateToken(token, parameters, out var securityToken);
-                return subject.Claims;
+                    throw new ExpiredTokenException(securityTokenExpiredException.Message);
+                }
+                else
+                {
+                    throw new InvalidTokenException(result.Exception.Message);
+                }
             }
-            catch (Exception ex)
-            {
-                throw new InvalidTokenException(ex.Message);
-            }
+            return result.ClaimsIdentity.Claims;
         }
 
         private async Task<IEnumerable<Claim>> ValidateReferenceTokenAsync(string tokenReference)
@@ -79,15 +78,15 @@ namespace IdentityServer.Validation
             {
                 throw new InvalidTokenException("Invalid token");
             }
-            if (_options.AuthenticationOptions.ValidateLifetime && token.Expiration < _systemClock.UtcNow.UtcDateTime)
+            if (token.Expiration < _systemClock.UtcNow.UtcDateTime)
             {
-                throw new InvalidTokenException("The access token has expired");
+                throw new ExpiredTokenException("The access token has expired");
             }
-            if (_options.AuthenticationOptions.ValidateIssuer && token.Issuer != _options.Issuer)
+            if (token.Issuer != _serverUrl.GetIssuerUrl())
             {
                 throw new InvalidTokenException("Invalid issuer");
             }
-            return token.GetJwtPayloadClaims();
+            return token.GetJwtClaims();
         }
     }
 }

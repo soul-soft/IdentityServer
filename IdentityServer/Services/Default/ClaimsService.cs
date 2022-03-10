@@ -4,26 +4,30 @@ namespace IdentityServer.Services
 {
     public class ClaimsService : IClaimsService
     {
+        private readonly IServerUrl _serverUrl;
         private readonly IProfileService _profileService;
 
-        public ClaimsService(IProfileService profileService)
+        public ClaimsService(
+            IServerUrl serverUrl,
+            IProfileService profileService)
         {
+            _serverUrl = serverUrl;
             _profileService = profileService;
         }
 
-        public async Task<IEnumerable<Claim>> GetAccessTokenClaimsAsync(ValidatedTokenRequest request)
+        public async Task<IEnumerable<Claim>> GetAccessTokenClaimsAsync(TokenValidatedRequest request)
         {
             var claims = await GetAllowedClaimsAsync(request);
             return claims;
         }
 
-        public async Task<IEnumerable<Claim>> GetIdentityTokenClaimsAsync(ValidatedTokenRequest request)
+        public async Task<IEnumerable<Claim>> GetIdentityTokenClaimsAsync(TokenValidatedRequest request)
         {
             var claims = await GetAllowedClaimsAsync(request);
             return claims;
         }
 
-        private async Task<List<Claim>> GetAllowedClaimsAsync(ValidatedTokenRequest request)
+        private async Task<List<Claim>> GetAllowedClaimsAsync(TokenValidatedRequest request)
         {
             var claims = new List<Claim>();
 
@@ -31,7 +35,7 @@ namespace IdentityServer.Services
             claims.Add(new Claim(JwtClaimTypes.ClientId, request.Client.ClientId));
 
             //issuer
-            claims.Add(new Claim(JwtClaimTypes.Issuer, request.Options.Issuer));
+            claims.Add(new Claim(JwtClaimTypes.Issuer, _serverUrl.GetIssuerUrl()));
 
             //audience
             foreach (var item in request.Resources.ApiResources)

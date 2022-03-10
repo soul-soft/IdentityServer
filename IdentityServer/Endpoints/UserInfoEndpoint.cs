@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace IdentityServer.Endpoints
 {
@@ -36,7 +37,8 @@ namespace IdentityServer.Endpoints
                 {
                     throw new InvalidRequestException("Token is miss");
                 }
-                var subject = await _tokenValidator.ValidateAsync(token);
+                var claims = await _tokenValidator.ValidateAsync(token);
+                var subject = new ClaimsPrincipal(new ClaimsIdentity(claims, "Local"));
                 var sub = subject.GetSubjectId();
                 if (string.IsNullOrWhiteSpace(sub))
                 {
@@ -54,10 +56,10 @@ namespace IdentityServer.Endpoints
                 }
                 var scopes = await _scopeParser.ParseAsync(subject);
                 var resources = await _scopeValidator.ValidateAsync(client.AllowedScopes, scopes);
-                var response = await _generator.ProcessAsync(new UserInfoGeneratorRequest(client, subject,  resources));
+                var response = await _generator.ProcessAsync(new UserInfoGeneratorRequest(client, subject, resources));
                 return new UserInfoResult(response);
             }
-            catch (InvalidException ex)
+            catch (ValidationException ex)
             {
                 return Unauthorized(ex.Error, ex.ErrorDescription);
             }

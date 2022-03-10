@@ -2,8 +2,7 @@
 {
     public class IdentityServerOptions
     {
-        public string Issuer { get; set; } = "identityserver";
-        public string? IssuerUri { get; set; }
+        public string IssuerUri { get; set; } = string.Empty;
         public string IdentityProvider { get; set; } = "local";
         public bool IncludeEndpointErrorDetails { get; set; } = true;
         public InputLengthRestrictions InputLengthRestrictions { get; set; } = new InputLengthRestrictions();
@@ -12,7 +11,6 @@
         public bool LowerCaseIssuerUri { get; set; } = true;
         public string? AccessTokenJwtType { get; set; } = "at+jwt";
         public bool EmitScopesAsSpaceDelimitedStringInJwt { get; set; } = true;
-        public string TokenEndpointAuthMethod { get; set; } = TokenEndpointAuthMethods.PostBody;
-        public AuthenticationOptions AuthenticationOptions { get; set; } = new AuthenticationOptions();
+        public string TokenEndpointAuthMethod { get; set; } = TokenEndpointAuthMethods.PostBody;  
     }
 }

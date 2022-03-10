@@ -2,14 +2,14 @@
 {
     public class SecretValidatorCollection
     {
-        private readonly IEnumerable<IClientCredentialsValidator> _secretValidators;
+        private readonly IEnumerable<ISecretValidator> _secretValidators;
 
-        public SecretValidatorCollection(IEnumerable<IClientCredentialsValidator> secretValidators)
+        public SecretValidatorCollection(IEnumerable<ISecretValidator> secretValidators)
         {
             _secretValidators = secretValidators;
         }
 
-        public IClientCredentialsValidator GetSecretValidator(string credentialsType)
+        public ISecretValidator GetSecretValidator(string credentialsType)
         {
             return _secretValidators
                 .Where(a => a.CredentialsType == credentialsType)

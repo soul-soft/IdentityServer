@@ -4,7 +4,7 @@ namespace IdentityServer.Models
 {
     public static class TokenExtensions
     {
-        public static IEnumerable<Claim> GetJwtPayloadClaims(this Token token)
+        public static IEnumerable<Claim> GetJwtClaims(this Token token)
         {
             var now = new DateTimeOffset(token.CreationTime).ToUnixTimeSeconds();
             var exp = now + token.Lifetime;

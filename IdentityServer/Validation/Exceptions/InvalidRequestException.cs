@@ -1,9 +1,9 @@
 ﻿namespace IdentityServer.Validation
 {
-    public class InvalidRequestException : InvalidException
+    public class InvalidRequestException : ValidationException
     {
         public InvalidRequestException(string errorDescription)
-            : base(ProtectedErrors.InvalidRequest, errorDescription)
+            : base(OpenIdConnectErrors.InvalidRequest, errorDescription)
         {
 
         }

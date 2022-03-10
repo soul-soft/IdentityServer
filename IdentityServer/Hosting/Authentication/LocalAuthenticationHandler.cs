@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Security.Claims;
 using System.Text.Encodings.Web;
 
 namespace IdentityServer.Hosting
@@ -29,11 +30,11 @@ namespace IdentityServer.Hosting
             try
             {
                 var token = await _tokenParser.ParserAsync(Context);
-                if (token == null)
+                if (string.IsNullOrEmpty(token))
                 {
                     return AuthenticateResult.NoResult();
                 }
-                var subject = await _tokenValidator.ValidateAsync(token);
+                var claims = await _tokenValidator.ValidateAsync(token);
                 var properties = new AuthenticationProperties();
                 if (Options.SaveToken)
                 {
@@ -42,6 +43,7 @@ namespace IdentityServer.Hosting
                         new AuthenticationToken { Name = "access_token", Value = token }
                     });
                 }
+                var subject = new ClaimsPrincipal(new ClaimsIdentity(claims, Scheme.Name));
                 var ticket = new AuthenticationTicket(subject, properties, Scheme.Name);
                 return AuthenticateResult.Success(ticket);
             }
