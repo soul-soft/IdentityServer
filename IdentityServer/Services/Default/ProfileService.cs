@@ -10,9 +10,9 @@ namespace IdentityServer.Services
             return Task.FromResult(result);
         }
 
-        public Task<Dictionary<string, object?>> GetProfileDataAsync(ProfileDataRequestContext context)
+        public Task<IEnumerable<Profile>> GetUserInfoAsync(UserInfoRequestContext context)
         {
-            var result = new Dictionary<string, object?>();
+            IEnumerable<Profile> result = Array.Empty<Profile>();
             return Task.FromResult(result);
         }
     }

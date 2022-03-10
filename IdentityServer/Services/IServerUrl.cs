@@ -2,6 +2,7 @@
 {
     public interface IServerUrl
     {
-        string GetIssuerUri();
+        string GetOriginUrl();
+        string GetBasePath();
     }
 }

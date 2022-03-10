@@ -14,15 +14,16 @@ namespace IdentityServer.Endpoints
 
         public string Serialize()
         {
-            var keys = Jwks.Select(jwk =>
-            {
-                return Map(jwk);
-            }).ToArray();
-            var keySet = new { Keys = keys };
+            var keys = Jwks.Select(jwk => MapKey(jwk))
+                .ToArray();
+            var keySet = new 
+            { 
+                Keys = keys 
+            };
             return ObjectSerializer.Serialize(keySet);
         }
 
-        public static object Map(JsonWebKey jsonWebKey)
+        public static object MapKey(JsonWebKey jsonWebKey)
         {
             return new
             {

@@ -7,17 +7,18 @@ namespace IdentityServer.Endpoints
         public string? IdentityToken { get; set; }
         public string? AccessToken { get; set; }
         public string? RefreshToken { get; set; }
-        public int? AccessTokenLifetime { get; set; }
+        public int? TokenLifetime { get; set; }
         public string? Scope { get; set; }
+       
         public string Serialize()
         {
-            var token = new
+            var token = new 
             {
-                id_token = IdentityToken,
-                access_token = AccessToken,
-                refresh_token = RefreshToken,
-                expires_in = AccessTokenLifetime,
-                scope = Scope
+                id_token= IdentityToken,
+                access_token= AccessToken,
+                refresh_token= RefreshToken,
+                expires_in= TokenLifetime,
+                scope= Scope,
             };
             return ObjectSerializer.Serialize(token);
         }

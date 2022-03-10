@@ -6,11 +6,11 @@ namespace IdentityServer.Services
     internal class SecurityTokenService : ISecurityTokenService
     {
         private readonly IdentityServerOptions _options;
-        private readonly ISigningCredentialsStore _credentials;
+        private readonly ISigningCredentialStore _credentials;
 
         public SecurityTokenService(
             IdentityServerOptions options,
-            ISigningCredentialsStore credentials)
+            ISigningCredentialStore credentials)
         {
             _options = options;
             _credentials = credentials;

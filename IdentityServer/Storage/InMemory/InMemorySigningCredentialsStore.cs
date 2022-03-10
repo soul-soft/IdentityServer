@@ -2,7 +2,7 @@
 
 namespace IdentityServer.Storage
 {
-    internal class InMemorySigningCredentialsStore : ISigningCredentialsStore
+    internal class InMemorySigningCredentialsStore : ISigningCredentialStore
     {
         private readonly IEnumerable<SigningCredentialsDescriptor> _descriptor;
 
@@ -21,14 +21,22 @@ namespace IdentityServer.Storage
         {
             var jwks = _descriptor.Select(descriptor =>
             {
-                var jwk = JsonWebKeyConverter.ConvertFromSecurityKey(descriptor.Key);
-                jwk.Alg = descriptor.SigningAlgorithm;
+                JsonWebKey jwk;
+                if (descriptor.Key is JsonWebKey)
+                {
+                    jwk = (JsonWebKey)descriptor.Key;
+                }
+                else
+                {
+                    jwk = JsonWebKeyConverter.ConvertFromSecurityKey(descriptor.Key);
+                    jwk.Alg = descriptor.SigningAlgorithm;
+                }
                 return jwk;
             });
             return Task.FromResult(jwks);
         }
 
-        public Task<IEnumerable<SigningCredentialsDescriptor>> GetSigningCredentialsDescriptorAsync()
+        public Task<IEnumerable<SigningCredentialsDescriptor>> GetSigningCredentialsAsync()
         {
             return Task.FromResult(_descriptor);
         }

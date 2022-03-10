@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace IdentityServer.Serialization
 {
-    internal static class ObjectSerializer
+    public static class ObjectSerializer
     {
         public readonly static JsonSerializerOptions JsonSerializerOptions;
 
@@ -12,8 +12,6 @@ namespace IdentityServer.Serialization
         {
             JsonSerializerOptions = new JsonSerializerOptions
             {
-                IgnoreReadOnlyFields = true,
-                IgnoreReadOnlyProperties = true,
                 DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,

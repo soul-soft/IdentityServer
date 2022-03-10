@@ -7,7 +7,7 @@ namespace IdentityServer.Services
     {
         private readonly ISystemClock _clock;
         private readonly IClaimsService _claimsService;
-        private readonly IHandleGenerator _identifyGenerator;
+        private readonly IHandleGenerator _handleGenerator;
         private readonly IRefreshTokenStore _refreshTokenStore;
         private readonly ITokenStore _referenceTokenStore;
         private readonly ISecurityTokenService _securityTokenService;
@@ -15,22 +15,22 @@ namespace IdentityServer.Services
         public TokenService(
             ISystemClock clock,
             IClaimsService claimsService,
-            IHandleGenerator identifyGenerator,
+            IHandleGenerator handleGenerator,
             IRefreshTokenStore refreshTokenStore,
             ITokenStore referenceTokenService,
             ISecurityTokenService securityTokenService)
         {
             _clock = clock;
             _claimsService = claimsService;
+            _handleGenerator = handleGenerator;
             _refreshTokenStore = refreshTokenStore;
-            _identifyGenerator = identifyGenerator;
             _referenceTokenStore = referenceTokenService;
             _securityTokenService = securityTokenService;
         }
 
         public async Task<Token> CreateAccessTokenAsync(ValidatedTokenRequest request)
         {
-            var id = await _identifyGenerator.GenerateAsync();
+            var id = await _handleGenerator.GenerateAsync();
             var claims = await _claimsService.GetAccessTokenClaimsAsync(request);
             var token = new Token
             {
@@ -41,23 +41,25 @@ namespace IdentityServer.Services
                 Lifetime = request.Client.AccessTokenLifetime,
                 CreationTime = _clock.UtcNow.UtcDateTime,
                 AccessTokenType = request.Client.AccessTokenType,
+                IdentityProvider = request.Options.IdentityProvider,
             };
             return token;
         }
 
         public async Task<Token> CreateIdentityTokenAsync(ValidatedTokenRequest request)
         {
-            var id = await _identifyGenerator.GenerateAsync();
+            var handle = await _handleGenerator.GenerateAsync();
             var claims = await _claimsService.GetIdentityTokenClaimsAsync(request);
             var token = new Token
             {
-                Id = id,
+                Id = handle,
                 Type = TokenTypes.AccessToken,
                 GrantType = request.GrantType,
                 Claims = claims.ToList(),
-                Lifetime = request.Client.AccessTokenLifetime,
                 CreationTime = _clock.UtcNow.UtcDateTime,
+                Lifetime = request.Client.AccessTokenLifetime,
                 AccessTokenType = request.Client.AccessTokenType,
+                IdentityProvider = request.Options.IdentityProvider,
             };
             return token;
         }
@@ -90,7 +92,7 @@ namespace IdentityServer.Services
 
         public async Task<string> CreateRefreshTokenAsync(Token token, int lifetime)
         {
-            var id = await _identifyGenerator.GenerateAsync();
+            var id = await _handleGenerator.GenerateAsync();
             var creationTime = _clock.UtcNow.UtcDateTime;
             var refreshToken = new RefreshToken(id, token, lifetime, creationTime);
             await _refreshTokenStore.StoreRefreshTokenAsync(refreshToken);

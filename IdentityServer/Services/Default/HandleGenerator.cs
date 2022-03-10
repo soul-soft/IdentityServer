@@ -4,9 +4,8 @@
     {
         public Task<string> GenerateAsync(int length = 32)
         {
-            var array = Guid.NewGuid().ToByteArray();
-            var result = BitConverter.ToString(array).Replace("-", "");
-            return Task.FromResult(result); 
+            var handle = CryptoRandom.CreateUniqueId(length,CryptoRandom.OutputFormat.Hex);
+            return Task.FromResult(handle); 
         }
     }
 }

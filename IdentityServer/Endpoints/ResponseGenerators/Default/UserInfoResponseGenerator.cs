@@ -11,10 +11,10 @@
 
         public async Task<UserInfoResponse> ProcessAsync(UserInfoGeneratorRequest request)
         {
-            var profileDataRequestContext = new ProfileDataRequestContext(
+            var profileDataRequestContext = new UserInfoRequestContext(
                 request.Client,
                 request.Subject);
-            var profiles = await _profileService.GetProfileDataAsync(profileDataRequestContext);
+            var profiles = await _profileService.GetUserInfoAsync(profileDataRequestContext);
             return new UserInfoResponse(profiles);
         }
     }

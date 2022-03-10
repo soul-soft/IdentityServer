@@ -1,5 +1,6 @@
 using Hosting.Configuration;
 using IdentityServer;
+using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,22 +13,24 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddLoaclApiAuthentication();
 builder.Services.AddAuthorization()
     .AddAuthorization(configure =>
-{
-    configure.AddPolicy("default", p => p.RequireAuthenticatedUser());
-});
+    {
+        configure.AddPolicy("default", p => p.RequireAuthenticatedUser());
+    });
 builder.Services.AddIdentityServer(o =>
-        {
-            o.Issuer = "microsoft";
-        })
-        .AddPasswordGrantValidator<PasswordGrantValidator>()
-        .AddExtensionGrantValidator<MyExtensionGrantValidator>()
-        .AddProfileService<ProfileService>()
-        .AddInMemoryStores(setup =>
-        {
-            setup.AddClients(Config.Clients);
-            setup.AddResources(Config.Resources);
-            setup.AddDeveloperSigningCredentials();
-        });
+    {
+        o.Issuer = "microsoft";
+        o.IssuerUri = null;
+    })
+    .AddPasswordGrantValidator<PasswordGrantValidator>()
+    .AddExtensionGrantValidator<MyExtensionGrantValidator>()
+    .AddProfileService<ProfileService>()
+    .AddInMemoryStores(setup =>
+    {
+        setup.AddClients(Config.Clients);
+        setup.AddResources(Config.Resources);
+        setup.AddSigningCredentials(new X509Certificate2("idsvr.pfx","nbjc"));
+        //setup.AddDeveloperSigningCredentials();
+    });
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

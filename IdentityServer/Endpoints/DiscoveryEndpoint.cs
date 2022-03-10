@@ -8,13 +8,16 @@ namespace IdentityServer.Endpoints
     internal class DiscoveryEndpoint : EndpointBase
     {
         private readonly IServerUrl _urls;
+        private readonly IdentityServerOptions _options;
         private readonly IDiscoveryResponseGenerator _generator;
 
         public DiscoveryEndpoint(
             IServerUrl urls,
+            IdentityServerOptions options,
             IDiscoveryResponseGenerator generator)
         {
             _urls = urls;
+            _options = options;
             _generator = generator;
         }
 
@@ -24,8 +27,9 @@ namespace IdentityServer.Endpoints
             {
                 return MethodNotAllowed();
             }
-            var issuer = _urls.GetIssuerUri();
-            var response = await _generator.CreateDiscoveryDocumentAsync(issuer);
+            var baseUrl = _urls.GetOriginUrl();
+            var issuer =_options.Issuer;
+            var response = await _generator.CreateDiscoveryDocumentAsync(issuer, baseUrl);
             return DiscoveryEndpointResult(response);
         }
 

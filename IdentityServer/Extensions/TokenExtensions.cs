@@ -1,5 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 
 namespace IdentityServer.Models
 {
@@ -14,6 +13,12 @@ namespace IdentityServer.Models
             claims.Add(new Claim(JwtClaimTypes.NotBefore, now.ToString()));
             claims.Add(new Claim(JwtClaimTypes.IssuedAt, now.ToString()));
             claims.Add(new Claim(JwtClaimTypes.Expiration, exp.ToString()));
+            if (claims.Exists(a => a.Type == JwtClaimTypes.Subject))
+            {
+                claims.Add(new Claim(JwtClaimTypes.AuthenticationTime, now.ToString()));
+                claims.Add(new Claim(JwtClaimTypes.IdentityProvider, token.IdentityProvider));
+                claims.Add(new Claim(JwtClaimTypes.AuthenticationMethod, token.GrantType));
+            }
             claims.AddRange(token.Claims);
             return claims;
         }

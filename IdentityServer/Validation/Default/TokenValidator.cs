@@ -8,13 +8,13 @@ namespace IdentityServer.Validation
     {
         private readonly ISystemClock _systemClock;
         private readonly IdentityServerOptions _options;
-        private readonly ISigningCredentialsStore _credentials;
+        private readonly ISigningCredentialStore _credentials;
         private readonly ITokenStore _referenceTokenStore;
 
         public TokenValidator(
             ISystemClock systemClock,
             IdentityServerOptions options,
-            ISigningCredentialsStore credentials,
+            ISigningCredentialStore credentials,
             ITokenStore referenceTokenStore)
         {
             _options = options;
@@ -57,11 +57,11 @@ namespace IdentityServer.Validation
                 var parameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                 {
                     ValidIssuer = _options.Issuer,
+                    IssuerSigningKeys = securityKeys,
+                    ValidAudience = _options.AuthenticationOptions.ValidAudience,
                     ValidateIssuer = _options.AuthenticationOptions.ValidateIssuer,
                     ValidateAudience = _options.AuthenticationOptions.ValidateAudience,
-                    ValidAudience = _options.AuthenticationOptions.ValidAudience,
                     ValidateLifetime = _options.AuthenticationOptions.ValidateLifetime,
-                    IssuerSigningKeys = securityKeys,
                 };
                 var subject = handler.ValidateToken(token, parameters, out var securityToken);
                 return subject.Claims;
@@ -75,7 +75,7 @@ namespace IdentityServer.Validation
         private async Task<IEnumerable<Claim>> ValidateReferenceTokenAsync(string tokenReference)
         {
             var token = await _referenceTokenStore.FindTokenAsync(tokenReference);
-            if (token == null || token.Expiration < _systemClock.UtcNow.UtcDateTime)
+            if (token == null)
             {
                 throw new InvalidTokenException("Invalid token");
             }

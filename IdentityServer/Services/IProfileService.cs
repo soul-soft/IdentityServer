@@ -5,6 +5,6 @@ namespace IdentityServer.Services
     public interface IProfileService
     {
         Task<IEnumerable<Claim>> GetClaimDataAsync(ClaimDataRequestContext context);
-        Task<Dictionary<string, object?>> GetProfileDataAsync(ProfileDataRequestContext context);
+        Task<IEnumerable<Profile>> GetUserInfoAsync(UserInfoRequestContext context);
     }
 }

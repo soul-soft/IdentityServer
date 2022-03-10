@@ -2,9 +2,9 @@
 {
     internal class InMemoryTokenStore : ITokenStore
     {
-        private readonly ICache _storage;
+        private readonly IObjectStore _storage;
 
-        public InMemoryTokenStore(ICache storage)
+        public InMemoryTokenStore(IObjectStore storage)
         {
             _storage = storage;
         }

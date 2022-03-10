@@ -7,9 +7,9 @@ namespace Microsoft.Extensions.DependencyInjection
     {       
         #region IPersistentStore
         public static IIdentityServerBuilder AddPersistentStore<T>(this IIdentityServerBuilder builder)
-            where T : class, ICache
+            where T : class, IObjectStore
         {
-            builder.Services.TryAddTransient<ICache, T>();
+            builder.Services.TryAddTransient<IObjectStore, T>();
             return builder;
         }
         #endregion
@@ -48,16 +48,16 @@ namespace Microsoft.Extensions.DependencyInjection
 
         #region ISigningCredentialStore
         public static IIdentityServerBuilder AddSigningCredentialStore<T>(this IIdentityServerBuilder builder)
-            where T : class, ISigningCredentialsStore
+            where T : class, ISigningCredentialStore
         {
-            builder.Services.TryAddTransient<ISigningCredentialsStore, T>();
+            builder.Services.TryAddTransient<ISigningCredentialStore, T>();
             return builder;
         }
 
         public static IIdentityServerBuilder AddSigningCredentialStore<T>(this IIdentityServerBuilder builder, Func<IServiceProvider, T> implementationFactory)
-            where T : class, ISigningCredentialsStore
+            where T : class, ISigningCredentialStore
         {
-            builder.Services.TryAddTransient<ISigningCredentialsStore>(implementationFactory);
+            builder.Services.TryAddTransient<ISigningCredentialStore>(implementationFactory);
             return builder;
         }
         #endregion

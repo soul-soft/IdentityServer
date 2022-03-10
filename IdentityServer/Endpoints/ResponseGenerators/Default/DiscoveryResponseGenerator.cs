@@ -6,14 +6,14 @@ namespace IdentityServer.Endpoints
         : IDiscoveryResponseGenerator
     {
         private readonly IResourceStore _resources;
-        private readonly ISigningCredentialsStore _credentials;
+        private readonly ISigningCredentialStore _credentials;
         private readonly ClientCredentialsParserCollection _secretParsers;
         private readonly ExtensionGrantValidatorCollection _extensionGrantValidators;
 
         public DiscoveryResponseGenerator(
             IResourceStore resources,
             ClientCredentialsParserCollection secretParsers,
-            ISigningCredentialsStore credentials,
+            ISigningCredentialStore credentials,
             ExtensionGrantValidatorCollection extensionGrantValidators)
         {
             _resources = resources;
@@ -22,15 +22,15 @@ namespace IdentityServer.Endpoints
             _extensionGrantValidators = extensionGrantValidators;
         }
 
-        public async Task<DiscoveryResponse> CreateDiscoveryDocumentAsync(string issuer)
+        public async Task<DiscoveryResponse> CreateDiscoveryDocumentAsync(string issuer, string baseUrl)
         {
             var configuration = new OpenIdConnectConfiguration
             {
                 Issuer = issuer,
-                JwksUri = issuer + Constants.EndpointRoutePaths.DiscoveryJwks,
-                AuthorizationEndpoint = issuer + Constants.EndpointRoutePaths.Authorize,
-                TokenEndpoint = issuer + Constants.EndpointRoutePaths.Token,
-                UserInfoEndpoint = issuer + Constants.EndpointRoutePaths.UserInfo
+                JwksUri = baseUrl + Constants.EndpointRoutePaths.DiscoveryJwks,
+                AuthorizationEndpoint = baseUrl + Constants.EndpointRoutePaths.Authorize,
+                TokenEndpoint = baseUrl + Constants.EndpointRoutePaths.Token,
+                UserInfoEndpoint = baseUrl + Constants.EndpointRoutePaths.UserInfo
             };
             var grantTypes = _extensionGrantValidators.GetCustomGrantTypes();
             foreach (var item in grantTypes)
@@ -45,7 +45,7 @@ namespace IdentityServer.Endpoints
             {
                 configuration.ScopesSupported.Add(item);
             }
-            var authMethods = _secretParsers.GetAuthenticationMethods(); 
+            var authMethods = _secretParsers.GetAuthenticationMethods();
             foreach (var item in authMethods)
             {
                 configuration.TokenEndpointAuthMethodsSupported.Add(item);

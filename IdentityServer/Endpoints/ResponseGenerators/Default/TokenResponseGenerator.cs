@@ -19,7 +19,7 @@
             {
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
-                AccessTokenLifetime = request.Client.AccessTokenLifetime,
+                TokenLifetime = request.Client.AccessTokenLifetime,
                 Scope = scope,
             };
             return response;

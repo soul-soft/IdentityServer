@@ -2,11 +2,11 @@
 
 namespace IdentityServer.Storage
 {
-    public interface ISigningCredentialsStore
+    public interface ISigningCredentialStore
     {
         Task<IEnumerable<SecurityKey>> GetSecurityKeysAsync();
         Task<IEnumerable<JsonWebKey>> GetJsonWebKeysAsync();
         Task<SigningCredentials> GetSigningCredentialsByAlgorithmsAsync(IEnumerable<string> algorithms);
-        Task<IEnumerable<SigningCredentialsDescriptor>> GetSigningCredentialsDescriptorAsync();
+        Task<IEnumerable<SigningCredentialsDescriptor>> GetSigningCredentialsAsync();
     }
 }

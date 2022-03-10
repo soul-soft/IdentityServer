@@ -13,7 +13,7 @@ namespace IdentityServer.Storage.Serialization
             {
                 return null;
             }
-            return new Claim(claimLite.Type, claimLite.Value, claimLite.Type);
+            return new Claim(claimLite.Name, claimLite.Value, claimLite.Type);
         }
 
         public override void Write(Utf8JsonWriter writer, Claim value, JsonSerializerOptions options)

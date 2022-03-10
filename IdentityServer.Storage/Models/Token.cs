@@ -6,10 +6,9 @@ namespace IdentityServer.Models
     {
         public string Id { get; set; } = null!;
         public string Type { get; set; } = null!;
-        public string GrantType { get; set; } = null!;
         public int Lifetime { get; set; }
-        public AccessTokenType AccessTokenType { get; set; }
-        public DateTime CreationTime { get; set; }
+        public string GrantType { get; set; } = null!;
+        public string IdentityProvider { get; set; } = null!;
         public string? Issuer
         {
             get
@@ -26,6 +25,13 @@ namespace IdentityServer.Models
                     .Select(s => s.Value).FirstOrDefault();
             }
         }
+        public DateTime Expiration
+        {
+            get 
+            {
+                return CreationTime.AddSeconds(Lifetime);
+            }
+        }
         public ICollection<string> Audiences
         {
             get
@@ -35,13 +41,8 @@ namespace IdentityServer.Models
             }
         }
         public ICollection<Claim> Claims { get; set; } = new HashSet<Claim>();
+        public AccessTokenType AccessTokenType { get; set; }
         public ICollection<string> AllowedSigningAlgorithms { get; set; } = new HashSet<string>();
-        public DateTime Expiration
-        {
-            get 
-            {
-                return CreationTime.AddSeconds(Lifetime);
-            }
-        }
+        public DateTime CreationTime { get; set; }
     }
 }

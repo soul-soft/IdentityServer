@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Storage
 {
-    public interface ICache
+    public interface IObjectStore
     {
         Task<T?> GetAsync<T>(string key);
         Task SetAsync(string key, object value, TimeSpan timeSpan);

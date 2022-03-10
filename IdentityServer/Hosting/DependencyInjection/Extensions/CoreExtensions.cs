@@ -37,7 +37,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<IHandleGenerator, HandleGenerator>();
             builder.Services.TryAddTransient<IProfileService, ProfileService>();
             builder.Services.TryAddTransient<IClaimsService, ClaimsService>();
-            builder.Services.TryAddTransient<ICache, DistributedCache>();
+            builder.Services.TryAddTransient<IObjectStore, DistributedCache>();
             builder.Services.TryAddTransient<ITokenService, TokenService>();
             builder.Services.TryAddTransient<ISecurityTokenService, SecurityTokenService>();
             return builder;

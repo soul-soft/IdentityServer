@@ -20,12 +20,12 @@ namespace Hosting.Configuration
             return Task.FromResult<IEnumerable<Claim>>(profiles);
         }
 
-        public Task<Dictionary<string,object?>> GetProfileDataAsync(ProfileDataRequestContext context)
+        public Task<IEnumerable<Profile>> GetUserInfoAsync(UserInfoRequestContext context)
         {
-            var data = new Dictionary<string, object?>();
-            data.Add(JwtClaimTypes.Subject, "10");
-            data.Add(JwtClaimTypes.Role, "admin");
-            return Task.FromResult(data);
+            var data = new List<Profile>();
+            data.Add(new Profile(JwtClaimTypes.Role, "admin"));
+            data.Add(new Profile(JwtClaimTypes.Subject, "10"));
+            return Task.FromResult<IEnumerable<Profile>>(data);
         }
     }
 }
