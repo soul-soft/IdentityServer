@@ -37,8 +37,16 @@ namespace IdentityServer.Hosting
             }
             catch (ValidationException ex)
             {
-                var result = new BadRequestResult(ex.Error, ex.ErrorDescription);
-                await result.ExecuteAsync(context);
+                if (ex is InvalidTokenException || ex is ExpiredTokenException)
+                {
+                    var result = new UnauthorizedResult(ex.Error, ex.ErrorDescription);
+                    await result.ExecuteAsync(context);
+                }
+                else
+                {
+                    var result = new BadRequestResult(ex.Error, ex.ErrorDescription);
+                    await result.ExecuteAsync(context);
+                }
             }
         }
     }

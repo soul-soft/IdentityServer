@@ -35,24 +35,24 @@ namespace IdentityServer.Endpoints
                 var token = await _tokenParser.ParserAsync(context);
                 if (string.IsNullOrEmpty(token))
                 {
-                    throw new InvalidRequestException("Token is miss");
+                    return BadRequest(OpenIdConnectErrors.InvalidRequest, "Token is miss");
                 }
                 var claims = await _tokenValidator.ValidateAsync(token);
                 var subject = new ClaimsPrincipal(new ClaimsIdentity(claims, "Local"));
                 var sub = subject.GetSubjectId();
                 if (string.IsNullOrWhiteSpace(sub))
                 {
-                    throw new InvalidTokenException("Sub claim is missing");
+                    return Unauthorized(OpenIdConnectErrors.InvalidGrant, "Sub claim is missing");
                 }
                 var clientId = subject.GetClientId();
                 if (string.IsNullOrWhiteSpace(clientId))
                 {
-                    throw new InvalidTokenException("ClientId claim is missing");
+                    return Unauthorized(OpenIdConnectErrors.InvalidGrant, "ClientId claim is missing");
                 }
                 var client = await _clients.FindByClientIdAsync(clientId);
                 if (client == null)
                 {
-                    throw new InvalidClientException("Invalid client");
+                    return Unauthorized(OpenIdConnectErrors.InvalidGrant, "Invalid client");
                 }
                 var scopes = await _scopeParser.ParseAsync(subject);
                 var resources = await _scopeValidator.ValidateAsync(client.AllowedScopes, scopes);

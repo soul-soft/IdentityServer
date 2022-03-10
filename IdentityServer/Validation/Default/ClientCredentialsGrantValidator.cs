@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Validation
 {
-    internal class ClientGrantValidator: IClientCredentialsGrantValidator
+    internal class ClientCredentialsGrantValidator: IClientCredentialsGrantValidator
     {
         public Task ValidateAsync(ClientGrantValidationRequest context)
         {

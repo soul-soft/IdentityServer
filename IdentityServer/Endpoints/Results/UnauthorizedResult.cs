@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
+using System.Net;
 
 namespace IdentityServer.Endpoints
 {
@@ -18,6 +19,7 @@ namespace IdentityServer.Endpoints
 
         public Task ExecuteAsync(HttpContext context)
         {
+            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
             var errorString = string.Format($"error=\"{Error}\"");
             if (string.IsNullOrEmpty(ErrorDescription))
             {

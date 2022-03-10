@@ -48,7 +48,7 @@ namespace IdentityServer.Endpoints
             var client = await _clients.FindByClientIdAsync(clientCredentials.ClientId);
             if (client == null)
             {
-                throw new InvalidClientException("Invalid client credentials");
+                return BadRequest(OpenIdConnectTokenErrors.InvalidClient, "Invalid client credentials");
             }
             if (client.RequireClientSecret)
             {
@@ -61,7 +61,7 @@ namespace IdentityServer.Endpoints
             var scope = form[OpenIdConnectParameterNames.Scope] ?? string.Empty;
             if (scope.Length > _options.InputLengthRestrictions.Scope)
             {
-                throw new InvalidGrantException("Scope is too long");
+                return BadRequest(OpenIdConnectTokenErrors.InvalidScope, "Scope is too long");
             }
             if (string.IsNullOrEmpty(scope))
             {
@@ -76,15 +76,15 @@ namespace IdentityServer.Endpoints
             var grantType = form[OpenIdConnectParameterNames.GrantType];
             if (string.IsNullOrEmpty(grantType))
             {
-                throw new InvalidGrantException("Grant Type is missing");
+                return BadRequest(OpenIdConnectTokenErrors.UnsupportedGrantType, "Grant type is missing");
             }
             if (grantType.Length > _options.InputLengthRestrictions.GrantType)
             {
-                throw new InvalidGrantException("Grant type is too long");
+                return BadRequest(OpenIdConnectTokenErrors.UnsupportedGrantType, "Grant type is too long");
             }
             if (!client.AllowedGrantTypes.Contains(grantType))
             {
-                throw new InvalidGrantException(string.Format("The client does not allow '{0}' authorization", grantType));
+                return BadRequest(OpenIdConnectTokenErrors.UnsupportedGrantType, "Grant type not allowed");
             }
             #endregion
 
