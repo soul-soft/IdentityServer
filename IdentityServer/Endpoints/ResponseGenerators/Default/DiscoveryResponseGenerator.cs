@@ -7,12 +7,12 @@ namespace IdentityServer.Endpoints
     {
         private readonly IResourceStore _resources;
         private readonly ISigningCredentialStore _credentials;
-        private readonly ClientCredentialsParserCollection _secretParsers;
+        private readonly SecretParserCollection _secretParsers;
         private readonly ExtensionGrantValidatorCollection _extensionGrantValidators;
 
         public DiscoveryResponseGenerator(
             IResourceStore resources,
-            ClientCredentialsParserCollection secretParsers,
+            SecretParserCollection secretParsers,
             ISigningCredentialStore credentials,
             ExtensionGrantValidatorCollection extensionGrantValidators)
         {

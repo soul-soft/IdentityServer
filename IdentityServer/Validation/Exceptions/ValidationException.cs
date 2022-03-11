@@ -6,6 +6,11 @@
 
         public string? ErrorDescription { get; }
 
+        public ValidationException(string error)
+        {
+            Error = error;
+        }
+
         public ValidationException(string error, string errorDescription)
             : base(errorDescription)
         {

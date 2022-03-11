@@ -1,12 +1,12 @@
 ﻿namespace IdentityServer.Models
 {
-    public class ClientCredentials
+    public class ParsedCredentials
     {
         public string ClientId { get; }
         public object Credentials { get; }
         public string Type { get; }
 
-        public ClientCredentials(string id, object credentials, string type)
+        public ParsedCredentials(string id, object credentials, string type)
         {
             ClientId = id;
             Type = type;

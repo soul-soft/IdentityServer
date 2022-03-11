@@ -40,7 +40,7 @@ namespace Hosting.Configuration
             new Client()
             {
                 ClientId = "client3",
-                //AccessTokenType = AccessTokenType.Reference,
+                AccessTokenType = AccessTokenType.Reference,
                 AllowedGrantTypes = new []
                 {
                     GrantTypes.ClientCredentials,
@@ -76,6 +76,14 @@ namespace Hosting.Configuration
                     "openid",
                     "address"
                 }
+            },
+            new Client()
+            {
+                ClientId="api",
+                ClientSecrets = new Secret[]
+                {
+                    new Secret("secret".Sha512())
+                },
             }
         };
 
@@ -100,6 +108,10 @@ namespace Hosting.Configuration
                 Scopes = new string[]
                 {
                     "api",//属于api组
+                },
+                ApiSecrets = 
+                {
+                    new Secret("secret".Sha256())
                 }
             },
             new ApiResource("emailapi")

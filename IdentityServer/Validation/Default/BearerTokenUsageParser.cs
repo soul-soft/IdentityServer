@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
-namespace IdentityServer.Services
+namespace IdentityServer.Validation
 {
     internal class BearerTokenUsageParser : ITokenParser
     {

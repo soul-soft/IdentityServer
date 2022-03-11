@@ -19,7 +19,7 @@ namespace IdentityServer.Hosting
             _endpoints = endpoints;
         }
 
-        public IEndpointHandler? Find(HttpContext context)
+        public IEndpointHandler? Routing(HttpContext context)
         {
             foreach (var endpoint in _endpoints)
             {

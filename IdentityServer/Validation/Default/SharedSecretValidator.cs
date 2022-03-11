@@ -13,13 +13,13 @@ namespace IdentityServer.Validation
             _clock = clock;
         }
 
-        public Task ValidateAsync(ClientCredentials clientCredentials, IEnumerable<Secret> allowedSecrets)
+        public Task ValidateAsync(ParsedCredentials clientCredentials, IEnumerable<Secret> allowedSecrets)
         {
             var credential = clientCredentials.Credentials.ToString();
 
             if (string.IsNullOrEmpty(credential))
             {
-                throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "Invalid clientCredentials");
+                throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "Invalid client credentials");
             }
 
             var credentials = new string[]
@@ -33,7 +33,7 @@ namespace IdentityServer.Validation
 
             if (!availableSecets.Any())
             {
-                throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "Invalid clientCredentials");
+                throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "Invalid client credentials");
             }
 
             if (availableSecets.Any(a => a.Expiration == null || a.Expiration >= _clock.UtcNow.UtcDateTime))
@@ -42,7 +42,7 @@ namespace IdentityServer.Validation
             }
             else
             {
-                throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "The clientCredentials has expired");
+                throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "The client credentials has expired");
             }
         }
     }

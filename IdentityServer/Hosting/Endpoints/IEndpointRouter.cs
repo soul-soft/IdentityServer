@@ -4,6 +4,6 @@ namespace IdentityServer.Hosting
 {
     public interface IEndpointRouter
     {
-        IEndpointHandler? Find(HttpContext context);
+        IEndpointHandler? Routing(HttpContext context);
     }
 }

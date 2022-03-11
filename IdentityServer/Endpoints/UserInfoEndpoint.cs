@@ -6,8 +6,8 @@ namespace IdentityServer.Endpoints
     internal class UserInfoEndpoint : EndpointBase
     {
         private readonly IClientStore _clients;
-        private readonly IScopeParser _scopeParser;
         private readonly ITokenParser _tokenParser;
+        private readonly IdentityServerOptions _options;
         private readonly IResourceStore _resourceStore;
         private readonly ITokenValidator _tokenValidator;
         private readonly IUserInfoResponseGenerator _generator;
@@ -15,15 +15,15 @@ namespace IdentityServer.Endpoints
         public UserInfoEndpoint(
             IClientStore clients,
             ITokenParser tokenParser,
-            IScopeParser scopeParser,
             IResourceStore resourceStore,
+            IdentityServerOptions options,
             ITokenValidator tokenValidator,
             IUserInfoResponseGenerator generator)
         {
             _clients = clients;
+            _options = options;
             _generator = generator;
             _tokenParser = tokenParser;
-            _scopeParser = scopeParser;
             _resourceStore = resourceStore;
             _tokenValidator = tokenValidator;
         }
@@ -37,8 +37,7 @@ namespace IdentityServer.Endpoints
             }
             var claims = await _tokenValidator.ValidateAccessTokenAsync(token);
             var subject = new ClaimsPrincipal(new ClaimsIdentity(claims, "Local"));
-            var sub = subject.GetSubjectId();
-            if (string.IsNullOrWhiteSpace(sub))
+            if (!subject.Claims.Any(a => a.Type == JwtClaimTypes.Subject))
             {
                 return Unauthorized(OpenIdConnectErrors.InsufficientScope, $"Checking for expected scope {JwtClaimTypes.Subject} failed");
             }
@@ -52,8 +51,8 @@ namespace IdentityServer.Endpoints
             {
                 return Unauthorized(OpenIdConnectErrors.InvalidGrant, "Invalid client");
             }
-            var scopes = await _scopeParser.ParseAsync(subject);
-            var resources = await _resourceStore.FindResourceByScopesAsync(scopes);
+            var scopes = subject.GetScopes(_options.EmitScopesAsSpaceDelimitedStringInJwt);
+            var resources = await _resourceStore.FindResourcesByScopesAsync(scopes);
             var response = await _generator.ProcessAsync(new UserInfoGeneratorRequest(client, subject, resources));
             return new UserInfoResult(response);
         }

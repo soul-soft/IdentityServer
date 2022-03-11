@@ -2,19 +2,19 @@
 
 namespace IdentityServer.Validation
 {
-    public class TokenValidationRequest
+    public class GrantValidationRequest
     {
         public Client Client { get; }
         public string GrantType { get; }
-        public ClientCredentials ClientSecret { get; }
+        public ParsedCredentials ClientSecret { get; }
         public IEnumerable<string> Scopes { get; }
         public ResourceCollection Resources { get; }
         public IdentityServerOptions Options { get; }
         public NameValueCollection Raw { get; }
 
-        public TokenValidationRequest(
+        public GrantValidationRequest(
             Client client,
-            ClientCredentials clientSecret,
+            ParsedCredentials clientSecret,
             IdentityServerOptions options,
             IEnumerable<string> scopes,
             string grantType,

@@ -2,15 +2,15 @@
 
 namespace IdentityServer.Services
 {
-    public class ClientCredentialsParserCollection
+    public class SecretParserCollection
     {
         private readonly IdentityServerOptions _options;
 
-        private readonly IEnumerable<IClientCredentialsParser> _parsers;
+        private readonly IEnumerable<ISecretParser> _parsers;
 
-        public ClientCredentialsParserCollection(
+        public SecretParserCollection(
             IdentityServerOptions options,
-            IEnumerable<IClientCredentialsParser> parsers)
+            IEnumerable<ISecretParser> parsers)
         {
             _options = options;
             _parsers = parsers;
@@ -21,7 +21,7 @@ namespace IdentityServer.Services
             return _parsers.Select(s => s.AuthenticationMethod);
         }
 
-        public async Task<ClientCredentials> ParseAsync(HttpContext context)
+        public async Task<ParsedCredentials> ParseAsync(HttpContext context)
         {
             var parser = _parsers
                 .Where(a => a.AuthenticationMethod == _options.TokenEndpointAuthMethod).

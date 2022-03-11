@@ -2,7 +2,7 @@
 
 namespace IdentityServer.Models
 {
-    public static class TokenExtensions
+    internal static class TokenExtensions
     {
         public static IEnumerable<Claim> GetJwtClaims(this Token token)
         {

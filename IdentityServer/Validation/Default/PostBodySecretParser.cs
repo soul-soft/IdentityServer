@@ -1,20 +1,20 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace IdentityServer.Services
+namespace IdentityServer.Validation
 {
-    public class PostBodyClientCredentialsParser : IClientCredentialsParser
+    public class PostBodySecretParser : ISecretParser
     {
 
         private readonly IdentityServerOptions _options;
 
-        public PostBodyClientCredentialsParser(IdentityServerOptions options)
+        public PostBodySecretParser(IdentityServerOptions options)
         {
             _options = options;
         }
 
         public string AuthenticationMethod => TokenEndpointAuthMethods.PostBody;
 
-        public async Task<ClientCredentials> ParseAsync(HttpContext context)
+        public async Task<ParsedCredentials> ParseAsync(HttpContext context)
         {
             var form = await context.Request.ReadFormAsync();
             var clientId = form["client_id"].FirstOrDefault();
@@ -33,11 +33,11 @@ namespace IdentityServer.Services
             }
             if (string.IsNullOrEmpty(credentials))
             {
-                return new ClientCredentials(clientId, credentials, ClientSecretTypes.NoSecret);
+                return new ParsedCredentials(clientId, credentials, ClientSecretTypes.NoSecret);
             }
             else
             {
-                return new ClientCredentials(clientId, credentials, ClientSecretTypes.SharedSecret);
+                return new ParsedCredentials(clientId, credentials, ClientSecretTypes.SharedSecret);
             }
         }
     }

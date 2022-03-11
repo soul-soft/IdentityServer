@@ -12,8 +12,8 @@ namespace IdentityServer.Endpoints
         private readonly IdentityServerOptions _options;
         private readonly ITokenResponseGenerator _generator;
         private readonly IResourceValidator _resourceValidator;
+        private readonly SecretParserCollection _secretParsers;
         private readonly SecretValidatorCollection _secretValidators;
-        private readonly ClientCredentialsParserCollection _clientCredentialsParsers;
 
         public TokenEndpoint(
             IClientStore clients,
@@ -22,15 +22,15 @@ namespace IdentityServer.Endpoints
             ITokenResponseGenerator generator,
             IResourceValidator resourceValidator,
             SecretValidatorCollection secretValidators,
-            ClientCredentialsParserCollection clientCredentialsParsers)
+            SecretParserCollection secretParsers)
         {
             _clients = clients;
             _options = options;
             _generator = generator;
             _resourceStore = resourceStore;
+            _secretParsers = secretParsers;
             _secretValidators = secretValidators;
             _resourceValidator = resourceValidator;
-            _clientCredentialsParsers = clientCredentialsParsers;
         }
 
         public override async Task<IEndpointResult> ProcessAsync(HttpContext context)
@@ -47,7 +47,7 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Validate ClientSecret
-            var clientCredentials = await _clientCredentialsParsers.ParseAsync(context);
+            var clientCredentials = await _secretParsers.ParseAsync(context);
             var client = await _clients.FindByClientIdAsync(clientCredentials.ClientId);
             if (client == null)
             {
@@ -85,7 +85,7 @@ namespace IdentityServer.Endpoints
             {
                 return BadRequest(OpenIdConnectErrors.InvalidScope, "No allowed scopes configured for client");
             }
-            var resources = await _resourceStore.FindResourceByScopesAsync(scopes);
+            var resources = await _resourceStore.FindResourcesByScopesAsync(scopes);
             await _resourceValidator.ValidateAsync(scopes, resources);
             #endregion
 
@@ -105,8 +105,8 @@ namespace IdentityServer.Endpoints
             }
             #endregion
 
-            #region Validation Token
-            var validationTokenRequest = new TokenValidationRequest(
+            #region Validate Grant
+            var validationTokenRequest = new GrantValidationRequest(
                 client: client,
                 clientSecret: clientCredentials,
                 options: _options,
@@ -114,7 +114,7 @@ namespace IdentityServer.Endpoints
                 resources: resources,
                 grantType: grantType,
                 raw: form);
-            await RunTokenValidationAsync(context, validationTokenRequest);
+            await RunGrantValidationAsync(context, validationTokenRequest);
             #endregion
 
             #region Generator Response
@@ -124,7 +124,8 @@ namespace IdentityServer.Endpoints
             #endregion
         }
 
-        private async Task RunTokenValidationAsync(HttpContext context, TokenValidationRequest request)
+        #region Validate Grant
+        private async Task RunGrantValidationAsync(HttpContext context, GrantValidationRequest request)
         {
             //验证刷新令牌
             if (GrantTypes.RefreshToken.Equals(request.GrantType))
@@ -185,5 +186,6 @@ namespace IdentityServer.Endpoints
                 await grantValidator.ValidateAsync(grantContext);
             }
         }
+        #endregion
     }
 }

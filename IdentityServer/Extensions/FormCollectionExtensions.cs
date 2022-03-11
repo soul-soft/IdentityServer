@@ -3,9 +3,9 @@ using System.Collections.Specialized;
 
 namespace IdentityServer.Extensions
 {
-    public static class FormCollectionExtensions
+    internal static class FormCollectionExtensions
     {
-        internal static NameValueCollection AsNameValueCollection(this IFormCollection form)
+        public static NameValueCollection AsNameValueCollection(this IFormCollection form)
         {
             var nv = new NameValueCollection();
             foreach (var field in form)

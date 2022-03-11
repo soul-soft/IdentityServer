@@ -28,9 +28,8 @@ namespace Microsoft.Extensions.DependencyInjection
         #region PluggableServices
         public static IIdentityServerBuilder AddPluggableServices(this IIdentityServerBuilder builder)
         {
-            builder.Services.TryAddTransient<IScopeParser, ScopeParser>();
-            builder.Services.TryAddTransient<IClientCredentialsParser, PostBodyClientCredentialsParser>();
-            builder.Services.TryAddTransient<ClientCredentialsParserCollection>();
+            builder.Services.TryAddTransient<ISecretParser, PostBodySecretParser>();
+            builder.Services.TryAddTransient<SecretParserCollection>();
             builder.Services.TryAddTransient<ITokenParser, BearerTokenUsageParser>();
 
             builder.Services.TryAddTransient<IServerUrl, ServerUrl>();

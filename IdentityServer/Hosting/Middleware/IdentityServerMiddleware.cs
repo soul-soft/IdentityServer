@@ -17,7 +17,7 @@ namespace IdentityServer.Hosting
 
         public async Task InvokeAsync(HttpContext context)
         {
-            var endpoint = _router.Find(context);
+            var endpoint = _router.Routing(context);
             if (endpoint != null)
             {
                 await EndpointHandlerAsync(context, endpoint);

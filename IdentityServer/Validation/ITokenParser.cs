@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace IdentityServer.Services
+namespace IdentityServer.Validation
 {
     public interface ITokenParser
     {
