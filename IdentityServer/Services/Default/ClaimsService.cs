@@ -57,18 +57,18 @@ namespace IdentityServer.Services
             }
             //request claims
             var claimTypes = request.Resources.ClaimTypes;
-            var claimDataRequestContext = new ClaimDataRequestContext(
+            var allowClaims = await _profileService.GetProfileDataAsync(new ProfileDataRequestContext(
                 ClaimsProviders.AccessToken,
                 request.Client,
-                claimTypes);
-            var allowClaims = await _profileService.GetClaimDataAsync(claimDataRequestContext);
+                request.Resources,
+                claimTypes));
             foreach (var item in allowClaims)
             {
                 if (!claimTypes.Any(a => a == item.Type))
                 {
                     continue;
                 }
-                if (claims.Any(a => a.Type == item.Type))
+                if (Constants.ClaimTypeFilters.ClaimsServiceFilterClaimTypes.Contains(item.Type))
                 {
                     continue;
                 }

@@ -1,7 +1,9 @@
-﻿namespace IdentityServer.Endpoints
+﻿using System.Security.Claims;
+
+namespace IdentityServer.Endpoints
 {
     public interface IUserInfoResponseGenerator
     {
-        Task<UserInfoResponse> ProcessAsync(UserInfoGeneratorRequest request);
+        Task<UserInfoResponse> ProcessAsync(ClaimsPrincipal subject, Client client, ResourceCollection resources);
     }
 }

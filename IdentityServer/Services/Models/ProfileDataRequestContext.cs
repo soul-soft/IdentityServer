@@ -2,16 +2,18 @@
 
 namespace IdentityServer.Models
 {
-    public class ClaimDataRequestContext
+    public class ProfileDataRequestContext
     {
         public string Caller { get; }
         public Client Client { get; }
+        public ResourceCollection Resources { get; }
         public IEnumerable<string> ClaimTypes { get; }
 
-        public ClaimDataRequestContext(string caller, Client client, IEnumerable<string> claimTypes)
+        public ProfileDataRequestContext(string caller, Client client, ResourceCollection resources, IEnumerable<string> claimTypes)
         {
             Caller = caller;
             Client = client;
+            Resources = resources;
             ClaimTypes = claimTypes;
         }
     }

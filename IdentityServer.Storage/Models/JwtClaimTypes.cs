@@ -34,6 +34,6 @@
         public const string Email = "email";
         public const string Phone = "phone";
         public const string Events = "events";
-
+        public const string ReferenceTokenId = "reference_token_id";
     }
 }

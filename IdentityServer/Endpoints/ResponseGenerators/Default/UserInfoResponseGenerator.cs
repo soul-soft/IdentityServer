@@ -1,4 +1,6 @@
-﻿namespace IdentityServer.Endpoints
+﻿using System.Security.Claims;
+
+namespace IdentityServer.Endpoints
 {
     internal class UserInfoResponseGenerator : IUserInfoResponseGenerator
     {
@@ -9,13 +11,15 @@
             _profileService = profileService;
         }
 
-        public async Task<UserInfoResponse> ProcessAsync(UserInfoGeneratorRequest request)
+        public async Task<UserInfoResponse> ProcessAsync(ClaimsPrincipal subject, Client client, ResourceCollection resources)
         {
-            var profileDataRequestContext = new UserInfoRequestContext(
-                request.Client,
-                request.Subject);
-            var profiles = await _profileService.GetUserInfoAsync(profileDataRequestContext);
-            return new UserInfoResponse(profiles);
+            var claimTypes = resources.ClaimTypes;
+            var claims = await _profileService.GetProfileDataAsync(new ProfileDataRequestContext(
+                ClaimsProviders.UserInfoEndpoint,
+                client,
+                resources,
+                claimTypes));
+            return new UserInfoResponse(claims);
         }
     }
 }

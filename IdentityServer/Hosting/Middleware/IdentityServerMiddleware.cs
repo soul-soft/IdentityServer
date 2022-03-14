@@ -17,10 +17,10 @@ namespace IdentityServer.Hosting
 
         public async Task InvokeAsync(HttpContext context)
         {
-            var endpoint = _router.Routing(context);
-            if (endpoint != null)
+            var handler = _router.Routing(context);
+            if (handler != null)
             {
-                await EndpointHandlerAsync(context, endpoint);
+                await ExecuteAsync(context, handler);
             }
             else
             {
@@ -28,7 +28,7 @@ namespace IdentityServer.Hosting
             }
         }
 
-        private static async Task EndpointHandlerAsync(HttpContext context, IEndpointHandler endpoint)
+        private static async Task ExecuteAsync(HttpContext context, IEndpointHandler endpoint)
         {
             try
             {
@@ -37,16 +37,8 @@ namespace IdentityServer.Hosting
             }
             catch (ValidationException ex)
             {
-                if (ex.Error == OpenIdConnectErrors.ExpiredToken|| ex.Error == OpenIdConnectErrors.InvalidToken)
-                {
-                    var result = new UnauthorizedResult(ex.Error, ex.ErrorDescription);
-                    await result.ExecuteAsync(context);
-                }
-                else
-                {
-                    var result = new BadRequestResult(ex.Error, ex.ErrorDescription);
-                    await result.ExecuteAsync(context);
-                }
+                var result = new BadRequestResult(ex.Error, ex.ErrorDescription);
+                await result.ExecuteAsync(context);
             }
         }
     }

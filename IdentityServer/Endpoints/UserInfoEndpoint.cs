@@ -53,7 +53,7 @@ namespace IdentityServer.Endpoints
             }
             var scopes = subject.GetScopes(_options.EmitScopesAsSpaceDelimitedStringInJwt);
             var resources = await _resourceStore.FindResourcesByScopesAsync(scopes);
-            var response = await _generator.ProcessAsync(new UserInfoGeneratorRequest(client, subject, resources));
+            var response = await _generator.ProcessAsync(subject, client, resources);
             return new UserInfoResult(response);
         }
     }

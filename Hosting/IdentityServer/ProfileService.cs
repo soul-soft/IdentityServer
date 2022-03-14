@@ -6,7 +6,7 @@ namespace Hosting.Configuration
 {
     public class ProfileService : IProfileService
     {
-        public Task<IEnumerable<Claim>> GetClaimDataAsync(ClaimDataRequestContext context)
+        public Task<IEnumerable<Claim>> GetProfileDataAsync(ProfileDataRequestContext context)
         {
             var profiles = new List<Claim>();
             if (context.ClaimTypes.Contains(JwtClaimTypes.Subject))
@@ -18,14 +18,6 @@ namespace Hosting.Configuration
                 profiles.Add(new Claim(JwtClaimTypes.Role, "admin"));
             }
             return Task.FromResult<IEnumerable<Claim>>(profiles);
-        }
-
-        public Task<IEnumerable<Profile>> GetUserInfoAsync(UserInfoRequestContext context)
-        {
-            var data = new List<Profile>();
-            data.Add(new Profile(JwtClaimTypes.Role, "admin"));
-            data.Add(new Profile(JwtClaimTypes.Subject, "10"));
-            return Task.FromResult<IEnumerable<Profile>>(data);
         }
     }
 }

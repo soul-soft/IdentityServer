@@ -107,5 +107,6 @@
     {
         public const string IdentityToken = "ClaimsProviderIdentityToken";
         public const string AccessToken = "ClaimsProviderAccessToken";
+        public const string UserInfoEndpoint = "UserInfoEndpoint";
     }
 }
