@@ -39,7 +39,7 @@ namespace IdentityServer.Endpoints
             var credentials = await _secretParsers.ParseAsync(context);
             if (credentials.Type == ClientSecretTypes.NoSecret)
             {
-                return BadRequest(OpenIdConnectErrors.InvalidRequest, "Invalid client credentials");
+                return BadRequest(OpenIdConnectErrors.InvalidRequest, "Client credentials is missing");
             }
             var client = await _clients.FindByClientIdAsync(credentials.ClientId);
             if (client == null)

@@ -4,9 +4,7 @@
     {
         private readonly ITokenService _tokenService;
 
-        public TokenResponseGenerator(
-            ITokenService tokenService,
-            IRefreshTokenStore refreshTokenStore)
+        public TokenResponseGenerator(ITokenService tokenService)
         {
             _tokenService = tokenService;
         }

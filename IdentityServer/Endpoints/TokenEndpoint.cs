@@ -93,15 +93,15 @@ namespace IdentityServer.Endpoints
             var grantType = form[OpenIdConnectParameterNames.GrantType];
             if (string.IsNullOrEmpty(grantType))
             {
-                return BadRequest(OpenIdConnectErrors.UnsupportedGrantType, "Grant type is missing");
+                return BadRequest(OpenIdConnectErrors.InvalidRequest, "Grant type is missing");
             }
             if (grantType.Length > _options.InputLengthRestrictions.GrantType)
             {
-                return BadRequest(OpenIdConnectErrors.UnsupportedGrantType, "Grant type is too long");
+                return BadRequest(OpenIdConnectErrors.InvalidRequest, "Grant type is too long");
             }
             if (!client.AllowedGrantTypes.Contains(grantType))
             {
-                return BadRequest(OpenIdConnectErrors.UnsupportedGrantType, "Grant type not allowed");
+                return BadRequest(OpenIdConnectErrors.UnauthorizedClient, "Grant type not allowed");
             }
             #endregion
 
@@ -139,9 +139,10 @@ namespace IdentityServer.Endpoints
                 {
                     throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "RefreshToken too long");
                 }
-                var grantContext = new RefreshTokenGrantValidationRequest(refreshToken, request);
                 var grantValidator = context.RequestServices.GetRequiredService<IRefreshTokenGrantValidator>();
-                await grantValidator.ValidateAsync(grantContext);
+                await grantValidator.ValidateAsync(new RefreshTokenGrantValidationRequest(
+                    refreshToken, 
+                    request));
             }
             //验证客户端凭据授权
             else if (GrantTypes.ClientCredentials.Equals(request.GrantType))
@@ -171,12 +172,11 @@ namespace IdentityServer.Endpoints
                 {
                     throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "Password too long");
                 }
-                var grantContext = new PasswordGrantValidationRequest(
+                var grantValidator = context.RequestServices.GetRequiredService<IPasswordGrantValidator>();
+                await grantValidator.ValidateAsync(new PasswordGrantValidationRequest(
                     request: request,
                     username: username,
-                    password: password);
-                var grantValidator = context.RequestServices.GetRequiredService<IPasswordGrantValidator>();
-                await grantValidator.ValidateAsync(grantContext);
+                    password: password));
             }
             //验证自定义授权
             else

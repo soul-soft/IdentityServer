@@ -40,6 +40,11 @@ namespace IdentityServer.Hosting
                 var result = new BadRequestResult(ex.Error, ex.ErrorDescription);
                 await result.ExecuteAsync(context);
             }
+            catch (UnauthorizedException ex)
+            {
+                var result = new UnauthorizedResult(ex.Error, ex.ErrorDescription);
+                await result.ExecuteAsync(context);
+            }
         }
     }
 }

@@ -55,7 +55,8 @@ namespace Hosting.Configuration
                 {
                     "api",
                     StandardScopes.OpenId,
-                    StandardScopes.OfflineAccess
+                    StandardScopes.OfflineAccess,
+                    StandardScopes.Profile
                 }
             },
             new Client()
@@ -79,10 +80,10 @@ namespace Hosting.Configuration
             },
             new Client()
             {
-                ClientId="api",
+                ClientId="orderapi",
                 ClientSecrets = new Secret[]
                 {
-                    new Secret("secret".Sha512())
+                    new Secret("secret2".Sha512())
                 },
             }
         };
@@ -123,6 +124,7 @@ namespace Hosting.Configuration
             },
             StandardResources.OpenId,
             StandardResources.OfflineAccess,
+            StandardResources.Profile,
             new IdentityResource("address")
             {
                //表示该身份资源允许签发phone和address给access_token
@@ -133,6 +135,5 @@ namespace Hosting.Configuration
                }
             },
         };
-
     }
 }

@@ -9,13 +9,33 @@ namespace Hosting.Configuration
         public Task<IEnumerable<Claim>> GetProfileDataAsync(ProfileDataRequestContext context)
         {
             var profiles = new List<Claim>();
-            if (context.ClaimTypes.Contains(JwtClaimTypes.Subject))
+            if (context.Caller == ClaimsProviders.AccessToken)
             {
-                profiles.Add(new Claim(JwtClaimTypes.Subject, "10"));
+                if (context.ClaimTypes.Contains(JwtClaimTypes.Subject))
+                {
+                    profiles.Add(new Claim(JwtClaimTypes.Subject, "10"));
+                }
             }
-            if (context.ClaimTypes.Contains(JwtClaimTypes.Role))
+            if (context.Caller == ClaimsProviders.UserInfoEndpoint)
             {
-                profiles.Add(new Claim(JwtClaimTypes.Role, "admin"));
+                if (context.ClaimTypes.Contains(JwtClaimTypes.Subject))
+                {
+                    profiles.Add(new Claim(JwtClaimTypes.Subject, "10"));
+                }
+                if (context.ClaimTypes.Contains(JwtClaimTypes.Role))
+                {
+                    profiles.Add(new Claim(JwtClaimTypes.Role, "admin1"));
+                }
+                if (context.ClaimTypes.Contains(JwtClaimTypes.Role))
+                {
+                    profiles.Add(new Claim(JwtClaimTypes.Role, "admin2"));
+                }
+                if (context.ClaimTypes.Contains(JwtClaimTypes.Email))
+                {
+                    var email = new { account = "123", cpy = "126" };
+                    var json = System.Text.Json.JsonSerializer.Serialize(email);
+                    profiles.Add(new Claim(JwtClaimTypes.Email, json, "json"));
+                }
             }
             return Task.FromResult<IEnumerable<Claim>>(profiles);
         }

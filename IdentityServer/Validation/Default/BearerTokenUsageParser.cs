@@ -12,7 +12,7 @@ namespace IdentityServer.Validation
                 string authorization = context.Request.Headers.Authorization.ToString();
                 if (authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
                 {
-                    var token = authorization.Substring("Bearer ".Length).Trim();
+                    var token = authorization["Bearer ".Length..].Trim();
                     if (!string.IsNullOrEmpty(token))
                     {
                         return token;

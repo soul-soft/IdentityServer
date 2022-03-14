@@ -4,16 +4,16 @@ namespace IdentityServer.Endpoints
 {
     public class UserInfoResponse
     {
-        private readonly object _data;
+        public readonly Dictionary<string,object> Profiles;
 
-        public UserInfoResponse(object data)
+        public UserInfoResponse(Dictionary<string, object> profiles)
         {
-            _data = data;
+            Profiles = profiles;
         }
       
         internal string Serialize()
         {
-            return ObjectSerializer.Serialize(_data);
+            return ObjectSerializer.Serialize(Profiles);
         }
     }
 }
