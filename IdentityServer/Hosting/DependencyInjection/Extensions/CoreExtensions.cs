@@ -51,6 +51,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<IResourceValidator, ResourceValidator>();
             builder.Services.TryAddTransient<ITokenValidator, TokenValidator>();
             builder.Services.TryAddTransient<ISecretValidator, SharedSecretValidator>();
+            builder.Services.TryAddTransient<IApiSecretValidator, ApiSecretValidator>();
             builder.Services.TryAddTransient<IRefreshTokenGrantValidator, RefreshTokenGrantValidator>();
             builder.Services.TryAddTransient<IClientCredentialsGrantValidator, ClientCredentialsGrantValidator >();
             builder.Services.TryAddTransient<IPasswordGrantValidator, PasswordGrantValidator>();

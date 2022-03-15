@@ -10,7 +10,7 @@
         public EndpointsOptions Endpoints { get; set; } = new EndpointsOptions();
         public bool LowerCaseIssuerUri { get; set; } = true;
         public string? AccessTokenJwtType { get; set; } = "at+jwt";
-        public bool EmitScopesAsSpaceDelimitedStringInJwt { get; set; } = true;
+        public bool EmitScopesAsCommaDelimitedStringInJwt { get; set; } = true;
         public string TokenEndpointAuthMethod { get; set; } = TokenEndpointAuthMethods.PostBody;  
     }
 }

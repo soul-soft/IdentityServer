@@ -4,15 +4,15 @@ namespace IdentityServer.Endpoints
 {
     public class IntrospectionRequest
     {
-        public bool IsActive { get; }
+        public bool IsError { get; }
         public ApiResource ApiResource { get; }
         public IEnumerable<Claim> Claims { get; }
 
         public IntrospectionRequest(bool isActive, ApiResource apiResource, IEnumerable<Claim> claims)
         {
-            IsActive = isActive;
-            ApiResource = apiResource;
+            IsError = isActive;
             Claims = claims;
+            ApiResource = apiResource;
         }
     }
 }

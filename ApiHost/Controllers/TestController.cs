@@ -21,7 +21,14 @@ namespace ApiHost.Controllers
         {
             var client = new HttpClient();
 
-            var disco = await client.GetDiscoveryDocumentAsync("https://localhost:7150");
+            var disco = await client.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest 
+            {
+                Address= "https://localhost:7150",
+                Policy=new DiscoveryPolicy 
+                {
+                    ValidateIssuerName =false,
+                }
+            });
             if (disco.IsError)
                 throw new Exception(disco.Error);
             return disco.Raw;

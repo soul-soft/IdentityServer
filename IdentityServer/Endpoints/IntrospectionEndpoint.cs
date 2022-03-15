@@ -44,10 +44,6 @@ namespace IdentityServer.Endpoints
                 return BadRequest(OpenIdConnectErrors.InvalidRequest, "Token is missing");
             }
             var tokenValidationResult = await _tokenValidator.ValidateAccessTokenAsync(token);
-            if (tokenValidationResult.IsError)
-            {
-                return Unauthorized(tokenValidationResult.Error, tokenValidationResult.ErrorDescription);
-            }
             #endregion
 
             #region Response Generator

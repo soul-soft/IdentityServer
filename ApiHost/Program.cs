@@ -43,7 +43,7 @@ builder.Services.AddAuthentication("Bearer")
         };
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateAudience = false
+            ValidateAudience = false,
         };
     });
 

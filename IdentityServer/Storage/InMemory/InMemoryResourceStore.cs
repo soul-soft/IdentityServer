@@ -24,13 +24,15 @@
                 .Where(a => a.Enabled)
                 .Where(a => scopes.Contains(a.Name));
 
-            var apiResources = _resources.ApiResources
-                .Where(a => a.Enabled)
-                .Where(a => a.Scopes.Any(scope => scopes.Contains(scope)));
-
             var apiScopes = _resources.ApiScopes
                 .Where(a => a.Enabled)
                 .Where(a => scopes.Contains(a.Name));
+            
+            var apiScopeNames = apiScopes.Select(s=>s.Name);
+            
+            var apiResources = _resources.ApiResources
+                .Where(a => a.Enabled)
+                .Where(a => a.Scopes.Any(scope => apiScopeNames.Contains(scope)));
 
             var resources = new ResourceCollection(identityResources, apiScopes, apiResources);
             return Task.FromResult(resources);

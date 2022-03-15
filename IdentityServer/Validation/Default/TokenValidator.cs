@@ -51,7 +51,7 @@ namespace IdentityServer.Validation
             {
                 ValidateIssuer = true,
                 ValidateAudience = false,
-                ValidIssuer = _serverUrl.GetIssuerUrl(),
+                ValidIssuer = _serverUrl.GetIdentityServerIssuerUri(),
                 IssuerSigningKeys = securityKeys,
             };
             var result = handler.ValidateToken(token, parameters);
@@ -80,11 +80,26 @@ namespace IdentityServer.Validation
             {
                 return TokenValidationResult.Fail(OpenIdConnectErrors.ExpiredToken, "The access token has expired");
             }
-            if (token.Issuer != _serverUrl.GetIssuerUrl())
+            if (token.Issuer != _serverUrl.GetIdentityServerIssuerUri())
             {
                 return TokenValidationResult.Fail(OpenIdConnectErrors.InvalidToken, "Invalid issuer");
             }
-            return TokenValidationResult.Success(token.GetJwtClaims());
+            var claims = ValidateClaims(token.GetJwtClaims());
+            return TokenValidationResult.Success(claims);
+        }
+
+        public IEnumerable<Claim> ValidateClaims(IEnumerable<Claim> claims)
+        {
+            if (_options.EmitScopesAsCommaDelimitedStringInJwt && claims.Any(a => a.Type == JwtClaimTypes.Scope))
+            {
+                var scopes = claims.Where(a => a.Type == JwtClaimTypes.Scope)
+                    .First().Value
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+                return claims.Where(a => a.Type != JwtClaimTypes.Scope)
+                    .Union(scopes.Select(scope => new Claim(JwtClaimTypes.Scope, scope)));
+            }
+            return claims;
         }
     }
 }

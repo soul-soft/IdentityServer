@@ -55,7 +55,7 @@ namespace IdentityServer.Endpoints
             {
                 return Unauthorized(OpenIdConnectErrors.InvalidGrant, "Invalid client");
             }
-            var scopes = subject.GetScopes(_options.EmitScopesAsSpaceDelimitedStringInJwt);
+            var scopes = subject.GetScopes(_options.EmitScopesAsCommaDelimitedStringInJwt);
             var resources = await _resourceStore.FindResourcesByScopesAsync(scopes);
             var response = await _generator.ProcessAsync(subject, client, resources);
             return new UserInfoResult(response);

@@ -35,7 +35,7 @@ namespace IdentityServer.Services
             claims.Add(new Claim(JwtClaimTypes.ClientId, request.Client.ClientId));
 
             //issuer
-            claims.Add(new Claim(JwtClaimTypes.Issuer, _serverUrl.GetIssuerUrl()));
+            claims.Add(new Claim(JwtClaimTypes.Issuer, _serverUrl.GetIdentityServerIssuerUri()));
 
             //audience
             foreach (var item in request.Resources.ApiResources)
@@ -44,7 +44,7 @@ namespace IdentityServer.Services
             }
 
             //scope
-            if (request.Options.EmitScopesAsSpaceDelimitedStringInJwt)
+            if (request.Options.EmitScopesAsCommaDelimitedStringInJwt)
             {
                 var scope = request.Resources.Scopes.Aggregate((x, y) => $"{x},{y}");
                 claims.Add(new Claim(JwtClaimTypes.Scope, scope));
@@ -57,12 +57,12 @@ namespace IdentityServer.Services
             }
             //request claims
             var claimTypes = request.Resources.ClaimTypes;
-            var allowClaims = await _profileService.GetProfileDataAsync(new ProfileDataRequestContext(
+            var requestedClaims = await _profileService.GetProfileDataAsync(new ProfileDataRequestContext(
                 ClaimsProviders.AccessToken,
                 request.Client,
                 request.Resources,
                 claimTypes));
-            foreach (var item in allowClaims)
+            foreach (var item in requestedClaims)
             {
                 if (!claimTypes.Any(a => a == item.Type))
                 {

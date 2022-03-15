@@ -17,7 +17,7 @@ namespace IdentityServer.Services
                 ?? throw new ArgumentNullException(nameof(accessor));
         }
 
-        public string GetServerUrl()
+        public string GetIdentityServerBaseUrl()
         {
             var request = _context.Request;
             var url = request.Scheme + "://" + request.Host.ToUriComponent();
@@ -26,12 +26,12 @@ namespace IdentityServer.Services
             return url;
         }
         
-        public string GetIssuerUrl()
+        public string GetIdentityServerIssuerUri()
         {
             var url = _options.IssuerUri;
             if (string.IsNullOrEmpty(url))
             {
-                url = GetServerUrl();
+                url = GetIdentityServerBaseUrl();
             }
             if (_options.LowerCaseIssuerUri)
             {

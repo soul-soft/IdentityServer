@@ -18,6 +18,7 @@ builder.Services.AddAuthorization()
     });
 builder.Services.AddIdentityServer(o =>
     {
+        o.IssuerUri = "https://www.baidu.com";
     })
     .AddPasswordGrantValidator<PasswordGrantValidator>()
     .AddExtensionGrantValidator<MyExtensionGrantValidator>()

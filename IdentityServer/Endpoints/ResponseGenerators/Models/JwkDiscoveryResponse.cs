@@ -38,7 +38,7 @@ namespace IdentityServer.Endpoints
                 jsonWebKey.Kid,
                 jsonWebKey.Kty,
                 jsonWebKey.N,
-                Oth = jsonWebKey.Oth,
+                jsonWebKey.Oth,
                 jsonWebKey.P,
                 jsonWebKey.Q,
                 jsonWebKey.QI,
