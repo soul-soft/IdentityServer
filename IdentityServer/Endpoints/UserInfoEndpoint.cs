@@ -35,8 +35,12 @@ namespace IdentityServer.Endpoints
             {
                 return BadRequest(OpenIdConnectErrors.InvalidRequest, "Token is miss");
             }
-            var claims = await _tokenValidator.ValidateAccessTokenAsync(token);
-            var subject = new ClaimsPrincipal(new ClaimsIdentity(claims, "Local"));
+            var tokenValidationResult = await _tokenValidator.ValidateAccessTokenAsync(token);
+            if (tokenValidationResult.IsError)
+            {
+                return Unauthorized(tokenValidationResult.Error, tokenValidationResult.ErrorDescription);
+            }
+            var subject = new ClaimsPrincipal(new ClaimsIdentity(tokenValidationResult.Claims, "Local"));
             if (!subject.Claims.Any(a => a.Type == JwtClaimTypes.Subject))
             {
                 return Unauthorized(OpenIdConnectErrors.InsufficientScope, $"Checking for expected scope {JwtClaimTypes.Subject} failed");

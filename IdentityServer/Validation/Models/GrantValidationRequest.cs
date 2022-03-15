@@ -6,7 +6,7 @@ namespace IdentityServer.Validation
     {
         public Client Client { get; }
         public string GrantType { get; }
-        public ParsedCredentials ClientSecret { get; }
+        public ParsedSecret ClientSecret { get; }
         public IEnumerable<string> Scopes { get; }
         public ResourceCollection Resources { get; }
         public IdentityServerOptions Options { get; }
@@ -14,7 +14,7 @@ namespace IdentityServer.Validation
 
         public GrantValidationRequest(
             Client client,
-            ParsedCredentials clientSecret,
+            ParsedSecret clientSecret,
             IdentityServerOptions options,
             IEnumerable<string> scopes,
             string grantType,

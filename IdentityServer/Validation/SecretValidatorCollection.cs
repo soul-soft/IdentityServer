@@ -16,7 +16,7 @@
                 .First();
         }
 
-        public Task ValidateAsync(ParsedCredentials ClientCredentials, IEnumerable<Secret> allowedSecrets)
+        public Task ValidateAsync(ParsedSecret ClientCredentials, IEnumerable<Secret> allowedSecrets)
         {
             var validator = GetSecretValidator(ClientCredentials.Type);
             return validator.ValidateAsync(ClientCredentials, allowedSecrets);

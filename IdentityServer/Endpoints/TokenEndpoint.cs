@@ -47,20 +47,21 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Validate ClientSecret
-            var clientCredentials = await _secretParsers.ParseAsync(context);
-            var client = await _clients.FindByClientIdAsync(clientCredentials.ClientId);
+            var parsedSecret = await _secretParsers.ParseAsync(context);
+            var client = await _clients.FindByClientIdAsync(parsedSecret.ClientId);
             if (client == null)
             {
                 return BadRequest(OpenIdConnectErrors.InvalidClient, "Invalid client credentials");
             }
             if (client.RequireClientSecret)
             {
-                await _secretValidators.ValidateAsync(clientCredentials, client.ClientSecrets);
+                await _secretValidators.ValidateAsync(parsedSecret, client.ClientSecrets);
             }
             #endregion
 
             #region Validate Resources
-            var form = (await context.Request.ReadFormAsync()).AsNameValueCollection();
+            var body = await context.Request.ReadFormAsync();
+            var form = body.AsNameValueCollection();
             var scope = form[OpenIdConnectParameterNames.Scope] ?? string.Empty;
             if (scope.Length > _options.InputLengthRestrictions.Scope)
             {
@@ -108,7 +109,7 @@ namespace IdentityServer.Endpoints
             #region Validate Grant
             var validationTokenRequest = new GrantValidationRequest(
                 client: client,
-                clientSecret: clientCredentials,
+                clientSecret: parsedSecret,
                 options: _options,
                 scopes: scopes,
                 resources: resources,

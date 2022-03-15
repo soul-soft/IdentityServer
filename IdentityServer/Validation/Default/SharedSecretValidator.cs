@@ -13,7 +13,7 @@ namespace IdentityServer.Validation
             _clock = clock;
         }
 
-        public Task ValidateAsync(ParsedCredentials clientCredentials, IEnumerable<Secret> allowedSecrets)
+        public Task ValidateAsync(ParsedSecret clientCredentials, IEnumerable<Secret> allowedSecrets)
         {
             var credential = clientCredentials.Credentials.ToString();
 

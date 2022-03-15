@@ -11,10 +11,10 @@
 
         public Task<IEnumerable<ApiResource>> FindApiResourcesByNameAsync(string name)
         {
-            var resources =_resources.ApiResources
-                .Where(a=>a.Enabled)
+            var resources = _resources.ApiResources
+                .Where(a => a.Enabled)
                 .Where(a => a.Name == name);
-           
+
             return Task.FromResult(resources);
         }
 
@@ -41,7 +41,7 @@
             var scopes = new List<string>();
             scopes.AddRange(_resources.IdentityResources
                 .Where(a => a.Enabled)
-                .Where(a=>a.ShowInDiscoveryDocument)
+                .Where(a => a.ShowInDiscoveryDocument)
                 .Select(s => s.Scope));
             scopes.AddRange(_resources.ApiScopes
                 .Where(a => a.Enabled)

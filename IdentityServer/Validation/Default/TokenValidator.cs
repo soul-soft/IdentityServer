@@ -27,25 +27,23 @@ namespace IdentityServer.Validation
             _referenceTokenStore = referenceTokenStore;
         }
 
-        public async Task<IEnumerable<Claim>> ValidateAccessTokenAsync(string token)
+        public async Task<TokenValidationResult> ValidateAccessTokenAsync(string token)
         {
-            IEnumerable<Claim> claims;
             if (token.Length > _options.InputLengthRestrictions.AccessToken)
             {
-                throw new UnauthorizedException(OpenIdConnectErrors.InvalidToken, "Access token too long");
+                return TokenValidationResult.Fail(OpenIdConnectErrors.InvalidToken, "Access token too long");
             }
             if (token.Contains('.'))
             {
-                claims = await ValidateJwtTokenAsync(token);
+                return await ValidateJwtTokenAsync(token);
             }
             else
             {
-                claims = await ValidateReferenceTokenAsync(token);
+                return await ValidateReferenceTokenAsync(token);
             }
-            return claims;
         }
 
-        private async Task<IEnumerable<Claim>> ValidateJwtTokenAsync(string token)
+        private async Task<TokenValidationResult> ValidateJwtTokenAsync(string token)
         {
             var handler = new JsonWebTokenHandler();
             var securityKeys = await _credentials.GetSecurityKeysAsync();
@@ -61,32 +59,32 @@ namespace IdentityServer.Validation
             {
                 if (result.Exception is SecurityTokenExpiredException securityTokenExpiredException)
                 {
-                    throw new UnauthorizedException(OpenIdConnectErrors.ExpiredToken, securityTokenExpiredException.Message);
+                    return TokenValidationResult.Fail(OpenIdConnectErrors.ExpiredToken, securityTokenExpiredException.Message);
                 }
                 else
                 {
-                    throw new UnauthorizedException(OpenIdConnectErrors.InvalidToken, result.Exception.Message);
+                    return TokenValidationResult.Fail(OpenIdConnectErrors.InvalidToken, result.Exception.Message);
                 }
             }
-            return result.ClaimsIdentity.Claims;
+            return TokenValidationResult.Success(result.ClaimsIdentity.Claims);
         }
 
-        private async Task<IEnumerable<Claim>> ValidateReferenceTokenAsync(string tokenReference)
+        private async Task<TokenValidationResult> ValidateReferenceTokenAsync(string tokenReference)
         {
             var token = await _referenceTokenStore.FindTokenAsync(tokenReference);
             if (token == null)
             {
-                throw new UnauthorizedException(OpenIdConnectErrors.InvalidToken, "Invalid reference token");
+                return TokenValidationResult.Fail(OpenIdConnectErrors.InvalidToken, "Invalid reference token");
             }
             if (token.Expiration < _systemClock.UtcNow.UtcDateTime)
             {
-                throw new UnauthorizedException(OpenIdConnectErrors.ExpiredToken, "The access token has expired");
+                return TokenValidationResult.Fail(OpenIdConnectErrors.ExpiredToken, "The access token has expired");
             }
             if (token.Issuer != _serverUrl.GetIssuerUrl())
             {
-                throw new UnauthorizedException(OpenIdConnectErrors.InvalidToken, "Invalid issuer");
+                return TokenValidationResult.Fail(OpenIdConnectErrors.InvalidToken, "Invalid issuer");
             }
-            return token.GetJwtClaims();
+            return TokenValidationResult.Success(token.GetJwtClaims());
         }
     }
 }

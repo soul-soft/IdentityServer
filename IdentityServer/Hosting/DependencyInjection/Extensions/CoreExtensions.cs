@@ -78,6 +78,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<IUserInfoResponseGenerator, UserInfoResponseGenerator>();
             builder.Services.TryAddTransient<ITokenResponseGenerator, TokenResponseGenerator>();
             builder.Services.TryAddTransient<IDiscoveryResponseGenerator, DiscoveryResponseGenerator>();
+            builder.Services.TryAddTransient<IIntrospectionResponseGenerator, IntrospectionResponseGenerator>();
             return builder;
         }
         #endregion

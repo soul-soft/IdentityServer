@@ -5,6 +5,6 @@ namespace IdentityServer.Validation
     public interface ISecretParser
     {
         string AuthenticationMethod { get; }
-        Task<ParsedCredentials> ParseAsync(HttpContext context);
+        Task<ParsedSecret> ParseAsync(HttpContext context);
     }
 }

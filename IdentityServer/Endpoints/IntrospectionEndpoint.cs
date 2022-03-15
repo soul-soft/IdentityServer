@@ -1,25 +1,21 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
 
 namespace IdentityServer.Endpoints
 {
     internal class IntrospectionEndpoint : EndpointBase
     {
-        private readonly IClientStore _clients;
-        private readonly IResourceStore _resources;
-        private readonly SecretValidatorCollection _secretValidators;
-        private readonly SecretParserCollection _secretParsers;
+        private readonly ITokenValidator _tokenValidator;
+        private readonly IApiSecretValidator _apiSecretParsers;
+        private readonly IIntrospectionResponseGenerator _generator;
 
         public IntrospectionEndpoint(
-            IClientStore clients,
-            IResourceStore resources,
-            SecretParserCollection secretParsers,
-            SecretValidatorCollection secretValidators)
+            ITokenValidator tokenValidator,
+            IApiSecretValidator apiSecretParsers,
+            IIntrospectionResponseGenerator generator)
         {
-            _clients = clients;
-            _resources = resources;
-            _secretParsers = secretParsers;
-            _secretValidators = secretValidators;
+            _generator = generator;
+            _tokenValidator = tokenValidator;
+            _apiSecretParsers = apiSecretParsers;
         }
 
         public override async Task<IEndpointResult> ProcessAsync(HttpContext context)
@@ -35,23 +31,33 @@ namespace IdentityServer.Endpoints
             }
             #endregion
 
-            #region Validate Credentials
-            var credentials = await _secretParsers.ParseAsync(context);
-            if (credentials.Type == ClientSecretTypes.NoSecret)
-            {
-                return BadRequest(OpenIdConnectErrors.InvalidRequest, "Client credentials is missing");
-            }
-            var client = await _clients.FindByClientIdAsync(credentials.ClientId);
-            if (client == null)
-            {
-                return BadRequest(OpenIdConnectErrors.InvalidClient, "Invalid client credentials");
-            }
-            await _secretValidators.ValidateAsync(credentials, client.ClientSecrets);
+            #region Validate ApiSecret
+            var apiResource = await _apiSecretParsers.ValidateAsync(context);
             #endregion
 
-            var apis = await _resources.FindApiResourcesByNameAsync(credentials.ClientId);
+            #region Validate Token
+            var body = await context.Request.ReadFormAsync();
+            var form = body.AsNameValueCollection();
+            var token = form.Get("token");
+            if (string.IsNullOrEmpty(token))
+            {
+                return BadRequest(OpenIdConnectErrors.InvalidRequest, "Token is missing");
+            }
+            var tokenValidationResult = await _tokenValidator.ValidateAccessTokenAsync(token);
+            if (tokenValidationResult.IsError)
+            {
+                return Unauthorized(tokenValidationResult.Error, tokenValidationResult.ErrorDescription);
+            }
+            #endregion
 
-            return MethodNotAllowed();
+            #region Response Generator
+            var response = await _generator.ProcessAsync(new IntrospectionRequest(
+                tokenValidationResult.IsError,
+                apiResource,
+                tokenValidationResult.Claims));
+            #endregion
+
+            return IntrospectionResult(response);
         }
     }
 }

@@ -4,6 +4,6 @@ namespace IdentityServer.Validation
 {
     public interface IApiSecretValidator
     {
-        Task ValidateAsync(HttpContext context);
+        Task<ApiResource> ValidateAsync(HttpContext context);
     }
 }

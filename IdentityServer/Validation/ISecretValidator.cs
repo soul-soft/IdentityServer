@@ -3,6 +3,6 @@
     public interface ISecretValidator
     {
         string CredentialsType { get; }
-        Task ValidateAsync(ParsedCredentials clientCredentials, IEnumerable<Secret> allowedSecrets);
+        Task ValidateAsync(ParsedSecret clientCredentials, IEnumerable<Secret> allowedSecrets);
     }
 }

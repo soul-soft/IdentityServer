@@ -11,7 +11,7 @@
             Error = error;
         }
 
-        public UnauthorizedException(string error, string errorDescription)
+        public UnauthorizedException(string error, string? errorDescription)
             : base(errorDescription)
         {
             Error = error;

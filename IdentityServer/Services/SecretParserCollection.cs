@@ -21,7 +21,7 @@ namespace IdentityServer.Services
             return _parsers.Select(s => s.AuthenticationMethod);
         }
 
-        public async Task<ParsedCredentials> ParseAsync(HttpContext context)
+        public async Task<ParsedSecret> ParseAsync(HttpContext context)
         {
             var parser = _parsers
                 .Where(a => a.AuthenticationMethod == _options.TokenEndpointAuthMethod).

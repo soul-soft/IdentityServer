@@ -22,6 +22,11 @@ namespace IdentityServer.Endpoints
             return new TokenResult(response);
         }
 
+        protected static IEndpointResult IntrospectionResult(IntrospectionResponse response)
+        {
+            return new IntrospectionResult(response);
+        }
+
         protected static IEndpointResult BadRequest(string error, string? errorDescription)
         {
             return new BadRequestResult(error, errorDescription);

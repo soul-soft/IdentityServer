@@ -77,14 +77,6 @@ namespace Hosting.Configuration
                     "openid",
                     "address"
                 }
-            },
-            new Client()
-            {
-                ClientId="orderapi",
-                ClientSecrets = new Secret[]
-                {
-                    new Secret("secret2".Sha512())
-                },
             }
         };
 

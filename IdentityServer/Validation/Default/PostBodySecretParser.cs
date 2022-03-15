@@ -14,7 +14,7 @@ namespace IdentityServer.Validation
 
         public string AuthenticationMethod => TokenEndpointAuthMethods.PostBody;
 
-        public async Task<ParsedCredentials> ParseAsync(HttpContext context)
+        public async Task<ParsedSecret> ParseAsync(HttpContext context)
         {
             var form = await context.Request.ReadFormAsync();
             var clientId = form["client_id"].FirstOrDefault();
@@ -33,11 +33,11 @@ namespace IdentityServer.Validation
             }
             if (string.IsNullOrEmpty(credentials))
             {
-                return new ParsedCredentials(clientId, credentials, ClientSecretTypes.NoSecret);
+                return new ParsedSecret(clientId, credentials, ClientSecretTypes.NoSecret);
             }
             else
             {
-                return new ParsedCredentials(clientId, credentials, ClientSecretTypes.SharedSecret);
+                return new ParsedSecret(clientId, credentials, ClientSecretTypes.SharedSecret);
             }
         }
     }
