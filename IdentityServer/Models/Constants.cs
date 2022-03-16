@@ -45,6 +45,7 @@
         {
             public static readonly string[] ClaimsServiceFilterClaimTypes =
             {
+                JwtClaimTypes.Subject,
                 JwtClaimTypes.AccessTokenHash,
                 JwtClaimTypes.Audience,
                 JwtClaimTypes.AuthenticationMethod,
@@ -62,7 +63,7 @@
                 JwtClaimTypes.ReferenceTokenId,
                 JwtClaimTypes.SessionId,
                 JwtClaimTypes.Scope,
-                JwtClaimTypes.Confirmation
+                JwtClaimTypes.Confirmation,
             };
         }
     }

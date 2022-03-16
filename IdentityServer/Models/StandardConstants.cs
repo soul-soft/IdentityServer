@@ -103,10 +103,23 @@
         };
     }
 
-    public static class ClaimsProviders
+    public static class ProfileDataCallers
     {
         public const string IdentityToken = "ClaimsProviderIdentityToken";
         public const string AccessToken = "ClaimsProviderAccessToken";
         public const string UserInfoEndpoint = "UserInfoEndpoint";
+    }
+
+    public static class ProfileIsActiveCallers
+    {
+        public const string AuthorizeEndpoint = "AuthorizeEndpoint";
+        public const string IdentityTokenValidation = "IdentityTokenValidation";
+        public const string AccessTokenValidation = "AccessTokenValidation";
+        public const string ResourceOwnerValidation = "ResourceOwnerValidation";
+        public const string ExtensionGrantValidation = "ExtensionGrantValidation";
+        public const string RefreshTokenValidation = "RefreshTokenValidation";
+        public const string AuthorizationCodeValidation = "AuthorizationCodeValidation";
+        public const string UserInfoRequestValidation = "UserInfoRequestValidation";
+        public const string DeviceCodeValidation = "DeviceCodeValidation";
     }
 }

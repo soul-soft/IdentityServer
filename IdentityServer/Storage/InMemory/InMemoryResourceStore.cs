@@ -2,9 +2,9 @@
 {
     internal class InMemoryResourceStore : IResourceStore
     {
-        private readonly ResourceCollection _resources;
+        private readonly Resources _resources;
 
-        public InMemoryResourceStore(ResourceCollection resources)
+        public InMemoryResourceStore(Resources resources)
         {
             _resources = resources;
         }
@@ -18,7 +18,7 @@
             return Task.FromResult(resources);
         }
 
-        public Task<ResourceCollection> FindResourcesByScopesAsync(IEnumerable<string> scopes)
+        public Task<Resources> FindResourcesByScopesAsync(IEnumerable<string> scopes)
         {
             var identityResources = _resources.IdentityResources
                 .Where(a => a.Enabled)
@@ -34,7 +34,7 @@
                 .Where(a => a.Enabled)
                 .Where(a => a.Scopes.Any(scope => apiScopeNames.Contains(scope)));
 
-            var resources = new ResourceCollection(identityResources, apiScopes, apiResources);
+            var resources = new Resources(identityResources, apiScopes, apiResources);
             return Task.FromResult(resources);
         }
 

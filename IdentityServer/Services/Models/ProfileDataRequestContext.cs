@@ -6,10 +6,10 @@ namespace IdentityServer.Models
     {
         public string Caller { get; }
         public Client Client { get; }
-        public ResourceCollection Resources { get; }
+        public Resources Resources { get; }
         public IEnumerable<string> ClaimTypes { get; }
 
-        public ProfileDataRequestContext(string caller, Client client, ResourceCollection resources, IEnumerable<string> claimTypes)
+        public ProfileDataRequestContext(string caller, Client client, Resources resources, IEnumerable<string> claimTypes)
         {
             Caller = caller;
             Client = client;

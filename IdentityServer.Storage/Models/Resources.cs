@@ -3,16 +3,16 @@ using static IdentityServer.OpenIdConnects;
 
 namespace IdentityServer.Models
 {
-    public class ResourceCollection : IEnumerable<IResource>
+    public class Resources : IEnumerable<IResource>
     {
         private readonly IEnumerable<IResource> _resources;
 
-        public ResourceCollection(IEnumerable<IResource> resources)
+        public Resources(IEnumerable<IResource> resources)
         {
             _resources = resources;
         }
 
-        public ResourceCollection(params IEnumerable<IResource>[] resources)
+        public Resources(params IEnumerable<IResource>[] resources)
         {
             _resources = resources.SelectMany(s => s);
         }

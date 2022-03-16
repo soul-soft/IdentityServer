@@ -6,6 +6,6 @@ namespace IdentityServer.Storage
     {
         Task<IEnumerable<string>> GetShowInDiscoveryDocumentScopesAsync();
         Task<IEnumerable<ApiResource>> FindApiResourcesByNameAsync(string name);
-        Task<ResourceCollection> FindResourcesByScopesAsync(IEnumerable<string> scopes);
+        Task<Resources> FindResourcesByScopesAsync(IEnumerable<string> scopes);
     }
 }

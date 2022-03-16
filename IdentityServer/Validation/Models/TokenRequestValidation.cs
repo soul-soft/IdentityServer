@@ -1,33 +1,31 @@
 ﻿using System.Collections.Specialized;
+using System.Security.Claims;
 
 namespace IdentityServer.Validation
 {
     public class TokenRequestValidation
     {
         public Client Client { get; }
-        public string GrantType { get; }
-        public ParsedSecret ClientSecret { get; }
-        public IEnumerable<string> Scopes { get; }
-        public ResourceCollection Resources { get; }
+        public string GrantType { get; set; }
+        public ClaimsPrincipal Subject { get; }
+        public Resources Resources { get; }
+        public NameValueCollection Body { get; }
         public IdentityServerOptions Options { get; }
-        public NameValueCollection Raw { get; }
 
         public TokenRequestValidation(
             Client client,
-            ParsedSecret clientSecret,
-            IdentityServerOptions options,
-            IEnumerable<string> scopes,
             string grantType,
-            ResourceCollection resources,
-            NameValueCollection raw)
+            Resources resources,
+            ClaimsPrincipal subject,
+            NameValueCollection body,
+            IdentityServerOptions options)
         {
             Client = client;
-            ClientSecret = clientSecret;
-            Options = options;
-            Scopes = scopes;
-            Resources = resources;
             GrantType = grantType;
-            Raw = raw;
+            Subject = subject;
+            Options = options;
+            Resources = resources;
+            Body = body;
         }
     }
 }

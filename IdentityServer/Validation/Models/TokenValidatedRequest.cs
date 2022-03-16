@@ -6,12 +6,15 @@ namespace IdentityServer.Models
     {
         public string GrantType { get; }
         public Client Client { get; }
-        public ResourceCollection Resources { get; }
+        public ClaimsPrincipal Subject { get; }
+
+        public Resources Resources { get; }
         public IdentityServerOptions Options { get; }
 
-        public TokenValidatedRequest(string grantType, Client client, ResourceCollection resources, IdentityServerOptions options)
+        public TokenValidatedRequest(string grantType, ClaimsPrincipal subject, Client client, Resources resources, IdentityServerOptions options)
         {
             GrantType = grantType;
+            Subject = subject;
             Client = client;
             Options = options;
             Resources = resources;

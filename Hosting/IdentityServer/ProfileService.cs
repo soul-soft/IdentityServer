@@ -9,14 +9,14 @@ namespace Hosting.Configuration
         public Task<IEnumerable<Claim>> GetProfileDataAsync(ProfileDataRequestContext context)
         {
             var profiles = new List<Claim>();
-            if (context.Caller == ClaimsProviders.AccessToken)
+            if (context.Caller == ProfileDataCallers.AccessToken)
             {
                 if (context.ClaimTypes.Contains(JwtClaimTypes.Subject))
                 {
                     profiles.Add(new Claim(JwtClaimTypes.Subject, "10"));
                 }
             }
-            if (context.Caller == ClaimsProviders.UserInfoEndpoint)
+            if (context.Caller == ProfileDataCallers.UserInfoEndpoint)
             {
                 if (context.ClaimTypes.Contains(JwtClaimTypes.Subject))
                 {

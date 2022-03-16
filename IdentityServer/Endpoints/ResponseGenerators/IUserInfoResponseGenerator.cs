@@ -4,6 +4,6 @@ namespace IdentityServer.Endpoints
 {
     public interface IUserInfoResponseGenerator
     {
-        Task<UserInfoResponse> ProcessAsync(ClaimsPrincipal subject, Client client, ResourceCollection resources);
+        Task<UserInfoResponse> ProcessAsync(ClaimsPrincipal subject, Client client, Resources resources);
     }
 }

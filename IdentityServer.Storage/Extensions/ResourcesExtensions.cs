@@ -2,9 +2,9 @@
 {
     public static class ResourcesExtensions
     {
-        public static ResourceCollection ToResources(this IEnumerable<IResource> resources)
+        public static Resources ToResources(this IEnumerable<IResource> resources)
         {
-            return new ResourceCollection(resources);
+            return new Resources(resources);
         }
     }
 }

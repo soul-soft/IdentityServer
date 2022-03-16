@@ -12,8 +12,9 @@ namespace IdentityServer.Endpoints
         private readonly IdentityServerOptions _options;
         private readonly ITokenResponseGenerator _generator;
         private readonly ISecretListParser _secretsParser;
+        private readonly IAuthenticationService _authenticationService;
         private readonly IResourceValidator _resourceValidator;
-        private readonly ISecretListValidator  _secretsValidator;
+        private readonly ISecretListValidator _secretsValidator;
 
         public TokenEndpoint(
             IClientStore clients,
@@ -22,7 +23,8 @@ namespace IdentityServer.Endpoints
             ISecretListParser secretsParser,
             ITokenResponseGenerator generator,
             IResourceValidator resourceValidator,
-            ISecretListValidator secretsValidator)
+            ISecretListValidator secretsValidator,
+            IAuthenticationService authenticationService)
         {
             _clients = clients;
             _options = options;
@@ -31,11 +33,12 @@ namespace IdentityServer.Endpoints
             _secretsParser = secretsParser;
             _secretsValidator = secretsValidator;
             _resourceValidator = resourceValidator;
+            _authenticationService = authenticationService;
         }
 
         public override async Task<IEndpointResult> ProcessAsync(HttpContext context)
         {
-            #region ValidateRequest
+            #region Validate Request
             if (!HttpMethods.IsPost(context.Request.Method))
             {
                 return MethodNotAllowed();
@@ -106,20 +109,23 @@ namespace IdentityServer.Endpoints
             }
             #endregion
 
+            #region Request Subject 
+            var subject = await _authenticationService.SingInAsync(grantType, client, resources);
+            #endregion
+
             #region Validate GrantRequest
             var validationTokenRequest = new TokenRequestValidation(
                 client: client,
-                clientSecret: parsedSecret,
-                options: _options,
-                scopes: scopes,
-                resources: resources,
                 grantType: grantType,
-                raw: form);
+                resources: resources,
+                subject: subject,
+                body: form,
+                options: _options);
             await RunValidationAsync(context, validationTokenRequest);
             #endregion
 
             #region Generator Response
-            var validatedTokenRequest = new TokenValidatedRequest(grantType, client, resources, _options);
+            var validatedTokenRequest = new TokenValidatedRequest(grantType, subject, client, resources, _options);
             var response = await _generator.ProcessAsync(validatedTokenRequest);
             return TokenEndpointResult(response);
             #endregion
@@ -144,6 +150,11 @@ namespace IdentityServer.Endpoints
             else if (GrantTypes.Password.Equals(request.GrantType))
             {
                 var validator = context.RequestServices.GetRequiredService<IResourceOwnerCredentialRequestValidator>();
+                var profileService = context.RequestServices.GetRequiredService<IProfileService>();
+                await profileService.IsActiveAsync(new IsActiveContext(
+                    ProfileIsActiveCallers.ResourceOwnerValidation,
+                    request.Client,
+                    request.Subject));
                 await ValidateResourceOwnerCredentialRequestAsync(validator, request);
             }
             //验证自定义授权
@@ -166,8 +177,8 @@ namespace IdentityServer.Endpoints
         #region ResourceOwnerCredentialRequest
         private async Task ValidateResourceOwnerCredentialRequestAsync(IResourceOwnerCredentialRequestValidator validator, TokenRequestValidation request)
         {
-            var username = request.Raw[OpenIdConnectParameterNames.Username];
-            var password = request.Raw[OpenIdConnectParameterNames.Password];
+            var username = request.Body[OpenIdConnectParameterNames.Username];
+            var password = request.Body[OpenIdConnectParameterNames.Password];
             if (string.IsNullOrEmpty(username))
             {
                 throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "Username is missing");
@@ -192,7 +203,7 @@ namespace IdentityServer.Endpoints
         #region RefreshTokenRequest
         private async Task ValidateRefreshTokenRequestAsync(IRefreshTokenRequestValidator validator, TokenRequestValidation request)
         {
-            var refreshToken = request.Raw[OpenIdConnectParameterNames.RefreshToken];
+            var refreshToken = request.Body[OpenIdConnectParameterNames.RefreshToken];
             if (refreshToken == null)
             {
                 throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "RefreshToken is missing");

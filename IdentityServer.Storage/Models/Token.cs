@@ -4,17 +4,39 @@ namespace IdentityServer.Models
 {
     public class Token
     {
-        public string Id { get; set; } = null!;
-        public string Type { get; set; } = null!;
-        public int Lifetime { get; set; }
-        public string GrantType { get; set; } = null!;
-        public string IdentityProvider { get; set; } = null!;
-        public string? Issuer
+        public string Type { get; }
+        public AccessTokenType AccessTokenType { get; set; }
+        public IEnumerable<Claim> Claims { get; }
+        public string JwtId
+        {
+            get
+            {
+                return Claims.Where(s => s.Type == JwtClaimTypes.JwtId)
+                    .Select(s => s.Value).First();
+            }
+        }
+        public string? AuthenticationMethod
+        {
+            get
+            {
+                return Claims.Where(s => s.Type == JwtClaimTypes.AuthenticationMethod)
+                    .Select(s => s.Value).FirstOrDefault();
+            }
+        }
+        public string? IdentityProvider
+        {
+            get
+            {
+                return Claims.Where(s => s.Type == JwtClaimTypes.IdentityProvider)
+                    .Select(s => s.Value).FirstOrDefault();
+            }
+        }
+        public string Issuer
         {
             get
             {
                 return Claims.Where(s => s.Type == JwtClaimTypes.Issuer)
-                    .Select(s => s.Value).FirstOrDefault();
+                    .Select(s => s.Value).First();
             }
         }
         public string? SubjectId
@@ -25,14 +47,16 @@ namespace IdentityServer.Models
                     .Select(s => s.Value).FirstOrDefault();
             }
         }
-        public DateTime Expiration
+        public DateTimeOffset Expiration
         {
-            get 
+            get
             {
-                return CreationTime.AddSeconds(Lifetime);
+                var issuedAt = Claims.Where(s => s.Type == JwtClaimTypes.Expiration)
+                   .Select(s => s.Value).First();
+                return DateTimeOffset.FromUnixTimeSeconds(long.Parse(issuedAt));
             }
         }
-        public ICollection<string> Audiences
+        public IEnumerable<string> Audiences
         {
             get
             {
@@ -40,9 +64,23 @@ namespace IdentityServer.Models
                     .Select(s => s.Value).ToArray();
             }
         }
-        public ICollection<Claim> Claims { get; set; } = new HashSet<Claim>();
-        public AccessTokenType AccessTokenType { get; set; }
-        public ICollection<string> AllowedSigningAlgorithms { get; set; } = new HashSet<string>();
-        public DateTime CreationTime { get; set; }
+        public IEnumerable<string> AllowedSigningAlgorithms { get; } 
+        public DateTimeOffset IssuedAt
+        {
+            get
+            {
+                var issuedAt = Claims.Where(s => s.Type == JwtClaimTypes.IssuedAt)
+                    .Select(s => s.Value).First();
+                return DateTimeOffset.FromUnixTimeSeconds(long.Parse(issuedAt));
+            }
+        }
+
+        public Token(string type, AccessTokenType accessTokenType, IEnumerable<Claim> claims, IEnumerable<string> allowedSigningAlgorithms)
+        {
+            Type = type;
+            AccessTokenType = accessTokenType;
+            Claims = claims;
+            AllowedSigningAlgorithms = allowedSigningAlgorithms;
+        }
     }
 }

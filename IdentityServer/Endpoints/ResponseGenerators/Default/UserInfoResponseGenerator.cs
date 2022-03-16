@@ -11,12 +11,12 @@ namespace IdentityServer.Endpoints
             _profileService = profileService;
         }
 
-        public async Task<UserInfoResponse> ProcessAsync(ClaimsPrincipal subject, Client client, ResourceCollection resources)
+        public async Task<UserInfoResponse> ProcessAsync(ClaimsPrincipal subject, Client client, Resources resources)
         {
             var claimTypes = resources.ClaimTypes;
           
             var claims = await _profileService.GetProfileDataAsync(new ProfileDataRequestContext(
-                ClaimsProviders.UserInfoEndpoint,
+                ProfileDataCallers.UserInfoEndpoint,
                 client,
                 resources,
                 claimTypes));

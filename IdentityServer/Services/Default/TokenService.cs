@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authentication;
-using System.Security.Claims;
 
 namespace IdentityServer.Services
 {
     internal class TokenService : ITokenService
     {
         private readonly ISystemClock _clock;
-        private readonly IClaimsService _claimsService;
+        private readonly IAuthenticationService _claimsService;
         private readonly IHandleGenerator _handleGenerator;
         private readonly IRefreshTokenStore _refreshTokenStore;
         private readonly ITokenStore _referenceTokenStore;
@@ -14,7 +13,7 @@ namespace IdentityServer.Services
 
         public TokenService(
             ISystemClock clock,
-            IClaimsService claimsService,
+            IAuthenticationService claimsService,
             IHandleGenerator handleGenerator,
             IRefreshTokenStore refreshTokenStore,
             ITokenStore referenceTokenService,
@@ -28,40 +27,24 @@ namespace IdentityServer.Services
             _securityTokenService = securityTokenService;
         }
 
-        public async Task<Token> CreateAccessTokenAsync(TokenValidatedRequest request)
+        public Task<Token> CreateAccessTokenAsync(TokenValidatedRequest request)
         {
-            var id = await _handleGenerator.GenerateAsync();
-            var claims = await _claimsService.GetAccessTokenClaimsAsync(request);
-            var token = new Token
-            {
-                Id = id,
-                Type = TokenTypes.AccessToken,
-                GrantType = request.GrantType,
-                Claims = claims.ToList(),
-                Lifetime = request.Client.AccessTokenLifetime,
-                CreationTime = _clock.UtcNow.UtcDateTime,
-                AccessTokenType = request.Client.AccessTokenType,
-                IdentityProvider = request.Options.IdentityProvider,
-            };
-            return token;
+            var token = new Token(
+                TokenTypes.AccessToken,
+                request.Client.AccessTokenType,
+                request.Subject.Claims,
+                request.Client.AllowedSigningAlgorithms);
+            return Task.FromResult(token);
         }
 
-        public async Task<Token> CreateIdentityTokenAsync(TokenValidatedRequest request)
+        public Task<Token> CreateIdentityTokenAsync(TokenValidatedRequest request)
         {
-            var handle = await _handleGenerator.GenerateAsync();
-            var claims = await _claimsService.GetIdentityTokenClaimsAsync(request);
-            var token = new Token
-            {
-                Id = handle,
-                Type = TokenTypes.AccessToken,
-                GrantType = request.GrantType,
-                Claims = claims.ToList(),
-                CreationTime = _clock.UtcNow.UtcDateTime,
-                Lifetime = request.Client.AccessTokenLifetime,
-                AccessTokenType = request.Client.AccessTokenType,
-                IdentityProvider = request.Options.IdentityProvider,
-            };
-            return token;
+            var token = new Token(
+                TokenTypes.IdentityToken,
+                request.Client.AccessTokenType, 
+                request.Subject.Claims,
+                request.Client.AllowedSigningAlgorithms);
+            return Task.FromResult(token);
         }
 
         public async Task<string> CreateSecurityTokenAsync(Token token)
@@ -76,7 +59,7 @@ namespace IdentityServer.Services
                 else
                 {
                     await _referenceTokenStore.StoreTokenAsync(token);
-                    securityToken = token.Id;
+                    securityToken = token.JwtId;
                 }
             }
             else if (token.Type == TokenTypes.IdentityToken)

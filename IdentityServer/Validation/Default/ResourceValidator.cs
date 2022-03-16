@@ -2,7 +2,7 @@
 {
     public class ResourceValidator : IResourceValidator
     {
-        public  Task ValidateAsync(IEnumerable<string> scopes, ResourceCollection resources)
+        public  Task ValidateAsync(IEnumerable<string> scopes, Resources resources)
         {
             foreach (var scope in scopes)
             {

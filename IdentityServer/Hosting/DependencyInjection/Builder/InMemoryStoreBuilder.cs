@@ -95,7 +95,7 @@ namespace IdentityServer.Configuration
             {
                 services.AddResourceStore(sp =>
                 {
-                    return new InMemoryResourceStore(new ResourceCollection(Resources));
+                    return new InMemoryResourceStore(new Resources(Resources));
                 });
             }
             if (SigningCredentials.Any())
