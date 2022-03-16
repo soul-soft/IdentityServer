@@ -11,25 +11,25 @@ namespace IdentityServer.Endpoints
         private readonly IResourceStore _resourceStore;
         private readonly IdentityServerOptions _options;
         private readonly ITokenResponseGenerator _generator;
+        private readonly ISecretListParser _secretsParser;
         private readonly IResourceValidator _resourceValidator;
-        private readonly SecretParserCollection _secretParsers;
-        private readonly SecretValidatorCollection _secretValidators;
+        private readonly ISecretListValidator  _secretsValidator;
 
         public TokenEndpoint(
             IClientStore clients,
             IResourceStore resourceStore,
             IdentityServerOptions options,
+            ISecretListParser secretsParser,
             ITokenResponseGenerator generator,
             IResourceValidator resourceValidator,
-            SecretValidatorCollection secretValidators,
-            SecretParserCollection secretParsers)
+            ISecretListValidator secretsValidator)
         {
             _clients = clients;
             _options = options;
             _generator = generator;
             _resourceStore = resourceStore;
-            _secretParsers = secretParsers;
-            _secretValidators = secretValidators;
+            _secretsParser = secretsParser;
+            _secretsValidator = secretsValidator;
             _resourceValidator = resourceValidator;
         }
 
@@ -47,7 +47,7 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Validate ClientSecret
-            var parsedSecret = await _secretParsers.ParseAsync(context);
+            var parsedSecret = await _secretsParser.ParseAsync(context);
             var client = await _clients.FindByClientIdAsync(parsedSecret.ClientId);
             if (client == null)
             {
@@ -55,7 +55,7 @@ namespace IdentityServer.Endpoints
             }
             if (client.RequireClientSecret)
             {
-                await _secretValidators.ValidateAsync(parsedSecret, client.ClientSecrets);
+                await _secretsValidator.ValidateAsync(parsedSecret, client.ClientSecrets);
             }
             #endregion
 
@@ -106,8 +106,8 @@ namespace IdentityServer.Endpoints
             }
             #endregion
 
-            #region Validate Grant
-            var validationTokenRequest = new GrantValidationRequest(
+            #region Validate GrantRequest
+            var validationTokenRequest = new TokenRequestValidation(
                 client: client,
                 clientSecret: parsedSecret,
                 options: _options,
@@ -115,7 +115,7 @@ namespace IdentityServer.Endpoints
                 resources: resources,
                 grantType: grantType,
                 raw: form);
-            await RunGrantValidationAsync(context, validationTokenRequest);
+            await RunValidationAsync(context, validationTokenRequest);
             #endregion
 
             #region Generator Response
@@ -125,67 +125,91 @@ namespace IdentityServer.Endpoints
             #endregion
         }
 
-        #region Validate Grant
-        private async Task RunGrantValidationAsync(HttpContext context, GrantValidationRequest request)
+        #region Validate GrantRequest
+        private async Task RunValidationAsync(HttpContext context, TokenRequestValidation request)
         {
             //验证刷新令牌
             if (GrantTypes.RefreshToken.Equals(request.GrantType))
             {
-                var refreshToken = request.Raw[OpenIdConnectParameterNames.RefreshToken];
-                if (refreshToken == null)
-                {
-                    throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "RefreshToken is missing");
-                }
-                if (refreshToken.Length > _options.InputLengthRestrictions.RefreshToken)
-                {
-                    throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "RefreshToken too long");
-                }
-                var grantValidator = context.RequestServices.GetRequiredService<IRefreshTokenGrantValidator>();
-                await grantValidator.ValidateAsync(new RefreshTokenGrantValidationRequest(
-                    refreshToken, 
-                    request));
+                var validator = context.RequestServices.GetRequiredService<IRefreshTokenRequestValidator>();
+                await ValidateRefreshTokenRequestAsync(validator, request);
             }
             //验证客户端凭据授权
             else if (GrantTypes.ClientCredentials.Equals(request.GrantType))
             {
-                var grantContext = new ClientGrantValidationRequest(request);
-                var grantValidator = context.RequestServices.GetRequiredService<IClientCredentialsGrantValidator>();
-                await grantValidator.ValidateAsync(grantContext);
+                var validator = context.RequestServices.GetRequiredService<IClientCredentialsRequestValidator>();
+                await ValidateClientCredentialsRequestAsync(validator, request);
             }
             //验证资源所有者密码授权
             else if (GrantTypes.Password.Equals(request.GrantType))
             {
-                var username = request.Raw[OpenIdConnectParameterNames.Username];
-                var password = request.Raw[OpenIdConnectParameterNames.Password];
-                if (string.IsNullOrEmpty(username))
-                {
-                    throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "Username is missing");
-                }
-                if (username.Length > _options.InputLengthRestrictions.UserName)
-                {
-                    throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "Username too long");
-                }
-                if (string.IsNullOrEmpty(password))
-                {
-                    throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "Password is missing");
-                }
-                if (password.Length > _options.InputLengthRestrictions.Password)
-                {
-                    throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "Password too long");
-                }
-                var grantValidator = context.RequestServices.GetRequiredService<IPasswordGrantValidator>();
-                await grantValidator.ValidateAsync(new PasswordGrantValidationRequest(
-                    request: request,
-                    username: username,
-                    password: password));
+                var validator = context.RequestServices.GetRequiredService<IResourceOwnerCredentialRequestValidator>();
+                await ValidateResourceOwnerCredentialRequestAsync(validator, request);
             }
             //验证自定义授权
             else
             {
-                var grantContext = new ExtensionGrantValidationRequest(request);
-                var grantValidator = context.RequestServices.GetRequiredService<ExtensionGrantValidatorCollection>();
-                await grantValidator.ValidateAsync(grantContext);
+                var validator = context.RequestServices.GetRequiredService<IExtensionGrantListValidator>();
+                await ValidateExtensionGrantRequestAsync(validator, request);
             }
+        }
+        #endregion
+
+        #region ClientCredentialsRequest
+        private static async Task ValidateClientCredentialsRequestAsync(IClientCredentialsRequestValidator validator, TokenRequestValidation request)
+        {
+            var grantContext = new ClientCredentialsRequestValidation(request);
+            await validator.ValidateAsync(grantContext);
+        }
+        #endregion
+
+        #region ResourceOwnerCredentialRequest
+        private async Task ValidateResourceOwnerCredentialRequestAsync(IResourceOwnerCredentialRequestValidator validator, TokenRequestValidation request)
+        {
+            var username = request.Raw[OpenIdConnectParameterNames.Username];
+            var password = request.Raw[OpenIdConnectParameterNames.Password];
+            if (string.IsNullOrEmpty(username))
+            {
+                throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "Username is missing");
+            }
+            if (username.Length > _options.InputLengthRestrictions.UserName)
+            {
+                throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "Username too long");
+            }
+            if (string.IsNullOrEmpty(password))
+            {
+                throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "Password is missing");
+            }
+            if (password.Length > _options.InputLengthRestrictions.Password)
+            {
+                throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "Password too long");
+            }
+            var validation = new ResourceOwnerCredentialRequestValidation(request, username, password);
+            await validator.ValidateAsync(validation);
+        }
+        #endregion
+
+        #region RefreshTokenRequest
+        private async Task ValidateRefreshTokenRequestAsync(IRefreshTokenRequestValidator validator, TokenRequestValidation request)
+        {
+            var refreshToken = request.Raw[OpenIdConnectParameterNames.RefreshToken];
+            if (refreshToken == null)
+            {
+                throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "RefreshToken is missing");
+            }
+            if (refreshToken.Length > _options.InputLengthRestrictions.RefreshToken)
+            {
+                throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "RefreshToken too long");
+            }
+            await validator.ValidateAsync(new RefreshTokenRequestValidation(refreshToken, request));
+        }
+        #endregion
+
+        #region ExtensionGrantRequest
+        private static async Task ValidateExtensionGrantRequestAsync(IExtensionGrantListValidator validator, TokenRequestValidation request)
+        {
+            var grantContext = new ExtensionGrantRequestValidation(request);
+            await validator.ValidateAsync(grantContext);
         }
         #endregion
     }

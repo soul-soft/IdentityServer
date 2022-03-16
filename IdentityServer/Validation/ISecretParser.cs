@@ -2,9 +2,12 @@
 
 namespace IdentityServer.Validation
 {
+    /// <summary>
+    /// 凭据解析器
+    /// </summary>
     public interface ISecretParser
     {
-        string AuthenticationMethod { get; }
+        string ParserType { get; }
         Task<ParsedSecret> ParseAsync(HttpContext context);
     }
 }

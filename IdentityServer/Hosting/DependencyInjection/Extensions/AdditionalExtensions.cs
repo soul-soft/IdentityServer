@@ -115,7 +115,7 @@ namespace Microsoft.Extensions.DependencyInjection
         }
         #endregion
 
-        #region IProfilefile
+        #region Profilefile
         public static IIdentityServerBuilder AddProfileService<T>(this IIdentityServerBuilder builder)
            where T : class, IProfileService
         {
@@ -124,16 +124,34 @@ namespace Microsoft.Extensions.DependencyInjection
         }
         #endregion
 
-        #region IPasswordGrantValidator
-        public static IIdentityServerBuilder AddPasswordGrantValidator<T>(this IIdentityServerBuilder builder)
-           where T : class, IPasswordGrantValidator
+        #region ClientCredentialsRequestValidator
+        public static IIdentityServerBuilder AddClientCredentialsRequestValidator<T>(this IIdentityServerBuilder builder)
+           where T : class, IClientCredentialsRequestValidator
         {
-            builder.Services.AddOrUpdateTransient<IPasswordGrantValidator, T>();
+            builder.Services.AddOrUpdateTransient<IClientCredentialsRequestValidator, T>();
             return builder;
         }
         #endregion
 
-        #region IExtensionGrantValidator
+        #region RefreshTokenRequestValidator
+        public static IIdentityServerBuilder AddRefreshTokenRequestValidator<T>(this IIdentityServerBuilder builder)
+           where T : class, IRefreshTokenRequestValidator
+        {
+            builder.Services.AddOrUpdateTransient<IRefreshTokenRequestValidator, T>();
+            return builder;
+        }
+        #endregion
+
+        #region ResourceOwnerCredentialRequestValidator
+        public static IIdentityServerBuilder AddResourceOwnerCredentialRequestValidator<T>(this IIdentityServerBuilder builder)
+           where T : class, IResourceOwnerCredentialRequestValidator
+        {
+            builder.Services.AddOrUpdateTransient<IResourceOwnerCredentialRequestValidator, T>();
+            return builder;
+        }
+        #endregion
+
+        #region ExtensionGrantValidator
         public static IIdentityServerBuilder AddExtensionGrantValidator<T>(this IIdentityServerBuilder builder)
            where T : class, IExtensionGrantValidator
         {

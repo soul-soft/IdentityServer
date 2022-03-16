@@ -4,17 +4,8 @@ namespace IdentityServer.Endpoints
 {
     internal class AuthorizeEndpoint : EndpointBase
     {
-        private readonly IdentityServerOptions _options;
-
-        public AuthorizeEndpoint(
-            IdentityServerOptions options)
+        public override Task<IEndpointResult> ProcessAsync(HttpContext context)
         {
-            _options = options;
-        }
-
-        public override async Task<IEndpointResult> ProcessAsync(HttpContext context)
-        {
-            await Task.CompletedTask;
             throw new NotImplementedException();
         }
     }

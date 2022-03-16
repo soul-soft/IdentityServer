@@ -20,7 +20,7 @@ builder.Services.AddIdentityServer(o =>
     {
         o.IssuerUri = "https://www.baidu.com";
     })
-    .AddPasswordGrantValidator<PasswordGrantValidator>()
+    .AddResourceOwnerCredentialRequestValidator<ResourceOwnerCredentialRequestValidator>()
     .AddExtensionGrantValidator<MyExtensionGrantValidator>()
     .AddProfileService<ProfileService>()
     .AddInMemoryStores(setup =>

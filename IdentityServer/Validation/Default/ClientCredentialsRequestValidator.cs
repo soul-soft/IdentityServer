@@ -1,8 +1,8 @@
 ﻿namespace IdentityServer.Validation
 {
-    internal class ClientCredentialsGrantValidator : IClientCredentialsGrantValidator
+    internal class ClientCredentialsRequestValidator : IClientCredentialsRequestValidator
     {
-        public Task ValidateAsync(ClientGrantValidationRequest context)
+        public Task ValidateAsync(ClientCredentialsRequestValidation context)
         {
             var resources = context.Request.Resources;
             if (resources.IdentityResources.Any())

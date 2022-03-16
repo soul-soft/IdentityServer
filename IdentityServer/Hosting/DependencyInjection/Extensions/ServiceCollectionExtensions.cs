@@ -39,10 +39,10 @@ namespace Microsoft.Extensions.DependencyInjection
 
             builder
                 .AddRequiredPlatformServices()
-                .AddValidators()
+                .AddPluggableValidators()
                 .AddPluggableServices()
-                .AddDefaultEndpoints()
-                .AddResponseGenerators();
+                .AddRequiredPlatformEndpoints()
+                .AddPluggableResponseGenerators();
 
             return builder;
         }

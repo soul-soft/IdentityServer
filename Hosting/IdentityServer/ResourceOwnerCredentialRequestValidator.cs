@@ -3,9 +3,9 @@ using IdentityServer.Validation;
 
 namespace Hosting.Configuration
 {
-    public class PasswordGrantValidator : IPasswordGrantValidator
+    public class ResourceOwnerCredentialRequestValidator : IResourceOwnerCredentialRequestValidator
     {
-        public Task ValidateAsync(PasswordGrantValidationRequest context)
+        public Task ValidateAsync(ResourceOwnerCredentialRequestValidation context)
         {
             if (context.Username == "test" && context.Password == "test")
             {

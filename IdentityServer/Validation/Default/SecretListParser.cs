@@ -2,13 +2,13 @@
 
 namespace IdentityServer.Services
 {
-    public class SecretParserCollection
+    public class SecretListParser: ISecretListParser
     {
         private readonly IdentityServerOptions _options;
 
         private readonly IEnumerable<ISecretParser> _parsers;
 
-        public SecretParserCollection(
+        public SecretListParser(
             IdentityServerOptions options,
             IEnumerable<ISecretParser> parsers)
         {
@@ -16,19 +16,18 @@ namespace IdentityServer.Services
             _parsers = parsers;
         }
 
-        public IEnumerable<string> GetAuthenticationMethods()
+        public IEnumerable<string> GetSecretParserTypes()
         {
-            return _parsers.Select(s => s.AuthenticationMethod);
+            return _parsers.Select(s => s.ParserType);
         }
 
         public async Task<ParsedSecret> ParseAsync(HttpContext context)
         {
-            var parser = _parsers
-                .Where(a => a.AuthenticationMethod == _options.TokenEndpointAuthMethod).
-                FirstOrDefault();
+            var parser = _parsers.Where(a => a.ParserType == _options.SecretParserType)
+                .FirstOrDefault();
             if (parser == null)
             {
-                throw new InvalidOperationException($"invalid authentication method：{_options.TokenEndpointAuthMethod}");
+                throw new InvalidOperationException($"invalid authentication method：{_options.SecretParserType}");
             }
             return await parser.ParseAsync(context);
         }

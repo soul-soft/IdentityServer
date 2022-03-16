@@ -7,14 +7,14 @@ namespace IdentityServer.Endpoints
     {
         private readonly IResourceStore _resources;
         private readonly ISigningCredentialStore _credentials;
-        private readonly SecretParserCollection _secretParsers;
-        private readonly ExtensionGrantValidatorCollection _extensionGrantValidators;
+        private readonly ISecretListParser _secretParsers;
+        private readonly IExtensionGrantListValidator _extensionGrantValidators;
 
         public DiscoveryResponseGenerator(
             IResourceStore resources,
-            SecretParserCollection secretParsers,
+            ISecretListParser secretParsers,
             ISigningCredentialStore credentials,
-            ExtensionGrantValidatorCollection extensionGrantValidators)
+            IExtensionGrantListValidator extensionGrantValidators)
         {
             _resources = resources;
             _credentials = credentials;
@@ -32,7 +32,7 @@ namespace IdentityServer.Endpoints
                 TokenEndpoint = baseUrl + Constants.EndpointRoutePaths.Token,
                 UserInfoEndpoint = baseUrl + Constants.EndpointRoutePaths.UserInfo
             };
-            var grantTypes = _extensionGrantValidators.GetExtensionGrantTypes();
+            var grantTypes = _extensionGrantValidators.GetGrantTypes();
             foreach (var item in grantTypes)
             {
                 configuration.GrantTypesSupported.Add(item);
@@ -45,7 +45,7 @@ namespace IdentityServer.Endpoints
             {
                 configuration.ScopesSupported.Add(item);
             }
-            var authMethods = _secretParsers.GetAuthenticationMethods();
+            var authMethods = _secretParsers.GetSecretParserTypes();
             foreach (var item in authMethods)
             {
                 configuration.TokenEndpointAuthMethodsSupported.Add(item);

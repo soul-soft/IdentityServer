@@ -2,7 +2,7 @@
 
 namespace IdentityServer.Validation
 {
-    public class RefreshTokenGrantValidator : IRefreshTokenGrantValidator
+    public class RefreshTokenGrantValidator : IRefreshTokenRequestValidator
     {
         private readonly ISystemClock _clock;
         private readonly IRefreshTokenStore _refreshTokenStore;
@@ -15,7 +15,7 @@ namespace IdentityServer.Validation
             _refreshTokenStore = refreshTokenStore;
         }
 
-        public async Task ValidateAsync(RefreshTokenGrantValidationRequest context)
+        public async Task ValidateAsync(RefreshTokenRequestValidation context)
         {
             var refreshToken = await _refreshTokenStore.FindRefreshTokenAsync(context.RefreshToken);
             if (refreshToken == null)

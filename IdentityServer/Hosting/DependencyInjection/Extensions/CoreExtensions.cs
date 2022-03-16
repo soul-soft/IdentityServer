@@ -5,8 +5,25 @@ using Microsoft.Extensions.Options;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
+    /// <summary>
+    /// 核心服务
+    /// </summary>
     internal static class CoreExtensions
     {
+        #region RequiredPlatformEndpoints
+        public static IIdentityServerBuilder AddRequiredPlatformEndpoints(this IIdentityServerBuilder builder)
+        {
+            builder.Services.AddTransient<IEndpointRouter, EndpointRouter>();
+            builder.AddEndpoint<TokenEndpoint>(Constants.EndpointNames.Token, Constants.EndpointRoutePaths.Token);
+            builder.AddEndpoint<TokenEndpoint>(Constants.EndpointNames.Authorize, Constants.EndpointRoutePaths.Authorize);
+            builder.AddEndpoint<UserInfoEndpoint>(Constants.EndpointNames.UserInfo, Constants.EndpointRoutePaths.UserInfo);
+            builder.AddEndpoint<DiscoveryEndpoint>(Constants.EndpointNames.Discovery, Constants.EndpointRoutePaths.Discovery);
+            builder.AddEndpoint<IntrospectionEndpoint>(Constants.EndpointNames.Introspection, Constants.EndpointRoutePaths.Introspection);
+            builder.AddEndpoint<DiscoveryKeyEndpoint>(Constants.EndpointNames.DiscoveryJwks, Constants.EndpointRoutePaths.DiscoveryJwks);
+            return builder;
+        }
+        #endregion
+
         #region PlatformServices
         /// <summary>
         /// 必要的平台服务
@@ -26,12 +43,13 @@ namespace Microsoft.Extensions.DependencyInjection
         #endregion
 
         #region PluggableServices
+        /// <summary>
+        /// 可插拔的服务
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <returns></returns>
         public static IIdentityServerBuilder AddPluggableServices(this IIdentityServerBuilder builder)
         {
-            builder.Services.TryAddTransient<ISecretParser, PostBodySecretParser>();
-            builder.Services.TryAddTransient<SecretParserCollection>();
-            builder.Services.TryAddTransient<ITokenParser, BearerTokenUsageParser>();
-
             builder.Services.TryAddTransient<IServerUrl, ServerUrl>();
             builder.Services.TryAddTransient<IHandleGenerator, HandleGenerator>();
             builder.Services.TryAddTransient<IProfileService, ProfileService>();
@@ -43,38 +61,33 @@ namespace Microsoft.Extensions.DependencyInjection
         }
         #endregion
 
-        #region Validators
-        public static IIdentityServerBuilder AddValidators(this IIdentityServerBuilder builder)
+        #region PluggableValidators
+        /// <summary>
+        /// 可插拔的验证器
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <returns></returns>
+        public static IIdentityServerBuilder AddPluggableValidators(this IIdentityServerBuilder builder)
         {
-            builder.Services.AddTransient<SecretValidatorCollection>();
-            builder.Services.AddTransient<ExtensionGrantValidatorCollection>();
-            builder.Services.TryAddTransient<IResourceValidator, ResourceValidator>();
+            builder.Services.TryAddTransient<ISecretParser, PostBodySecretParser>();
+            builder.Services.TryAddTransient<ISecretListParser, SecretListParser>();
+            builder.Services.TryAddTransient<ITokenParser, BearerTokenUsageParser>();
+
             builder.Services.TryAddTransient<ITokenValidator, TokenValidator>();
             builder.Services.TryAddTransient<ISecretValidator, SharedSecretValidator>();
+            builder.Services.TryAddTransient<IResourceValidator, ResourceValidator>();
             builder.Services.TryAddTransient<IApiSecretValidator, ApiSecretValidator>();
-            builder.Services.TryAddTransient<IRefreshTokenGrantValidator, RefreshTokenGrantValidator>();
-            builder.Services.TryAddTransient<IClientCredentialsGrantValidator, ClientCredentialsGrantValidator >();
-            builder.Services.TryAddTransient<IPasswordGrantValidator, PasswordGrantValidator>();
+            builder.Services.TryAddTransient<ISecretListValidator, SecretListValidator>();
+            builder.Services.TryAddTransient<IExtensionGrantListValidator, ExtensionGrantListValidator>();
+            builder.Services.TryAddTransient<IRefreshTokenRequestValidator, RefreshTokenGrantValidator>();
+            builder.Services.TryAddTransient<IClientCredentialsRequestValidator, ClientCredentialsRequestValidator>();
+            builder.Services.TryAddTransient<IResourceOwnerCredentialRequestValidator, ResourceOwnerCredentialRequestValidator>();
             return builder;
         }
         #endregion
 
-        #region Endpoints
-        public static IIdentityServerBuilder AddDefaultEndpoints(this IIdentityServerBuilder builder)
-        {
-            builder.Services.AddTransient<IEndpointRouter, EndpointRouter>();
-            builder.AddEndpoint<TokenEndpoint>(Constants.EndpointNames.Token, Constants.EndpointRoutePaths.Token);
-            builder.AddEndpoint<TokenEndpoint>(Constants.EndpointNames.Authorize, Constants.EndpointRoutePaths.Authorize);
-            builder.AddEndpoint<UserInfoEndpoint>(Constants.EndpointNames.UserInfo, Constants.EndpointRoutePaths.UserInfo);
-            builder.AddEndpoint<DiscoveryEndpoint>(Constants.EndpointNames.Discovery, Constants.EndpointRoutePaths.Discovery);
-            builder.AddEndpoint<IntrospectionEndpoint>(Constants.EndpointNames.Introspection, Constants.EndpointRoutePaths.Introspection);
-            builder.AddEndpoint<DiscoveryKeyEndpoint>(Constants.EndpointNames.DiscoveryJwks, Constants.EndpointRoutePaths.DiscoveryJwks);
-            return builder;
-        }
-        #endregion
-
-        #region ResponseGenerators
-        public static IIdentityServerBuilder AddResponseGenerators(this IIdentityServerBuilder builder)
+        #region PluggableResponseGenerators
+        public static IIdentityServerBuilder AddPluggableResponseGenerators(this IIdentityServerBuilder builder)
         {
             builder.Services.TryAddTransient<IUserInfoResponseGenerator, UserInfoResponseGenerator>();
             builder.Services.TryAddTransient<ITokenResponseGenerator, TokenResponseGenerator>();

@@ -1,15 +1,15 @@
 ﻿namespace IdentityServer.Validation
 {
-    internal class ExtensionGrantValidatorCollection
+    internal class ExtensionGrantListValidator: IExtensionGrantListValidator
     {
         private readonly IEnumerable<IExtensionGrantValidator> _extensions;
 
-        public ExtensionGrantValidatorCollection(IEnumerable<IExtensionGrantValidator> extensions)
+        public ExtensionGrantListValidator(IEnumerable<IExtensionGrantValidator> extensions)
         {
             _extensions = extensions;
         }
 
-        public Task ValidateAsync(ExtensionGrantValidationRequest context)
+        public Task ValidateAsync(ExtensionGrantRequestValidation context)
         {
             var validator = _extensions
                 .Where(a => a.GrantType == context.Request.GrantType)
@@ -21,7 +21,7 @@
             return validator.ValidateAsync(context);
         }
 
-        public IEnumerable<string> GetExtensionGrantTypes()
+        public IEnumerable<string> GetGrantTypes()
         {
             return _extensions.Select(a => a.GrantType).ToList();
         }

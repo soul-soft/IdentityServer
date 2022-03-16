@@ -1,14 +1,14 @@
 ﻿namespace IdentityServer.Validation
 {
-    public class PasswordGrantValidationRequest
+    public class ResourceOwnerCredentialRequestValidation
     {
-        public GrantValidationRequest Request { get; }
+        public TokenRequestValidation Request { get; }
       
         public string Username { get; }
         
         public string Password { get; }
 
-        public PasswordGrantValidationRequest(GrantValidationRequest request, string username, string password)
+        public ResourceOwnerCredentialRequestValidation(TokenRequestValidation request, string username, string password)
         {
             Request = request;
             Username = username;

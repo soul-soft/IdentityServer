@@ -1,15 +1,15 @@
 ﻿namespace IdentityServer.Validation
 {
-    public class SecretValidatorCollection
+    public class SecretListValidator : ISecretListValidator
     {
         private readonly IEnumerable<ISecretValidator> _secretValidators;
 
-        public SecretValidatorCollection(IEnumerable<ISecretValidator> secretValidators)
+        public SecretListValidator(IEnumerable<ISecretValidator> secretValidators)
         {
             _secretValidators = secretValidators;
         }
 
-        public ISecretValidator GetSecretValidator(string credentialsType)
+        private ISecretValidator GetSecretValidator(string credentialsType)
         {
             return _secretValidators
                 .Where(a => a.CredentialsType == credentialsType)

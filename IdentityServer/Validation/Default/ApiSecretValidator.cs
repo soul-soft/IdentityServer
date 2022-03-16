@@ -5,13 +5,13 @@ namespace IdentityServer.Validation
     internal class ApiSecretValidator : IApiSecretValidator
     {
         private readonly IResourceStore _resources;
-        private readonly SecretParserCollection _secretParsers;
-        private readonly SecretValidatorCollection _secretValidators;
+        private readonly SecretListParser _secretParsers;
+        private readonly SecretListValidator  _secretValidators;
 
         public ApiSecretValidator(
             IResourceStore resources,
-            SecretParserCollection secretParsers,
-            SecretValidatorCollection secretValidators)
+            SecretListParser secretParsers,
+            SecretListValidator  secretValidators)
         {
             _resources = resources;
             _secretParsers = secretParsers;
