@@ -4,14 +4,15 @@
     {
         public Task<IntrospectionResponse> ProcessAsync(IntrospectionRequest request)
         {
-            var errorResponse = new Dictionary<string, object>();
-            errorResponse.Add("active", false);
-            if (request.IsError)
+            var errorResponse = new Dictionary<string, object>
+            {
+                { "active", false }
+            };
+            if (request.TokenValidationResult.IsError)
             {
                 return Task.FromResult(new IntrospectionResponse(errorResponse));
             }
-
-            var tokenScopes = request.Claims
+            var tokenScopes = request.TokenValidationResult.Claims
                 .Where(a => a.Type == JwtClaimTypes.Scope)
                 .Select(s => s.Value);
             var apiResourceScopes = request.ApiResource.Scopes;
@@ -20,19 +21,20 @@
             {
                 return Task.FromResult(new IntrospectionResponse(errorResponse));
             }
-
-            var entities = request.Claims
+            var entities = request.TokenValidationResult.Claims
                 .Where(a => a.Type != JwtClaimTypes.Scope)
                 .ToClaimsDictionary();
-            var response = new Dictionary<string, object>(entities);
-            response.Add("active", true);
+            var response = new Dictionary<string, object>(entities)
+            {
+                { "active", true }
+            };
             if (allowScopes.Count() == 1)
             {
                 response.Add(JwtClaimTypes.Scope, allowScopes.First());
             }
             else
             {
-                response.Add(JwtClaimTypes.Scope, allowScopes.First());
+                response.Add(JwtClaimTypes.Scope, allowScopes);
             }
             return Task.FromResult(new IntrospectionResponse(response));
         }

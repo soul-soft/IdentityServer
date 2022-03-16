@@ -1,15 +1,15 @@
 ﻿namespace IdentityServer.Models
 {
-    public class SingInRequestContext
+    public class AuthenticationSingInContext
     {
-        public string GrantType { get; }
         public Client Client { get; }
+        public string GrantType { get; }
         public Resources Resources { get; }
 
-        public SingInRequestContext(string grantType, Client client, Resources resources)
+        public AuthenticationSingInContext(string grantType, Client client, Resources resources)
         {
-            GrantType = grantType;
             Client = client;
+            GrantType = grantType;
             Resources = resources;
         }
     }

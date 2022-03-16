@@ -4,15 +4,13 @@ namespace IdentityServer.Endpoints
 {
     public class IntrospectionRequest
     {
-        public bool IsError { get; }
         public ApiResource ApiResource { get; }
-        public IEnumerable<Claim> Claims { get; }
+        public TokenValidationResult TokenValidationResult { get; }
 
-        public IntrospectionRequest(bool isActive, ApiResource apiResource, IEnumerable<Claim> claims)
+        public IntrospectionRequest(ApiResource apiResource, TokenValidationResult tokenValidationResult)
         {
-            IsError = isActive;
-            Claims = claims;
             ApiResource = apiResource;
+            TokenValidationResult = tokenValidationResult;
         }
     }
 }

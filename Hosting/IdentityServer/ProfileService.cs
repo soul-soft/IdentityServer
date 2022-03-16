@@ -9,7 +9,7 @@ namespace Hosting.Configuration
         public Task<IEnumerable<Claim>> GetProfileDataAsync(ProfileDataRequestContext context)
         {
             var profiles = new List<Claim>();
-            if (context.Caller == ProfileDataCallers.AccessToken)
+            if (context.Caller == ProfileDataCallers.TokenEndpoint)
             {
                 if (context.ClaimTypes.Contains(JwtClaimTypes.Subject))
                 {
@@ -38,6 +38,11 @@ namespace Hosting.Configuration
                 }
             }
             return Task.FromResult<IEnumerable<Claim>>(profiles);
+        }
+
+        public Task<bool> IsActiveAsync(IsActiveContext context)
+        {
+            return Task.FromResult(true);
         }
     }
 }

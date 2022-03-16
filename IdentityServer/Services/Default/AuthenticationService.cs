@@ -25,48 +25,58 @@ namespace IdentityServer.Services
             _handleGenerator = handleGenerator;
         }
 
-        public async Task<ClaimsPrincipal> SingInAsync(string grantType, Client client, Resources resources)
+        public async Task<ClaimsPrincipal> SingInAsync(AuthenticationSingInContext context)
         {
+            //request jwt
             var jwtId = await _handleGenerator.GenerateAsync();
             var issuedAt = _systemClock.UtcNow.ToUnixTimeSeconds();
-            var jwtClaims = GetStandardJwtClaims(jwtId, issuedAt, client, resources);
+
+            var jwtClaims = GetAccessTokenClaims(jwtId, issuedAt, context);
             var claims = new List<Claim>(jwtClaims);
-            //request claims
-            var claimTypes = resources.ClaimTypes;
+
+            #region Profile Claims
+            var profileClaimTypes = context.Resources.ClaimTypes;
             var profileDataRequest = new ProfileDataRequestContext(
-                ProfileDataCallers.AccessToken,
-                client,
-                resources,
-                claimTypes);
+                ProfileDataCallers.TokenEndpoint,
+                context.Client,
+                context.Resources,
+                profileClaimTypes);
             var requestedClaims = await _profileService.GetProfileDataAsync(profileDataRequest);
-            //standard claims
+            var allowedRequestClaims = requestedClaims
+                .Where(a => profileClaimTypes.Contains(a.Type))
+                .Where(a => !Constants.ClaimTypeFilters.ClaimsServiceFilterClaimTypes.Contains(a.Type));
+            claims.AddRange(allowedRequestClaims);
+            #endregion
+
+            #region Standard Claims
             if (requestedClaims.Any(a => a.Type == JwtClaimTypes.Subject))
             {
                 var subject = requestedClaims
                     .Where(a => a.Type == JwtClaimTypes.Subject)
                     .First().Value;
-                var standardClaims = GetSubjectStandardClaims(subject, grantType, issuedAt);
+                var identityProvider = _options.IdentityProvider;
+                var standardClaims = GetSubjectStandardClaims(subject, issuedAt, context.GrantType, identityProvider);
                 claims.AddRange(standardClaims);
             }
-            var allowedRequestClaims = requestedClaims
-                .Where(a => claimTypes.Contains(a.Type))
-                .Where(a => !Constants.ClaimTypeFilters.ClaimsServiceFilterClaimTypes.Contains(a.Type));
-            claims.AddRange(allowedRequestClaims);
-            return new ClaimsPrincipal(new ClaimsIdentity(claims, "TokenRequestEndpoint"));
+            #endregion
+
+            return new ClaimsPrincipal(new ClaimsIdentity(claims, context.GrantType));
         }
 
 
-        private IEnumerable<Claim> GetStandardJwtClaims(string jwtId, long issuedAt, Client client, Resources resources)
+        private IEnumerable<Claim> GetAccessTokenClaims(string jwtId, long issuedAt, AuthenticationSingInContext context)
         {
-            var claims = new List<Claim>();
-            //clientId
-            claims.Add(new Claim(JwtClaimTypes.ClientId, client.ClientId));
+            var claims = new List<Claim>
+            {
+                //clientId
+                new Claim(JwtClaimTypes.ClientId, context.Client.ClientId),
 
-            //issuer
-            claims.Add(new Claim(JwtClaimTypes.Issuer, _serverUrl.GetIdentityServerIssuerUri()));
+                //issuer
+                new Claim(JwtClaimTypes.Issuer, _serverUrl.GetIdentityServerIssuerUri())
+            };
 
             //audience
-            foreach (var item in resources.ApiResources)
+            foreach (var item in context.Resources.ApiResources)
             {
                 claims.Add(new Claim(JwtClaimTypes.Audience, item.Name));
             }
@@ -74,17 +84,17 @@ namespace IdentityServer.Services
             //scope
             if (_options.EmitScopesAsCommaDelimitedStringInJwt)
             {
-                var scope = resources.Scopes.Aggregate((x, y) => $"{x},{y}");
+                var scope = context.Resources.Scopes.Aggregate((x, y) => $"{x},{y}");
                 claims.Add(new Claim(JwtClaimTypes.Scope, scope));
             }
             else
             {
-                var scopes = resources.Scopes
+                var scopes = context.Resources.Scopes
                     .Select(scope => new Claim(JwtClaimTypes.Scope, scope));
                 claims.AddRange(scopes);
             }
 
-            var expiration = issuedAt + client.AccessTokenLifetime;
+            var expiration = issuedAt + context.Client.AccessTokenLifetime;
             claims.Add(new Claim(JwtClaimTypes.JwtId, jwtId));
             claims.Add(new Claim(JwtClaimTypes.NotBefore, issuedAt.ToString(), ClaimValueTypes.Integer64));
             claims.Add(new Claim(JwtClaimTypes.IssuedAt, issuedAt.ToString(), ClaimValueTypes.Integer64));
@@ -92,13 +102,15 @@ namespace IdentityServer.Services
             return claims;
         }
 
-        private IEnumerable<Claim> GetSubjectStandardClaims(string subject, string authenticationMethod, long authenticationTime)
+        private static IEnumerable<Claim> GetSubjectStandardClaims(string subject, long issuedAt, string authenticationMethod, string identityProvider)
         {
-            var claims = new List<Claim>();
-            claims.Add(new Claim(JwtClaimTypes.Subject, subject));
-            claims.Add(new Claim(JwtClaimTypes.AuthenticationTime, authenticationTime.ToString(), ClaimValueTypes.Integer64));
-            claims.Add(new Claim(JwtClaimTypes.IdentityProvider, _options.IdentityProvider));
-            claims.Add(new Claim(JwtClaimTypes.AuthenticationMethod, authenticationMethod));
+            var claims = new List<Claim>
+            {
+                new Claim(JwtClaimTypes.Subject, subject),
+                new Claim(JwtClaimTypes.AuthenticationTime, issuedAt.ToString(), ClaimValueTypes.Integer64),
+                new Claim(JwtClaimTypes.IdentityProvider, identityProvider),
+                new Claim(JwtClaimTypes.AuthenticationMethod, authenticationMethod)
+            };
             return claims;
         }
     }

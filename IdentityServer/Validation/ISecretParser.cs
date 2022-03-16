@@ -7,7 +7,7 @@ namespace IdentityServer.Validation
     /// </summary>
     public interface ISecretParser
     {
-        string ParserType { get; }
+        string Name { get; }
         Task<ParsedSecret> ParseAsync(HttpContext context);
     }
 }

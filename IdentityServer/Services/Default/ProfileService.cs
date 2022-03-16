@@ -4,9 +4,9 @@ namespace IdentityServer.Services
 {
     internal class ProfileService : IProfileService
     {
-        public Task IsActiveAsync(IsActiveContext context)
+        public Task<bool> IsActiveAsync(IsActiveContext context)
         {
-            return Task.CompletedTask;
+            return Task.FromResult(true);
         }
 
         public Task<IEnumerable<Claim>> GetProfileDataAsync(ProfileDataRequestContext context)

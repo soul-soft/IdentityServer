@@ -105,8 +105,7 @@
 
     public static class ProfileDataCallers
     {
-        public const string IdentityToken = "ClaimsProviderIdentityToken";
-        public const string AccessToken = "ClaimsProviderAccessToken";
+        public const string TokenEndpoint = "TokenEndpoint";
         public const string UserInfoEndpoint = "UserInfoEndpoint";
     }
 

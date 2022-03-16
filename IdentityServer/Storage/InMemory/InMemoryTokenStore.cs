@@ -18,7 +18,8 @@
         public async Task StoreTokenAsync(Token token)
         {
             var key = GenerateStoreKey(token.JwtId);
-            await _storage.SetAsync(key, token, TimeSpan.FromSeconds(token.Lifetime));
+            var span = token.Expiration - token.IssuedAt;
+            await _storage.SetAsync(key, token, span);
         }
 
         private static string GenerateStoreKey(string id)

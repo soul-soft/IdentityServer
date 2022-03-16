@@ -7,31 +7,25 @@ namespace IdentityServer.Endpoints
 {
     public class TokenEndpoint : EndpointBase
     {
-        private readonly IClientStore _clients;
         private readonly IResourceStore _resourceStore;
         private readonly IdentityServerOptions _options;
         private readonly ITokenResponseGenerator _generator;
-        private readonly ISecretListParser _secretsParser;
-        private readonly IAuthenticationService _authenticationService;
         private readonly IResourceValidator _resourceValidator;
-        private readonly ISecretListValidator _secretsValidator;
+        private readonly IClientSecretValidator _clientSecretValidator;
+        private readonly IAuthenticationService _authenticationService;
 
         public TokenEndpoint(
-            IClientStore clients,
             IResourceStore resourceStore,
             IdentityServerOptions options,
-            ISecretListParser secretsParser,
             ITokenResponseGenerator generator,
+            IClientSecretValidator clientSecretValidator,
             IResourceValidator resourceValidator,
-            ISecretListValidator secretsValidator,
             IAuthenticationService authenticationService)
         {
-            _clients = clients;
             _options = options;
             _generator = generator;
             _resourceStore = resourceStore;
-            _secretsParser = secretsParser;
-            _secretsValidator = secretsValidator;
+            _clientSecretValidator = clientSecretValidator;
             _resourceValidator = resourceValidator;
             _authenticationService = authenticationService;
         }
@@ -49,41 +43,29 @@ namespace IdentityServer.Endpoints
             }
             #endregion
 
-            #region Validate ClientSecret
-            var parsedSecret = await _secretsParser.ParseAsync(context);
-            var client = await _clients.FindByClientIdAsync(parsedSecret.ClientId);
-            if (client == null)
-            {
-                return BadRequest(OpenIdConnectErrors.InvalidClient, "Invalid client credentials");
-            }
-            if (client.RequireClientSecret)
-            {
-                await _secretsValidator.ValidateAsync(parsedSecret, client.ClientSecrets);
-            }
+            #region Validate Client
+            var client = await _clientSecretValidator.ValidateAsync(context);
             #endregion
 
             #region Validate Resources
-            var body = await context.Request.ReadFormAsync();
-            var form = body.AsNameValueCollection();
-            var scope = form[OpenIdConnectParameterNames.Scope] ?? string.Empty;
+            var from = await context.Request.ReadFormAsync();
+            var body = from.AsNameValueCollection();
+            var scope = body[OpenIdConnectParameterNames.Scope] ?? string.Empty;
             if (scope.Length > _options.InputLengthRestrictions.Scope)
             {
                 return BadRequest(OpenIdConnectErrors.InvalidScope, "Scope is too long");
             }
             var scopes = scope.Split(",").Where(a => !string.IsNullOrWhiteSpace(a));
-            if (scopes.Any())
-            {
-                foreach (var item in scopes)
-                {
-                    if (!client.AllowedScopes.Contains(item))
-                    {
-                        return BadRequest(OpenIdConnectErrors.InvalidScope, $"Scope '{item}' not allowed");
-                    }
-                }
-            }
-            else
+            if (!scopes.Any())
             {
                 scopes = client.AllowedScopes;
+            }
+            foreach (var item in scopes)
+            {
+                if (!client.AllowedScopes.Contains(item))
+                {
+                    return BadRequest(OpenIdConnectErrors.InvalidScope, $"Scope '{item}' not allowed");
+                }
             }
             if (!scopes.Any())
             {
@@ -94,7 +76,7 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Validate GrantType
-            var grantType = form[OpenIdConnectParameterNames.GrantType];
+            var grantType = body[OpenIdConnectParameterNames.GrantType];
             if (string.IsNullOrEmpty(grantType))
             {
                 return BadRequest(OpenIdConnectErrors.InvalidRequest, "Grant type is missing");
@@ -109,34 +91,24 @@ namespace IdentityServer.Endpoints
             }
             #endregion
 
-            #region Request Subject 
-            var subject = await _authenticationService.SingInAsync(grantType, client, resources);
-            #endregion
-
             #region Validate GrantRequest
-            var validationTokenRequest = new TokenRequestValidation(
-                client: client,
-                grantType: grantType,
-                resources: resources,
-                subject: subject,
-                body: form,
-                options: _options);
-            await RunValidationAsync(context, validationTokenRequest);
+            var subject = await RunValidationAsync(context, new TokenRequestValidation(client, grantType, resources, body, _options));
             #endregion
 
-            #region Generator Response
-            var validatedTokenRequest = new TokenValidatedRequest(grantType, subject, client, resources, _options);
-            var response = await _generator.ProcessAsync(validatedTokenRequest);
+            #region Response
+            var response = await _generator.ProcessAsync(new TokenRequest(grantType, subject, client, resources, _options));
             return TokenEndpointResult(response);
             #endregion
         }
 
         #region Validate GrantRequest
-        private async Task RunValidationAsync(HttpContext context, TokenRequestValidation request)
+        private async Task<ClaimsPrincipal> RunValidationAsync(HttpContext context, TokenRequestValidation request)
         {
             //验证刷新令牌
+            var validationActive = false;
             if (GrantTypes.RefreshToken.Equals(request.GrantType))
             {
+                validationActive = true;
                 var validator = context.RequestServices.GetRequiredService<IRefreshTokenRequestValidator>();
                 await ValidateRefreshTokenRequestAsync(validator, request);
             }
@@ -149,20 +121,36 @@ namespace IdentityServer.Endpoints
             //验证资源所有者密码授权
             else if (GrantTypes.Password.Equals(request.GrantType))
             {
+                validationActive = true;
                 var validator = context.RequestServices.GetRequiredService<IResourceOwnerCredentialRequestValidator>();
-                var profileService = context.RequestServices.GetRequiredService<IProfileService>();
-                await profileService.IsActiveAsync(new IsActiveContext(
-                    ProfileIsActiveCallers.ResourceOwnerValidation,
-                    request.Client,
-                    request.Subject));
                 await ValidateResourceOwnerCredentialRequestAsync(validator, request);
+
             }
             //验证自定义授权
             else
             {
+                validationActive = true;
                 var validator = context.RequestServices.GetRequiredService<IExtensionGrantListValidator>();
                 await ValidateExtensionGrantRequestAsync(validator, request);
             }
+            //登入
+            var subject = await _authenticationService.SingInAsync(new AuthenticationSingInContext(
+                request.GrantType,
+                request.Client,
+                request.Resources));
+            if (validationActive)
+            {
+                var profile = context.RequestServices.GetRequiredService<IProfileService>();
+                var isActive = await profile.IsActiveAsync(new IsActiveContext(
+                    ProfileIsActiveCallers.ResourceOwnerValidation,
+                    request.Client,
+                    subject));
+                if (!isActive)
+                {
+                    throw new ValidationException(OpenIdConnectErrors.InvalidGrant, string.Format("User has been disabled:{0}", subject.GetSubjectId()));
+                }
+            }
+            return subject;
         }
         #endregion
 

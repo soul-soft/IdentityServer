@@ -5,22 +5,22 @@ namespace IdentityServer.Validation
     internal class ApiSecretValidator : IApiSecretValidator
     {
         private readonly IResourceStore _resources;
-        private readonly SecretListParser _secretParsers;
-        private readonly SecretListValidator  _secretValidators;
+        private readonly ISecretListParser _secretListParser;
+        private readonly ISecretListValidator _secretListValidator;
 
         public ApiSecretValidator(
             IResourceStore resources,
-            SecretListParser secretParsers,
-            SecretListValidator  secretValidators)
+            ISecretListParser secretParsers,
+            ISecretListValidator  secretValidators)
         {
             _resources = resources;
-            _secretParsers = secretParsers;
-            _secretValidators = secretValidators;
+            _secretListParser = secretParsers;
+            _secretListValidator = secretValidators;
         }
         
         public async Task<ApiResource> ValidateAsync(HttpContext context)
         {
-            var parsedSecret = await _secretParsers.ParseAsync(context);
+            var parsedSecret = await _secretListParser.ParseAsync(context);
             if (parsedSecret.Type == ClientSecretTypes.NoSecret)
             {
                 throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "Client credentials is missing");
@@ -35,7 +35,7 @@ namespace IdentityServer.Validation
                 throw new ValidationException(OpenIdConnectErrors.InvalidClient, "More than one API resource with that name found. aborting");
             }
             var apiResource = apiResources.First();
-            await _secretValidators.ValidateAsync(parsedSecret, apiResource.ApiSecrets);
+            await _secretListValidator.ValidateAsync(parsedSecret, apiResource.ApiSecrets);
             return apiResource;
         }
     }

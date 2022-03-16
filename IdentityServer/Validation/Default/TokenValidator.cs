@@ -84,7 +84,7 @@ namespace IdentityServer.Validation
             {
                 return TokenValidationResult.Fail(OpenIdConnectErrors.InvalidToken, "Invalid issuer");
             }
-            var claims = ValidateClaims(token.GetJwtClaims());
+            var claims = ValidateClaims(token.Claims);
             return TokenValidationResult.Success(claims);
         }
 

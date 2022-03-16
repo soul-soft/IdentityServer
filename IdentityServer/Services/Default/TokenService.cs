@@ -5,29 +5,26 @@ namespace IdentityServer.Services
     internal class TokenService : ITokenService
     {
         private readonly ISystemClock _clock;
-        private readonly IAuthenticationService _claimsService;
+        private readonly ITokenStore _referenceTokenStore;
         private readonly IHandleGenerator _handleGenerator;
         private readonly IRefreshTokenStore _refreshTokenStore;
-        private readonly ITokenStore _referenceTokenStore;
         private readonly ISecurityTokenService _securityTokenService;
 
         public TokenService(
             ISystemClock clock,
-            IAuthenticationService claimsService,
             IHandleGenerator handleGenerator,
-            IRefreshTokenStore refreshTokenStore,
             ITokenStore referenceTokenService,
+            IRefreshTokenStore refreshTokenStore,
             ISecurityTokenService securityTokenService)
         {
             _clock = clock;
-            _claimsService = claimsService;
             _handleGenerator = handleGenerator;
             _refreshTokenStore = refreshTokenStore;
             _referenceTokenStore = referenceTokenService;
             _securityTokenService = securityTokenService;
         }
 
-        public Task<Token> CreateAccessTokenAsync(TokenValidatedRequest request)
+        public Task<Token> CreateAccessTokenAsync(TokenRequest request)
         {
             var token = new Token(
                 TokenTypes.AccessToken,
@@ -37,7 +34,7 @@ namespace IdentityServer.Services
             return Task.FromResult(token);
         }
 
-        public Task<Token> CreateIdentityTokenAsync(TokenValidatedRequest request)
+        public Task<Token> CreateIdentityTokenAsync(TokenRequest request)
         {
             var token = new Token(
                 TokenTypes.IdentityToken,

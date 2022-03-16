@@ -16,18 +16,19 @@ namespace IdentityServer.Services
             _parsers = parsers;
         }
 
-        public IEnumerable<string> GetSecretParserTypes()
+        public Task<IEnumerable<string>> GetSecretParserTypesAsync()
         {
-            return _parsers.Select(s => s.ParserType);
+            var names = _parsers.Select(s => s.Name);
+            return Task.FromResult(names);
         }
 
         public async Task<ParsedSecret> ParseAsync(HttpContext context)
         {
-            var parser = _parsers.Where(a => a.ParserType == _options.SecretParserType)
+            var parser = _parsers.Where(a => a.Name == _options.SecretParserType)
                 .FirstOrDefault();
             if (parser == null)
             {
-                throw new InvalidOperationException($"invalid authentication method：{_options.SecretParserType}");
+                throw new InvalidOperationException($"invalid Secret Parser Type：{_options.SecretParserType}");
             }
             return await parser.ParseAsync(context);
         }

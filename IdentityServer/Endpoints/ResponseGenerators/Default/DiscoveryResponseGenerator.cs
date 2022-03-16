@@ -45,8 +45,8 @@ namespace IdentityServer.Endpoints
             {
                 configuration.ScopesSupported.Add(item);
             }
-            var authMethods = _secretParsers.GetSecretParserTypes();
-            foreach (var item in authMethods)
+            var secretParserTypes = await _secretParsers.GetSecretParserTypesAsync();
+            foreach (var item in secretParserTypes)
             {
                 configuration.TokenEndpointAuthMethodsSupported.Add(item);
             }

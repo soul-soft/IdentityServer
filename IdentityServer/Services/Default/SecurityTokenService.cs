@@ -46,7 +46,7 @@ namespace IdentityServer.Services
 
         private static JwtPayload CreateJwtPayload(Token token)
         {
-            return new JwtPayload(token.GetJwtClaims());
+            return new JwtPayload(token.Claims);
         }
     }
 }

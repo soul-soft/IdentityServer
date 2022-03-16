@@ -4,6 +4,6 @@ namespace IdentityServer.Services
 {
     public interface IAuthenticationService
     {
-        Task<ClaimsPrincipal> SingInAsync(string grantType, Client client, Resources resources);
+        Task<ClaimsPrincipal> SingInAsync(AuthenticationSingInContext context);
     }
 }
