@@ -1,0 +1,212 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Soul.IdentityServer</name>
+    </assembly>
+    <members>
+        <member name="P:IdentityServer.Configuration.DiscoveryOptions.ShowEndpoints">
+            <summary>
+            Show endpoints
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.DiscoveryOptions.ShowKeySet">
+            <summary>
+            Show signing keys
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.DiscoveryOptions.ShowIdentityScopes">
+            <summary>
+            Show identity scopes
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.DiscoveryOptions.ShowApiScopes">
+            <summary>
+            Show API scopes
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.DiscoveryOptions.ShowClaims">
+            <summary>
+            Show identity claims
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.DiscoveryOptions.ShowResponseTypes">
+            <summary>
+            Show response types
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.DiscoveryOptions.ShowResponseModes">
+            <summary>
+            Show response modes
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.DiscoveryOptions.ShowGrantTypes">
+            <summary>
+            Show standard grant types
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.DiscoveryOptions.ShowExtensionGrantTypes">
+            <summary>
+            Show custom grant types
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.DiscoveryOptions.ShowTokenEndpointAuthenticationMethods">
+            <summary>
+            Show token endpoint authentication methods
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.DiscoveryOptions.ExpandRelativePathsInCustomEntries">
+            <summary>
+            Turns relative paths that start with ~/ into absolute paths
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.DiscoveryOptions.ResponseCacheInterval">
+            <summary>
+            Sets the maxage value of the cache control header (in seconds) of the HTTP response. This gives clients a hint how often they should refresh their cached copy of the discovery document. If set to 0 no-cache headers will be set. Defaults to null, which does not set the header.
+            </summary>
+            <value>
+            The cache interval in seconds.
+            </value>
+        </member>
+        <member name="P:IdentityServer.Configuration.DiscoveryOptions.CustomEntries">
+            <summary>
+            Adds custom entries to the discovery document
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.IdentityServerOptions.IssuerUri">
+            <summary>
+            签发url
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.IdentityServerOptions.LowerCaseIssuerUri">
+            <summary>
+            是否使用小写的签发url
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.IdentityServerOptions.IdentityProvider">
+            <summary>
+            身份提供程序
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.IdentityServerOptions.IncludeEndpointErrorDetails">
+            <summary>
+            是否包含终结点的错误详情
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.IdentityServerOptions.InputLengthRestrictions">
+            <summary>
+            输入长度限制
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.IdentityServerOptions.Endpoints">
+            <summary>
+            终结点选项
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.IdentityServerOptions.AccessTokenJwtType">
+            <summary>
+            token中的jwt类型
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.IdentityServerOptions.EmitScopesAsCommaDelimitedStringInJwt">
+            <summary>
+            是否使用逗号连接jwt中的scopes
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.IdentityServerOptions.SecretParserType">
+            <summary>
+            凭据解析方式
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.InputLengthRestrictions.AccessToken">
+            <summary>
+            Max length for AccessToken
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.InputLengthRestrictions.ClientId">
+            <summary>
+            Max length for client_id
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.InputLengthRestrictions.ClientSecret">
+            <summary>
+            Max length for external client secrets
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.InputLengthRestrictions.GrantType">
+            <summary>
+            Max length for grant_type
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.InputLengthRestrictions.UserName">
+            <summary>
+            Max length for username
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.InputLengthRestrictions.Password">
+            <summary>
+            Max length for password
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.InputLengthRestrictions.Scope">
+            <summary>
+            Max length for scope
+            </summary>
+        </member>
+        <member name="P:IdentityServer.Configuration.InputLengthRestrictions.RefreshToken">
+            <summary>
+            Max length for refresh tokens
+            </summary>
+        </member>
+        <member name="T:IdentityServer.Endpoints.DiscoveryEndpoint">
+            <summary>
+            https://openid.net/specs/openid-connect-discovery-1_0.html
+            </summary>
+        </member>
+        <member name="T:IdentityServer.Endpoints.DiscoveryKeyEndpoint">
+            <summary>
+            https://datatracker.ietf.org/doc/html/draft-ietf-jose-json-web-key-31
+            </summary>
+        </member>
+        <member name="T:IdentityServer.Validation.ISecretParser">
+            <summary>
+            凭据解析器
+            </summary>
+        </member>
+        <member name="T:IdentityServer.Hosting.IEndpointRouter">
+            <summary>
+            终结点路由
+            </summary>
+        </member>
+        <member name="T:IdentityServer.Services.ISecretListParser">
+            <summary>
+            凭据解析器集
+            </summary>
+        </member>
+        <member name="T:Microsoft.Extensions.DependencyInjection.CoreExtensions">
+            <summary>
+            核心服务
+            </summary>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.CoreExtensions.AddRequiredPlatformServices(Microsoft.Extensions.DependencyInjection.IIdentityServerBuilder)">
+            <summary>
+            必要的平台服务
+            </summary>
+            <param name="builder"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.CoreExtensions.AddPluggableServices(Microsoft.Extensions.DependencyInjection.IIdentityServerBuilder)">
+            <summary>
+            可插拔的服务
+            </summary>
+            <param name="builder"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Extensions.DependencyInjection.CoreExtensions.AddPluggableValidators(Microsoft.Extensions.DependencyInjection.IIdentityServerBuilder)">
+            <summary>
+            可插拔的验证器
+            </summary>
+            <param name="builder"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
