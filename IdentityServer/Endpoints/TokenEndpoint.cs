@@ -7,7 +7,6 @@ namespace IdentityServer.Endpoints
 {
     public class TokenEndpoint : EndpointBase
     {
-        private readonly IResourceStore _resourceStore;
         private readonly IdentityServerOptions _options;
         private readonly IProfileService _profileService;
         private readonly ITokenResponseGenerator _generator;
@@ -16,7 +15,6 @@ namespace IdentityServer.Endpoints
         private readonly IAuthenticationService _authenticationService;
 
         public TokenEndpoint(
-            IResourceStore resourceStore,
             IdentityServerOptions options,
             IProfileService profileService,
             ITokenResponseGenerator generator,
@@ -26,7 +24,6 @@ namespace IdentityServer.Endpoints
         {
             _options = options;
             _generator = generator;
-            _resourceStore = resourceStore;
             _profileService = profileService;
             _clientSecretValidator = clientSecretValidator;
             _resourceValidator = resourceValidator;
@@ -59,23 +56,7 @@ namespace IdentityServer.Endpoints
                 return BadRequest(OpenIdConnectErrors.InvalidScope, "Scope is too long");
             }
             var scopes = scope.Split(",").Where(a => !string.IsNullOrWhiteSpace(a));
-            if (!scopes.Any())
-            {
-                scopes = client.AllowedScopes;
-            }
-            foreach (var item in scopes)
-            {
-                if (!client.AllowedScopes.Contains(item))
-                {
-                    return BadRequest(OpenIdConnectErrors.InvalidScope, $"Scope '{item}' not allowed");
-                }
-            }
-            if (!scopes.Any())
-            {
-                return BadRequest(OpenIdConnectErrors.InvalidScope, "No allowed scopes configured for client");
-            }
-            var resources = await _resourceStore.FindResourcesByScopesAsync(scopes);
-            await _resourceValidator.ValidateAsync(scopes, resources);
+            var resources = await _resourceValidator.ValidateAsync(client, scopes);
             #endregion
 
             #region Validate GrantType
