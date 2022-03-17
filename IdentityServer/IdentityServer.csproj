@@ -28,9 +28,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Remove="Hosting\Endpoints\JsonEndpointResult.cs~RFaa26d48.TMP" />
-	</ItemGroup>
-	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
 	<ItemGroup>
