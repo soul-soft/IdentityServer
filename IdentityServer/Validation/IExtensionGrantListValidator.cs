@@ -3,6 +3,6 @@
     public interface IExtensionGrantListValidator
     {
         IEnumerable<string> GetGrantTypes();
-        Task ValidateAsync(ExtensionGrantRequestValidation context);
+        Task ValidateAsync(ExtensionGrantValidation context);
     }
 }

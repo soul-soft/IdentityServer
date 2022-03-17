@@ -2,6 +2,6 @@
 {
     public interface IClientCredentialsRequestValidator
     {
-        Task ValidateAsync(ClientCredentialsRequestValidation context);
+        Task ValidateAsync(ClientCredentialsValidation context);
     }
 }

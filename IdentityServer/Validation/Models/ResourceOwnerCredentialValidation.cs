@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Validation
 {
-    public class ResourceOwnerCredentialRequestValidation
+    public class ResourceOwnerCredentialValidation
     {
         public TokenRequestValidation Request { get; }
       
@@ -8,7 +8,7 @@
         
         public string Password { get; }
 
-        public ResourceOwnerCredentialRequestValidation(TokenRequestValidation request, string username, string password)
+        public ResourceOwnerCredentialValidation(TokenRequestValidation request, string username, string password)
         {
             Request = request;
             Username = username;

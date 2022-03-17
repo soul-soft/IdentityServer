@@ -5,7 +5,7 @@ namespace Hosting.Configuration
 {
     public class ResourceOwnerCredentialRequestValidator : IResourceOwnerCredentialRequestValidator
     {
-        public Task ValidateAsync(ResourceOwnerCredentialRequestValidation context)
+        public Task ValidateAsync(ResourceOwnerCredentialValidation context)
         {
             if (context.Username == "test" && context.Password == "test")
             {

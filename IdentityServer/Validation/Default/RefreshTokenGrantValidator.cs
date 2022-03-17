@@ -15,7 +15,7 @@ namespace IdentityServer.Validation
             _refreshTokenStore = refreshTokenStore;
         }
 
-        public async Task ValidateAsync(RefreshTokenRequestValidation context)
+        public async Task ValidateAsync(RefreshTokenValidation context)
         {
             var refreshToken = await _refreshTokenStore.FindRefreshTokenAsync(context.RefreshToken);
             if (refreshToken == null)

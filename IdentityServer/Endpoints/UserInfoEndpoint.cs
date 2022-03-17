@@ -34,7 +34,7 @@ namespace IdentityServer.Endpoints
             {
                 return Unauthorized(tokenValidationResult.Error, tokenValidationResult.ErrorDescription);
             }
-            var subject = new ClaimsPrincipal(new ClaimsIdentity(tokenValidationResult.Claims, "Local"));
+            var subject = new ClaimsPrincipal(new ClaimsIdentity(tokenValidationResult.Claims, "UserInfo"));
             if (!subject.Claims.Any(a => a.Type == JwtClaimTypes.Subject))
             {
                 return Unauthorized(OpenIdConnectValidationErrors.InsufficientScope, $"Token contains no sub claim");

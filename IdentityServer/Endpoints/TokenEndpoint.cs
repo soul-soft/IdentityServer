@@ -113,7 +113,7 @@ namespace IdentityServer.Endpoints
                 var validator = context.RequestServices.GetRequiredService<IExtensionGrantListValidator>();
                 await ValidateExtensionGrantRequestAsync(validator, request);
             }
-            var profileDataRequestContext = new ProfileDataRequestContext(ProfileDataCallers.TokenEndpoint, request.Client, request.Resources);
+            var profileDataRequestContext = new ProfileDataRequestContext(ProfileDataCallers.TokenEndpoint, new ClaimsPrincipal(new ClaimsIdentity("Token")), request.Client, request.Resources);
             var profiles = await _profileService.GetProfileDataAsync(profileDataRequestContext);
             var singInAuthenticationContext = new SingInAuthenticationContext(request.Client, request.Resources, request.GrantType, profiles);
             var subject = await _authenticationService.SingInAsync(singInAuthenticationContext);
@@ -132,7 +132,7 @@ namespace IdentityServer.Endpoints
         #region ClientCredentialsRequest
         private static async Task ValidateClientCredentialsRequestAsync(IClientCredentialsRequestValidator validator, TokenRequestValidation request)
         {
-            var grantContext = new ClientCredentialsRequestValidation(request);
+            var grantContext = new ClientCredentialsValidation(request);
             await validator.ValidateAsync(grantContext);
         }
         #endregion
@@ -158,7 +158,7 @@ namespace IdentityServer.Endpoints
             {
                 throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, "Password too long");
             }
-            var validation = new ResourceOwnerCredentialRequestValidation(request, username, password);
+            var validation = new ResourceOwnerCredentialValidation(request, username, password);
             await validator.ValidateAsync(validation);
         }
         #endregion
@@ -175,14 +175,14 @@ namespace IdentityServer.Endpoints
             {
                 throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, "RefreshToken too long");
             }
-            await validator.ValidateAsync(new RefreshTokenRequestValidation(refreshToken, request));
+            await validator.ValidateAsync(new RefreshTokenValidation(refreshToken, request));
         }
         #endregion
 
         #region ExtensionGrantRequest
         private static async Task ValidateExtensionGrantRequestAsync(IExtensionGrantListValidator validator, TokenRequestValidation request)
         {
-            var grantContext = new ExtensionGrantRequestValidation(request);
+            var grantContext = new ExtensionGrantValidation(request);
             await validator.ValidateAsync(grantContext);
         }
         #endregion

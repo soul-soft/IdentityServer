@@ -13,7 +13,11 @@ namespace IdentityServer.Endpoints
 
         public async Task<UserInfoResponse> ProcessAsync(ClaimsPrincipal subject, Client client, Resources resources)
         {
-            var profileDataRequestContext = new ProfileDataRequestContext(ProfileDataCallers.UserInfoEndpoint, client, resources);
+            var profileDataRequestContext = new ProfileDataRequestContext(
+                ProfileDataCallers.UserInfoEndpoint,
+                subject,
+                client,
+                resources);
             var claims = await _profileService.GetProfileDataAsync(profileDataRequestContext);
             return new UserInfoResponse(claims.ToClaimsDictionary());
         }

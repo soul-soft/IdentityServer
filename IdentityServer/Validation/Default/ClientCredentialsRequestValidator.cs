@@ -2,7 +2,7 @@
 {
     internal class ClientCredentialsRequestValidator : IClientCredentialsRequestValidator
     {
-        public Task ValidateAsync(ClientCredentialsRequestValidation context)
+        public Task ValidateAsync(ClientCredentialsValidation context)
         {
             var resources = context.Request.Resources;
             if (resources.IdentityResources.Any())

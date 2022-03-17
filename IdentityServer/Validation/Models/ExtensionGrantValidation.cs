@@ -1,10 +1,10 @@
 ﻿namespace IdentityServer.Validation
 {
-    public class ClientCredentialsRequestValidation
+    public class ExtensionGrantValidation
     {
         public TokenRequestValidation Request { get; }
-      
-        public ClientCredentialsRequestValidation(TokenRequestValidation request)
+     
+        public ExtensionGrantValidation(TokenRequestValidation request)
         {
             Request = request;
         }
