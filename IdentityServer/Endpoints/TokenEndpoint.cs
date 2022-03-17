@@ -9,6 +9,7 @@ namespace IdentityServer.Endpoints
     {
         private readonly IResourceStore _resourceStore;
         private readonly IdentityServerOptions _options;
+        private readonly IProfileService _profileService;
         private readonly ITokenResponseGenerator _generator;
         private readonly IResourceValidator _resourceValidator;
         private readonly IClientSecretValidator _clientSecretValidator;
@@ -17,6 +18,7 @@ namespace IdentityServer.Endpoints
         public TokenEndpoint(
             IResourceStore resourceStore,
             IdentityServerOptions options,
+            IProfileService profileService,
             ITokenResponseGenerator generator,
             IClientSecretValidator clientSecretValidator,
             IResourceValidator resourceValidator,
@@ -25,6 +27,7 @@ namespace IdentityServer.Endpoints
             _options = options;
             _generator = generator;
             _resourceStore = resourceStore;
+            _profileService = profileService;
             _clientSecretValidator = clientSecretValidator;
             _resourceValidator = resourceValidator;
             _authenticationService = authenticationService;
@@ -91,24 +94,22 @@ namespace IdentityServer.Endpoints
             }
             #endregion
 
-            #region Validate GrantRequest
+            #region Validate Grant
             var subject = await RunValidationAsync(context, new TokenRequestValidation(client, grantType, resources, body, _options));
             #endregion
 
-            #region Response
+            #region Response Generator
             var response = await _generator.ProcessAsync(new TokenRequest(grantType, subject, client, resources, _options));
             return TokenEndpointResult(response);
             #endregion
         }
 
-        #region Validate GrantRequest
+        #region Validate Grant
         private async Task<ClaimsPrincipal> RunValidationAsync(HttpContext context, TokenRequestValidation request)
         {
             //验证刷新令牌
-            var validationActive = false;
             if (GrantTypes.RefreshToken.Equals(request.GrantType))
             {
-                validationActive = true;
                 var validator = context.RequestServices.GetRequiredService<IRefreshTokenRequestValidator>();
                 await ValidateRefreshTokenRequestAsync(validator, request);
             }
@@ -121,7 +122,6 @@ namespace IdentityServer.Endpoints
             //验证资源所有者密码授权
             else if (GrantTypes.Password.Equals(request.GrantType))
             {
-                validationActive = true;
                 var validator = context.RequestServices.GetRequiredService<IResourceOwnerCredentialRequestValidator>();
                 await ValidateResourceOwnerCredentialRequestAsync(validator, request);
 
@@ -129,7 +129,6 @@ namespace IdentityServer.Endpoints
             //验证自定义授权
             else
             {
-                validationActive = true;
                 var validator = context.RequestServices.GetRequiredService<IExtensionGrantListValidator>();
                 await ValidateExtensionGrantRequestAsync(validator, request);
             }
@@ -138,19 +137,23 @@ namespace IdentityServer.Endpoints
                 request.GrantType,
                 request.Client,
                 request.Resources));
-            if (validationActive)
+            //验证
+            await ValidateSubjectAsync(request.Client, subject);
+            return subject;
+        }
+        #endregion
+
+        #region Validate Subject
+        private async Task ValidateSubjectAsync(Client client, ClaimsPrincipal subject)
+        {
+            if (!string.IsNullOrEmpty(subject.GetSubjectId()))
             {
-                var profile = context.RequestServices.GetRequiredService<IProfileService>();
-                var isActive = await profile.IsActiveAsync(new IsActiveContext(
-                    ProfileIsActiveCallers.ResourceOwnerValidation,
-                    request.Client,
-                    subject));
+                var isActive = await _profileService.IsActiveAsync(new IsActiveContext(client, subject));
                 if (!isActive)
                 {
                     throw new ValidationException(OpenIdConnectErrors.InvalidGrant, string.Format("User has been disabled:{0}", subject.GetSubjectId()));
                 }
             }
-            return subject;
         }
         #endregion
 

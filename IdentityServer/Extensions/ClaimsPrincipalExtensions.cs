@@ -16,12 +16,8 @@ namespace IdentityServer.Extensions
             return claim?.Value;
         }
 
-        public static IEnumerable<string> GetScopes(this ClaimsPrincipal principal, bool emitScopesAsSpaceDelimitedStringInJwt)
+        public static IEnumerable<string> GetAllScopes(this ClaimsPrincipal principal)
         {
-            if (emitScopesAsSpaceDelimitedStringInJwt)
-            {
-                return principal.FindFirstValue(JwtClaimTypes.Scope).Split(',');
-            }
             return principal.FindAll(JwtClaimTypes.Scope).Select(s => s.Value);
         }
     }

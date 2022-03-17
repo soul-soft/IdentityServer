@@ -13,7 +13,7 @@ namespace IdentityServer.Extensions
                 var list = new List<object>();
                 foreach (var item in grouping)
                 {
-                    list.Add(GetValue(item));
+                    list.Add(ParseValue(item));
                 }
                 if (list.Count == 1)
                 {
@@ -27,7 +27,7 @@ namespace IdentityServer.Extensions
             return dictionary;
         }
 
-        private static object GetValue(Claim claim)
+        private static object ParseValue(Claim claim)
         {
             if (claim.ValueType == ClaimValueTypes.Integer || claim.ValueType == ClaimValueTypes.Integer32)
             {
@@ -71,12 +71,10 @@ namespace IdentityServer.Extensions
                     return value;
                 }
             }
-
             if (claim.ValueType == "json")
             {
                 return JsonSerializer.Deserialize<JsonElement>(claim.Value);
             }
-
             return claim.Value;
         }
     }

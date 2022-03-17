@@ -7,7 +7,6 @@ namespace IdentityServer.Endpoints
     {
         private readonly IClientStore _clients;
         private readonly ITokenParser _tokenParser;
-        private readonly IdentityServerOptions _options;
         private readonly IResourceStore _resourceStore;
         private readonly ITokenValidator _tokenValidator;
         private readonly IUserInfoResponseGenerator _generator;
@@ -16,12 +15,10 @@ namespace IdentityServer.Endpoints
             IClientStore clients,
             ITokenParser tokenParser,
             IResourceStore resourceStore,
-            IdentityServerOptions options,
             ITokenValidator tokenValidator,
             IUserInfoResponseGenerator generator)
         {
             _clients = clients;
-            _options = options;
             _generator = generator;
             _tokenParser = tokenParser;
             _resourceStore = resourceStore;
@@ -55,7 +52,7 @@ namespace IdentityServer.Endpoints
             {
                 return Unauthorized(OpenIdConnectErrors.InvalidGrant, "Invalid client");
             }
-            var scopes = subject.GetScopes(_options.EmitScopesAsCommaDelimitedStringInJwt);
+            var scopes = subject.GetAllScopes();
             var resources = await _resourceStore.FindResourcesByScopesAsync(scopes);
             var response = await _generator.ProcessAsync(subject, client, resources);
             return new UserInfoResult(response);

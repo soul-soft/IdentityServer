@@ -7,24 +7,30 @@ namespace IdentityServer.Validation
 {
     internal class TokenValidator : ITokenValidator
     {
+        private readonly ITokenStore _tokens;
+        private readonly IClientStore _clients;
         private readonly IServerUrl _serverUrl;
         private readonly ISystemClock _systemClock;
         private readonly IdentityServerOptions _options;
+        private readonly IProfileService _profileService;
         private readonly ISigningCredentialStore _credentials;
-        private readonly ITokenStore _referenceTokenStore;
 
         public TokenValidator(
+            ITokenStore tokens,
+            IClientStore clients,
             IServerUrl serverUrl,
             ISystemClock systemClock,
             IdentityServerOptions options,
-            ISigningCredentialStore credentials,
-            ITokenStore referenceTokenStore)
+            IProfileService profileService,
+            ISigningCredentialStore credentials)
         {
+            _tokens = tokens;
+            _clients = clients;
             _options = options;
             _serverUrl = serverUrl;
             _systemClock = systemClock;
             _credentials = credentials;
-            _referenceTokenStore = referenceTokenStore;
+            _profileService = profileService;
         }
 
         public async Task<TokenValidationResult> ValidateAccessTokenAsync(string token)
@@ -66,12 +72,12 @@ namespace IdentityServer.Validation
                     return TokenValidationResult.Fail(OpenIdConnectErrors.InvalidToken, result.Exception.Message);
                 }
             }
-            return TokenValidationResult.Success(result.ClaimsIdentity.Claims);
+            return await ValidateSubjectAsync(result.ClaimsIdentity.Claims);
         }
 
-        private async Task<TokenValidationResult> ValidateReferenceTokenAsync(string tokenReference)
+        private async Task<TokenValidationResult> ValidateReferenceTokenAsync(string reference)
         {
-            var token = await _referenceTokenStore.FindTokenAsync(tokenReference);
+            var token = await _tokens.FindTokenAsync(reference);
             if (token == null)
             {
                 return TokenValidationResult.Fail(OpenIdConnectErrors.InvalidToken, "Invalid reference token");
@@ -84,11 +90,10 @@ namespace IdentityServer.Validation
             {
                 return TokenValidationResult.Fail(OpenIdConnectErrors.InvalidToken, "Invalid issuer");
             }
-            var claims = ValidateClaims(token.Claims);
-            return TokenValidationResult.Success(claims);
+            return await ValidateSubjectAsync(token.Claims);
         }
 
-        public IEnumerable<Claim> ValidateClaims(IEnumerable<Claim> claims)
+        private async Task<TokenValidationResult> ValidateSubjectAsync(IEnumerable<Claim> claims)
         {
             if (_options.EmitScopesAsCommaDelimitedStringInJwt && claims.Any(a => a.Type == JwtClaimTypes.Scope))
             {
@@ -96,10 +101,30 @@ namespace IdentityServer.Validation
                     .First().Value
                     .Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-                return claims.Where(a => a.Type != JwtClaimTypes.Scope)
+                claims = claims.Where(a => a.Type != JwtClaimTypes.Scope)
                     .Union(scopes.Select(scope => new Claim(JwtClaimTypes.Scope, scope)));
             }
-            return claims;
+            var subject = new ClaimsPrincipal(new ClaimsIdentity(claims, "TokenValidator"));
+            var clientId = subject.GetClientId();
+            if (string.IsNullOrEmpty(clientId))
+            {
+                return TokenValidationResult.Fail(OpenIdConnectErrors.InvalidToken, $"Invalid client_id");
+            }
+            var client = await _clients.FindByClientIdAsync(clientId);
+            if (client == null)
+            {
+                return TokenValidationResult.Fail(OpenIdConnectErrors.InvalidClient, $"Client ID is missing");
+            }
+            var subjectId = subject.GetSubjectId();
+            if (!string.IsNullOrEmpty(subjectId))
+            {
+                var isActive = await _profileService.IsActiveAsync(new IsActiveContext(client, subject));
+                if (!isActive)
+                {
+                    return TokenValidationResult.Fail(OpenIdConnectErrors.InvalidGrant, $"User marked as not active: {subjectId}");
+                }
+            }
+            return TokenValidationResult.Success(subject.Claims);
         }
     }
 }
