@@ -7,6 +7,6 @@ namespace IdentityServer.Storage
         Task<IEnumerable<SecurityKey>> GetSecurityKeysAsync();
         Task<IEnumerable<JsonWebKey>> GetJsonWebKeysAsync();
         Task<SigningCredentials> GetSigningCredentialsByAlgorithmsAsync(IEnumerable<string> algorithms);
-        Task<IEnumerable<SigningCredentialsDescriptor>> GetSigningCredentialsAsync();
+        Task<IEnumerable<SigningCredentials>> GetAllSigningCredentialsAsync();
     }
 }

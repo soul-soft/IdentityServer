@@ -25,7 +25,7 @@
 
         private async Task<(string accessToken, string? refreshToken)> CreateAccessTokenAsync(TokenRequest request)
         {
-            var token = await _tokenService.CreateAccessTokenAsync(request);
+            var token = await _tokenService.CreateAccessTokenAsync(request.Client, request.Subject);
 
             var accessToken = await _tokenService.CreateSecurityTokenAsync(token);
 

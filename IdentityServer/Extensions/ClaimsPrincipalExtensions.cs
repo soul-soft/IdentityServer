@@ -15,10 +15,5 @@ namespace IdentityServer.Extensions
             var claim = principal.FindFirst(JwtClaimTypes.Subject);
             return claim?.Value;
         }
-
-        public static IEnumerable<string> GetAllScopes(this ClaimsPrincipal principal)
-        {
-            return principal.FindAll(JwtClaimTypes.Scope).Select(s => s.Value);
-        }
     }
 }

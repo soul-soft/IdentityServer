@@ -40,7 +40,7 @@ namespace Hosting.Configuration
             new Client()
             {
                 ClientId = "client3",
-                AccessTokenType = AccessTokenType.Reference,
+                //AccessTokenType = AccessTokenType.Reference,
                 AllowedGrantTypes = new []
                 {
                     GrantTypes.ClientCredentials,
@@ -93,18 +93,9 @@ namespace Hosting.Configuration
                     "api"
                 }
             },
-            StandardResources.OpenId,
-            StandardResources.OfflineAccess,
-            StandardResources.Profile,
-            new IdentityResource("address")
-            {
-               //表示该身份资源允许签发phone和address给access_token
-               ClaimTypes = new string[]
-               {
-                   JwtClaimTypes.Phone,
-                   JwtClaimTypes.Address
-               }
-            },
+            IdentityResources.OpenId,
+            IdentityResources.OfflineAccess,
+            IdentityResources.Profile,
         };
     }
 }

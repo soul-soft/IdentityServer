@@ -4,7 +4,7 @@
     {
         public Task ValidateAsync(ResourceOwnerCredentialRequestValidation context)
         {
-            throw new ValidationException(OpenIdConnectErrors.InvalidGrant, "Invalid username or password");
+            throw new ValidationException(OpenIdConnectValidationErrors.InvalidGrant, "Invalid username or password");
         }
     }
 }

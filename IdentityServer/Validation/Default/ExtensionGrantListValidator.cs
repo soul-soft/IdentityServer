@@ -16,7 +16,7 @@
                 .FirstOrDefault();
             if (validator == null)
             {
-                throw new ValidationException(OpenIdConnectErrors.InvalidRequest, $"Unsupported grant type '{context.Request.GrantType}'");
+                throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, $"Unsupported grant type '{context.Request.GrantType}'");
             }
             return validator.ValidateAsync(context);
         }

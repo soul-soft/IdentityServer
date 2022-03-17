@@ -23,16 +23,16 @@ namespace IdentityServer.Validation
             var parsedSecret = await _secretListParser.ParseAsync(context);
             if (parsedSecret.Type == ClientSecretTypes.NoSecret)
             {
-                throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "Client credentials is missing");
+                throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, "Client credentials is missing");
             }
             var apiResources = await _resources.FindApiResourcesByNameAsync(parsedSecret.ClientId);
             if (!apiResources.Any())
             {
-                throw new ValidationException(OpenIdConnectErrors.InvalidClient, "No API resource with that name found. aborting");
+                throw new ValidationException(OpenIdConnectValidationErrors.InvalidClient, "No API resource with that name found. aborting");
             }
             if (apiResources.Count() > 1)
             {
-                throw new ValidationException(OpenIdConnectErrors.InvalidClient, "More than one API resource with that name found. aborting");
+                throw new ValidationException(OpenIdConnectValidationErrors.InvalidClient, "More than one API resource with that name found. aborting");
             }
             var apiResource = apiResources.First();
             await _secretListValidator.ValidateAsync(parsedSecret, apiResource.ApiSecrets);

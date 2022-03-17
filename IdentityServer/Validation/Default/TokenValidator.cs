@@ -37,7 +37,7 @@ namespace IdentityServer.Validation
         {
             if (token.Length > _options.InputLengthRestrictions.AccessToken)
             {
-                return TokenValidationResult.Fail(OpenIdConnectErrors.InvalidToken, "Access token too long");
+                return TokenValidationResult.Fail(OpenIdConnectValidationErrors.InvalidToken, "Access token too long");
             }
             if (token.Contains('.'))
             {
@@ -65,11 +65,11 @@ namespace IdentityServer.Validation
             {
                 if (result.Exception is SecurityTokenExpiredException securityTokenExpiredException)
                 {
-                    return TokenValidationResult.Fail(OpenIdConnectErrors.ExpiredToken, securityTokenExpiredException.Message);
+                    return TokenValidationResult.Fail(OpenIdConnectValidationErrors.ExpiredToken, securityTokenExpiredException.Message);
                 }
                 else
                 {
-                    return TokenValidationResult.Fail(OpenIdConnectErrors.InvalidToken, result.Exception.Message);
+                    return TokenValidationResult.Fail(OpenIdConnectValidationErrors.InvalidToken, result.Exception.Message);
                 }
             }
             return await ValidateSubjectAsync(result.ClaimsIdentity.Claims);
@@ -80,15 +80,15 @@ namespace IdentityServer.Validation
             var token = await _tokens.FindTokenAsync(reference);
             if (token == null)
             {
-                return TokenValidationResult.Fail(OpenIdConnectErrors.InvalidToken, "Invalid reference token");
+                return TokenValidationResult.Fail(OpenIdConnectValidationErrors.InvalidToken, "Invalid reference token");
             }
             if (token.Expiration < _systemClock.UtcNow.UtcDateTime)
             {
-                return TokenValidationResult.Fail(OpenIdConnectErrors.ExpiredToken, "The access token has expired");
+                return TokenValidationResult.Fail(OpenIdConnectValidationErrors.ExpiredToken, "The access token has expired");
             }
             if (token.Issuer != _serverUrl.GetIdentityServerIssuerUri())
             {
-                return TokenValidationResult.Fail(OpenIdConnectErrors.InvalidToken, "Invalid issuer");
+                return TokenValidationResult.Fail(OpenIdConnectValidationErrors.InvalidToken, "Invalid issuer");
             }
             return await ValidateSubjectAsync(token.Claims);
         }
@@ -108,12 +108,12 @@ namespace IdentityServer.Validation
             var clientId = subject.GetClientId();
             if (string.IsNullOrEmpty(clientId))
             {
-                return TokenValidationResult.Fail(OpenIdConnectErrors.InvalidToken, $"Invalid client_id");
+                return TokenValidationResult.Fail(OpenIdConnectValidationErrors.InvalidToken, $"Token contains no client_id claim");
             }
             var client = await _clients.FindByClientIdAsync(clientId);
             if (client == null)
             {
-                return TokenValidationResult.Fail(OpenIdConnectErrors.InvalidClient, $"Client ID is missing");
+                return TokenValidationResult.Fail(OpenIdConnectValidationErrors.InvalidClient, $"Client does not exist anymore.");
             }
             var subjectId = subject.GetSubjectId();
             if (!string.IsNullOrEmpty(subjectId))
@@ -121,10 +121,10 @@ namespace IdentityServer.Validation
                 var isActive = await _profileService.IsActiveAsync(new IsActiveContext(client, subject));
                 if (!isActive)
                 {
-                    return TokenValidationResult.Fail(OpenIdConnectErrors.InvalidGrant, $"User marked as not active: {subjectId}");
+                    return TokenValidationResult.Fail(OpenIdConnectValidationErrors.InvalidGrant, $"User marked as not active: {subjectId}");
                 }
             }
-            return TokenValidationResult.Success(subject.Claims);
+            return TokenValidationResult.Success(client, subject.Claims);
         }
     }
 }

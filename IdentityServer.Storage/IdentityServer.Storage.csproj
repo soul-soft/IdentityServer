@@ -4,8 +4,8 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<AssemblyName>Soul.$(MSBuildProjectName)</AssemblyName>
-		<Version>6.0.0-bate12</Version>
-		<PackageTags>OAuth2;OAuth 2.0;OpenID Connect;Security;Identity;IdentityServer</PackageTags>
+		<Version>6.0.0-bate13</Version>
+		<PackageTags>OAuth2;OAuth 2.0;OpenID Connect;IdentityServer</PackageTags>
 		<Copyright>MIT</Copyright>
 		<PackageProjectUrl>https://github.com/1448376744/IdentityServer</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/1448376744/IdentityServer</RepositoryUrl>
@@ -13,4 +13,8 @@
 		<PackageReleaseNotes>预览版</PackageReleaseNotes>
 		<Description>Simple identityServer storage.</Description>
 	</PropertyGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" Version="1.1.1" />
+	</ItemGroup>
 </Project>

@@ -19,7 +19,7 @@ namespace IdentityServer.Services
         public async Task<string> CreateTokenAsync(Token token)
         {
             var credential = await _credentials
-                    .GetSigningCredentialsByAlgorithmsAsync(Array.Empty<string>());
+                    .GetSigningCredentialsByAlgorithmsAsync(token.AllowedSigningAlgorithms);
             var header = CreateJwtHeader(token, credential);
             var payload = CreateJwtPayload(token);
             var handler = new JwtSecurityTokenHandler();

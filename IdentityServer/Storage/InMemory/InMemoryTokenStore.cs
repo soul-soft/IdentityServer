@@ -2,9 +2,9 @@
 {
     internal class InMemoryTokenStore : ITokenStore
     {
-        private readonly IObjectStore _storage;
+        private readonly ICache _storage;
 
-        public InMemoryTokenStore(IObjectStore storage)
+        public InMemoryTokenStore(ICache storage)
         {
             _storage = storage;
         }
@@ -17,7 +17,7 @@
 
         public async Task StoreTokenAsync(Token token)
         {
-            var key = GenerateStoreKey(token.JwtId);
+            var key = GenerateStoreKey(token.Id);
             var span = token.Expiration - token.IssuedAt;
             await _storage.SetAsync(key, token, span);
         }

@@ -4,10 +4,11 @@ namespace IdentityServer.Validation
 {
     public class TokenValidationResult
     {
-        public bool IsError { get;  }
-        public string Error { get; } = string.Empty;
-        public string? ErrorDescription { get;  }
+        public Client Client { get; } = null!;
         public IEnumerable<Claim> Claims { get; } = new List<Claim>();
+        public bool IsError { get; }
+        public string Error { get; } = string.Empty;
+        public string? ErrorDescription { get; }
 
         private TokenValidationResult(string error, string? errorDescription)
         {
@@ -16,8 +17,9 @@ namespace IdentityServer.Validation
             ErrorDescription = errorDescription;
         }
 
-        private TokenValidationResult(IEnumerable<Claim> claims)
+        private TokenValidationResult(Client client, IEnumerable<Claim> claims)
         {
+            Client = client;
             Claims = claims;
         }
 
@@ -26,9 +28,9 @@ namespace IdentityServer.Validation
             return new TokenValidationResult(error, errorDescription);
         }
 
-        public static TokenValidationResult Success(IEnumerable<Claim> claims)
+        public static TokenValidationResult Success(Client client, IEnumerable<Claim> claims)
         {
-            return new TokenValidationResult(claims);
+            return new TokenValidationResult(client, claims);
         }
     }
 }

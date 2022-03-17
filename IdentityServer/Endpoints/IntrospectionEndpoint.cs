@@ -27,7 +27,7 @@ namespace IdentityServer.Endpoints
             }
             if (!context.Request.HasFormContentType)
             {
-                return BadRequest(OpenIdConnectErrors.InvalidRequest, "Invalid contextType");
+                return BadRequest(OpenIdConnectValidationErrors.InvalidRequest, "Invalid contextType");
             }
             #endregion
 
@@ -41,7 +41,7 @@ namespace IdentityServer.Endpoints
             var token = form.Get("token");
             if (string.IsNullOrEmpty(token))
             {
-                return BadRequest(OpenIdConnectErrors.InvalidRequest, "Token is missing");
+                return BadRequest(OpenIdConnectValidationErrors.InvalidRequest, "Token is missing");
             }
             var tokenValidationResult = await _tokenValidator.ValidateAccessTokenAsync(token);
             #endregion

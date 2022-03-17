@@ -1,12 +1,26 @@
 ﻿using System.Security.Claims;
+using System.Text.Json.Serialization;
 
 namespace IdentityServer.Models
 {
     public class Token
     {
-        public string Type { get; }
-        public AccessTokenType AccessTokenType { get; set; }
-        public IEnumerable<Claim> Claims { get; }
+        public string Id { get; set; }
+        public string? Type { get; set; }
+        public AccessTokenType AccessTokenType { get; set; }        
+        public IEnumerable<Claim> Claims { get; set; } = new List<Claim>();
+        public IEnumerable<string> AllowedSigningAlgorithms { get; } = new HashSet<string>();
+      
+        public Token(string id, string? type, AccessTokenType accessTokenType, IEnumerable<Claim> claims, IEnumerable<string> allowedSigningAlgorithms)
+        {
+            Id = id;
+            Type = type;
+            AccessTokenType = accessTokenType;
+            Claims = claims;
+            AllowedSigningAlgorithms = allowedSigningAlgorithms;
+        }
+
+        [JsonIgnore]
         public string JwtId
         {
             get
@@ -15,6 +29,7 @@ namespace IdentityServer.Models
                     .Select(s => s.Value).First();
             }
         }
+        [JsonIgnore]
         public string? AuthenticationMethod
         {
             get
@@ -23,6 +38,7 @@ namespace IdentityServer.Models
                     .Select(s => s.Value).FirstOrDefault();
             }
         }
+        [JsonIgnore]
         public string? IdentityProvider
         {
             get
@@ -31,6 +47,7 @@ namespace IdentityServer.Models
                     .Select(s => s.Value).FirstOrDefault();
             }
         }
+        [JsonIgnore]
         public string Issuer
         {
             get
@@ -39,6 +56,7 @@ namespace IdentityServer.Models
                     .Select(s => s.Value).First();
             }
         }
+        [JsonIgnore]
         public string? SubjectId
         {
             get
@@ -47,6 +65,7 @@ namespace IdentityServer.Models
                     .Select(s => s.Value).FirstOrDefault();
             }
         }
+        [JsonIgnore]
         public DateTimeOffset Expiration
         {
             get
@@ -56,6 +75,7 @@ namespace IdentityServer.Models
                 return DateTimeOffset.FromUnixTimeSeconds(long.Parse(issuedAt));
             }
         }
+        [JsonIgnore]
         public IEnumerable<string> Audiences
         {
             get
@@ -64,7 +84,7 @@ namespace IdentityServer.Models
                     .Select(s => s.Value).ToArray();
             }
         }
-        public IEnumerable<string> AllowedSigningAlgorithms { get; } 
+        [JsonIgnore]
         public DateTimeOffset IssuedAt
         {
             get
@@ -73,14 +93,6 @@ namespace IdentityServer.Models
                     .Select(s => s.Value).First();
                 return DateTimeOffset.FromUnixTimeSeconds(long.Parse(issuedAt));
             }
-        }
-
-        public Token(string type, AccessTokenType accessTokenType, IEnumerable<Claim> claims, IEnumerable<string> allowedSigningAlgorithms)
-        {
-            Type = type;
-            AccessTokenType = accessTokenType;
-            Claims = claims;
-            AllowedSigningAlgorithms = allowedSigningAlgorithms;
         }
     }
 }

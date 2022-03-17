@@ -15,7 +15,7 @@
             {
                 if (!client.AllowedScopes.Any())
                 {
-                    throw new ValidationException(OpenIdConnectErrors.InvalidScope, "No allowed scopes configured for client");
+                    throw new ValidationException(OpenIdConnectValidationErrors.InvalidScope, "No allowed scopes configured for client");
                 }
                 scopes = client.AllowedScopes;
             }
@@ -25,7 +25,7 @@
                 {
                     if (!client.AllowedScopes.Contains(item))
                     {
-                        throw new ValidationException(OpenIdConnectErrors.InvalidScope, $"Scope '{item}' not allowed");
+                        throw new ValidationException(OpenIdConnectValidationErrors.InvalidScope, $"Scope '{item}' not allowed");
                     }
                 }
             }
@@ -34,7 +34,7 @@
             {
                 if (!resources.Scopes.Contains(scope))
                 {
-                    throw new ValidationException(OpenIdConnectErrors.InvalidScope);
+                    throw new ValidationException(OpenIdConnectValidationErrors.InvalidScope);
                 }
             }
             return resources;

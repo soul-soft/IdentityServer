@@ -39,7 +39,7 @@ namespace IdentityServer.Endpoints
             }
             if (!context.Request.HasFormContentType)
             {
-                return BadRequest(OpenIdConnectErrors.InvalidRequest, "Invalid contextType");
+                return BadRequest(OpenIdConnectValidationErrors.InvalidRequest, "Invalid contextType");
             }
             #endregion
 
@@ -53,7 +53,7 @@ namespace IdentityServer.Endpoints
             var scope = body[OpenIdConnectParameterNames.Scope] ?? string.Empty;
             if (scope.Length > _options.InputLengthRestrictions.Scope)
             {
-                return BadRequest(OpenIdConnectErrors.InvalidScope, "Scope is too long");
+                return BadRequest(OpenIdConnectValidationErrors.InvalidScope, "Scope is too long");
             }
             var scopes = scope.Split(",").Where(a => !string.IsNullOrWhiteSpace(a));
             var resources = await _resourceValidator.ValidateAsync(client, scopes);
@@ -63,15 +63,15 @@ namespace IdentityServer.Endpoints
             var grantType = body[OpenIdConnectParameterNames.GrantType];
             if (string.IsNullOrEmpty(grantType))
             {
-                return BadRequest(OpenIdConnectErrors.InvalidRequest, "Grant type is missing");
+                return BadRequest(OpenIdConnectValidationErrors.InvalidRequest, "Grant type is missing");
             }
             if (grantType.Length > _options.InputLengthRestrictions.GrantType)
             {
-                return BadRequest(OpenIdConnectErrors.InvalidRequest, "Grant type is too long");
+                return BadRequest(OpenIdConnectValidationErrors.InvalidRequest, "Grant type is too long");
             }
             if (!client.AllowedGrantTypes.Contains(grantType))
             {
-                return BadRequest(OpenIdConnectErrors.UnauthorizedClient, "Grant type not allowed");
+                return BadRequest(OpenIdConnectValidationErrors.UnauthorizedClient, "Grant type not allowed");
             }
             #endregion
 
@@ -113,28 +113,19 @@ namespace IdentityServer.Endpoints
                 var validator = context.RequestServices.GetRequiredService<IExtensionGrantListValidator>();
                 await ValidateExtensionGrantRequestAsync(validator, request);
             }
-            //登入
-            var subject = await _authenticationService.SingInAsync(new AuthenticationSingInContext(
-                request.GrantType,
-                request.Client,
-                request.Resources));
-            //验证
-            await ValidateSubjectAsync(request.Client, subject);
-            return subject;
-        }
-        #endregion
-
-        #region Validate Subject
-        private async Task ValidateSubjectAsync(Client client, ClaimsPrincipal subject)
-        {
+            var profileDataRequestContext = new ProfileDataRequestContext(ProfileDataCallers.TokenEndpoint, request.Client, request.Resources);
+            var profiles = await _profileService.GetProfileDataAsync(profileDataRequestContext);
+            var singInAuthenticationContext = new SingInAuthenticationContext(request.Client, request.Resources, request.GrantType, profiles);
+            var subject = await _authenticationService.SingInAsync(singInAuthenticationContext);
             if (!string.IsNullOrEmpty(subject.GetSubjectId()))
             {
-                var isActive = await _profileService.IsActiveAsync(new IsActiveContext(client, subject));
+                var isActive = await _profileService.IsActiveAsync(new IsActiveContext(request.Client, subject));
                 if (!isActive)
                 {
-                    throw new ValidationException(OpenIdConnectErrors.InvalidGrant, string.Format("User has been disabled:{0}", subject.GetSubjectId()));
+                    throw new ValidationException(OpenIdConnectValidationErrors.InvalidGrant, string.Format("User has been disabled:{0}", subject.GetSubjectId()));
                 }
             }
+            return subject;
         }
         #endregion
 
@@ -153,19 +144,19 @@ namespace IdentityServer.Endpoints
             var password = request.Body[OpenIdConnectParameterNames.Password];
             if (string.IsNullOrEmpty(username))
             {
-                throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "Username is missing");
+                throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, "Username is missing");
             }
             if (username.Length > _options.InputLengthRestrictions.UserName)
             {
-                throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "Username too long");
+                throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, "Username too long");
             }
             if (string.IsNullOrEmpty(password))
             {
-                throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "Password is missing");
+                throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, "Password is missing");
             }
             if (password.Length > _options.InputLengthRestrictions.Password)
             {
-                throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "Password too long");
+                throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, "Password too long");
             }
             var validation = new ResourceOwnerCredentialRequestValidation(request, username, password);
             await validator.ValidateAsync(validation);
@@ -178,11 +169,11 @@ namespace IdentityServer.Endpoints
             var refreshToken = request.Body[OpenIdConnectParameterNames.RefreshToken];
             if (refreshToken == null)
             {
-                throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "RefreshToken is missing");
+                throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, "RefreshToken is missing");
             }
             if (refreshToken.Length > _options.InputLengthRestrictions.RefreshToken)
             {
-                throw new ValidationException(OpenIdConnectErrors.InvalidRequest, "RefreshToken too long");
+                throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, "RefreshToken too long");
             }
             await validator.ValidateAsync(new RefreshTokenRequestValidation(refreshToken, request));
         }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
 
 namespace IdentityServer.Services
 {
@@ -24,25 +25,7 @@ namespace IdentityServer.Services
             _securityTokenService = securityTokenService;
         }
 
-        public Task<Token> CreateAccessTokenAsync(TokenRequest request)
-        {
-            var token = new Token(
-                TokenTypes.AccessToken,
-                request.Client.AccessTokenType,
-                request.Subject.Claims,
-                request.Client.AllowedSigningAlgorithms);
-            return Task.FromResult(token);
-        }
-
-        public Task<Token> CreateIdentityTokenAsync(TokenRequest request)
-        {
-            var token = new Token(
-                TokenTypes.IdentityToken,
-                request.Client.AccessTokenType, 
-                request.Subject.Claims,
-                request.Client.AllowedSigningAlgorithms);
-            return Task.FromResult(token);
-        }
+      
 
         public async Task<string> CreateSecurityTokenAsync(Token token)
         {
@@ -56,7 +39,7 @@ namespace IdentityServer.Services
                 else
                 {
                     await _referenceTokenStore.StoreTokenAsync(token);
-                    securityToken = token.JwtId;
+                    securityToken = token.Id;
                 }
             }
             else if (token.Type == TokenTypes.IdentityToken)
@@ -69,15 +52,29 @@ namespace IdentityServer.Services
             }
             return securityToken;
         }
+        public async Task<Token> CreateAccessTokenAsync(Client client, ClaimsPrincipal subject)
+        {
+            var id = await _handleGenerator.GenerateAsync();
+            var token = new Token(
+                id,
+                TokenTypes.AccessToken,
+                client.AccessTokenType,
+                subject.Claims,
+                client.AllowedSigningAlgorithms);
+            return token;
+        }
 
-        public async Task<string> CreateRefreshTokenAsync(Token token, int lifetime)
+        public async Task<string> CreateRefreshTokenAsync(Token token, int refreshTokenLifetime)
         {
             var id = await _handleGenerator.GenerateAsync();
             var creationTime = _clock.UtcNow.UtcDateTime;
-            var refreshToken = new RefreshToken(id, token, lifetime, creationTime);
+            var refreshToken = new RefreshToken(
+                id, 
+                token, 
+                refreshTokenLifetime, 
+                creationTime);
             await _refreshTokenStore.StoreRefreshTokenAsync(refreshToken);
             return id;
         }
-
     }
 }

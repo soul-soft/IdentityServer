@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<AssemblyName>Soul.$(MSBuildProjectName)</AssemblyName>
-		<Version>6.0.0-bate12</Version>
+		<Version>6.0.0-bate13</Version>
 		<PackageTags>OAuth2;OAuth 2.0;OpenID Connect;Security;Identity;IdentityServer</PackageTags>
 		<Copyright>MIT</Copyright>
 		<PackageProjectUrl>https://github.com/1448376744/IdentityServer</PackageProjectUrl>
@@ -26,24 +26,19 @@
 		<Using Include="IdentityServer.Configuration" />
 		<Using Include="IdentityServer.Infrastructure" />
 	</ItemGroup>
-	
-	<ItemGroup>		
-	  <Compile Remove="Hosting\Server\**" />
-	  <EmbeddedResource Remove="Hosting\Server\**" />
-	  <None Remove="Hosting\Server\**" />
-	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="Hosting\Endpoints\JsonEndpointResult.cs~RFaa26d48.TMP" />
+		<None Remove="Hosting\Endpoints\JsonEndpointResult.cs~RFaa26d48.TMP" />
 	</ItemGroup>
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.0" />
-	  <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="6.16.0" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.0" />
+		<PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="6.16.0" />
+		<PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" Version="1.1.1" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\IdentityServer.Storage\IdentityServer.Storage.csproj" />
+		<ProjectReference Include="..\IdentityServer.Storage\IdentityServer.Storage.csproj" />
 	</ItemGroup>
 </Project>

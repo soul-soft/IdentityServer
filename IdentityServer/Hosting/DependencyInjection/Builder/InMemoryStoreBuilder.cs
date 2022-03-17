@@ -10,19 +10,19 @@ namespace IdentityServer.Configuration
         #region fields
         private readonly List<Client> Clients = new List<Client>();
         private readonly List<IResource> Resources = new List<IResource>();
-        private readonly List<SigningCredentialsDescriptor> SigningCredentials = new List<SigningCredentialsDescriptor>();
+        private readonly List<SigningCredentials> SigningCredentials = new List<SigningCredentials>();
         #endregion
 
         #region SigningCredentials
-        public InMemoryStoreBuilder AddSigningCredentials(SigningCredentials credential, string signingAlgorithm)
+        public InMemoryStoreBuilder AddSigningCredentials(SigningCredentials credential)
         {
-            SigningCredentials.Add(new SigningCredentialsDescriptor(credential, signingAlgorithm));
+            SigningCredentials.Add(credential);
             return this;
         }
         public InMemoryStoreBuilder AddSigningCredentials(SecurityKey securityKey, string signingAlgorithm = SecurityAlgorithms.RsaSha256)
         {
             var credential = new SigningCredentials(securityKey, signingAlgorithm);
-            AddSigningCredentials(credential, signingAlgorithm);
+            AddSigningCredentials(credential);
             return this;
         }
         public InMemoryStoreBuilder AddSigningCredentials(X509Certificate2 certificate, string signingAlgorithm = SecurityAlgorithms.RsaSha256)
@@ -34,14 +34,14 @@ namespace IdentityServer.Configuration
             var securityKey = new X509SecurityKey(certificate);
             securityKey.KeyId += signingAlgorithm;
             var credential = new SigningCredentials(securityKey, signingAlgorithm);
-            AddSigningCredentials(credential, signingAlgorithm);
+            AddSigningCredentials(credential);
             return this;
         }
         public InMemoryStoreBuilder AddDeveloperSigningCredentials(bool persistKey = true,string? filename = null,string signingAlgorithm = SecurityAlgorithms.RsaSha256)
         {
             if (filename == null)
             {
-                filename = Path.Combine(Directory.GetCurrentDirectory(), "tempkey.jwk");
+                filename = Path.Combine(Directory.GetCurrentDirectory(), "idsvr.jwk");
             }
             if (File.Exists(filename))
             {

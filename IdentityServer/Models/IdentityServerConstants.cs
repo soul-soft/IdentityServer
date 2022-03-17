@@ -45,7 +45,7 @@
         public const string SelfSignedTlsClientAuth = "self_signed_tls_client_auth";
     }
 
-    public static class StandardResources
+    public static class IdentityResources
     {
         public static IdentityResource OpenId => new IdentityResource(StandardScopes.OpenId)
         {

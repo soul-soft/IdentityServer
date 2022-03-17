@@ -24,7 +24,7 @@ namespace IdentityServer.Validation
             var client = await _clients.FindByClientIdAsync(parsedSecret.ClientId);
             if (client == null)
             {
-                throw new ValidationException(OpenIdConnectErrors.InvalidClient, "Invalid client credentials");
+                throw new ValidationException(OpenIdConnectValidationErrors.InvalidClient, "Invalid client credentials");
             }
             if (client.RequireClientSecret)
             {
