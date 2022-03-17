@@ -113,7 +113,10 @@ namespace IdentityServer.Endpoints
                 var validator = context.RequestServices.GetRequiredService<IExtensionGrantListValidator>();
                 await ValidateExtensionGrantRequestAsync(validator, request);
             }
-            var profileDataRequestContext = new ProfileDataRequestContext(ProfileDataCallers.TokenEndpoint, new ClaimsPrincipal(new ClaimsIdentity("Token")), request.Client, request.Resources);
+            var profileDataRequestContext = new ProfileDataRequestContext(
+                ProfileDataCallers.TokenEndpoint,
+                new ClaimsPrincipal(new ClaimsIdentity("Token")), 
+                request.Client, request.Resources);
             var profiles = await _profileService.GetProfileDataAsync(profileDataRequestContext);
             var singInAuthenticationContext = new SingInAuthenticationContext(request.Client, request.Resources, request.GrantType, profiles);
             var subject = await _authenticationService.SingInAsync(singInAuthenticationContext);
