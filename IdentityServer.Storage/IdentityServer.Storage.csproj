@@ -12,6 +12,8 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageReleaseNotes>预览版</PackageReleaseNotes>
 		<Description>Simple identityServer storage.</Description>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<DocumentationFile>.\IdentityServer.Storage.xml</DocumentationFile>
 	</PropertyGroup>
 	
 	<ItemGroup>
