@@ -22,7 +22,7 @@ namespace IdentityServer.Endpoints
             _extensionGrantValidators = extensionGrantValidators;
         }
 
-        public async Task<DiscoveryResponse> CreateDiscoveryDocumentAsync(string issuer, string baseUrl)
+        public async Task<DiscoveryGeneratorResponse> CreateDiscoveryDocumentAsync(string issuer, string baseUrl)
         {
             var configuration = new OpenIdConnectConfiguration
             {
@@ -32,8 +32,8 @@ namespace IdentityServer.Endpoints
                 TokenEndpoint = baseUrl + Constants.EndpointRoutePaths.Token,
                 UserInfoEndpoint = baseUrl + Constants.EndpointRoutePaths.UserInfo
             };
-            var grantTypes = _extensionGrantValidators.GetGrantTypes();
-            foreach (var item in grantTypes)
+            var supportedExtensionsGrantTypes = _extensionGrantValidators.GetSupportedGrantTypes();
+            foreach (var item in supportedExtensionsGrantTypes)
             {
                 configuration.GrantTypesSupported.Add(item);
             }
@@ -45,19 +45,19 @@ namespace IdentityServer.Endpoints
             {
                 configuration.ScopesSupported.Add(item);
             }
-            var secretParserTypes = await _secretParsers.GetSecretParserTypesAsync();
-            foreach (var item in secretParserTypes)
+            var supportedAuthenticationMethods = await _secretParsers.GetSupportedAuthenticationMethodsAsync();
+            foreach (var item in supportedAuthenticationMethods)
             {
                 configuration.TokenEndpointAuthMethodsSupported.Add(item);
             }
-            var response = new DiscoveryResponse(configuration);
+            var response = new DiscoveryGeneratorResponse(configuration);
             return response;
         }
 
-        public async Task<JwkDiscoveryResponse> CreateJwkDiscoveryDocumentAsync()
+        public async Task<JwkDiscoveryGeneratorResponse> CreateJwkDiscoveryDocumentAsync()
         {
             var jwks = await _credentials.GetJsonWebKeysAsync();
-            return new JwkDiscoveryResponse(jwks);
+            return new JwkDiscoveryGeneratorResponse(jwks);
         }
     }
 }

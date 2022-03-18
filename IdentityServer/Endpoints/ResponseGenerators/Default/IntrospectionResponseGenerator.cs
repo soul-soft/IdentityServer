@@ -2,7 +2,7 @@
 {
     internal class IntrospectionResponseGenerator : IIntrospectionResponseGenerator
     {
-        public Task<IntrospectionResponse> ProcessAsync(IntrospectionRequest request)
+        public Task<IntrospectionGeneratorResponse> ProcessAsync(IntrospectionGeneratorRequest request)
         {
             var errorResponse = new Dictionary<string, object>
             {
@@ -10,7 +10,7 @@
             };
             if (request.TokenValidationResult.IsError)
             {
-                return Task.FromResult(new IntrospectionResponse(errorResponse));
+                return Task.FromResult(new IntrospectionGeneratorResponse(errorResponse));
             }
             var tokenScopes = request.TokenValidationResult.Claims
                 .Where(a => a.Type == JwtClaimTypes.Scope)
@@ -19,7 +19,7 @@
             var allowScopes = tokenScopes.Where(a => apiResourceScopes.Contains(a));
             if (!allowScopes.Any())
             {
-                return Task.FromResult(new IntrospectionResponse(errorResponse));
+                return Task.FromResult(new IntrospectionGeneratorResponse(errorResponse));
             }
             var entities = request.TokenValidationResult.Claims
                 .Where(a => a.Type != JwtClaimTypes.Scope)
@@ -36,7 +36,7 @@
             {
                 response.Add(JwtClaimTypes.Scope, allowScopes);
             }
-            return Task.FromResult(new IntrospectionResponse(response));
+            return Task.FromResult(new IntrospectionGeneratorResponse(response));
         }
     }
 }

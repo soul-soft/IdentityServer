@@ -80,7 +80,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<IClientSecretValidator, ClientSecretValidator>();
             builder.Services.TryAddTransient<ISecretListValidator, SecretListValidator>();
             builder.Services.TryAddTransient<IExtensionGrantListValidator, ExtensionGrantListValidator>();
-            builder.Services.TryAddTransient<IRefreshTokenRequestValidator, RefreshTokenGrantValidator>();
+            builder.Services.TryAddTransient<IRefreshTokenRequestValidator, RefreshTokenRequestValidator>();
             builder.Services.TryAddTransient<IClientCredentialsRequestValidator, ClientCredentialsRequestValidator>();
             builder.Services.TryAddTransient<IResourceOwnerCredentialRequestValidator, ResourceOwnerCredentialRequestValidator>();
             return builder;

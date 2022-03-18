@@ -5,9 +5,9 @@ namespace IdentityServer.Endpoints
 {
     internal class IntrospectionResult : IEndpointResult
     {
-        private readonly IntrospectionResponse _response;
+        private readonly IntrospectionGeneratorResponse _response;
 
-        public IntrospectionResult(IntrospectionResponse response)
+        public IntrospectionResult(IntrospectionGeneratorResponse response)
         {
             _response = response;
         }

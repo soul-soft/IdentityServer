@@ -2,7 +2,7 @@
 
 namespace IdentityServer.Models
 {
-    public class TokenRequest
+    public class TokenGeneratorRequest
     {
         public string GrantType { get; }
         public Client Client { get; }
@@ -10,7 +10,7 @@ namespace IdentityServer.Models
         public Resources Resources { get; }
         public IdentityServerOptions Options { get; }
 
-        public TokenRequest(string grantType, ClaimsPrincipal subject, Client client, Resources resources, IdentityServerOptions options)
+        public TokenGeneratorRequest(string grantType, ClaimsPrincipal subject, Client client, Resources resources, IdentityServerOptions options)
         {
             GrantType = grantType;
             Subject = subject;

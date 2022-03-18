@@ -5,9 +5,9 @@ namespace IdentityServer.Endpoints
 {
     public class TokenResult : IEndpointResult
     {
-        private readonly TokenResponse _response;
+        private readonly TokenGeneratorResponse _response;
 
-        public TokenResult(TokenResponse response)
+        public TokenResult(TokenGeneratorResponse response)
         {
             _response = response;
         }

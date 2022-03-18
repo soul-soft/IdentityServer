@@ -2,11 +2,11 @@
 
 namespace IdentityServer.Endpoints
 {
-    public class DiscoveryResponse
+    public class DiscoveryGeneratorResponse
     {
         public OpenIdConnectConfiguration Configuration { get; }
 
-        public DiscoveryResponse(OpenIdConnectConfiguration configuration)
+        public DiscoveryGeneratorResponse(OpenIdConnectConfiguration configuration)
         {
             Configuration = configuration;
         }

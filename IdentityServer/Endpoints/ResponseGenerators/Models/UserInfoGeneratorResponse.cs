@@ -2,11 +2,11 @@
 
 namespace IdentityServer.Endpoints
 {
-    public class UserInfoResponse
+    public class UserInfoGeneratorResponse
     {
         public readonly Dictionary<string,object> Profiles;
 
-        public UserInfoResponse(Dictionary<string, object> profiles)
+        public UserInfoGeneratorResponse(Dictionary<string, object> profiles)
         {
             Profiles = profiles;
         }

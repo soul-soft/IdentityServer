@@ -36,7 +36,7 @@
         public const string OfflineAccess = "offline_access";
     }
 
-    public static class SecretParserTypes
+    public static class EndpointAuthenticationMethods
     {
         public const string PostBody = "client_secret_post";
         public const string BasicAuthentication = "client_secret_basic";

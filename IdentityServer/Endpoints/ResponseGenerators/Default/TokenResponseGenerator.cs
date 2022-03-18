@@ -9,11 +9,11 @@
             _tokenService = tokenService;
         }
 
-        public async Task<TokenResponse> ProcessAsync(TokenRequest request)
+        public async Task<TokenGeneratorResponse> ProcessAsync(TokenGeneratorRequest request)
         {
             (string accessToken, string? refreshToken) = await CreateAccessTokenAsync(request);
             var scope = string.Join(",", request.Resources.Scopes);
-            var response = new TokenResponse()
+            var response = new TokenGeneratorResponse()
             {
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
@@ -23,7 +23,7 @@
             return response;
         }
 
-        private async Task<(string accessToken, string? refreshToken)> CreateAccessTokenAsync(TokenRequest request)
+        private async Task<(string accessToken, string? refreshToken)> CreateAccessTokenAsync(TokenGeneratorRequest request)
         {
             var token = await _tokenService.CreateAccessTokenAsync(request.Client, request.Subject);
 

@@ -2,7 +2,7 @@
 {
     public interface IExtensionGrantListValidator
     {
-        IEnumerable<string> GetGrantTypes();
-        Task ValidateAsync(ExtensionGrantValidation context);
+        IEnumerable<string> GetSupportedGrantTypes();
+        Task<ExtensionGrantValidationResult> ValidateAsync(ExtensionGrantValidationRequest request);
     }
 }

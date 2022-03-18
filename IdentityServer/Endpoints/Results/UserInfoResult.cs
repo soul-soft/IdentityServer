@@ -5,9 +5,9 @@ namespace IdentityServer.Endpoints
 {
     public class UserInfoResult : IEndpointResult
     {
-        private readonly UserInfoResponse _response;
+        private readonly UserInfoGeneratorResponse _response;
 
-        public UserInfoResult(UserInfoResponse response)
+        public UserInfoResult(UserInfoGeneratorResponse response)
         {
             _response = response;
         }

@@ -11,7 +11,7 @@ namespace IdentityServer.Endpoints
             _profileService = profileService;
         }
 
-        public async Task<UserInfoResponse> ProcessAsync(ClaimsPrincipal subject, Client client, Resources resources)
+        public async Task<UserInfoGeneratorResponse> ProcessAsync(ClaimsPrincipal subject, Client client, Resources resources)
         {
             var profileDataRequestContext = new ProfileDataRequestContext(
                 ProfileDataCallers.UserInfoEndpoint,
@@ -19,7 +19,7 @@ namespace IdentityServer.Endpoints
                 client,
                 resources);
             var claims = await _profileService.GetProfileDataAsync(profileDataRequestContext);
-            return new UserInfoResponse(claims.ToClaimsDictionary());
+            return new UserInfoGeneratorResponse(claims.ToClaimsDictionary());
         }
     }
 }

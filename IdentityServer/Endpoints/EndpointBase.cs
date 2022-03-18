@@ -7,22 +7,22 @@ namespace IdentityServer.Endpoints
     {
         public abstract Task<IEndpointResult> ProcessAsync(HttpContext context);
 
-        protected static IEndpointResult DiscoveryEndpointResult(DiscoveryResponse response)
+        protected static IEndpointResult DiscoveryEndpointResult(DiscoveryGeneratorResponse response)
         {
             return new DiscoveryResult(response);
         }
 
-        protected static IEndpointResult JwkDiscoveryEndpointResult(JwkDiscoveryResponse response)
+        protected static IEndpointResult JwkDiscoveryEndpointResult(JwkDiscoveryGeneratorResponse response)
         {
             return new JwkDiscoveryResult(response);
         }
 
-        protected static IEndpointResult TokenEndpointResult(TokenResponse response)
+        protected static IEndpointResult TokenEndpointResult(TokenGeneratorResponse response)
         {
             return new TokenResult(response);
         }
 
-        protected static IEndpointResult IntrospectionResult(IntrospectionResponse response)
+        protected static IEndpointResult IntrospectionResult(IntrospectionGeneratorResponse response)
         {
             return new IntrospectionResult(response);
         }

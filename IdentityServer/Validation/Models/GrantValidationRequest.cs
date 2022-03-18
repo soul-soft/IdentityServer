@@ -1,9 +1,8 @@
 ﻿using System.Collections.Specialized;
-using System.Security.Claims;
 
 namespace IdentityServer.Validation
 {
-    public class TokenRequestValidation
+    public class GrantValidationRequest
     {
         public Client Client { get; }
         public string GrantType { get; set; }
@@ -11,7 +10,7 @@ namespace IdentityServer.Validation
         public NameValueCollection Body { get; }
         public IdentityServerOptions Options { get; }
 
-        public TokenRequestValidation(
+        internal GrantValidationRequest(
             Client client,
             string grantType,
             Resources resources,

@@ -2,11 +2,11 @@
 
 namespace IdentityServer.Endpoints
 {
-    public class IntrospectionResponse
+    public class IntrospectionGeneratorResponse
     {
         private readonly Dictionary<string, object> _profiles;
 
-        public IntrospectionResponse(Dictionary<string, object> profiles)
+        public IntrospectionGeneratorResponse(Dictionary<string, object> profiles)
         {
             _profiles = profiles;
         }

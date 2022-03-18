@@ -5,9 +5,9 @@ namespace IdentityServer.Endpoints
 {
     public class DiscoveryResult : IEndpointResult
     {
-        private readonly DiscoveryResponse _discovery;
+        private readonly DiscoveryGeneratorResponse _discovery;
 
-        public DiscoveryResult(DiscoveryResponse discovery)
+        public DiscoveryResult(DiscoveryGeneratorResponse discovery)
         {
             _discovery = discovery;
         }

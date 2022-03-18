@@ -5,9 +5,9 @@ namespace IdentityServer.Endpoints
 {
     public class JwkDiscoveryResult : IEndpointResult
     {
-        public JwkDiscoveryResponse _response;
+        public JwkDiscoveryGeneratorResponse _response;
 
-        public JwkDiscoveryResult(JwkDiscoveryResponse response)
+        public JwkDiscoveryResult(JwkDiscoveryGeneratorResponse response)
         {
             _response = response;
         }

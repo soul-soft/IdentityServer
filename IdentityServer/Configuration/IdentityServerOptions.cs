@@ -22,9 +22,6 @@
         /// 输入长度限制
         /// </summary>
         public InputLengthRestrictions InputLengthRestrictions { get; set; } = new InputLengthRestrictions();
-        /// <summary>
-        /// 发现文档选项
-        /// </summary>
         //public DiscoveryOptions Discovery { get; set; } = new DiscoveryOptions();
         /// <summary>
         /// 终结点选项
@@ -39,8 +36,8 @@
         /// </summary>
         public bool EmitScopesAsCommaDelimitedStringInJwt { get; set; } = true;
         /// <summary>
-        /// 凭据解析方式
+        /// 认证方式
         /// </summary>
-        public string SecretParserType { get; set; } = SecretParserTypes.PostBody;  
+        public string AuthenticationMethod { get; set; } = EndpointAuthenticationMethods.PostBody;  
     }
 }

@@ -8,6 +8,6 @@ namespace IdentityServer.Services
     public interface ISecretListParser
     {
         Task<ParsedSecret> ParseAsync(HttpContext context);
-        Task<IEnumerable<string>> GetSecretParserTypesAsync();
+        Task<IEnumerable<string>> GetSupportedAuthenticationMethodsAsync();
     }
 }

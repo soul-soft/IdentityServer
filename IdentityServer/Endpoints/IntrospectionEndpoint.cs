@@ -47,7 +47,7 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Response Generator
-            var response = await _generator.ProcessAsync(new IntrospectionRequest(
+            var response = await _generator.ProcessAsync(new IntrospectionGeneratorRequest(
                 apiResource,
                 tokenValidationResult));
             #endregion

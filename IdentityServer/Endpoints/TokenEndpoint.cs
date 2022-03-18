@@ -76,46 +76,47 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Validate Grant
-            var subject = await RunValidationAsync(context, new TokenRequestValidation(client, grantType, resources, body, _options));
+            var subject = await RunGrantValidationAsync(context, new GrantValidationRequest(client, grantType, resources, body, _options));
             #endregion
 
             #region Response Generator
-            var response = await _generator.ProcessAsync(new TokenRequest(grantType, subject, client, resources, _options));
+            var response = await _generator.ProcessAsync(new TokenGeneratorRequest(grantType, subject, client, resources, _options));
             return TokenEndpointResult(response);
             #endregion
         }
 
         #region Validate Grant
-        private async Task<ClaimsPrincipal> RunValidationAsync(HttpContext context, TokenRequestValidation request)
+        private async Task<ClaimsPrincipal> RunGrantValidationAsync(HttpContext context, GrantValidationRequest request)
         {
             //验证刷新令牌
+            GrantValidationResult result;
             if (GrantTypes.RefreshToken.Equals(request.GrantType))
             {
                 var validator = context.RequestServices.GetRequiredService<IRefreshTokenRequestValidator>();
-                await ValidateRefreshTokenRequestAsync(validator, request);
+                result = await ValidateRefreshTokenRequestAsync(validator, request);
             }
             //验证客户端凭据授权
             else if (GrantTypes.ClientCredentials.Equals(request.GrantType))
             {
                 var validator = context.RequestServices.GetRequiredService<IClientCredentialsRequestValidator>();
-                await ValidateClientCredentialsRequestAsync(validator, request);
+                result = await ValidateClientCredentialsRequestAsync(validator, request);
             }
             //验证资源所有者密码授权
             else if (GrantTypes.Password.Equals(request.GrantType))
             {
                 var validator = context.RequestServices.GetRequiredService<IResourceOwnerCredentialRequestValidator>();
-                await ValidateResourceOwnerCredentialRequestAsync(validator, request);
+                result = await ValidateResourceOwnerCredentialRequestAsync(validator, request);
 
             }
             //验证自定义授权
             else
             {
                 var validator = context.RequestServices.GetRequiredService<IExtensionGrantListValidator>();
-                await ValidateExtensionGrantRequestAsync(validator, request);
+                result = await ValidateExtensionGrantRequestAsync(validator, request);
             }
             var profileDataRequestContext = new ProfileDataRequestContext(
                 ProfileDataCallers.TokenEndpoint,
-                new ClaimsPrincipal(new ClaimsIdentity("Token")), 
+                result.Subject,
                 request.Client, request.Resources);
             var profiles = await _profileService.GetProfileDataAsync(profileDataRequestContext);
             var singInAuthenticationContext = new SingInAuthenticationContext(request.Client, request.Resources, request.GrantType, profiles);
@@ -133,15 +134,15 @@ namespace IdentityServer.Endpoints
         #endregion
 
         #region ClientCredentialsRequest
-        private static async Task ValidateClientCredentialsRequestAsync(IClientCredentialsRequestValidator validator, TokenRequestValidation request)
+        private static async Task<GrantValidationResult> ValidateClientCredentialsRequestAsync(IClientCredentialsRequestValidator validator, GrantValidationRequest request)
         {
-            var grantContext = new ClientCredentialsValidation(request);
-            await validator.ValidateAsync(grantContext);
+            var grantContext = new ClientCredentialsValidationRequest(request);
+            return await validator.ValidateAsync(grantContext);
         }
         #endregion
 
         #region ResourceOwnerCredentialRequest
-        private async Task ValidateResourceOwnerCredentialRequestAsync(IResourceOwnerCredentialRequestValidator validator, TokenRequestValidation request)
+        private async Task<GrantValidationResult> ValidateResourceOwnerCredentialRequestAsync(IResourceOwnerCredentialRequestValidator validator, GrantValidationRequest request)
         {
             var username = request.Body[OpenIdConnectParameterNames.Username];
             var password = request.Body[OpenIdConnectParameterNames.Password];
@@ -161,13 +162,13 @@ namespace IdentityServer.Endpoints
             {
                 throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, "Password too long");
             }
-            var validation = new ResourceOwnerCredentialValidation(request, username, password);
-            await validator.ValidateAsync(validation);
+            var validation = new ResourceOwnerCredentialValidationRequest(username, password, request);
+            return await validator.ValidateAsync(validation);
         }
         #endregion
 
         #region RefreshTokenRequest
-        private async Task ValidateRefreshTokenRequestAsync(IRefreshTokenRequestValidator validator, TokenRequestValidation request)
+        private async Task<GrantValidationResult> ValidateRefreshTokenRequestAsync(IRefreshTokenRequestValidator validator, GrantValidationRequest request)
         {
             var refreshToken = request.Body[OpenIdConnectParameterNames.RefreshToken];
             if (refreshToken == null)
@@ -178,15 +179,15 @@ namespace IdentityServer.Endpoints
             {
                 throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, "RefreshToken too long");
             }
-            await validator.ValidateAsync(new RefreshTokenValidation(refreshToken, request));
+            return await validator.ValidateAsync(new RefreshTokenValidationRequest(refreshToken, request));
         }
         #endregion
 
         #region ExtensionGrantRequest
-        private static async Task ValidateExtensionGrantRequestAsync(IExtensionGrantListValidator validator, TokenRequestValidation request)
+        private static async Task<GrantValidationResult> ValidateExtensionGrantRequestAsync(IExtensionGrantListValidator validator, GrantValidationRequest request)
         {
-            var grantContext = new ExtensionGrantValidation(request);
-            await validator.ValidateAsync(grantContext);
+            var grantContext = new ExtensionGrantValidationRequest(request);
+            return await validator.ValidateAsync(grantContext);
         }
         #endregion
     }

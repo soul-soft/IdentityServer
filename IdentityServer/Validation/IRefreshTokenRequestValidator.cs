@@ -2,6 +2,6 @@
 {
     public interface IRefreshTokenRequestValidator
     {
-        Task ValidateAsync(RefreshTokenValidation context);
+        Task<RefreshTokenValidationResult> ValidateAsync(RefreshTokenValidationRequest request);
     }
 }

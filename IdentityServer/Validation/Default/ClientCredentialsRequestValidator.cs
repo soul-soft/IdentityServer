@@ -1,15 +1,17 @@
-﻿namespace IdentityServer.Validation
+﻿using System.Security.Claims;
+
+namespace IdentityServer.Validation
 {
     internal class ClientCredentialsRequestValidator : IClientCredentialsRequestValidator
     {
-        public Task ValidateAsync(ClientCredentialsValidation context)
+        public Task<ClientCredentialsValidationResult> ValidateAsync(ClientCredentialsValidationRequest request)
         {
-            var resources = context.Request.Resources;
+            var resources = request.Resources;
             if (resources.IdentityResources.Any())
             {
                 throw new ValidationException(OpenIdConnectValidationErrors.InvalidGrant, "Client cannot request OpenID scopes in client credentials flow");
             }
-            return Task.CompletedTask;
+            return Task.FromResult(new ClientCredentialsValidationResult(Array.Empty<Claim>()));
         }
     }
 }

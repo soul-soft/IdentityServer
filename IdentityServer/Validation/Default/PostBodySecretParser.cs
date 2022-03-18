@@ -12,7 +12,7 @@ namespace IdentityServer.Validation
             _options = options;
         }
 
-        public string Name => SecretParserTypes.PostBody;
+        public string AuthenticationMethod => EndpointAuthenticationMethods.PostBody;
 
         public async Task<ParsedSecret> ParseAsync(HttpContext context)
         {

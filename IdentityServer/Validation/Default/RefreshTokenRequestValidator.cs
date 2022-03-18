@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
 
 namespace IdentityServer.Validation
 {
-    public class RefreshTokenGrantValidator : IRefreshTokenRequestValidator
+    public class RefreshTokenRequestValidator : IRefreshTokenRequestValidator
     {
         private readonly ISystemClock _clock;
         private readonly IRefreshTokenStore _refreshTokenStore;
 
-        public RefreshTokenGrantValidator(
+        public RefreshTokenRequestValidator(
             ISystemClock clock,
             IRefreshTokenStore refreshTokenStore)
         {
@@ -15,9 +16,9 @@ namespace IdentityServer.Validation
             _refreshTokenStore = refreshTokenStore;
         }
 
-        public async Task ValidateAsync(RefreshTokenValidation context)
+        public async Task<RefreshTokenValidationResult> ValidateAsync(RefreshTokenValidationRequest request)
         {
-            var refreshToken = await _refreshTokenStore.FindRefreshTokenAsync(context.RefreshToken);
+            var refreshToken = await _refreshTokenStore.FindRefreshTokenAsync(request.RefreshToken);
             if (refreshToken == null)
             {
                 throw new ValidationException(OpenIdConnectValidationErrors.InvalidGrant, "Invalid refresh token");
@@ -28,6 +29,7 @@ namespace IdentityServer.Validation
                 throw new ValidationException(OpenIdConnectValidationErrors.InvalidGrant, "Refresh token has expired");
             }
             await _refreshTokenStore.RevomeRefreshTokenAsync(refreshToken);
+            return new RefreshTokenValidationResult(Array.Empty<Claim>());
         }
     }
 }

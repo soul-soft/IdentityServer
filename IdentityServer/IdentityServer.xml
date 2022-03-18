@@ -112,9 +112,9 @@
             是否使用逗号连接jwt中的scopes
             </summary>
         </member>
-        <member name="P:IdentityServer.Configuration.IdentityServerOptions.SecretParserType">
+        <member name="P:IdentityServer.Configuration.IdentityServerOptions.AuthenticationMethod">
             <summary>
-            凭据解析方式
+            认证方式
             </summary>
         </member>
         <member name="P:IdentityServer.Configuration.InputLengthRestrictions.AccessToken">

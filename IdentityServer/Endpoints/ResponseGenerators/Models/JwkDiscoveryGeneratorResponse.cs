@@ -3,11 +3,11 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityServer.Endpoints
 {
-    public class JwkDiscoveryResponse
+    public class JwkDiscoveryGeneratorResponse
     {
         public IEnumerable<JsonWebKey> Jwks { get; }
 
-        public JwkDiscoveryResponse(IEnumerable<JsonWebKey> jwks)
+        public JwkDiscoveryGeneratorResponse(IEnumerable<JsonWebKey> jwks)
         {
             Jwks = jwks;
         }

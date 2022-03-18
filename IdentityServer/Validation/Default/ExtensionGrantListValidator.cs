@@ -9,21 +9,21 @@
             _extensions = extensions;
         }
 
-        public Task ValidateAsync(ExtensionGrantValidation context)
+        public Task<ExtensionGrantValidationResult> ValidateAsync(ExtensionGrantValidationRequest request)
         {
             var validator = _extensions
-                .Where(a => a.GrantType == context.Request.GrantType)
+                .Where(a => a.GrantType == request.GrantType)
                 .FirstOrDefault();
             if (validator == null)
             {
-                throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, $"Unsupported grant type '{context.Request.GrantType}'");
+                throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, $"Unsupported grant type '{request.GrantType}'");
             }
-            return validator.ValidateAsync(context);
+            return validator.ValidateAsync(request);
         }
 
-        public IEnumerable<string> GetGrantTypes()
+        public IEnumerable<string> GetSupportedGrantTypes()
         {
-            return _extensions.Select(a => a.GrantType).ToList();
+            return _extensions.Select(a => a.GrantType);
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace IdentityServer.Endpoints
 {
-    public class TokenResponse
+    public class TokenGeneratorResponse
     {
         public string? IdentityToken { get; set; }
         public string? AccessToken { get; set; }
