@@ -6,14 +6,16 @@ namespace IdentityServer.Models
     {
         public Client Client { get; }
         public Resources Resources { get; }
-        public IEnumerable<Claim> Claims { get; }
+        public ClaimsPrincipal Subject { get; }
+        public IEnumerable<Claim> RequestedClaims { get; }
         public string AuthenticationType { get; }
 
-        public SingInAuthenticationContext(Client client, Resources resources,string authenticationType, IEnumerable<Claim> claims)
+        public SingInAuthenticationContext(Client client, ClaimsPrincipal subject, IEnumerable<Claim> requestedClaims, Resources resources, string authenticationType)
         {
             Client = client;
+            Subject = subject;
             Resources = resources;
-            Claims = claims;
+            RequestedClaims = requestedClaims;
             AuthenticationType = authenticationType;
         }
     }

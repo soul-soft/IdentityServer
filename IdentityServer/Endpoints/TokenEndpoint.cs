@@ -71,7 +71,7 @@ namespace IdentityServer.Endpoints
             }
             if (!client.AllowedGrantTypes.Contains(grantType))
             {
-                return BadRequest(OpenIdConnectValidationErrors.UnauthorizedClient, "Grant type not allowed");
+                return BadRequest(OpenIdConnectValidationErrors.UnauthorizedClient, $"The client does not allow {grantType}");
             }
             #endregion
 
@@ -106,7 +106,6 @@ namespace IdentityServer.Endpoints
             {
                 var validator = context.RequestServices.GetRequiredService<IResourceOwnerCredentialRequestValidator>();
                 result = await ValidateResourceOwnerCredentialRequestAsync(validator, request);
-
             }
             //验证自定义授权
             else
@@ -114,14 +113,21 @@ namespace IdentityServer.Endpoints
                 var validator = context.RequestServices.GetRequiredService<IExtensionGrantListValidator>();
                 result = await ValidateExtensionGrantRequestAsync(validator, request);
             }
-            var profileDataRequestContext = new ProfileDataRequestContext(
+            //request claims
+            var requestedClaims = await _profileService.GetProfileDataAsync(new ProfileDataRequestContext(
                 ProfileDataCallers.TokenEndpoint,
                 result.Subject,
-                request.Client, request.Resources);
-            var profiles = await _profileService.GetProfileDataAsync(profileDataRequestContext);
-            var singInAuthenticationContext = new SingInAuthenticationContext(request.Client, request.Resources, request.GrantType, profiles);
-            var subject = await _authenticationService.SingInAsync(singInAuthenticationContext);
-            if (!string.IsNullOrEmpty(subject.GetSubjectId()))
+                request.Client, 
+                request.Resources));
+            //sing claims
+            var subject = await _authenticationService.SingInAsync(new SingInAuthenticationContext(
+                request.Client,
+                result.Subject,
+                requestedClaims,
+                request.Resources,
+                request.GrantType));
+
+            if (!string.IsNullOrEmpty(result.Subject.GetSubjectId()))
             {
                 var isActive = await _profileService.IsActiveAsync(new IsActiveContext(request.Client, subject));
                 if (!isActive)

@@ -5,11 +5,11 @@ namespace Hosting.Configuration
 {
     public class ResourceOwnerCredentialRequestValidator : IResourceOwnerCredentialRequestValidator
     {
-        public Task ValidateAsync(ResourceOwnerCredentialValidationRequest context)
+        public Task<ResourceOwnerCredentialValidationResult> ValidateAsync(ResourceOwnerCredentialValidationRequest context)
         {
             if (context.Username == "test" && context.Password == "test")
             {
-                return Task.CompletedTask;
+                return Task.FromResult(new ResourceOwnerCredentialValidationResult("10"));
             }
             throw new ValidationException(OpenIdConnectValidationErrors.InvalidGrant, "用户名或密码错误");
         }

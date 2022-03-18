@@ -45,7 +45,8 @@ namespace Hosting.Configuration
                 {
                     GrantTypes.ClientCredentials,
                     GrantTypes.RefreshToken,
-                    GrantTypes.Password
+                    GrantTypes.Password,
+                    "myGrant"
                 },
                 ClientSecrets = new Secret[]
                 {

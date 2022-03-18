@@ -4,7 +4,7 @@ namespace IdentityServer.Validation
 {
     public class GrantValidationResult
     {
-        public ClaimsPrincipal Subject { get; set; }
+        public ClaimsPrincipal Subject { get; }
 
         public GrantValidationResult(ClaimsPrincipal subject)
         {

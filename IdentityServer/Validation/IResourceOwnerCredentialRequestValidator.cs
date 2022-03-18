@@ -2,6 +2,6 @@
 {
     public interface IResourceOwnerCredentialRequestValidator
     {
-        Task<GrantValidationResult> ValidateAsync(ResourceOwnerCredentialValidationRequest request);
+        Task<ResourceOwnerCredentialValidationResult> ValidateAsync(ResourceOwnerCredentialValidationRequest request);
     }
 }

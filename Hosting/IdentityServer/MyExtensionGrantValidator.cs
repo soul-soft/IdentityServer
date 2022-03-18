@@ -1,5 +1,4 @@
 ﻿using IdentityServer.Validation;
-using System.Security.Claims;
 
 namespace Hosting.Configuration
 {
@@ -9,7 +8,7 @@ namespace Hosting.Configuration
 
         public Task<ExtensionGrantValidationResult> ValidateAsync(ExtensionGrantValidationRequest request)
         {
-            return Task.FromResult(new ExtensionGrantValidationResult(Array.Empty<Claim>()));
+            return Task.FromResult(new ExtensionGrantValidationResult("10", GrantType));
         }
     }
 }
