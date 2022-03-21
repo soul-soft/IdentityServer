@@ -19,7 +19,7 @@ jobs:
         dotnet-version: 6.0.x  
     - name: Restore dependencies
       run: dotnet restore
-    - name: Build
-      run: dotnet nuget push .\nuget\*.nupkg -s https://www.myget.org/F/identity/api/v2/package -k ${{ secrets.nuget }}
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+    - name: Pack
+      run: dotnet pack --output /nupkgs
+    - name: Nuget
+      run: dotnet nuget push /nupkgs/*.nupkg -k oy2g7bnltbypilm4n35qsiaoanv56bfudkbxpuacxigpau -s https://api.nuget.org/v3/index.json
