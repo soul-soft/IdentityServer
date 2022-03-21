@@ -18,4 +18,4 @@ jobs:
       with:
         dotnet-version: 5.0.x
     - name: Restore dependencies
-      run: echo ${{ GITHUB_REF }}
+      run: echo ${{ github.ref }}
