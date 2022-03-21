@@ -15,6 +15,7 @@
 		<Description>Simple identityServer middleware.</Description>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<DocumentationFile>.\IdentityServer.xml</DocumentationFile>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
