@@ -2,7 +2,7 @@ name: .NET
 
 on:
   push:
-    tags: [ '*' ]
+    release: [ 'created' ]
 
 jobs:
   build:
