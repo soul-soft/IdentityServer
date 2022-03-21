@@ -20,6 +20,6 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Pack
-      run: dotnet pack --output /nupkgs
+      run: dotnet pack --output ./nuget
     - name: Nuget
-      run: dotnet nuget push ./nupkgs/*.nupkg -k oy2g7bnltbypilm4n35qsiaoanv56bfudkbxpuacxigpau -s https://api.nuget.org/v3/index.json
+      run: dotnet nuget push ./nuget/*.nupkg -k oy2g7bnltbypilm4n35qsiaoanv56bfudkbxpuacxigpau -s https://api.nuget.org/v3/index.json
