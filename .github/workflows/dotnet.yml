@@ -18,6 +18,6 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Pack
-      run: dotnet pack -c Release -o /nupkgs --version-suffix ${{ github.ref_name }}
+      run: dotnet pack -c Release -o /nupkgs -p:PackageVersion=${{ github.ref_name }}
     - name: Nuget
-      run: dotnet nuget push /nupkgs/*.nupkg -k oy2g7bnltbypilm4n35qsiaoanv56bfudkbxpuacxigpau -s https://api.nuget.org/v3/index.json
+      run: dotnet nuget push /nupkgs/*.nupkg -k ${{ secrets.NUGET }} -s https://api.nuget.org/v3/index.json
