@@ -8,11 +8,13 @@ namespace IdentityServer.Endpoints
         private readonly ITokenParser _tokenParser;
         private readonly IResourceStore _resourceStore;
         private readonly ITokenValidator _tokenValidator;
+        private readonly IProfileService _profileService;
         private readonly IUserInfoResponseGenerator _generator;
 
         public UserInfoEndpoint(
             ITokenParser tokenParser,
             IResourceStore resourceStore,
+            IProfileService profileService,
             ITokenValidator tokenValidator,
             IUserInfoResponseGenerator generator)
         {
@@ -20,6 +22,7 @@ namespace IdentityServer.Endpoints
             _tokenParser = tokenParser;
             _resourceStore = resourceStore;
             _tokenValidator = tokenValidator;
+            _profileService = profileService;
         }
 
         public override async Task<IEndpointResult> ProcessAsync(HttpContext context)
@@ -38,6 +41,14 @@ namespace IdentityServer.Endpoints
             if (!subject.Claims.Any(a => a.Type == JwtClaimTypes.Subject))
             {
                 return Unauthorized(OpenIdConnectValidationErrors.InsufficientScope, $"Token contains no sub claim");
+            }
+            var isActive = await _profileService.IsActiveAsync(new IsActiveRequest(
+                ProfileIsActiveCallers.UserInfoEndpoint,
+                tokenValidationResult.Client,
+                subject));
+            if (!isActive)
+            {
+                return BadRequest(OpenIdConnectValidationErrors.InvalidRequest, $"User marked as not active: {subject.GetSubjectId()}");
             }
             var scopes = subject.FindAll(JwtClaimTypes.Scope).Select(s => s.Value);
             var client = tokenValidationResult.Client;

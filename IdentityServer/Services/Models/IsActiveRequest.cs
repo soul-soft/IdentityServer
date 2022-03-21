@@ -2,13 +2,15 @@
 
 namespace IdentityServer.Models
 {
-    public class IsActiveContext
+    public class IsActiveRequest
     {
+        public string Caller { get; }
         public Client Client { get; }
         public ClaimsPrincipal Subject { get; }
 
-        public IsActiveContext(Client client, ClaimsPrincipal subject)
+        public IsActiveRequest(string caller, Client client, ClaimsPrincipal subject)
         {
+            Caller = caller;
             Client = client;
             Subject = subject;
         }

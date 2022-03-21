@@ -2,7 +2,7 @@
 
 namespace IdentityServer.Models
 {
-    public class ProfileDataRequestContext
+    public class ProfileDataRequest
     {
         public string Caller { get; }
         public Client Client { get; }
@@ -10,7 +10,7 @@ namespace IdentityServer.Models
         public ClaimsPrincipal Subject { get; }
         public IEnumerable<string> ClaimTypes => Resources.ClaimTypes;
 
-        public ProfileDataRequestContext(string caller, ClaimsPrincipal subject, Client client, Resources resources)
+        public ProfileDataRequest(string caller, ClaimsPrincipal subject, Client client, Resources resources)
         {
             Caller = caller;
             Subject = subject;

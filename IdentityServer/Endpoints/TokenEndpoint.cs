@@ -113,11 +113,23 @@ namespace IdentityServer.Endpoints
                 var validator = context.RequestServices.GetRequiredService<IExtensionGrantListValidator>();
                 result = await ValidateExtensionGrantRequestAsync(validator, request);
             }
+            //验证用户是否启用
+            if (!string.IsNullOrEmpty(result.Subject.GetSubjectId()))
+            {
+                var isActive = await _profileService.IsActiveAsync(new IsActiveRequest(
+                    ProfileIsActiveCallers.TokenEndpoint,
+                    request.Client,
+                    result.Subject));
+                if (!isActive)
+                {
+                    throw new ValidationException(OpenIdConnectValidationErrors.InvalidGrant, string.Format("User has been disabled:{0}", result.Subject.GetSubjectId()));
+                }
+            }
             //request claims
-            var requestedClaims = await _profileService.GetProfileDataAsync(new ProfileDataRequestContext(
+            var requestedClaims = await _profileService.GetProfileDataAsync(new ProfileDataRequest(
                 ProfileDataCallers.TokenEndpoint,
                 result.Subject,
-                request.Client, 
+                request.Client,
                 request.Resources));
             //sing claims
             var subject = await _authenticationService.SingInAsync(new SingInAuthenticationContext(
@@ -127,14 +139,6 @@ namespace IdentityServer.Endpoints
                 request.Resources,
                 request.GrantType));
 
-            if (!string.IsNullOrEmpty(result.Subject.GetSubjectId()))
-            {
-                var isActive = await _profileService.IsActiveAsync(new IsActiveContext(request.Client, subject));
-                if (!isActive)
-                {
-                    throw new ValidationException(OpenIdConnectValidationErrors.InvalidGrant, string.Format("User has been disabled:{0}", subject.GetSubjectId()));
-                }
-            }
             return subject;
         }
         #endregion

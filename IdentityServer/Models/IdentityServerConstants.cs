@@ -111,10 +111,7 @@
 
     public static class ProfileIsActiveCallers
     {
-        public const string AuthorizeEndpoint = "AuthorizeEndpoint";
-        public const string IdentityTokenValidation = "IdentityTokenValidation";
-        public const string TokenValidation = "AccessTokenValidation";
-        public const string UserInfoRequestValidation = "UserInfoRequestValidation";
-        public const string TokenRequestValidation = "UserInfoRequestValidation";
+        public const string TokenEndpoint = "TokenEndpoint";
+        public const string UserInfoEndpoint = "UserInfoEndpoint";
     }
 }

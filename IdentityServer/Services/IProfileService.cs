@@ -4,7 +4,7 @@ namespace IdentityServer.Services
 {
     public interface IProfileService
     {
-        Task<bool> IsActiveAsync(IsActiveContext context);
-        Task<IEnumerable<Claim>> GetProfileDataAsync(ProfileDataRequestContext context);
+        Task<bool> IsActiveAsync(IsActiveRequest request);
+        Task<IEnumerable<Claim>> GetProfileDataAsync(ProfileDataRequest request);
     }
 }

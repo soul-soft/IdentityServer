@@ -114,16 +114,7 @@ namespace IdentityServer.Validation
             if (client == null)
             {
                 return TokenValidationResult.Fail(OpenIdConnectValidationErrors.InvalidClient, $"Client does not exist anymore.");
-            }
-            var subjectId = subject.GetSubjectId();
-            if (!string.IsNullOrEmpty(subjectId))
-            {
-                var isActive = await _profileService.IsActiveAsync(new IsActiveContext(client, subject));
-                if (!isActive)
-                {
-                    return TokenValidationResult.Fail(OpenIdConnectValidationErrors.InvalidGrant, $"User marked as not active: {subjectId}");
-                }
-            }
+            }           
             return TokenValidationResult.Success(client, subject.Claims);
         }
     }

@@ -18,7 +18,7 @@ builder.Services.AddAuthorization()
     });
 builder.Services.AddIdentityServer(o =>
     {
-        o.IssuerUri = "https://www.baidu.com";
+        o.IssuerUri = "https://www.example.com";
     })
     .AddResourceOwnerCredentialRequestValidator<ResourceOwnerCredentialRequestValidator>()
     .AddExtensionGrantValidator<MyExtensionGrantValidator>()

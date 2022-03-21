@@ -76,7 +76,7 @@ namespace Hosting.Configuration
                 { 
                     JwtClaimTypes.Role
                 },
-                Scopes = new string[]
+                Scopes =
                 {
                     "api",
                 },
