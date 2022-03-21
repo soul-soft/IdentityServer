@@ -9,7 +9,6 @@
 		<Copyright>MIT</Copyright>
 		<PackageProjectUrl>https://github.com/1448376744/IdentityServer</PackageProjectUrl>
 		<Version>6.0.0</Version>
-		<VersionSuffix>$</VersionSuffix>
 		<RepositoryUrl>https://github.com/1448376744/IdentityServer</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageReleaseNotes>预览版</PackageReleaseNotes>
