@@ -6,7 +6,7 @@ namespace Hosting.Configuration
 {
     public class ProfileService : IProfileService
     {
-        public Task<IEnumerable<Claim>> GetProfileDataAsync(ProfileDataRequestContext context)
+        public Task<IEnumerable<Claim>> GetProfileDataAsync(ProfileDataRequest context)
         {
             var profiles = new List<Claim>();
             if (context.Caller == ProfileDataCallers.TokenEndpoint)
@@ -40,7 +40,7 @@ namespace Hosting.Configuration
             return Task.FromResult<IEnumerable<Claim>>(profiles);
         }
 
-        public Task<bool> IsActiveAsync(IsActiveContext context)
+        public Task<bool> IsActiveAsync(IsActiveRequest context)
         {
             return Task.FromResult(true);
         }
