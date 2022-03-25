@@ -14,7 +14,7 @@
             public const string Introspection = "Introspection";
         }
 
-        public static class EndpointRoutePaths
+        public static class EndpointPaths
         {
             public const string ConnectPathPrefix = "/connect";
 

@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiHost", "ApiHost\ApiHost.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer.Storage", "IdentityServer.Storage\IdentityServer.Storage.csproj", "{0C3009E5-56E6-4193-A72A-E61481954A29}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityServer.Validation", "IdentityServer.Validation\IdentityServer.Validation.csproj", "{850AD9AF-FCB8-4A2E-98EB-2ED35B225108}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityServer.Authentication", "IdentityServer.Authentication\IdentityServer.Authentication.csproj", "{4DB1E5ED-4634-437F-BB83-62B9F1B9773F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +35,10 @@ Global
 		{0C3009E5-56E6-4193-A72A-E61481954A29}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C3009E5-56E6-4193-A72A-E61481954A29}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C3009E5-56E6-4193-A72A-E61481954A29}.Release|Any CPU.Build.0 = Release|Any CPU
-		{850AD9AF-FCB8-4A2E-98EB-2ED35B225108}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{850AD9AF-FCB8-4A2E-98EB-2ED35B225108}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{850AD9AF-FCB8-4A2E-98EB-2ED35B225108}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{850AD9AF-FCB8-4A2E-98EB-2ED35B225108}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DB1E5ED-4634-437F-BB83-62B9F1B9773F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DB1E5ED-4634-437F-BB83-62B9F1B9773F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DB1E5ED-4634-437F-BB83-62B9F1B9773F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DB1E5ED-4634-437F-BB83-62B9F1B9773F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

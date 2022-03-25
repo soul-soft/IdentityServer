@@ -22,15 +22,16 @@ namespace IdentityServer.Endpoints
             _extensionGrantValidators = extensionGrantValidators;
         }
 
-        public async Task<DiscoveryGeneratorResponse> CreateDiscoveryDocumentAsync(string issuer, string baseUrl)
+        public async Task<DiscoveryGeneratorResponse> GetDiscoveryDocumentAsync(string issuer, string baseUrl)
         {
             var configuration = new OpenIdConnectConfiguration
             {
                 Issuer = issuer,
-                JwksUri = baseUrl + Constants.EndpointRoutePaths.DiscoveryJwks,
-                AuthorizationEndpoint = baseUrl + Constants.EndpointRoutePaths.Authorize,
-                TokenEndpoint = baseUrl + Constants.EndpointRoutePaths.Token,
-                UserInfoEndpoint = baseUrl + Constants.EndpointRoutePaths.UserInfo
+                JwksUri = baseUrl + Constants.EndpointPaths.DiscoveryJwks,
+                AuthorizationEndpoint = baseUrl + Constants.EndpointPaths.Authorize,
+                TokenEndpoint = baseUrl + Constants.EndpointPaths.Token,
+                UserInfoEndpoint = baseUrl + Constants.EndpointPaths.UserInfo,
+                IntrospectionEndpoint = baseUrl + Constants.EndpointPaths.Introspection,
             };
             var supportedExtensionsGrantTypes = _extensionGrantValidators.GetSupportedGrantTypes();
             foreach (var item in supportedExtensionsGrantTypes)

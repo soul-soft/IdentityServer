@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -30,10 +31,16 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
-builder.Services.AddAuthentication("Bearer")
-    .AddJwtBearer("Bearer", options =>
+builder.Services.AddAuthentication("Reference")
+    .AddOAuth2Introspection("Reference", options => 
     {
         options.Authority = "https://localhost:7150/";
+        options.ClientId = "orderapi";
+        options.ClientSecret = "secret";
+    })
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.Authority = "https://localhost:7150/";        
         options.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents
         {
             OnMessageReceived = async (c) =>

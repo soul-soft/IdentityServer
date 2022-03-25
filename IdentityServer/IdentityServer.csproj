@@ -15,15 +15,8 @@
 		<Description>Simple identityServer middleware.</Description>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<DocumentationFile>.\IdentityServer.xml</DocumentationFile>
-		<EmbedUntrackedSources>true</EmbedUntrackedSources>	
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-	  <NoWarn>1701;1702;1591</NoWarn>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-	  <NoWarn>1701;1702;1591</NoWarn>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<NoWarn>1701;1702;1591</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
