@@ -4,6 +4,6 @@ namespace IdentityServer.Hosting
 {
     public interface IEndpointHandler
     {
-        Task<IEndpointResult> ProcessAsync(HttpContext context);
+        Task<IEndpointResult> HandleAsync(HttpContext context);
     }
 }

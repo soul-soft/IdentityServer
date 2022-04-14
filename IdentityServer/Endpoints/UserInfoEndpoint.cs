@@ -25,7 +25,7 @@ namespace IdentityServer.Endpoints
             _profileService = profileService;
         }
 
-        public override async Task<IEndpointResult> ProcessAsync(HttpContext context)
+        public override async Task<IEndpointResult> HandleAsync(HttpContext context)
         {
             var token = await _tokenParser.ParserAsync(context);
             if (string.IsNullOrEmpty(token))

@@ -14,7 +14,7 @@ namespace IdentityServer.Endpoints
             _generator = generator;
         }
 
-        public override async Task<IEndpointResult> ProcessAsync(HttpContext context)
+        public override async Task<IEndpointResult> HandleAsync(HttpContext context)
         {
             var response = await _generator.CreateJwkDiscoveryDocumentAsync();
 

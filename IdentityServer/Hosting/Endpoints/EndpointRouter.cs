@@ -8,11 +8,12 @@ namespace IdentityServer.Hosting
     {
         private readonly IdentityServerOptions _options;
         private readonly ILogger<EndpointRouter> _logger;
-        private readonly IEnumerable<Endpoint> _endpoints;
+        private readonly IEnumerable<DefaultEndpoint> _endpoints;
+       
         public EndpointRouter(
             IdentityServerOptions options,
             ILogger<EndpointRouter> logger,
-            IEnumerable<Endpoint> endpoints)
+            IEnumerable<DefaultEndpoint> endpoints)
         {
             _options = options;
             _logger = logger;

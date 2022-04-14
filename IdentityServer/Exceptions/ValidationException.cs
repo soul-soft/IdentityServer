@@ -6,9 +6,10 @@
 
         public string? ErrorDescription { get; }
 
-        public ValidationException(string error)
+        public ValidationException(string errorDescription)
         {
-            Error = error;
+            Error = OpenIdConnectValidationErrors.InvalidRequest;
+            ErrorDescription = errorDescription;
         }
 
         public ValidationException(string error, string errorDescription)

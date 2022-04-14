@@ -34,7 +34,7 @@
             {
                 if (!resources.Scopes.Contains(scope))
                 {
-                    throw new ValidationException(OpenIdConnectValidationErrors.InvalidScope);
+                    throw new ValidationException($"Invalid scope: {scope}");
                 }
             }
             return resources;

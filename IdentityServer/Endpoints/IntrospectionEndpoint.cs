@@ -22,7 +22,7 @@ namespace IdentityServer.Endpoints
             _apiSecretParsers = apiSecretParsers;
         }
 
-        public override async Task<IEndpointResult> ProcessAsync(HttpContext context)
+        public override async Task<IEndpointResult> HandleAsync(HttpContext context)
         {
             #region Validate Method
             if (!HttpMethods.IsPost(context.Request.Method))

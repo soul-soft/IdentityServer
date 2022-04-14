@@ -32,7 +32,7 @@ namespace IdentityServer.Hosting
         {
             try
             {
-                var result = await endpoint.ProcessAsync(context);
+                var result = await endpoint.HandleAsync(context);
                 await result.ExecuteAsync(context);
             }
             catch (ValidationException ex)

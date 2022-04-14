@@ -9,7 +9,7 @@
         public bool EnableAuthorizeEndpoint { get; set; } = true;
         public bool EnableIntrospectionEndpoint { get; set; } = true;
 
-        public bool IsEndpointEnabled(Endpoint endpoint)
+        public bool IsEndpointEnabled(DefaultEndpoint endpoint)
         {
             if (endpoint.Name == Constants.EndpointNames.Discovery)
             {

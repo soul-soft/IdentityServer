@@ -5,7 +5,7 @@ namespace IdentityServer.Endpoints
 {
     public abstract class EndpointBase : IEndpointHandler
     {
-        public abstract Task<IEndpointResult> ProcessAsync(HttpContext context);
+        public abstract Task<IEndpointResult> HandleAsync(HttpContext context);
 
         protected static IEndpointResult DiscoveryEndpointResult(DiscoveryGeneratorResponse response)
         {

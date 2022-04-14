@@ -93,13 +93,13 @@ namespace Microsoft.Extensions.DependencyInjection
         #endregion
 
         #region InMemoryStoreBuilder
-        public static IIdentityServerBuilder AddInMemoryStores(this IIdentityServerBuilder builder, Action<InMemoryStoreBuilder> configure)
+        public static IIdentityServerBuilder AddInMemoryStores(this IIdentityServerBuilder builder, Action<InMemoryStoreBuilder> stores)
         {
             builder.AddTokenStore<InMemoryTokenStore>();
             builder.AddRefreshTokenStore<InMemoryRefreshTokenStore>();
             builder.Services.AddDistributedMemoryCache();
             var inMemoryStoreBuilder = new InMemoryStoreBuilder();
-            configure(inMemoryStoreBuilder);
+            stores(inMemoryStoreBuilder);
             inMemoryStoreBuilder.Build(builder);
             return builder;
         }
@@ -107,10 +107,10 @@ namespace Microsoft.Extensions.DependencyInjection
 
         #region IEndpoint
         public static IIdentityServerBuilder AddEndpoint<T>(this IIdentityServerBuilder builder, string name, PathString path)
-          where T : class, IEndpointHandler
+            where T : class, IEndpointHandler
         {
             builder.Services.AddTransient<T>();
-            builder.Services.AddSingleton(new IdentityServer.Hosting.Endpoint(name, path, typeof(T)));
+            builder.Services.AddSingleton(new DefaultEndpoint(name, path, typeof(T)));
             return builder;
         }
         #endregion

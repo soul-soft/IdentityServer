@@ -30,7 +30,7 @@ namespace IdentityServer.Endpoints
             _authenticationService = authenticationService;
         }
 
-        public override async Task<IEndpointResult> ProcessAsync(HttpContext context)
+        public override async Task<IEndpointResult> HandleAsync(HttpContext context)
         {
             #region Validate Request
             if (!HttpMethods.IsPost(context.Request.Method))
