@@ -3,14 +3,14 @@ using System.Security.Claims;
 
 namespace IdentityServer.Services
 {
-    public class AuthenticationService : IAuthenticationService
+    public class SingInService : ISingInService
     {
         private readonly IServerUrl _serverUrl;
         private readonly ISystemClock _systemClock;
         private readonly IdentityServerOptions _options;
         private readonly IHandleGenerator _handleGenerator;
 
-        public AuthenticationService(
+        public SingInService(
             IServerUrl serverUrl,
             ISystemClock systemClock,
             IdentityServerOptions options,
@@ -63,7 +63,7 @@ namespace IdentityServer.Services
             }
             #endregion
 
-            #region Profile Claims
+            #region Subject Claims
             var allowedRequestedClaims = context.Subject.Claims
                 .Where(a => context.Resources.ClaimTypes.Contains(a.Type))
                 .Where(a => !Constants.ClaimTypeFilters.ClaimsServiceFilterClaimTypes.Contains(a.Type));

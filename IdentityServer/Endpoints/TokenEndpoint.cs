@@ -8,26 +8,26 @@ namespace IdentityServer.Endpoints
     public class TokenEndpoint : EndpointBase
     {
         private readonly IdentityServerOptions _options;
+        private readonly ISingInService _singInService;
         private readonly IProfileService _profileService;
         private readonly ITokenResponseGenerator _generator;
         private readonly IResourceValidator _resourceValidator;
         private readonly IClientSecretValidator _clientSecretValidator;
-        private readonly IAuthenticationService _authenticationService;
 
         public TokenEndpoint(
+            ISingInService singInService,
             IdentityServerOptions options,
             IProfileService profileService,
             ITokenResponseGenerator generator,
             IClientSecretValidator clientSecretValidator,
-            IResourceValidator resourceValidator,
-            IAuthenticationService authenticationService)
+            IResourceValidator resourceValidator)
         {
             _options = options;
             _generator = generator;
+            _singInService = singInService;
             _profileService = profileService;
             _clientSecretValidator = clientSecretValidator;
             _resourceValidator = resourceValidator;
-            _authenticationService = authenticationService;
         }
 
         public override async Task<IEndpointResult> HandleAsync(HttpContext context)
@@ -127,7 +127,7 @@ namespace IdentityServer.Endpoints
             }
             //sing claims
             var singInAuthenticationContext = new SingInAuthenticationContext(request.Client, result.Subject, request.Resources, request.GrantType);
-            var subject = await _authenticationService.SingInAsync(singInAuthenticationContext);
+            var subject = await _singInService.SingInAsync(singInAuthenticationContext);
             return subject;
         }
         #endregion
