@@ -8,14 +8,14 @@ namespace IdentityServer.Endpoints
     public class TokenEndpoint : EndpointBase
     {
         private readonly IdentityServerOptions _options;
-        private readonly ISingInService _singInService;
+        private readonly ISignInService _singInService;
         private readonly IProfileService _profileService;
         private readonly ITokenResponseGenerator _generator;
         private readonly IResourceValidator _resourceValidator;
         private readonly IClientSecretValidator _clientSecretValidator;
 
         public TokenEndpoint(
-            ISingInService singInService,
+            ISignInService singInService,
             IdentityServerOptions options,
             IProfileService profileService,
             ITokenResponseGenerator generator,

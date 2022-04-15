@@ -3,14 +3,14 @@ using System.Security.Claims;
 
 namespace IdentityServer.Services
 {
-    public class SingInService : ISingInService
+    public class SignInService : ISignInService
     {
         private readonly IServerUrl _serverUrl;
         private readonly ISystemClock _systemClock;
         private readonly IdentityServerOptions _options;
         private readonly IHandleGenerator _handleGenerator;
 
-        public SingInService(
+        public SignInService(
             IServerUrl serverUrl,
             ISystemClock systemClock,
             IdentityServerOptions options,

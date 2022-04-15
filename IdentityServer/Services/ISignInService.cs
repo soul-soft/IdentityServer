@@ -2,7 +2,7 @@
 
 namespace IdentityServer.Services
 {
-    public interface ISingInService
+    public interface ISignInService
     {
         Task<ClaimsPrincipal> SingInAsync(SingInAuthenticationContext context);
     }
