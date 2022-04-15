@@ -64,7 +64,7 @@ namespace IdentityServer.Services
             #endregion
 
             #region Profile Claims
-            var allowedRequestedClaims = context.RequestedClaims
+            var allowedRequestedClaims = context.Subject.Claims
                 .Where(a => context.Resources.ClaimTypes.Contains(a.Type))
                 .Where(a => !Constants.ClaimTypeFilters.ClaimsServiceFilterClaimTypes.Contains(a.Type));
             claims.AddRange(allowedRequestedClaims);

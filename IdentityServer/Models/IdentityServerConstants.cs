@@ -103,12 +103,6 @@
         };
     }
 
-    public static class ProfileDataCallers
-    {
-        public const string TokenEndpoint = "TokenEndpoint";
-        public const string UserInfoEndpoint = "UserInfoEndpoint";
-    }
-
     public static class ProfileIsActiveCallers
     {
         public const string TokenEndpoint = "TokenEndpoint";

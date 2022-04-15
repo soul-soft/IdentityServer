@@ -125,20 +125,9 @@ namespace IdentityServer.Endpoints
                     throw new ValidationException(OpenIdConnectValidationErrors.InvalidGrant, string.Format("User has been disabled:{0}", result.Subject.GetSubjectId()));
                 }
             }
-            //request claims
-            var requestedClaims = await _profileService.GetProfileDataAsync(new ProfileDataRequest(
-                ProfileDataCallers.TokenEndpoint,
-                result.Subject,
-                request.Client,
-                request.Resources));
             //sing claims
-            var subject = await _authenticationService.SingInAsync(new SingInAuthenticationContext(
-                request.Client,
-                result.Subject,
-                requestedClaims,
-                request.Resources,
-                request.GrantType));
-
+            var singInAuthenticationContext = new SingInAuthenticationContext(request.Client, result.Subject, request.Resources, request.GrantType);
+            var subject = await _authenticationService.SingInAsync(singInAuthenticationContext);
             return subject;
         }
         #endregion
