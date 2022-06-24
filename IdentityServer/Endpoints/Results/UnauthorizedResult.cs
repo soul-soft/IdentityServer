@@ -25,14 +25,15 @@ namespace IdentityServer.Endpoints
                 context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
             }
             var errorString = string.Format($"error=\"{Error}\"");
+            errorString = WebUtility.UrlEncode(errorString);
             if (string.IsNullOrEmpty(ErrorDescription))
             {
                 context.Response.Headers.Add(HeaderNames.WWWAuthenticate, new StringValues(new[] { "Bearer realm=\"IdentityServer\"", errorString }).ToString());
             }
             else
             {
-                var errorDescriptionString = string.Format($"error_description=\"{ErrorDescription}\"");
-                var errorDescription = WebUtility.UrlEncode(errorDescriptionString);
+                var errorDescription = string.Format($"error_description=\"{ErrorDescription}\"");
+                errorDescription = WebUtility.UrlEncode(errorDescription);
                 context.Response.Headers.Add(HeaderNames.WWWAuthenticate, new StringValues(new[] { "Bearer realm=\"IdentityServer\"", errorString, errorDescription }).ToString());
             }
             return Task.CompletedTask;
