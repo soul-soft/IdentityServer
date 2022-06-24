@@ -63,9 +63,9 @@ namespace IdentityServer.Validation
             var result = handler.ValidateToken(token, parameters);
             if (!result.IsValid)
             {
-                if (result.Exception is SecurityTokenExpiredException securityTokenExpiredException)
+                if (result.Exception is SecurityTokenExpiredException)
                 {
-                    return TokenValidationResult.Fail(OpenIdConnectValidationErrors.ExpiredToken, securityTokenExpiredException.Message);
+                    return TokenValidationResult.Fail(OpenIdConnectValidationErrors.ExpiredToken, "Token expired");
                 }
                 else
                 {
@@ -113,7 +113,7 @@ namespace IdentityServer.Validation
             var client = await _clients.FindByClientIdAsync(clientId);
             if (client == null)
             {
-                return TokenValidationResult.Fail(OpenIdConnectValidationErrors.InvalidClient, $"Client does not exist anymore.");
+                return TokenValidationResult.Fail(OpenIdConnectValidationErrors.InvalidClient, $"Client does not exist anymore");
             }           
             return TokenValidationResult.Success(client, subject.Claims);
         }

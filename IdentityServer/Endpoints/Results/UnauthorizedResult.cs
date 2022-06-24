@@ -32,7 +32,8 @@ namespace IdentityServer.Endpoints
             else
             {
                 var errorDescriptionString = string.Format($"error_description=\"{ErrorDescription}\"");
-                context.Response.Headers.Add(HeaderNames.WWWAuthenticate, new StringValues(new[] { "Bearer realm=\"IdentityServer\"", errorString, errorDescriptionString }).ToString());
+                var errorDescription = WebUtility.UrlEncode(errorDescriptionString);
+                context.Response.Headers.Add(HeaderNames.WWWAuthenticate, new StringValues(new[] { "Bearer realm=\"IdentityServer\"", errorString, errorDescription }).ToString());
             }
             return Task.CompletedTask;
         }
