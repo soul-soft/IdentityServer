@@ -3,14 +3,14 @@ using System.Security.Claims;
 
 namespace IdentityServer.Services
 {
-    public class SignInService : ISignInService
+    public class ClaimService : IClaimService
     {
         private readonly IServerUrl _serverUrl;
         private readonly ISystemClock _systemClock;
         private readonly IdentityServerOptions _options;
         private readonly IHandleGenerator _handleGenerator;
 
-        public SignInService(
+        public ClaimService(
             IServerUrl serverUrl,
             ISystemClock systemClock,
             IdentityServerOptions options,
@@ -22,7 +22,7 @@ namespace IdentityServer.Services
             _handleGenerator = handleGenerator;
         }
 
-        public async Task<ClaimsPrincipal> SingInAsync(SingInAuthenticationContext context)
+        public async Task<ClaimsPrincipal> SignClaimsInAsync(SingInAuthenticationContext context)
         {
             #region Jwt Claims
             //request jwt

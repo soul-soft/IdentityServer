@@ -8,14 +8,14 @@ namespace IdentityServer.Endpoints
     public class TokenEndpoint : EndpointBase
     {
         private readonly IdentityServerOptions _options;
-        private readonly ISignInService _singInService;
+        private readonly IClaimService _singInService;
         private readonly IProfileService _profileService;
         private readonly ITokenResponseGenerator _generator;
         private readonly IResourceValidator _resourceValidator;
         private readonly IClientSecretValidator _clientSecretValidator;
 
         public TokenEndpoint(
-            ISignInService singInService,
+            IClaimService singInService,
             IdentityServerOptions options,
             IProfileService profileService,
             ITokenResponseGenerator generator,
@@ -127,7 +127,7 @@ namespace IdentityServer.Endpoints
             }
             //sing claims
             var singInAuthenticationContext = new SingInAuthenticationContext(request.Client, result.Subject, request.Resources, request.GrantType);
-            var subject = await _singInService.SingInAsync(singInAuthenticationContext);
+            var subject = await _singInService.SignClaimsInAsync(singInAuthenticationContext);
             return subject;
         }
         #endregion
