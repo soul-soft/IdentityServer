@@ -8,7 +8,7 @@ namespace IdentityServer.Services
         private readonly IServerUrl _serverUrl;
         private readonly ISystemClock _systemClock;
         private readonly IdentityServerOptions _options;
-        private readonly IUniqueIdGenerator _handleGenerator;
+        private readonly IUniqueIdGenerator _uniqueIdGenerator;
 
         public ClaimService(
             IServerUrl serverUrl,
@@ -19,14 +19,14 @@ namespace IdentityServer.Services
             _options = options;
             _serverUrl = serverUrl;
             _systemClock = systemClock;
-            _handleGenerator = handleGenerator;
+            _uniqueIdGenerator = handleGenerator;
         }
 
         public async Task<ClaimsPrincipal> SignClaimsInAsync(SingInAuthenticationContext context)
         {
             #region Jwt Claims
             //request jwt
-            var jwtId = await _handleGenerator.GenerateAsync(16);
+            var jwtId = await _uniqueIdGenerator.GenerateAsync(16);
             var issuer = _serverUrl.GetIdentityServerIssuerUri();
             var issuedAt = _systemClock.UtcNow.ToUnixTimeSeconds();
             var expiration = issuedAt + context.Client.AccessTokenLifetime;
