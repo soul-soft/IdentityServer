@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Services
 {
-    public interface IHandleGenerator
+    public interface IUniqueIdGenerator
     {
         Task<string> GenerateAsync(int length = 32);
     }

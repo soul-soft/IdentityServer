@@ -7,13 +7,13 @@ namespace IdentityServer.Services
     {
         private readonly ISystemClock _clock;
         private readonly ITokenStore _referenceTokenStore;
-        private readonly IHandleGenerator _handleGenerator;
+        private readonly IUniqueIdGenerator _handleGenerator;
         private readonly IRefreshTokenStore _refreshTokenStore;
         private readonly ISecurityTokenService _securityTokenService;
 
         public TokenService(
             ISystemClock clock,
-            IHandleGenerator handleGenerator,
+            IUniqueIdGenerator handleGenerator,
             ITokenStore referenceTokenService,
             IRefreshTokenStore refreshTokenStore,
             ISecurityTokenService securityTokenService)
