@@ -4,6 +4,6 @@ namespace IdentityServer.Services
 {
     public interface IClaimService
     {
-        Task<ClaimsPrincipal> SignClaimsInAsync(SingInAuthenticationContext context);
+        Task<ClaimsPrincipal> SignClaimsAsync(SingInAuthenticationContext context);
     }
 }

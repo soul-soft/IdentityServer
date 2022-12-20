@@ -127,7 +127,7 @@ namespace IdentityServer.Endpoints
             }
             //sing claims
             var singInAuthenticationContext = new SingInAuthenticationContext(request.Client, result.Subject, request.Resources, request.GrantType);
-            var subject = await _claimService.SignClaimsInAsync(singInAuthenticationContext);
+            var subject = await _claimService.SignClaimsAsync(singInAuthenticationContext);
             return subject;
         }
         #endregion

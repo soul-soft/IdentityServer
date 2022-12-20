@@ -22,7 +22,7 @@ namespace IdentityServer.Services
             _uniqueIdGenerator = handleGenerator;
         }
 
-        public async Task<ClaimsPrincipal> SignClaimsInAsync(SingInAuthenticationContext context)
+        public async Task<ClaimsPrincipal> SignClaimsAsync(SingInAuthenticationContext context)
         {
             #region Jwt Claims
             //request jwt
