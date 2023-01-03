@@ -1,22 +1,21 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using System.Text.Json;
+﻿using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.Json;
 
-namespace IdentityServer.Configuration
+namespace Microsoft.Extensions.DependencyInjection
 {
     public class InMemoryStoreBuilder
     {
         #region fields
-        private readonly List<Client> Clients = new List<Client>();
-        private readonly List<IResource> Resources = new List<IResource>();
-        private readonly List<SigningCredentials> SigningCredentials = new List<SigningCredentials>();
+        private readonly List<Client> _clients = new List<Client>();
+        private readonly List<IResource> _resources = new List<IResource>();
+        private readonly List<SigningCredentials> _signingCredentials = new List<SigningCredentials>();
         #endregion
 
         #region SigningCredentials
         public InMemoryStoreBuilder AddSigningCredentials(SigningCredentials credential)
         {
-            SigningCredentials.Add(credential);
+            _signingCredentials.Add(credential);
             return this;
         }
         public InMemoryStoreBuilder AddSigningCredentials(SecurityKey securityKey, string signingAlgorithm = SecurityAlgorithms.RsaSha256)
@@ -66,17 +65,27 @@ namespace IdentityServer.Configuration
         #endregion
 
         #region Resource
-        public InMemoryStoreBuilder AddResources(IEnumerable<IResource> scopes)
+        public InMemoryStoreBuilder AddResource(IResource resources)
         {
-            Resources.AddRange(scopes);
+            _resources.Add(resources);
+            return this;
+        }
+        public InMemoryStoreBuilder AddResources(IEnumerable<IResource> resources)
+        {
+            _resources.AddRange(resources);
             return this;
         }
         #endregion
 
         #region Client
+        public InMemoryStoreBuilder AddClient(Client client)
+        {
+            _clients.Add(client);
+            return this;
+        }
         public InMemoryStoreBuilder AddClients(IEnumerable<Client> clients)
         {
-            Clients.AddRange(clients);
+            _clients.AddRange(clients);
             return this;
         }
         #endregion
@@ -84,25 +93,25 @@ namespace IdentityServer.Configuration
         #region build
         internal void Build(IIdentityServerBuilder services)
         {
-            if (Clients.Any())
+            if (_clients.Any())
             {
                 services.AddClientStore(sp =>
                 {
-                    return new InMemoryClientStore(Clients);
+                    return new ClientStore(_clients);
                 });
             }
-            if (Resources.Any())
+            if (_resources.Any())
             {
                 services.AddResourceStore(sp =>
                 {
-                    return new InMemoryResourceStore(new Resources(Resources));
+                    return new ResourceStore(new Resources(_resources));
                 });
             }
-            if (SigningCredentials.Any())
+            if (_signingCredentials.Any())
             {
                 services.AddSigningCredentialStore(sp =>
                 {
-                    return new InMemorySigningCredentialsStore(SigningCredentials);
+                    return new SigningCredentialsStore(_signingCredentials);
                 });
             }
         }

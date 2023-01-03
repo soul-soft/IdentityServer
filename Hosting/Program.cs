@@ -18,17 +18,17 @@ builder.Services.AddAuthorization()
     });
 builder.Services.AddIdentityServer(o =>
     {
+        o.Endpoints.EndpointPathPrefix = "/api/connect";
         o.IssuerUri = "https://www.example.com";
     })
     .AddResourceOwnerCredentialRequestValidator<ResourceOwnerCredentialRequestValidator>()
     .AddExtensionGrantValidator<MyExtensionGrantValidator>()
     .AddProfileService<ProfileService>()
-    .AddInMemoryStores(setup =>
+    .AddInMemoryStore(store =>
     {
-        setup.AddClients(Config.Clients);
-        setup.AddResources(Config.Resources);
-        setup.AddSigningCredentials(new X509Certificate2("idsvr.pfx","nbjc"));
-        //setup.AddDeveloperSigningCredentials();
+        store.AddClients(Config.Clients);
+        store.AddResources(Config.Resources);
+        store.AddSigningCredentials(new X509Certificate2("idsvr.pfx","nbjc"));
     });
 var app = builder.Build();
 

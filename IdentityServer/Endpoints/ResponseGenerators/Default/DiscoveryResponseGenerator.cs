@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace IdentityServer.Endpoints
 {
@@ -6,17 +7,20 @@ namespace IdentityServer.Endpoints
         : IDiscoveryResponseGenerator
     {
         private readonly IResourceStore _resources;
-        private readonly ISigningCredentialStore _credentials;
+        private readonly IdentityServerOptions _options;
         private readonly ISecretListParser _secretParsers;
+        private readonly ISigningCredentialStore _credentials;
         private readonly IExtensionGrantListValidator _extensionGrantValidators;
 
         public DiscoveryResponseGenerator(
             IResourceStore resources,
+            IdentityServerOptions options,
             ISecretListParser secretParsers,
             ISigningCredentialStore credentials,
             IExtensionGrantListValidator extensionGrantValidators)
         {
             _resources = resources;
+            _options = options;
             _credentials = credentials;
             _secretParsers = secretParsers;
             _extensionGrantValidators = extensionGrantValidators;
@@ -27,11 +31,11 @@ namespace IdentityServer.Endpoints
             var configuration = new OpenIdConnectConfiguration
             {
                 Issuer = issuer,
-                JwksUri = baseUrl + Constants.EndpointPaths.DiscoveryJwks,
-                AuthorizationEndpoint = baseUrl + Constants.EndpointPaths.Authorize,
-                TokenEndpoint = baseUrl + Constants.EndpointPaths.Token,
-                UserInfoEndpoint = baseUrl + Constants.EndpointPaths.UserInfo,
-                IntrospectionEndpoint = baseUrl + Constants.EndpointPaths.Introspection,
+                JwksUri = baseUrl + _options.Endpoints.GetEndpointFullPath(Constants.EndpointRutePaths.DiscoveryJwks),
+                AuthorizationEndpoint = baseUrl + _options.Endpoints.GetEndpointFullPath(Constants.EndpointRutePaths.Authorize),
+                TokenEndpoint = baseUrl + _options.Endpoints.GetEndpointFullPath(Constants.EndpointRutePaths.Token),
+                UserInfoEndpoint = baseUrl + _options.Endpoints.GetEndpointFullPath(Constants.EndpointRutePaths.UserInfo),
+                IntrospectionEndpoint = baseUrl + _options.Endpoints.GetEndpointFullPath(Constants.EndpointRutePaths.Introspection),
             };
             var supportedExtensionsGrantTypes = _extensionGrantValidators.GetSupportedGrantTypes();
             foreach (var item in supportedExtensionsGrantTypes)

@@ -1,10 +1,10 @@
 ﻿namespace IdentityServer.Storage
 {
-    internal class InMemoryResourceStore : IResourceStore
+    internal class ResourceStore : IResourceStore
     {
         private readonly Resources _resources;
 
-        public InMemoryResourceStore(Resources resources)
+        public ResourceStore(Resources resources)
         {
             _resources = resources;
         }

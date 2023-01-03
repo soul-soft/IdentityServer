@@ -2,8 +2,6 @@
 {
     internal static class Constants
     {
-        public const string IdentityServerProvider = "IdentityServer";
-
         public static class EndpointNames
         {
             public const string Authorize = "Authorize";
@@ -14,21 +12,35 @@
             public const string Introspection = "Introspection";
         }
 
-        public static class EndpointPaths
+        public static class EndpointRutePaths
         {
-            public const string ConnectPathPrefix = "/connect";
 
-            public const string DiscoveryJwks = Discovery + "/jwks";
-
-            public const string Authorize = ConnectPathPrefix + "/authorize";
+            public const string Authorize = "authorize";
 
             public const string Discovery = "/.well-known/openid-configuration";
+            
+            public const string DiscoveryJwks = Discovery + "/jwks";
 
-            public const string Token = ConnectPathPrefix + "/token";
+            public const string Token = "token";
 
-            public const string UserInfo = ConnectPathPrefix + "/userinfo";
+            public const string UserInfo = "userinfo";
 
-            public const string Introspection = ConnectPathPrefix + "/introspect";
+            public const string Introspection = "introspect";
+        }
+
+        public static class Endpoints
+        {
+            public const string Authorize = "/authorize";
+
+            public const string Discovery = "/.well-known/openid-configuration";
+                         
+            public const string DiscoveryJwks = Discovery + "/jwks";
+                         
+            public const string Token = "/token";
+                         
+            public const string UserInfo = "/userinfo";
+                         
+            public const string Introspection = "/introspect";
         }
 
         public static class AuthenticationSchemes

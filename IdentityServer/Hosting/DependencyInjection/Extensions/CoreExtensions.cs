@@ -14,12 +14,12 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IIdentityServerBuilder AddRequiredPlatformEndpoints(this IIdentityServerBuilder builder)
         {
             builder.Services.AddTransient<IEndpointRouter, EndpointRouter>();
-            builder.AddEndpoint<TokenEndpoint>(Constants.EndpointNames.Token, Constants.EndpointPaths.Token);
-            builder.AddEndpoint<TokenEndpoint>(Constants.EndpointNames.Authorize, Constants.EndpointPaths.Authorize);
-            builder.AddEndpoint<UserInfoEndpoint>(Constants.EndpointNames.UserInfo, Constants.EndpointPaths.UserInfo);
-            builder.AddEndpoint<DiscoveryEndpoint>(Constants.EndpointNames.Discovery, Constants.EndpointPaths.Discovery);
-            builder.AddEndpoint<IntrospectionEndpoint>(Constants.EndpointNames.Introspection, Constants.EndpointPaths.Introspection);
-            builder.AddEndpoint<DiscoveryKeyEndpoint>(Constants.EndpointNames.DiscoveryJwks, Constants.EndpointPaths.DiscoveryJwks);
+            builder.AddEndpoint<TokenEndpoint>(Constants.EndpointNames.Token, Constants.EndpointRutePaths.Token);
+            builder.AddEndpoint<TokenEndpoint>(Constants.EndpointNames.Authorize, Constants.EndpointRutePaths.Authorize);
+            builder.AddEndpoint<UserInfoEndpoint>(Constants.EndpointNames.UserInfo, Constants.EndpointRutePaths.UserInfo);
+            builder.AddEndpoint<DiscoveryEndpoint>(Constants.EndpointNames.Discovery, Constants.EndpointRutePaths.Discovery);
+            builder.AddEndpoint<IntrospectionEndpoint>(Constants.EndpointNames.Introspection, Constants.EndpointRutePaths.Introspection);
+            builder.AddEndpoint<DiscoveryKeyEndpoint>(Constants.EndpointNames.DiscoveryJwks, Constants.EndpointRutePaths.DiscoveryJwks);
             return builder;
         }
         #endregion
@@ -54,7 +54,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<IUniqueIdGenerator, UniqueIdGenerator>();
             builder.Services.TryAddTransient<IProfileService, ProfileService>();
             builder.Services.TryAddTransient<IClaimService, ClaimService>();
-            builder.Services.TryAddTransient<ICache, DistributedCache>();
+            builder.Services.TryAddTransient<ICache, Cache>();
             builder.Services.TryAddTransient<ITokenService, TokenService>();
             builder.Services.TryAddTransient<ISecurityTokenService, SecurityTokenService>();
             return builder;

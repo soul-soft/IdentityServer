@@ -8,12 +8,12 @@ namespace IdentityServer.Hosting
     {
         private readonly IdentityServerOptions _options;
         private readonly ILogger<EndpointRouter> _logger;
-        private readonly IEnumerable<DefaultEndpoint> _endpoints;
+        private readonly IEnumerable<EndpointDescriptor> _endpoints;
        
         public EndpointRouter(
             IdentityServerOptions options,
             ILogger<EndpointRouter> logger,
-            IEnumerable<DefaultEndpoint> endpoints)
+            IEnumerable<EndpointDescriptor> endpoints)
         {
             _options = options;
             _logger = logger;
@@ -24,7 +24,8 @@ namespace IdentityServer.Hosting
         {
             foreach (var endpoint in _endpoints)
             {
-                if (context.Request.Path.Equals(endpoint.Path, StringComparison.OrdinalIgnoreCase))
+                var endpointPath = _options.Endpoints.GetEndpointFullPath(endpoint.Path);
+                if (context.Request.Path.Equals(endpointPath, StringComparison.OrdinalIgnoreCase))
                 {
                     if (!_options.Endpoints.IsEndpointEnabled(endpoint))
                     {

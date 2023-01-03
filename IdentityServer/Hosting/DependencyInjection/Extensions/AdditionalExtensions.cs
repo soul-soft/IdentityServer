@@ -4,16 +4,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class AdditionalExtensions
-    {       
-        #region IPersistentStore
-        public static IIdentityServerBuilder AddPersistentStore<T>(this IIdentityServerBuilder builder)
-            where T : class, ICache
-        {
-            builder.Services.TryAddTransient<ICache, T>();
-            return builder;
-        }
-        #endregion
-
+    {             
         #region IClientStore
         public static IIdentityServerBuilder AddClientStore<T>(this IIdentityServerBuilder builder)
             where T : class, IClientStore
@@ -93,24 +84,24 @@ namespace Microsoft.Extensions.DependencyInjection
         #endregion
 
         #region InMemoryStoreBuilder
-        public static IIdentityServerBuilder AddInMemoryStores(this IIdentityServerBuilder builder, Action<InMemoryStoreBuilder> stores)
+        public static IIdentityServerBuilder AddInMemoryStore(this IIdentityServerBuilder builder, Action<InMemoryStoreBuilder> setup)
         {
-            builder.AddTokenStore<InMemoryTokenStore>();
-            builder.AddRefreshTokenStore<InMemoryRefreshTokenStore>();
-            builder.Services.AddDistributedMemoryCache();
             var inMemoryStoreBuilder = new InMemoryStoreBuilder();
-            stores(inMemoryStoreBuilder);
+            setup(inMemoryStoreBuilder);
             inMemoryStoreBuilder.Build(builder);
+            builder.Services.AddDistributedMemoryCache();
+            builder.AddTokenStore<TokenStore>();
+            builder.AddRefreshTokenStore<RefreshTokenStore>();
             return builder;
         }
         #endregion
 
         #region IEndpoint
-        public static IIdentityServerBuilder AddEndpoint<T>(this IIdentityServerBuilder builder, string name, PathString path)
+        public static IIdentityServerBuilder AddEndpoint<T>(this IIdentityServerBuilder builder, string name, string path)
             where T : class, IEndpointHandler
         {
             builder.Services.AddTransient<T>();
-            builder.Services.AddSingleton(new DefaultEndpoint(name, path, typeof(T)));
+            builder.Services.AddSingleton(new EndpointDescriptor(name, path, typeof(T)));
             return builder;
         }
         #endregion

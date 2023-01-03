@@ -1,12 +1,16 @@
 ﻿namespace IdentityServer.Storage
 {
-    internal class InMemoryRefreshTokenStore : IRefreshTokenStore
+    internal class RefreshTokenStore : IRefreshTokenStore
     {
         private readonly ICache _storage;
-       
-        public InMemoryRefreshTokenStore(ICache storage)
+        private readonly IdentityServerOptions _options;
+
+        public RefreshTokenStore(
+            ICache storage, 
+            IdentityServerOptions options)
         {
             _storage = storage;
+            _options = options;
         }
 
         public async Task<RefreshToken?> FindRefreshTokenAsync(string id)
@@ -27,9 +31,9 @@
             await _storage.RevomeAsync(key);
         }
 
-        private static string BuildStoreKey(string id)
+        private string BuildStoreKey(string id)
         {
-            return $"{Constants.IdentityServerProvider}:RefreshToken:{id}";
+            return $"{_options.DistributedStorageKeyPrefix}:RefreshToken:{id}";
         }
     }
 }

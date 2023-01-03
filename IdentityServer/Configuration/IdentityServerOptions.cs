@@ -7,13 +7,13 @@
         /// </summary>
         public string IssuerUri { get; set; } = string.Empty;
         /// <summary>
+        /// 存储key
+        /// </summary>
+        public string DistributedStorageKeyPrefix { get; set; } = "IdentityServer";
+        /// <summary>
         /// 是否使用小写的签发url
         /// </summary>
         public bool LowerCaseIssuerUri { get; set; } = true;
-        /// <summary>
-        /// 身份提供程序
-        /// </summary>
-        public string IdentityProvider { get; set; } = "local";
         /// <summary>
         /// 是否包含终结点的错误详情
         /// </summary>
@@ -21,8 +21,7 @@
         /// <summary>
         /// 输入长度限制
         /// </summary>
-        public InputLengthRestrictions InputLengthRestrictions { get; set; } = new InputLengthRestrictions();
-        //public DiscoveryOptions Discovery { get; set; } = new DiscoveryOptions();
+        public InputLengthRestrictions InputLengthRestrictions { get; set; } = new InputLengthRestrictions();        
         /// <summary>
         /// 终结点选项
         /// </summary>

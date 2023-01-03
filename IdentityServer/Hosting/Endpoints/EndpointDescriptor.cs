@@ -1,12 +1,12 @@
 ﻿namespace IdentityServer.Hosting
 {
-    public class DefaultEndpoint
+    public class EndpointDescriptor
     {
         public string Name { get; set; }
         public string Path { get; set; }
         public Type HandlerType { get; set; }
 
-        public DefaultEndpoint(string name, string path, Type handler)
+        public EndpointDescriptor(string name, string path, Type handler)
         {
             Name = name;
             Path = path;

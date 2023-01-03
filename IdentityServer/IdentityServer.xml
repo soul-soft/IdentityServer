@@ -77,14 +77,14 @@
             签发url
             </summary>
         </member>
+        <member name="P:IdentityServer.Configuration.IdentityServerOptions.DistributedStorageKeyPrefix">
+            <summary>
+            存储key
+            </summary>
+        </member>
         <member name="P:IdentityServer.Configuration.IdentityServerOptions.LowerCaseIssuerUri">
             <summary>
             是否使用小写的签发url
-            </summary>
-        </member>
-        <member name="P:IdentityServer.Configuration.IdentityServerOptions.IdentityProvider">
-            <summary>
-            身份提供程序
             </summary>
         </member>
         <member name="P:IdentityServer.Configuration.IdentityServerOptions.IncludeEndpointErrorDetails">

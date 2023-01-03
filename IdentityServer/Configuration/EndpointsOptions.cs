@@ -6,10 +6,10 @@
         public bool EnableDiscoveryJwksEndpoint { get; set; } = true;
         public bool EnableTokenEndpoint { get; set; } = true;
         public bool EnableUserInfoEndpoint { get; set; } = true;
-        public bool EnableAuthorizeEndpoint { get; set; } = true;
         public bool EnableIntrospectionEndpoint { get; set; } = true;
+        public string EndpointPathPrefix { get; set; } = "/connect";
 
-        public bool IsEndpointEnabled(DefaultEndpoint endpoint)
+        public bool IsEndpointEnabled(EndpointDescriptor endpoint)
         {
             if (endpoint.Name == Constants.EndpointNames.Discovery)
             {
@@ -32,6 +32,15 @@
                 return EnableIntrospectionEndpoint;
             }
             return false;
+        }
+
+        public string GetEndpointFullPath(string path)
+        {
+            if (path.StartsWith('/'))
+            {
+                return path;
+            }
+            return $"{EndpointPathPrefix}/{path}";
         }
     }
 }

@@ -1,10 +1,10 @@
 ﻿namespace IdentityServer.Storage
 {
-    internal class InMemoryClientStore : IClientStore
+    internal class ClientStore : IClientStore
     {
         private readonly IEnumerable<Client> _clients;
 
-        public InMemoryClientStore(IEnumerable<Client> clients)
+        public ClientStore(IEnumerable<Client> clients)
         {
             _clients = clients;
         }
@@ -13,8 +13,8 @@
         {
             var client = _clients
                 .Where(a => a.ClientId == clientId)
-                .Where(a => a.Enabled)
                 .FirstOrDefault();
+
             return Task.FromResult(client);
         }
     }
