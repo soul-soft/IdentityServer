@@ -25,9 +25,9 @@
         var redirect_uri = GetQueryString("redirect_uri");
         var access_token = window.localStorage.getItem('access_token')
         if (access_token) {
-            //如果有token
+            //如果有token,就获取一个授权码，并跳转会第三方
             $.ajax({
-                url: '/connect/token',
+                url: '/connect/authorize',
                 data: {
                     redirect_uri: redirect_uri,
                     client_id:"client1"
