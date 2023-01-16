@@ -32,7 +32,7 @@
                 url: '/connect/authorize',
                 contentType: 'multipart/form-data;',
                 data: {
-                    redirect_uri: redirect_uri,
+                    redirect_uri: encodeURI(redirect_uri),//要对url进行编码
                     client_id: "client1"
                 },
                 headers: {
