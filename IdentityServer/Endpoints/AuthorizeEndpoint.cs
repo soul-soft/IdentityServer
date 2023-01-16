@@ -1,7 +1,9 @@
 ﻿using IdentityServer.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using System.Net;
 using System.Security.Claims;
+using System.Text.Encodings.Web;
 
 namespace IdentityServer.Endpoints
 {
@@ -71,6 +73,7 @@ namespace IdentityServer.Endpoints
 
             #region RedirectUri
             var redirectUri = parameters[OpenIdConnectParameterNames.RedirectUri];
+            redirectUri = WebUtility.UrlDecode(redirectUri);
             if (string.IsNullOrEmpty(redirectUri))
             {
                 return BadRequest(OpenIdConnectValidationErrors.InvalidRequest, "RedirectUri type is missing");
@@ -117,7 +120,7 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Generator
-            var request = new AuthorizeGeneratorRequest(redirectUri, responseType, client, resources, subject, _options);
+            var request = new AuthorizeGeneratorRequest(state, redirectUri,responseType, client, resources, subject, _options);
             var response = await _generator.ProcessAsync(request);
             #endregion
 
