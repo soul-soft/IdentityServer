@@ -155,6 +155,20 @@ namespace Microsoft.Extensions.DependencyInjection
         }
         #endregion
 
+        #region IAuthorizeCodeRequestValidator
+        public static IIdentityServerBuilder AddAuthorizeCodeRequestValidator<T>(this IIdentityServerBuilder builder)
+        where T : class, IAuthorizeCodeRequestValidator
+        {
+            builder.Services.AddOrUpdateTransient<IAuthorizeCodeRequestValidator, T>();
+            return builder;
+        }
+        public static IIdentityServerBuilder AddAuthorizeCodeRequestValidator(this IIdentityServerBuilder builder)
+        {
+            builder.Services.AddOrUpdateTransient<IAuthorizeCodeRequestValidator, AuthorizeCodeRequestValidator>();
+            return builder;
+        }
+        #endregion
+
         #region ExtensionGrantValidator
         public static IIdentityServerBuilder AddExtensionGrantValidator<T>(this IIdentityServerBuilder builder)
            where T : class, IExtensionGrantValidator

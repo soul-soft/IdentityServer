@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.Net.Mime;
 
 namespace IdentityServer.Endpoints
 {
@@ -11,10 +12,11 @@ namespace IdentityServer.Endpoints
             _response = response;
         }
 
-        public Task ExecuteAsync(HttpContext context)
+        public async Task ExecuteAsync(HttpContext context)
         {
-            context.Response.Redirect($"{_response.RedirectUri}?code={_response.Code}");
-            return Task.CompletedTask;
+            var json = _response.Serialize();
+            context.Response.ContentType = MediaTypeNames.Application.Json;
+            await context.Response.WriteAsync(json, System.Text.Encoding.UTF8);
         }
     }
 }

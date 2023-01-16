@@ -1,9 +1,6 @@
 ﻿using IdentityServer.Models;
-using IdentityServer.Validation;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 
 namespace IdentityServer.Endpoints
@@ -39,34 +36,13 @@ namespace IdentityServer.Endpoints
         public override async Task<IEndpointResult> HandleAsync(HttpContext context)
         {
             #region Validate Request
-            if (!HttpMethods.IsGet(context.Request.Method))
+            if (!HttpMethods.IsPost(context.Request.Method))
             {
                 return MethodNotAllowed();
             }
-            var query = context.Request.Query.AsNameValueCollection();
-            #endregion
-
-            #region state
-            var state = query[OpenIdConnectParameterNames.State];
-            if (string.IsNullOrEmpty(state))
+            if (!context.Request.HasFormContentType)
             {
-                return BadRequest(OpenIdConnectValidationErrors.InvalidRequest, "State type is missing");
-            }
-            #endregion
-
-            #region RedirectUri
-            var redirectUri = query[OpenIdConnectParameterNames.RedirectUri];
-            if (string.IsNullOrEmpty(redirectUri))
-            {
-                return BadRequest(OpenIdConnectValidationErrors.InvalidRequest, "RedirectUri type is missing");
-            }
-            #endregion
-
-            #region ResponseType
-            var responseType = query[OpenIdConnectParameterNames.ResponseType];
-            if (string.IsNullOrEmpty(responseType))
-            {
-                return BadRequest(OpenIdConnectValidationErrors.InvalidRequest, "ResponseType type is missing");
+                return BadRequest(OpenIdConnectValidationErrors.InvalidRequest, "Invalid contextType");
             }
             #endregion
 
@@ -74,16 +50,40 @@ namespace IdentityServer.Endpoints
             var client = await _clientSecretValidator.ValidateAsync(context);
             #endregion
 
+            #region GrantType
+            if (!client.AllowedGrantTypes.Contains(GrantTypes.AuthorizationCode))
+            {
+                return BadRequest(OpenIdConnectValidationErrors.UnauthorizedClient, $"The client does not allow {GrantTypes.AuthorizationCode}");
+            }
+            #endregion
+
             #region Validate Resources
             var from = await context.Request.ReadFormAsync();
-            var body = from.AsNameValueCollection();
-            var scope = body[OpenIdConnectParameterNames.Scope] ?? string.Empty;
+            var parameters = from.AsNameValueCollection();
+            var scope = parameters[OpenIdConnectParameterNames.Scope] ?? string.Empty;
             if (scope.Length > _options.InputLengthRestrictions.Scope)
             {
                 return BadRequest(OpenIdConnectValidationErrors.InvalidScope, "Scope is too long");
             }
             var scopes = scope.Split(",").Where(a => !string.IsNullOrWhiteSpace(a));
             var resources = await _resourceValidator.ValidateAsync(client, scopes);
+            #endregion
+
+            #region RedirectUri
+            var redirectUri = parameters[OpenIdConnectParameterNames.RedirectUri];
+            if (string.IsNullOrEmpty(redirectUri))
+            {
+                return BadRequest(OpenIdConnectValidationErrors.InvalidRequest, "RedirectUri type is missing");
+            }
+            #endregion
+
+            #region State
+            var state = parameters[OpenIdConnectParameterNames.State];
+            #endregion
+
+
+            #region ResponseType
+            var responseType = "code";
             #endregion
 
             #region Token

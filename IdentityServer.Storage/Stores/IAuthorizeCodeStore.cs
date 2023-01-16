@@ -6,5 +6,6 @@ namespace IdentityServer.Storage
     {
         Task StoreAuthorizeCodeAsync(AuthorizeCode code);
         Task<AuthorizeCode?> FindByAuthorizeCodeAsync(string id);
+        Task RevomeAuthorizeCodeAsync(string id);
     }
 }

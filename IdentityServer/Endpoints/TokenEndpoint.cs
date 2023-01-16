@@ -48,8 +48,8 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Validate Resources
-            var from = await context.Request.ReadFormAsync();
-            var body = from.AsNameValueCollection();
+            var parameters = await context.Request.ReadFormAsync();
+            var body = parameters.AsNameValueCollection();
             var scope = body[OpenIdConnectParameterNames.Scope] ?? string.Empty;
             if (scope.Length > _options.InputLengthRestrictions.Scope)
             {
@@ -95,13 +95,13 @@ namespace IdentityServer.Endpoints
                 var validator = context.RequestServices.GetRequiredService<IRefreshTokenRequestValidator>();
                 result = await ValidateRefreshTokenRequestAsync(validator, request);
             }
-            if (GrantTypes.AuthorizationCode.Equals(request.GrantType))
-            {
-                var validator = context.RequestServices.GetRequiredService<IAuthorizeCodeRequestValidator>();
-                result = await ValidateAuthorizeCodeRequestAsync(validator, request);
-            }
             //验证客户端凭据授权
             else if (GrantTypes.ClientCredentials.Equals(request.GrantType))
+            {
+                var validator = context.RequestServices.GetRequiredService<IClientCredentialsRequestValidator>();
+                result = await ValidateClientCredentialsRequestAsync(validator, request);
+            }
+            else if (GrantTypes.AuthorizationCode.Equals(request.GrantType))
             {
                 var validator = context.RequestServices.GetRequiredService<IClientCredentialsRequestValidator>();
                 result = await ValidateClientCredentialsRequestAsync(validator, request);
@@ -153,7 +153,7 @@ namespace IdentityServer.Endpoints
             {
                 throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, "Code is missing");
             }
-            var grantContext = new AuthorizeCodeValidationRequest(code, request);
+            var grantContext = new AuthorizeCodeValidationRequest(code,request);
             return await validator.ValidateAsync(grantContext);
         }
         #endregion

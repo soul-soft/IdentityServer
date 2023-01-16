@@ -1,4 +1,5 @@
 ﻿using IdentityServer.Serialization;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace IdentityServer.Endpoints
 {
@@ -11,6 +12,14 @@ namespace IdentityServer.Endpoints
         {
             Code = code;
             RedirectUri = redirectUri;
+        }
+
+        public string Serialize()
+        {
+            var values = new Dictionary<string, object>();
+            values.Add(OpenIdConnectParameterNames.Code, Code);
+            values.Add(OpenIdConnectParameterNames.RedirectUri, RedirectUri);
+            return ObjectSerializer.Serialize(values);
         }
     }
 }

@@ -12,7 +12,8 @@ namespace Hosting.Configuration
                 AllowedGrantTypes = new []
                 {
                     "myGrant",
-                    GrantTypes.ClientCredentials
+                    GrantTypes.ClientCredentials,
+                    GrantTypes.AuthorizationCode
                 },
                 ClientSecrets = new Secret[]
                 {
@@ -21,7 +22,8 @@ namespace Hosting.Configuration
                 AllowedScopes = new[]
                 {
                     "api",
-                }
+                },
+                RequireClientSecret=false
             },
             new Client()
             {

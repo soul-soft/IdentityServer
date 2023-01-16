@@ -29,7 +29,7 @@ builder.Services.AddIdentityServer(o =>
     {
         store.AddClients(Config.Clients);
         store.AddResources(Config.Resources);
-        store.AddSigningCredentials(new X509Certificate2("idsvr.pfx","nbjc"));
+        store.AddSigningCredentials(new X509Certificate2("idsvr.pfx", "nbjc"));
     });
 var app = builder.Build();
 

@@ -21,6 +21,11 @@ namespace IdentityServer.Storage
             return await _cache.GetAsync<AuthorizeCode>(key);
         }
 
+        public async Task RevomeAuthorizeCodeAsync(string id)
+        {
+            var key = GenerateStoreKey(id);
+            await _cache.RevomeAsync(key);
+        }
 
         public async Task StoreAuthorizeCodeAsync(AuthorizeCode Code)
         {

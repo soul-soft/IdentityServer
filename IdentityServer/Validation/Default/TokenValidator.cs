@@ -104,7 +104,7 @@ namespace IdentityServer.Validation
                 claims = claims.Where(a => a.Type != JwtClaimTypes.Scope)
                     .Union(scopes.Select(scope => new Claim(JwtClaimTypes.Scope, scope)));
             }
-            var subject = new ClaimsPrincipal(new ClaimsIdentity(claims, "TokenValidator"));
+            var subject = new ClaimsPrincipal(new ClaimsIdentity(claims, "Local"));
             var clientId = subject.GetClientId();
             if (string.IsNullOrEmpty(clientId))
             {
