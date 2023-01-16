@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <!-- 
+        用于检查是否登入
+    -->
+    <script>
+        //第三方页面跳转过来callback.html?redirect_uri=http://www.baidu.com
+        //判断本地是否存在token
+        //如果没有就跳转到login页面：从这里跳到登入页面在url上指定一个标记假设/login.html?redirect_uri=http://www.baidu.com&app_uri=callback.html
+        //如果有（登入成功会跳过来），就调用/connect/authorize,获取code
+        //跳转到第三方页面
+    </script>
+    <script>
+        function GetQueryString(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]); return null;
+        }
+        //假设第三方跳过了来这样的：callback.html?redirect_uri=http://www.baidu.com
+        var redirect_uri = GetQueryString("redirect_uri");
+        var access_token = window.localStorage.getItem('access_token')
+        if (access_token) {
+            //如果有token
+            $.ajax({
+                url: '/connect/token',
+                data: {
+                    redirect_uri: redirect_uri,
+                    client_id:"client1"
+                },
+                headers: {
+                    authorization: "Bearer "+access_token//注意Bearer后面的空格
+                },
+                success: function (res) {
+                    var code = res.data.code;
+                    window.location.href = redirect_uri + "?code=" + code;
+                }
+            });
+        } else {
+            //如果没token就去登入页登入
+            
+            window.location.href = '/login.html?redirect_uri=' + redirect_uri + '&callback=true';
+        }
+       
+    </script>
+</body>
+</html>

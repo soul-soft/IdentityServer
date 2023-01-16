@@ -16,6 +16,7 @@ builder.Services.AddAuthorization()
     {
         configure.AddPolicy("default", p => p.RequireAuthenticatedUser());
     });
+//builder.Services.AddStackExchangeRedisCache();
 builder.Services.AddIdentityServer(o =>
     {
         //o.Endpoints.EndpointPathPrefix = "/api/connect";
@@ -39,7 +40,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseStaticFiles();
+app.UseDefaultFiles();
 app.UseHttpsRedirection();
 
 app.UseIdentityServer();
