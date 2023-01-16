@@ -75,6 +75,10 @@ namespace IdentityServer.Endpoints
             {
                 return BadRequest(OpenIdConnectValidationErrors.InvalidRequest, "RedirectUri type is missing");
             }
+            if (!client.AllowedRedirectUris.Any(a => a == redirectUri))
+            {
+                return BadRequest(OpenIdConnectValidationErrors.InvalidGrant, "Unauthorized redirectUri");
+            }
             #endregion
 
             #region State

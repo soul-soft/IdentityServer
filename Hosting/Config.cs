@@ -23,6 +23,10 @@ namespace Hosting.Configuration
                 {
                     "api",
                 },
+                AllowedRedirectUris = new string[]
+                { 
+                    "http://www.baidu.com/callbck"
+                },
                 RequireClientSecret=false
             },
             new Client()
