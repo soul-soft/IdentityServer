@@ -8,6 +8,7 @@
         public bool EnableUserInfoEndpoint { get; set; } = true;
         public bool EnableIntrospectionEndpoint { get; set; } = true;
         public string EndpointPathPrefix { get; set; } = "/connect";
+        private readonly List<string> _enableEndpoints = new List<string>();
 
         public bool IsEndpointEnabled(EndpointDescriptor endpoint)
         {
@@ -30,6 +31,10 @@
             else if (endpoint.Name == Constants.EndpointNames.Introspection)
             {
                 return EnableIntrospectionEndpoint;
+            }
+            else if (_enableEndpoints.Any(a => a == endpoint.Name))
+            {
+                return true;
             }
             return false;
         }
