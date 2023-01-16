@@ -33,7 +33,8 @@
                     localStorage.setItem('access_token', res.data.access_token);
                     if (GetQueryString('callback') == 'true') {
                         var redirect_uri = GetQueryString('?redirect_uri');
-                        window.location.href = "/callback.html?redirect_uri=" + "redirect_uri";
+                        //redirect_uri参数带回去
+                        window.location.href = "/callback.html?redirect_uri=" + redirect_uri;
                     }
                 }
             });
