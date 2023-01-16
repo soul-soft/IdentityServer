@@ -101,10 +101,11 @@ namespace IdentityServer.Endpoints
                 var validator = context.RequestServices.GetRequiredService<IClientCredentialsRequestValidator>();
                 result = await ValidateClientCredentialsRequestAsync(validator, request);
             }
+            //授权码凭据授权
             else if (GrantTypes.AuthorizationCode.Equals(request.GrantType))
             {
-                var validator = context.RequestServices.GetRequiredService<IClientCredentialsRequestValidator>();
-                result = await ValidateClientCredentialsRequestAsync(validator, request);
+                var validator = context.RequestServices.GetRequiredService<IAuthorizeCodeRequestValidator>();
+                result = await ValidateAuthorizeCodeRequestAsync(validator, request);
             }
             //验证资源所有者密码授权
             else if (GrantTypes.Password.Equals(request.GrantType))

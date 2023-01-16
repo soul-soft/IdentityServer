@@ -21,11 +21,12 @@ namespace IdentityServer.Models
         }
         public DateTime CreationTime { get; }
 
-        public AuthorizeCode(string id, int lifetime,IEnumerable<Claim> claims)
+        public AuthorizeCode(string id, int lifetime, IEnumerable<Claim> claims, DateTime creationTime)
         {
             Id = id;
             Lifetime = lifetime;
             Claims = claims;
+            CreationTime = creationTime;
         }
     }
 }
