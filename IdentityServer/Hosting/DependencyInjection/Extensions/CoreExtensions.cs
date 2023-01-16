@@ -15,8 +15,8 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             builder.Services.AddTransient<IEndpointRouter, EndpointRouter>();
             builder.AddEndpoint<TokenEndpoint>(Constants.EndpointNames.Token, Constants.EndpointRutePaths.Token);
-            builder.AddEndpoint<TokenEndpoint>(Constants.EndpointNames.Authorize, Constants.EndpointRutePaths.Authorize);
             builder.AddEndpoint<UserInfoEndpoint>(Constants.EndpointNames.UserInfo, Constants.EndpointRutePaths.UserInfo);
+            builder.AddEndpoint<AuthorizeEndpoint>(Constants.EndpointNames.Authorize, Constants.EndpointRutePaths.Authorize);
             builder.AddEndpoint<DiscoveryEndpoint>(Constants.EndpointNames.Discovery, Constants.EndpointRutePaths.Discovery);
             builder.AddEndpoint<IntrospectionEndpoint>(Constants.EndpointNames.Introspection, Constants.EndpointRutePaths.Introspection);
             builder.AddEndpoint<DiscoveryKeyEndpoint>(Constants.EndpointNames.DiscoveryJwks, Constants.EndpointRutePaths.DiscoveryJwks);
@@ -51,11 +51,12 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IIdentityServerBuilder AddPluggableServices(this IIdentityServerBuilder builder)
         {
             builder.Services.TryAddTransient<IServerUrl, ServerUrl>();
-            builder.Services.TryAddTransient<IUniqueIdGenerator, UniqueIdGenerator>();
+            builder.Services.TryAddTransient<IIdGenerator, IdGenerator>();
             builder.Services.TryAddTransient<IProfileService, ProfileService>();
             builder.Services.TryAddTransient<IClaimService, ClaimService>();
             builder.Services.TryAddTransient<ICache, Cache>();
             builder.Services.TryAddTransient<ITokenService, TokenService>();
+            builder.Services.TryAddTransient<IAuthorizeCodeService, AuthorizeCodeService>();
             builder.Services.TryAddTransient<ISecurityTokenService, SecurityTokenService>();
             return builder;
         }
@@ -90,6 +91,7 @@ namespace Microsoft.Extensions.DependencyInjection
         #region PluggableResponseGenerators
         public static IIdentityServerBuilder AddPluggableResponseGenerators(this IIdentityServerBuilder builder)
         {
+            builder.Services.TryAddTransient<IAuthorizeResponseGenerator, AuthorizeResponseGenerator>();
             builder.Services.TryAddTransient<IUserInfoResponseGenerator, UserInfoResponseGenerator>();
             builder.Services.TryAddTransient<ITokenResponseGenerator, TokenResponseGenerator>();
             builder.Services.TryAddTransient<IDiscoveryResponseGenerator, DiscoveryResponseGenerator>();

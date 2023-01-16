@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Services
 {
-    internal class UniqueIdGenerator : IUniqueIdGenerator
+    internal class IdGenerator : IIdGenerator
     {
         public Task<string> GenerateAsync(int length = 32)
         {

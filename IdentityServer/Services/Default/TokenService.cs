@@ -6,15 +6,15 @@ namespace IdentityServer.Services
     internal class TokenService : ITokenService
     {
         private readonly ISystemClock _clock;
-        private readonly ITokenStore _referenceTokenStore;
-        private readonly IUniqueIdGenerator _handleGenerator;
+        private readonly IReferenceTokenStore _referenceTokenStore;
+        private readonly IIdGenerator _handleGenerator;
         private readonly IRefreshTokenStore _refreshTokenStore;
         private readonly ISecurityTokenService _securityTokenService;
 
         public TokenService(
             ISystemClock clock,
-            IUniqueIdGenerator handleGenerator,
-            ITokenStore referenceTokenService,
+            IIdGenerator handleGenerator,
+            IReferenceTokenStore referenceTokenService,
             IRefreshTokenStore refreshTokenStore,
             ISecurityTokenService securityTokenService)
         {
@@ -27,7 +27,7 @@ namespace IdentityServer.Services
 
       
 
-        public async Task<string> CreateSecurityTokenAsync(Token token)
+        public async Task<string> CreateSecurityTokenAsync(ReferenceToken token)
         {
             string securityToken;
             if (token.Type == TokenTypes.AccessToken)
@@ -52,10 +52,10 @@ namespace IdentityServer.Services
             }
             return securityToken;
         }
-        public async Task<Token> CreateAccessTokenAsync(Client client, ClaimsPrincipal subject)
+        public async Task<ReferenceToken> CreateAccessTokenAsync(Client client, ClaimsPrincipal subject)
         {
             var id = await _handleGenerator.GenerateAsync();
-            var token = new Token(
+            var token = new ReferenceToken(
                 id,
                 TokenTypes.AccessToken,
                 client.AccessTokenType,
@@ -64,7 +64,7 @@ namespace IdentityServer.Services
             return token;
         }
 
-        public async Task<string> CreateRefreshTokenAsync(Token token, int refreshTokenLifetime)
+        public async Task<string> CreateRefreshTokenAsync(ReferenceToken token, int refreshTokenLifetime)
         {
             var id = await _handleGenerator.GenerateAsync();
             var creationTime = _clock.UtcNow.UtcDateTime;

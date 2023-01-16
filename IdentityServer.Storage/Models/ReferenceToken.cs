@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace IdentityServer.Models
 {
-    public class Token
+    public class ReferenceToken
     {
         public string Id { get; set; }
         public string? Type { get; set; }
@@ -11,7 +11,7 @@ namespace IdentityServer.Models
         public IEnumerable<Claim> Claims { get; set; } = new List<Claim>();
         public IEnumerable<string> AllowedSigningAlgorithms { get; } = new HashSet<string>();
       
-        public Token(string id, string? type, AccessTokenType accessTokenType, IEnumerable<Claim> claims, IEnumerable<string> allowedSigningAlgorithms)
+        public ReferenceToken(string id, string? type, AccessTokenType accessTokenType, IEnumerable<Claim> claims, IEnumerable<string> allowedSigningAlgorithms)
         {
             Id = id;
             Type = type;

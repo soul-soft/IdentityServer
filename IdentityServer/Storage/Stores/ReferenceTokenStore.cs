@@ -1,11 +1,11 @@
 ﻿namespace IdentityServer.Storage
 {
-    internal class TokenStore : ITokenStore
+    internal class ReferenceTokenStore : IReferenceTokenStore
     {
         private readonly ICache _cache;
         private readonly IdentityServerOptions _options;
 
-        public TokenStore(
+        public ReferenceTokenStore(
             ICache storage,
             IdentityServerOptions options)
         {
@@ -13,13 +13,13 @@
             _options = options;
         }
 
-        public async Task<Token?> FindTokenAsync(string id)
+        public async Task<ReferenceToken?> FindTokenAsync(string id)
         {
             var key = GenerateStoreKey(id);
-            return await _cache.GetAsync<Token>(key);
+            return await _cache.GetAsync<ReferenceToken>(key);
         }
 
-        public async Task StoreTokenAsync(Token token)
+        public async Task StoreTokenAsync(ReferenceToken token)
         {
             var key = GenerateStoreKey(token.Id);
             var span = token.Expiration - token.IssuedAt;
@@ -28,7 +28,7 @@
 
         private string GenerateStoreKey(string id)
         {
-            return $"{_options.DistributedStorageKeyPrefix}:ReferenceToken:{id}";
+            return $"{_options.DistributedStorageKeyPrefix}:Token:{id}";
         }
     }
 }

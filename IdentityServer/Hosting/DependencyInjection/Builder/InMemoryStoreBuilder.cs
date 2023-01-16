@@ -93,27 +93,21 @@ namespace Microsoft.Extensions.DependencyInjection
         #region build
         internal void Build(IIdentityServerBuilder services)
         {
-            if (_clients.Any())
+            services.AddClientStore(sp =>
             {
-                services.AddClientStore(sp =>
-                {
-                    return new ClientStore(_clients);
-                });
-            }
-            if (_resources.Any())
+                return new ClientStore(_clients);
+            });
+            services.AddResourceStore(sp =>
             {
-                services.AddResourceStore(sp =>
-                {
-                    return new ResourceStore(new Resources(_resources));
-                });
-            }
-            if (_signingCredentials.Any())
+                return new ResourceStore(new Resources(_resources));
+            });
+            services.AddSigningCredentialStore(sp =>
             {
-                services.AddSigningCredentialStore(sp =>
-                {
-                    return new SigningCredentialsStore(_signingCredentials);
-                });
-            }
+                return new SigningCredentialsStore(_signingCredentials);
+            });
+            services.AddRefreshTokenStore<RefreshTokenStore>();
+            services.AddAuthorizeCodeStore<AuthorizeCodeStore>();
+            services.AddReferenceTokenStore<ReferenceTokenStore>();
         }
         #endregion
     }

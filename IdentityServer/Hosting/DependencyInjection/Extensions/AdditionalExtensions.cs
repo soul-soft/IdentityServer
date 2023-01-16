@@ -68,17 +68,32 @@ namespace Microsoft.Extensions.DependencyInjection
         }
         #endregion
 
-        #region ReferenceTokenStore
-        public static IIdentityServerBuilder AddTokenStore<T>(this IIdentityServerBuilder builder)
-          where T : class, ITokenStore
+        #region IReferenceTokenStore
+        public static IIdentityServerBuilder AddReferenceTokenStore<T>(this IIdentityServerBuilder builder)
+          where T : class, IReferenceTokenStore
         {
-            builder.Services.TryAddTransient<ITokenStore, T>();
+            builder.Services.TryAddTransient<IReferenceTokenStore, T>();
             return builder;
         }
         public static IIdentityServerBuilder AddReferenceTokenStore<T>(this IIdentityServerBuilder builder, Func<IServiceProvider, T> implementationFactory)
-            where T : class, ITokenStore
+            where T : class, IReferenceTokenStore
         {
-            builder.Services.TryAddTransient<ITokenStore>(implementationFactory);
+            builder.Services.TryAddTransient<IReferenceTokenStore>(implementationFactory);
+            return builder;
+        }
+        #endregion
+
+        #region IAuthorizeCodeStore
+        public static IIdentityServerBuilder AddAuthorizeCodeStore<T>(this IIdentityServerBuilder builder)
+          where T : class, IAuthorizeCodeStore
+        {
+            builder.Services.TryAddTransient<IAuthorizeCodeStore, T>();
+            return builder;
+        }
+        public static IIdentityServerBuilder AddAuthorizeCodeStore<T>(this IIdentityServerBuilder builder, Func<IServiceProvider, T> implementationFactory)
+            where T : class, IAuthorizeCodeStore
+        {
+            builder.Services.TryAddTransient<IAuthorizeCodeStore>(implementationFactory);
             return builder;
         }
         #endregion
@@ -90,8 +105,6 @@ namespace Microsoft.Extensions.DependencyInjection
             setup(inMemoryStoreBuilder);
             inMemoryStoreBuilder.Build(builder);
             builder.Services.AddDistributedMemoryCache();
-            builder.AddTokenStore<TokenStore>();
-            builder.AddRefreshTokenStore<RefreshTokenStore>();
             return builder;
         }
         #endregion

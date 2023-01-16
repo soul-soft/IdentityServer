@@ -1,18 +1,20 @@
-﻿namespace IdentityServer.Models
+﻿using System.Text.Json.Serialization;
+
+namespace IdentityServer.Models
 {
     public class RefreshToken
     {
         public string Id { get; }
 
-        public Token Token { get; }
+        public ReferenceToken Token { get; }
 
         public int Lifetime { get; }
-
+        [JsonIgnore]
         public DateTime Expiration => CreationTime.AddSeconds(Lifetime);
        
         public DateTime CreationTime { get; }
 
-        public RefreshToken(string id, Token token, int lifetime, DateTime creationTime)
+        public RefreshToken(string id, ReferenceToken token, int lifetime, DateTime creationTime)
         {
             Id = id;
             Token = token;

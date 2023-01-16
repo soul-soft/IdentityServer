@@ -104,5 +104,6 @@
     {
         public const string TokenEndpoint = "TokenEndpoint";
         public const string UserInfoEndpoint = "UserInfoEndpoint";
+        public const string AuthorizeEndpoint = "AuthorizeEndpoint";
     }
 }

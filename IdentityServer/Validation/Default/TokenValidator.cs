@@ -7,7 +7,7 @@ namespace IdentityServer.Validation
 {
     internal class TokenValidator : ITokenValidator
     {
-        private readonly ITokenStore _tokens;
+        private readonly IReferenceTokenStore _tokens;
         private readonly IClientStore _clients;
         private readonly IServerUrl _serverUrl;
         private readonly ISystemClock _systemClock;
@@ -16,7 +16,7 @@ namespace IdentityServer.Validation
         private readonly ISigningCredentialStore _credentials;
 
         public TokenValidator(
-            ITokenStore tokens,
+            IReferenceTokenStore tokens,
             IClientStore clients,
             IServerUrl serverUrl,
             ISystemClock systemClock,

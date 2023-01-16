@@ -16,7 +16,7 @@ namespace IdentityServer.Services
             _credentials = credentials;
         }
 
-        public async Task<string> CreateTokenAsync(Token token)
+        public async Task<string> CreateTokenAsync(ReferenceToken token)
         {
             var credential = await _credentials
                     .GetSigningCredentialsByAlgorithmsAsync(token.AllowedSigningAlgorithms);
@@ -26,7 +26,7 @@ namespace IdentityServer.Services
             return handler.WriteToken(new JwtSecurityToken(header, payload));
         }
 
-        private JwtHeader CreateJwtHeader(Token token, SigningCredentials credentials)
+        private JwtHeader CreateJwtHeader(ReferenceToken token, SigningCredentials credentials)
         {
             var header = new JwtHeader(credentials);
             if (credentials.Key is X509SecurityKey x509Key)
@@ -44,7 +44,7 @@ namespace IdentityServer.Services
             return header;
         }
 
-        private static JwtPayload CreateJwtPayload(Token token)
+        private static JwtPayload CreateJwtPayload(ReferenceToken token)
         {
             return new JwtPayload(token.Claims);
         }

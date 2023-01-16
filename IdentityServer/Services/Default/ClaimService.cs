@@ -8,13 +8,13 @@ namespace IdentityServer.Services
         private readonly IServerUrl _serverUrl;
         private readonly ISystemClock _systemClock;
         private readonly IdentityServerOptions _options;
-        private readonly IUniqueIdGenerator _uniqueIdGenerator;
+        private readonly IIdGenerator _uniqueIdGenerator;
 
         public ClaimService(
             IServerUrl serverUrl,
             ISystemClock systemClock,
             IdentityServerOptions options,
-            IUniqueIdGenerator handleGenerator)
+            IIdGenerator handleGenerator)
         {
             _options = options;
             _serverUrl = serverUrl;

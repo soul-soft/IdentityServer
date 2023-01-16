@@ -95,6 +95,11 @@ namespace IdentityServer.Endpoints
                 var validator = context.RequestServices.GetRequiredService<IRefreshTokenRequestValidator>();
                 result = await ValidateRefreshTokenRequestAsync(validator, request);
             }
+            if (GrantTypes.AuthorizationCode.Equals(request.GrantType))
+            {
+                var validator = context.RequestServices.GetRequiredService<IAuthorizeCodeRequestValidator>();
+                result = await ValidateAuthorizeCodeRequestAsync(validator, request);
+            }
             //验证客户端凭据授权
             else if (GrantTypes.ClientCredentials.Equals(request.GrantType))
             {
@@ -136,6 +141,19 @@ namespace IdentityServer.Endpoints
         private static async Task<GrantValidationResult> ValidateClientCredentialsRequestAsync(IClientCredentialsRequestValidator validator, GrantValidationRequest request)
         {
             var grantContext = new ClientCredentialsValidationRequest(request);
+            return await validator.ValidateAsync(grantContext);
+        }
+        #endregion
+
+        #region AuthorizeCodeRequest
+        private static async Task<GrantValidationResult> ValidateAuthorizeCodeRequestAsync(IAuthorizeCodeRequestValidator validator, GrantValidationRequest request)
+        {
+            var code = request.Body[OpenIdConnectParameterNames.Code];
+            if (string.IsNullOrEmpty(code))
+            {
+                throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, "Code is missing");
+            }
+            var grantContext = new AuthorizeCodeValidationRequest(code, request);
             return await validator.ValidateAsync(grantContext);
         }
         #endregion
