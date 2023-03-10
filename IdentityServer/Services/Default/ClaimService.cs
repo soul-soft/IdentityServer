@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using IdentityServer.Models;
+using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 
 namespace IdentityServer.Services
@@ -8,77 +9,103 @@ namespace IdentityServer.Services
         private readonly IServerUrl _serverUrl;
         private readonly ISystemClock _systemClock;
         private readonly IdentityServerOptions _options;
-        private readonly IIdGenerator _uniqueIdGenerator;
+        private readonly IIdGenerator _idGenerator;
+        private readonly IProfileService _profileService;
 
         public ClaimService(
             IServerUrl serverUrl,
+            IIdGenerator idGenerator,
             ISystemClock systemClock,
             IdentityServerOptions options,
-            IIdGenerator handleGenerator)
+            IProfileService profileService)
         {
             _options = options;
+            _idGenerator = idGenerator;
             _serverUrl = serverUrl;
             _systemClock = systemClock;
-            _uniqueIdGenerator = handleGenerator;
+            _profileService = profileService;
         }
 
-        public async Task<ClaimsPrincipal> SignClaimsAsync(SingInAuthenticationContext context)
+        public async Task<ClaimsPrincipal> GetAccessTokenClaimsAsync(string authenticationMethod, ProfileClaimsRequest request)
         {
             #region Jwt Claims
             //request jwt
-            var jwtId = await _uniqueIdGenerator.GenerateAsync(16);
+            var jwtId = await _idGenerator.GenerateAsync(16);
             var issuer = _serverUrl.GetIdentityServerIssuerUri();
             var issuedAt = _systemClock.UtcNow.ToUnixTimeSeconds();
-            var expiration = issuedAt + context.Client.AccessTokenLifetime;
+            var expiration = issuedAt + request.Client.AccessTokenLifetime;
             var claims = new List<Claim>
             {
                 new Claim(JwtClaimTypes.JwtId, jwtId),
                 new Claim(JwtClaimTypes.Issuer, issuer),
-                new Claim(JwtClaimTypes.ClientId, context.Client.ClientId),
+                new Claim(JwtClaimTypes.ClientId, request.Client.ClientId),
                 new Claim(JwtClaimTypes.IssuedAt, issuedAt.ToString(), ClaimValueTypes.Integer64),
                 new Claim(JwtClaimTypes.NotBefore, issuedAt.ToString(), ClaimValueTypes.Integer64),
                 new Claim(JwtClaimTypes.Expiration, expiration.ToString(), ClaimValueTypes.Integer64)
             };
+
             //audience
-            foreach (var item in context.Resources.ApiResources)
+            foreach (var item in request.Resources.ApiResources)
             {
                 claims.Add(new Claim(JwtClaimTypes.Audience, item.Name));
             }
             //scope
             if (_options.EmitScopesAsCommaDelimitedStringInJwt)
             {
-                var scope = context.Resources.Scopes.Aggregate((x, y) => $"{x},{y}");
+                var scope = request.Resources.Scopes.Aggregate((x, y) => $"{x},{y}");
                 claims.Add(new Claim(JwtClaimTypes.Scope, scope));
             }
             else
             {
-                var scopes = context.Resources.Scopes
+                var scopes = request.Resources.Scopes
                     .Select(scope => new Claim(JwtClaimTypes.Scope, scope));
                 claims.AddRange(scopes);
             }
 
-            if (context.Subject.Claims.Any(a => a.Type == JwtClaimTypes.Subject))
+            if (request.Subject.Claims.Any(a => a.Type == JwtClaimTypes.Subject))
             {
-                claims.AddRange(GetStandardSubjectClaims(context.Subject));
+                claims.AddRange(GetStandardSubjectClaims(authenticationMethod, request.Subject));
             }
             #endregion
 
             #region Subject Claims
-            var allowedRequestedClaims = context.Subject.Claims
-                .Where(a => context.Resources.ClaimTypes.Contains(a.Type))
-                .Where(a => !Constants.ClaimTypeFilters.ClaimsServiceFilterClaimTypes.Contains(a.Type));
-            claims.AddRange(allowedRequestedClaims);
+            claims.AddRange(FilterRequestClaims(request.Subject.Claims, request.Resources.ClaimTypes));
             #endregion
 
-            return new ClaimsPrincipal(new ClaimsIdentity(claims, context.AuthenticationType));
+            #region Profile Cliams
+            var profileDataClaims = await _profileService.GetProfileClaimsAsync(new ProfileClaimsRequest(request.Subject, request.Client, request.Resources));
+            claims.AddRange(FilterRequestClaims(profileDataClaims, request.Resources.ClaimTypes));
+            #endregion
+
+            return new ClaimsPrincipal(new ClaimsIdentity(claims, authenticationMethod));
         }
-       
-        private static IEnumerable<Claim> GetStandardSubjectClaims(ClaimsPrincipal subject)
+
+        public async Task<ClaimsPrincipal> GetProfileClaimsAsync(ProfileClaimsRequest context)
+        {
+            var claims = new List<Claim>();
+
+            var profileDataClaims = await _profileService.GetProfileClaimsAsync(new ProfileClaimsRequest(context.Subject, context.Client, context.Resources));
+            claims.AddRange(FilterRequestClaims(profileDataClaims, context.Resources.ClaimTypes));
+
+            return new ClaimsPrincipal(new ClaimsIdentity(claims));
+        }
+
+        private IEnumerable<Claim> FilterRequestClaims(IEnumerable<Claim> claims, IEnumerable<string> claimTypes)
+        {
+            if (_options.EnableClaimTypeFilter)
+            {
+                return claims.Where(a => claimTypes.Contains(a.Type))
+                    .Where(a => !Constants.ClaimTypeFilters.ClaimsServiceFilterClaimTypes.Contains(a.Type));
+            }
+            return claims;
+        }
+
+        private static IEnumerable<Claim> GetStandardSubjectClaims(string authenticationMethod, ClaimsPrincipal subject)
         {
             yield return subject.Claims.Where(a => a.Type == JwtClaimTypes.Subject).First();
             yield return subject.Claims.Where(a => a.Type == JwtClaimTypes.IdentityProvider).First();
             yield return subject.Claims.Where(a => a.Type == JwtClaimTypes.AuthenticationTime).First();
-            yield return subject.Claims.Where(a => a.Type == JwtClaimTypes.AuthenticationMethod).First();
+            yield return new Claim(JwtClaimTypes.AuthenticationMethod, authenticationMethod);
         }
     }
 }

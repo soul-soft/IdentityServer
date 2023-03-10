@@ -6,12 +6,16 @@ namespace Hosting.Configuration
 {
     public class ProfileService : IProfileService
     {
-        public Task<IEnumerable<Claim>> GetProfileDataAsync(ProfileDataRequest context)
+        public Task<IEnumerable<Claim>> GetProfileClaimsAsync(ProfileClaimsRequest context)
         {
             var profiles = new List<Claim>();
             if (context.ClaimTypes.Contains(JwtClaimTypes.Subject))
             {
                 profiles.Add(new Claim(JwtClaimTypes.Subject, "10"));
+            }
+            if (context.ClaimTypes.Contains(JwtClaimTypes.Audience))
+            {
+                profiles.Add(new Claim(JwtClaimTypes.Audience, "aaa"));
             }
             if (context.ClaimTypes.Contains(JwtClaimTypes.Role))
             {

@@ -21,7 +21,7 @@
         /// <summary>
         /// 输入长度限制
         /// </summary>
-        public InputLengthRestrictions InputLengthRestrictions { get; set; } = new InputLengthRestrictions();        
+        public InputLengthRestrictions InputLengthRestrictions { get; set; } = new InputLengthRestrictions();
         /// <summary>
         /// 终结点选项
         /// </summary>
@@ -35,8 +35,12 @@
         /// </summary>
         public bool EmitScopesAsCommaDelimitedStringInJwt { get; set; } = true;
         /// <summary>
+        /// 是否启用claim签发过滤
+        /// </summary>
+        public bool EnableClaimTypeFilter { get; set; } = true;
+        /// <summary>
         /// 认证方式
         /// </summary>
-        public string AuthenticationMethod { get; set; } = EndpointAuthenticationMethods.PostBody;  
+        public string AuthenticationMethod { get; set; } = EndpointAuthenticationMethods.PostBody;
     }
 }

@@ -131,9 +131,9 @@ namespace IdentityServer.Endpoints
                     throw new ValidationException(OpenIdConnectValidationErrors.InvalidGrant, string.Format("User has been disabled:{0}", result.Subject.GetSubjectId()));
                 }
             }
-            //sing claims
-            var singInAuthenticationContext = new SingInAuthenticationContext(request.Client, result.Subject, request.Resources, request.GrantType);
-            var subject = await _claimService.SignClaimsAsync(singInAuthenticationContext);
+            //issue claims
+            var accessTokenClaimsRequest = new AccessTokenClaimsRequest(request.GrantType, result.Subject, request.Client, request.Resources);
+            var subject = await _claimService.GetAccessTokenClaimsAsync(accessTokenClaimsRequest);
             return subject;
         }
         #endregion
@@ -205,7 +205,8 @@ namespace IdentityServer.Endpoints
         private static async Task<GrantValidationResult> ValidateExtensionGrantRequestAsync(IExtensionGrantListValidator validator, GrantValidationRequest request)
         {
             var grantContext = new ExtensionGrantValidationRequest(request);
-            return await validator.ValidateAsync(grantContext);
+            var result = await validator.ValidateAsync(grantContext);
+            return result;
         }
         #endregion
     }

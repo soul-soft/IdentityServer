@@ -5,6 +5,7 @@ namespace IdentityServer.Services
     public interface IProfileService
     {
         Task<bool> IsActiveAsync(IsActiveRequest request);
-        Task<IEnumerable<Claim>> GetProfileDataAsync(ProfileDataRequest request);
+        Task<IEnumerable<Claim>> GetProfileClaimsAsync(ProfileClaimsRequest request);
+        Task<IEnumerable<Claim>> GetAccessTokenClaimsAsync(ProfileClaimsRequest request);
     }
 }
