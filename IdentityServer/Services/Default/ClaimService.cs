@@ -1,5 +1,4 @@
-﻿using IdentityServer.Models;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 
 namespace IdentityServer.Services
@@ -8,8 +7,8 @@ namespace IdentityServer.Services
     {
         private readonly IServerUrl _serverUrl;
         private readonly ISystemClock _systemClock;
-        private readonly IdentityServerOptions _options;
         private readonly IIdGenerator _idGenerator;
+        private readonly IdentityServerOptions _options;
         private readonly IProfileService _profileService;
 
         public ClaimService(
@@ -26,7 +25,7 @@ namespace IdentityServer.Services
             _profileService = profileService;
         }
 
-        public async Task<ClaimsPrincipal> GetAccessTokenClaimsAsync(string authenticationMethod, ProfileClaimsRequest request)
+        public async Task<ClaimsPrincipal> GetAccessTokenClaimsAsync(string grantType, ProfileClaimsRequest request)
         {
             #region Jwt Claims
             //request jwt
@@ -64,7 +63,7 @@ namespace IdentityServer.Services
 
             if (request.Subject.Claims.Any(a => a.Type == JwtClaimTypes.Subject))
             {
-                claims.AddRange(GetStandardSubjectClaims(authenticationMethod, request.Subject));
+                claims.AddRange(GetStandardSubjectClaims(request.Subject, request.Resources.ClaimTypes));
             }
             #endregion
 
@@ -77,7 +76,7 @@ namespace IdentityServer.Services
             claims.AddRange(FilterRequestClaims(profileDataClaims, request.Resources.ClaimTypes));
             #endregion
 
-            return new ClaimsPrincipal(new ClaimsIdentity(claims, authenticationMethod));
+            return new ClaimsPrincipal(new ClaimsIdentity(claims, grantType));
         }
 
         public async Task<ClaimsPrincipal> GetProfileClaimsAsync(ProfileClaimsRequest context)
@@ -100,12 +99,16 @@ namespace IdentityServer.Services
             return claims;
         }
 
-        private static IEnumerable<Claim> GetStandardSubjectClaims(string authenticationMethod, ClaimsPrincipal subject)
+        private IEnumerable<Claim> GetStandardSubjectClaims(ClaimsPrincipal subject, IEnumerable<string> claimTypes)
         {
+            if (_options.EnableClaimTypeFilter && !claimTypes.Contains(JwtClaimTypes.Subject))
+            {
+                yield break;
+            }
             yield return subject.Claims.Where(a => a.Type == JwtClaimTypes.Subject).First();
             yield return subject.Claims.Where(a => a.Type == JwtClaimTypes.IdentityProvider).First();
             yield return subject.Claims.Where(a => a.Type == JwtClaimTypes.AuthenticationTime).First();
-            yield return new Claim(JwtClaimTypes.AuthenticationMethod, authenticationMethod);
+            yield return subject.Claims.Where(a => a.Type == JwtClaimTypes.AuthenticationMethod).First();
         }
     }
 }

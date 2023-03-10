@@ -132,8 +132,8 @@ namespace IdentityServer.Endpoints
                 }
             }
             //issue claims
-            var accessTokenClaimsRequest = new AccessTokenClaimsRequest(request.GrantType, result.Subject, request.Client, request.Resources);
-            var subject = await _claimService.GetAccessTokenClaimsAsync(accessTokenClaimsRequest);
+            var accessTokenClaimsRequest = new ProfileClaimsRequest(result.Subject, request.Client, request.Resources);
+            var subject = await _claimService.GetAccessTokenClaimsAsync(request.GrantType, accessTokenClaimsRequest);
             return subject;
         }
         #endregion
@@ -154,7 +154,7 @@ namespace IdentityServer.Endpoints
             {
                 throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, "Code is missing");
             }
-            var grantContext = new AuthorizeCodeValidationRequest(code,request);
+            var grantContext = new AuthorizeCodeValidationRequest(code, request);
             return await validator.ValidateAsync(grantContext);
         }
         #endregion

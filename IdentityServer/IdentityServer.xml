@@ -112,6 +112,11 @@
             是否使用逗号连接jwt中的scopes
             </summary>
         </member>
+        <member name="P:IdentityServer.Configuration.IdentityServerOptions.EnableClaimTypeFilter">
+            <summary>
+            是否启用claim签发过滤
+            </summary>
+        </member>
         <member name="P:IdentityServer.Configuration.IdentityServerOptions.AuthenticationMethod">
             <summary>
             认证方式

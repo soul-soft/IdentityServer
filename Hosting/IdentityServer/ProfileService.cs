@@ -6,6 +6,11 @@ namespace Hosting.Configuration
 {
     public class ProfileService : IProfileService
     {
+        public Task<IEnumerable<Claim>> GetAccessTokenClaimsAsync(ProfileClaimsRequest request)
+        {
+            return Task.FromResult<IEnumerable<Claim>>(new Claim[0]);
+        }
+
         public Task<IEnumerable<Claim>> GetProfileClaimsAsync(ProfileClaimsRequest context)
         {
             var profiles = new List<Claim>();
