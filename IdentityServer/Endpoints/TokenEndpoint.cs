@@ -149,7 +149,7 @@ namespace IdentityServer.Endpoints
         #region AuthorizeCodeRequest
         private static async Task<GrantValidationResult> ValidateAuthorizeCodeRequestAsync(IAuthorizeCodeRequestValidator validator, GrantValidationRequest request)
         {
-            var code = request.Body[OpenIdConnectParameterNames.Code];
+            var code = request.Form[OpenIdConnectParameterNames.Code];
             if (string.IsNullOrEmpty(code))
             {
                 throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, "Code is missing");
@@ -162,8 +162,8 @@ namespace IdentityServer.Endpoints
         #region ResourceOwnerCredentialRequest
         private async Task<GrantValidationResult> ValidateResourceOwnerCredentialRequestAsync(IResourceOwnerCredentialRequestValidator validator, GrantValidationRequest request)
         {
-            var username = request.Body[OpenIdConnectParameterNames.Username];
-            var password = request.Body[OpenIdConnectParameterNames.Password];
+            var username = request.Form[OpenIdConnectParameterNames.Username];
+            var password = request.Form[OpenIdConnectParameterNames.Password];
             if (string.IsNullOrEmpty(username))
             {
                 throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, "Username is missing");
@@ -188,7 +188,7 @@ namespace IdentityServer.Endpoints
         #region RefreshTokenRequest
         private async Task<GrantValidationResult> ValidateRefreshTokenRequestAsync(IRefreshTokenRequestValidator validator, GrantValidationRequest request)
         {
-            var refreshToken = request.Body[OpenIdConnectParameterNames.RefreshToken];
+            var refreshToken = request.Form[OpenIdConnectParameterNames.RefreshToken];
             if (refreshToken == null)
             {
                 throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, "RefreshToken is missing");

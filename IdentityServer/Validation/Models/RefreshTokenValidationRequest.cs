@@ -7,7 +7,7 @@ namespace IdentityServer.Validation
         public string RefreshToken { get; }
 
         public RefreshTokenValidationRequest(string refreshToken, GrantValidationRequest request) 
-            : base(request.Client, request.GrantType, request.Resources, request.Body, request.Options)
+            : base(request.Client, request.GrantType, request.Resources, request.Form, request.Options)
         {
             RefreshToken = refreshToken;
         }

@@ -9,7 +9,7 @@ namespace IdentityServer.Validation
         public string Password { get; }
 
         public ResourceOwnerCredentialValidationRequest(string username, string password, GrantValidationRequest request) 
-            : base(request.Client, request.GrantType, request.Resources, request.Body, request.Options)
+            : base(request.Client, request.GrantType, request.Resources, request.Form, request.Options)
         {
             Username = username;
             Password = password;

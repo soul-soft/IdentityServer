@@ -7,7 +7,7 @@ namespace IdentityServer.Validation
         public Client Client { get; }
         public string GrantType { get; set; }
         public Resources Resources { get; }
-        public NameValueCollection Body { get; }
+        public NameValueCollection Form { get; }
         public IdentityServerOptions Options { get; }
 
         internal GrantValidationRequest(
@@ -21,7 +21,7 @@ namespace IdentityServer.Validation
             Options = options;
             GrantType = grantType;
             Resources = resources;
-            Body = body;
+            Form = body;
         }
     }
 }
