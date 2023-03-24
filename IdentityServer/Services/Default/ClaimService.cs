@@ -72,7 +72,7 @@ namespace IdentityServer.Services
             #endregion
 
             #region Profile Cliams
-            var profileDataClaims = await _profileService.GetProfileClaimsAsync(new ProfileClaimsRequest(request.Subject, request.Client, request.Resources));
+            var profileDataClaims = await _profileService.GetAccessTokenClaimsAsync(new ProfileClaimsRequest(request.Subject, request.Client, request.Resources));
             claims.AddRange(FilterRequestClaims(profileDataClaims, request.Resources.ClaimTypes));
             #endregion
 
