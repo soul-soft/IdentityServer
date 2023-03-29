@@ -16,7 +16,10 @@ builder.Services.AddAuthorization()
     {
         configure.AddPolicy("default", p => p.RequireAuthenticatedUser());
     });
-//builder.Services.AddStackExchangeRedisCache();
+builder.Services.AddStackExchangeRedisCache(c => 
+{
+    c.Configuration = "127.0.0.1";
+});
 builder.Services.AddIdentityServer(o =>
     {
         //o.Endpoints.EndpointPathPrefix = "/api/connect";

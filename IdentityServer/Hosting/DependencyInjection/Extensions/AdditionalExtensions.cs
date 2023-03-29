@@ -37,18 +37,23 @@ namespace Microsoft.Extensions.DependencyInjection
         }
         #endregion
 
-        #region ISigningCredentialsStore
-        public static IIdentityServerBuilder AddSigningCredentialsStore<T>(this IIdentityServerBuilder builder)
-            where T : class, ISigningCredentialsStore
+        #region CacheStore
+        public static IIdentityServerBuilder AddDistributedMemoryCache(this IIdentityServerBuilder builder)
         {
-            builder.Services.TryAddTransient<ISigningCredentialsStore, T>();
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.TryAddTransient<ICacheStore, CacheStore>();
             return builder;
         }
-
-        public static IIdentityServerBuilder AddSigningCredentialsStore<T>(this IIdentityServerBuilder builder, Func<IServiceProvider, T> implementationFactory)
-            where T : class, ISigningCredentialsStore
+        public static IIdentityServerBuilder AddCacheStore<T>(this IIdentityServerBuilder builder)
+            where T : class, ICacheStore
         {
-            builder.Services.TryAddTransient<ISigningCredentialsStore>(implementationFactory);
+            builder.Services.TryAddTransient<ICacheStore, T>();
+            return builder;
+        }
+        public static IIdentityServerBuilder AddCacheStore<T>(this IIdentityServerBuilder builder, Func<IServiceProvider, T> implementationFactory)
+            where T : class, ICacheStore
+        {
+            builder.Services.TryAddTransient<ICacheStore>(implementationFactory);
             return builder;
         }
         #endregion
@@ -79,6 +84,22 @@ namespace Microsoft.Extensions.DependencyInjection
             where T : class, IAuthorizeCodeStore
         {
             builder.Services.TryAddTransient<IAuthorizeCodeStore>(implementationFactory);
+            return builder;
+        }
+        #endregion
+        
+        #region ISigningCredentialsStore
+        public static IIdentityServerBuilder AddSigningCredentialsStore<T>(this IIdentityServerBuilder builder)
+            where T : class, ISigningCredentialsStore
+        {
+            builder.Services.TryAddTransient<ISigningCredentialsStore, T>();
+            return builder;
+        }
+
+        public static IIdentityServerBuilder AddSigningCredentialsStore<T>(this IIdentityServerBuilder builder, Func<IServiceProvider, T> implementationFactory)
+            where T : class, ISigningCredentialsStore
+        {
+            builder.Services.TryAddTransient<ISigningCredentialsStore>(implementationFactory);
             return builder;
         }
         #endregion

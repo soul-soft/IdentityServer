@@ -2,10 +2,10 @@
 {
     internal class TokenStore : ITokenStore
     {
-        private readonly ICache _cache;
+        private readonly ICacheStore _cache;
         private readonly IdentityServerOptions _options;
 
-        public TokenStore(ICache cache, IdentityServerOptions options)
+        public TokenStore(ICacheStore cache, IdentityServerOptions options)
         {
             _cache = cache;
             _options = options;

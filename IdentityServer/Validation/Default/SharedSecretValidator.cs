@@ -19,7 +19,7 @@ namespace IdentityServer.Validation
 
             if (string.IsNullOrEmpty(credential))
             {
-                throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, "Invalid client credentials");
+                throw new ValidationException(ValidationErrors.InvalidRequest, "Invalid client credentials");
             }
 
             var credentials = new string[]
@@ -33,7 +33,7 @@ namespace IdentityServer.Validation
 
             if (!availableSecets.Any())
             {
-                throw new ValidationException(OpenIdConnectValidationErrors.UnauthorizedClient, "Invalid client credentials");
+                throw new ValidationException(ValidationErrors.UnauthorizedClient, "Invalid client credentials");
             }
 
             if (availableSecets.Any(a => a.Expiration == null || a.Expiration >= _clock.UtcNow.UtcDateTime))
@@ -42,7 +42,7 @@ namespace IdentityServer.Validation
             }
             else
             {
-                throw new ValidationException(OpenIdConnectValidationErrors.UnauthorizedClient, "The client credentials has expired");
+                throw new ValidationException(ValidationErrors.UnauthorizedClient, "The client credentials has expired");
             }
         }
     }

@@ -35,10 +35,6 @@
         /// </summary>
         public bool EmitScopesAsCommaDelimitedStringInJwt { get; set; } = true;
         /// <summary>
-        /// 是否启用claim签发过滤
-        /// </summary>
-        public bool EnableClaimTypeFilter { get; set; } = true;
-        /// <summary>
         /// 认证方式
         /// </summary>
         public string AuthenticationMethod { get; set; } = EndpointAuthenticationMethods.PostBody;

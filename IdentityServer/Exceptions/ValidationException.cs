@@ -8,7 +8,7 @@
 
         public ValidationException(string errorDescription)
         {
-            Error = OpenIdConnectValidationErrors.InvalidRequest;
+            Error = ValidationErrors.InvalidRequest;
             ErrorDescription = errorDescription;
         }
 

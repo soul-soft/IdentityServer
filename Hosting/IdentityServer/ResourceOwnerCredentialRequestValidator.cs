@@ -11,7 +11,7 @@ namespace Hosting.Configuration
             {
                 return Task.FromResult(new ResourceOwnerCredentialValidationResult("10"));
             }
-            throw new ValidationException(OpenIdConnectValidationErrors.InvalidGrant, "用户名或密码错误");
+            throw new ValidationException(ValidationErrors.InvalidGrant, "用户名或密码错误");
         }
     }
 }

@@ -3,11 +3,11 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace IdentityServer.Storage
 {
-    internal class Cache : ICache
+    internal class CacheStore : ICacheStore
     {
         private readonly IDistributedCache _distributedCache;
 
-        public Cache(IDistributedCache distributedCache)
+        public CacheStore(IDistributedCache distributedCache)
         {
             _distributedCache = distributedCache;
         }

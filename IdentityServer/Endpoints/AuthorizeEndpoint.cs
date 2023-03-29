@@ -44,7 +44,7 @@ namespace IdentityServer.Endpoints
             }
             if (!context.Request.HasFormContentType)
             {
-                return BadRequest(OpenIdConnectValidationErrors.InvalidRequest, "Invalid contextType");
+                return BadRequest(ValidationErrors.InvalidRequest, "Invalid contextType");
             }
             #endregion
 
@@ -55,7 +55,7 @@ namespace IdentityServer.Endpoints
             #region GrantType
             if (!client.AllowedGrantTypes.Contains(GrantTypes.AuthorizationCode))
             {
-                return BadRequest(OpenIdConnectValidationErrors.UnauthorizedClient, $"The client does not allow {GrantTypes.AuthorizationCode}");
+                return BadRequest(ValidationErrors.UnauthorizedClient, $"The client does not allow {GrantTypes.AuthorizationCode}");
             }
             #endregion
 
@@ -65,7 +65,7 @@ namespace IdentityServer.Endpoints
             var scope = parameters[OpenIdConnectParameterNames.Scope] ?? string.Empty;
             if (scope.Length > _options.InputLengthRestrictions.Scope)
             {
-                return BadRequest(OpenIdConnectValidationErrors.InvalidScope, "Scope is too long");
+                return BadRequest(ValidationErrors.InvalidScope, "Scope is too long");
             }
             var scopes = scope.Split(",").Where(a => !string.IsNullOrWhiteSpace(a));
             var resources = await _resourceValidator.ValidateAsync(client, scopes);
@@ -76,11 +76,11 @@ namespace IdentityServer.Endpoints
             redirectUri = WebUtility.UrlDecode(redirectUri);
             if (string.IsNullOrEmpty(redirectUri))
             {
-                return BadRequest(OpenIdConnectValidationErrors.InvalidRequest, "RedirectUri type is missing");
+                return BadRequest(ValidationErrors.InvalidRequest, "RedirectUri type is missing");
             }
             if (!client.AllowedRedirectUris.Any(a => a == redirectUri))
             {
-                return BadRequest(OpenIdConnectValidationErrors.InvalidGrant, "Unauthorized redirectUri");
+                return BadRequest(ValidationErrors.InvalidGrant, "Unauthorized redirectUri");
             }
             #endregion
 
@@ -97,7 +97,7 @@ namespace IdentityServer.Endpoints
             var token = await _tokenParser.ParserAsync(context);
             if (string.IsNullOrEmpty(token))
             {
-                return BadRequest(OpenIdConnectValidationErrors.InvalidRequest, "Token is missing");
+                return BadRequest(ValidationErrors.InvalidRequest, "Token is missing");
             }
             var tokenValidationResult = await _tokenValidator.ValidateAccessTokenAsync(token);
             if (tokenValidationResult.IsError)
@@ -107,7 +107,7 @@ namespace IdentityServer.Endpoints
             var subject = new ClaimsPrincipal(new ClaimsIdentity(tokenValidationResult.Claims, "UserInfo"));
             if (!subject.Claims.Any(a => a.Type == JwtClaimTypes.Subject))
             {
-                return Unauthorized(OpenIdConnectValidationErrors.InsufficientScope, $"Token contains no sub claim");
+                return Unauthorized(ValidationErrors.InsufficientScope, $"Token contains no sub claim");
             }
             var isActive = await _profileService.IsActiveAsync(new IsActiveRequest(
                 ProfileIsActiveCallers.AuthorizeEndpoint,
@@ -115,7 +115,7 @@ namespace IdentityServer.Endpoints
                 subject));
             if (!isActive)
             {
-                return BadRequest(OpenIdConnectValidationErrors.InvalidRequest, $"User marked as not active: {subject.GetSubjectId()}");
+                return BadRequest(ValidationErrors.InvalidRequest, $"User marked as not active: {subject.GetSubjectId()}");
             }
             #endregion
 

@@ -53,8 +53,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<IServerUrl, ServerUrl>();
             builder.Services.TryAddTransient<IIdGenerator, IdGenerator>();
             builder.Services.TryAddTransient<IProfileService, ProfileService>();
-            builder.Services.TryAddTransient<IClaimService, ClaimService>();
-            builder.Services.TryAddTransient<ICache, Cache>();
+            builder.Services.TryAddTransient<IClaimService, ClaimService>();           
             builder.Services.TryAddTransient<ITokenService, TokenService>();
             builder.Services.TryAddTransient<IAuthorizeCodeService, AuthorizeCodeService>();
             builder.Services.TryAddTransient<IJwtTokenService, JwtTokenService>();

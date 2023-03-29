@@ -4,11 +4,11 @@ namespace IdentityServer.Storage
 {
     internal class AuthorizeCodeStore : IAuthorizeCodeStore
     {
-        private readonly ICache _cache;
+        private readonly ICacheStore _cache;
         private readonly IdentityServerOptions _options;
 
         public AuthorizeCodeStore(
-            ICache storage,
+            ICacheStore storage,
             IdentityServerOptions options)
         {
             _cache = storage;

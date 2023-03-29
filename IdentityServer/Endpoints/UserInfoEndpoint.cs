@@ -30,7 +30,7 @@ namespace IdentityServer.Endpoints
             var token = await _tokenParser.ParserAsync(context);
             if (string.IsNullOrEmpty(token))
             {
-                return BadRequest(OpenIdConnectValidationErrors.InvalidRequest, "Token is missing");
+                return BadRequest(ValidationErrors.InvalidRequest, "Token is missing");
             }
             var tokenValidationResult = await _tokenValidator.ValidateAccessTokenAsync(token);
             if (tokenValidationResult.IsError)
@@ -40,7 +40,7 @@ namespace IdentityServer.Endpoints
             var subject = new ClaimsPrincipal(new ClaimsIdentity(tokenValidationResult.Claims, "UserInfo"));
             if (!subject.Claims.Any(a => a.Type == JwtClaimTypes.Subject))
             {
-                return Unauthorized(OpenIdConnectValidationErrors.InsufficientScope, $"Token contains no sub claim");
+                return Unauthorized(ValidationErrors.InsufficientScope, $"Token contains no sub claim");
             }
             var isActive = await _profileService.IsActiveAsync(new IsActiveRequest(
                 ProfileIsActiveCallers.UserInfoEndpoint,
@@ -48,7 +48,7 @@ namespace IdentityServer.Endpoints
                 subject));
             if (!isActive)
             {
-                return BadRequest(OpenIdConnectValidationErrors.InvalidRequest, $"User marked as not active: {subject.GetSubjectId()}");
+                return BadRequest(ValidationErrors.InvalidRequest, $"User marked as not active: {subject.GetSubjectId()}");
             }
             var scopes = subject.FindAll(JwtClaimTypes.Scope).Select(s => s.Value);
             var client = tokenValidationResult.Client;

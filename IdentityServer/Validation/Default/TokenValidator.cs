@@ -34,7 +34,7 @@ namespace IdentityServer.Validation
         {
             if (token.Length > _options.InputLengthRestrictions.AccessToken)
             {
-                return TokenValidationResult.Fail(OpenIdConnectValidationErrors.InvalidToken, "Access token too long");
+                return TokenValidationResult.Fail(ValidationErrors.InvalidToken, "Access token too long");
             }
             if (token.Contains('.'))
             {
@@ -63,11 +63,11 @@ namespace IdentityServer.Validation
             {
                 if (result.Exception is SecurityTokenExpiredException)
                 {
-                    return TokenValidationResult.Fail(OpenIdConnectValidationErrors.ExpiredToken, "Token expired");
+                    return TokenValidationResult.Fail(ValidationErrors.ExpiredToken, "Token expired");
                 }
                 else
                 {
-                    return TokenValidationResult.Fail(OpenIdConnectValidationErrors.InvalidToken, result.Exception.Message);
+                    return TokenValidationResult.Fail(ValidationErrors.InvalidToken, result.Exception.Message);
                 }
             }
             return await ValidateClaimsAsync(result.ClaimsIdentity.Claims);
@@ -78,16 +78,16 @@ namespace IdentityServer.Validation
             var token = await _tokens.FindTokenAsync(reference);
             if (token == null)
             {
-                return TokenValidationResult.Fail(OpenIdConnectValidationErrors.InvalidToken, "Invalid reference token");
+                return TokenValidationResult.Fail(ValidationErrors.InvalidToken, "Invalid reference token");
             }
             var span = _systemClock.UtcNow.UtcDateTime - token.CreationTime;
             if (span.TotalSeconds > token.Lifetime)
             {
-                return TokenValidationResult.Fail(OpenIdConnectValidationErrors.ExpiredToken, "The access token has expired");
+                return TokenValidationResult.Fail(ValidationErrors.ExpiredToken, "The access token has expired");
             }
             if (token.GetIssuer() != _serverUrl.GetIdentityServerIssuerUri())
             {
-                return TokenValidationResult.Fail(OpenIdConnectValidationErrors.InvalidToken, "Invalid issuer");
+                return TokenValidationResult.Fail(ValidationErrors.InvalidToken, "Invalid issuer");
             }
             return await ValidateClaimsAsync(token.Claims);
         }
@@ -107,12 +107,12 @@ namespace IdentityServer.Validation
             var clientId = subject.GetClientId();
             if (string.IsNullOrEmpty(clientId))
             {
-                return TokenValidationResult.Fail(OpenIdConnectValidationErrors.InvalidToken, $"Token contains no client_id claim");
+                return TokenValidationResult.Fail(ValidationErrors.InvalidToken, $"Token contains no client_id claim");
             }
             var client = await _clients.FindByClientIdAsync(clientId);
             if (client == null)
             {
-                return TokenValidationResult.Fail(OpenIdConnectValidationErrors.InvalidClient, $"Client does not exist anymore");
+                return TokenValidationResult.Fail(ValidationErrors.InvalidClient, $"Client does not exist anymore");
             }           
             return TokenValidationResult.Success(client, subject.Claims);
         }

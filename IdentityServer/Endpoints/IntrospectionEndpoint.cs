@@ -31,7 +31,7 @@ namespace IdentityServer.Endpoints
             }
             if (!context.Request.HasFormContentType)
             {
-                return BadRequest(OpenIdConnectValidationErrors.InvalidRequest, "Invalid contextType");
+                return BadRequest(ValidationErrors.InvalidRequest, "Invalid contextType");
             }
             #endregion
 
@@ -45,7 +45,7 @@ namespace IdentityServer.Endpoints
             var token = form.Get("token");
             if (string.IsNullOrEmpty(token))
             {
-                return BadRequest(OpenIdConnectValidationErrors.InvalidRequest, "Token is missing");
+                return BadRequest(ValidationErrors.InvalidRequest, "Token is missing");
             }
             var tokenValidationResult = await _tokenValidator.ValidateAccessTokenAsync(token);
             #endregion
@@ -60,7 +60,7 @@ namespace IdentityServer.Endpoints
                     subject));
                 if (!isActive)
                 {
-                    throw new ValidationException(OpenIdConnectValidationErrors.InvalidGrant, string.Format("User has been disabled:{0}", subject.GetSubjectId()));
+                    throw new ValidationException(ValidationErrors.InvalidGrant, string.Format("User has been disabled:{0}", subject.GetSubjectId()));
                 }
             }
             #endregion

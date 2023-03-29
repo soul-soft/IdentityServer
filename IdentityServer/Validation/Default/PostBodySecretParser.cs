@@ -21,15 +21,15 @@ namespace IdentityServer.Validation
             var credentials = form["client_secret"].FirstOrDefault() ?? string.Empty;
             if (string.IsNullOrEmpty(clientId))
             {
-                throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest,"Client ID is missing.");
+                throw new ValidationException(ValidationErrors.InvalidRequest,"Client ID is missing.");
             }
             if (clientId.Length > _options.InputLengthRestrictions.ClientId)
             {
-                throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, "Client ID is too long.");
+                throw new ValidationException(ValidationErrors.InvalidRequest, "Client ID is too long.");
             }
             if (credentials.Length > _options.InputLengthRestrictions.ClientSecret)
             {
-                throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, "Client secret is too long.");
+                throw new ValidationException(ValidationErrors.InvalidRequest, "Client secret is too long.");
             }
             if (string.IsNullOrEmpty(credentials))
             {

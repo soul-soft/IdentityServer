@@ -27,7 +27,7 @@ namespace Hosting.Configuration
                 { 
                     "http://www.baidu.com/callbck"
                 },
-                RequireClientSecret=false
+                RequireClientSecret = false
             },
             new Client()
             {

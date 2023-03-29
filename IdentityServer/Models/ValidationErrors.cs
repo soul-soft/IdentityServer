@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Models
 {
-    public class OpenIdConnectValidationErrors
+    public class ValidationErrors
     {
         public const string InvalidRequest = "invalid_request";
         public const string InvalidClient = "invalid_client";
