@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Models
 {
-    internal static class Constants
+    internal static class internalConstants
     {
         public static class EndpointNames
         {
