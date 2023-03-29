@@ -3,7 +3,7 @@ using System.Security.Claims;
 
 namespace IdentityServer.Validation
 {
-    public class AuthorizeCodeRequestValidator : IAuthorizeCodeRequestValidator
+    internal class AuthorizeCodeRequestValidator : IAuthorizeCodeRequestValidator
     {
         private readonly ISystemClock _clock;
         private readonly IAuthorizeCodeStore _authorizeCodeStore;

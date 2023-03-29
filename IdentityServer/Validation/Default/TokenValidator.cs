@@ -12,7 +12,6 @@ namespace IdentityServer.Validation
         private readonly IServerUrl _serverUrl;
         private readonly ISystemClock _systemClock;
         private readonly IdentityServerOptions _options;
-        private readonly IProfileService _profileService;
         private readonly ISigningCredentialsStore _credentials;
 
         public TokenValidator(
@@ -21,7 +20,6 @@ namespace IdentityServer.Validation
             IServerUrl serverUrl,
             ISystemClock systemClock,
             IdentityServerOptions options,
-            IProfileService profileService,
             ISigningCredentialsStore credentials)
         {
             _tokens = tokens;
@@ -30,7 +28,6 @@ namespace IdentityServer.Validation
             _serverUrl = serverUrl;
             _systemClock = systemClock;
             _credentials = credentials;
-            _profileService = profileService;
         }
 
         public async Task<TokenValidationResult> ValidateAccessTokenAsync(string token)

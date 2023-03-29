@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Validation
 {
-    public class ResourceValidator : IResourceValidator
+    internal class ResourceValidator : IResourceValidator
     {
         private readonly IResourceStore _resources;
 

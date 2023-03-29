@@ -2,7 +2,7 @@
 
 namespace IdentityServer.Validation
 {
-    public class ClientSecretValidator : IClientSecretValidator
+    internal class ClientSecretValidator : IClientSecretValidator
     {
         private readonly IClientStore _clients;
         private readonly ISecretListParser _secretListParser;

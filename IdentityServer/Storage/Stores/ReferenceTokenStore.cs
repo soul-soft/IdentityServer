@@ -19,10 +19,10 @@
             return await _cache.GetAsync<ReferenceToken>(key);
         }
 
-        public async Task StoreTokenAsync(ReferenceToken token)
+        public async Task StoreTokenAsync(Token token)
         {
             var key = GenerateStoreKey(token.Id);
-            var span = token.Expiration - token.IssuedAt;
+            var span = TimeSpan.FromSeconds(token.Lifetime);
             await _cache.SetAsync(key, token, span);
         }
 

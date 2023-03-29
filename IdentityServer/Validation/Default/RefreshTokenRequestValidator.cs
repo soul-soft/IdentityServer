@@ -3,7 +3,7 @@ using System.Security.Claims;
 
 namespace IdentityServer.Validation
 {
-    public class RefreshTokenRequestValidator : IRefreshTokenRequestValidator
+    internal class RefreshTokenRequestValidator : IRefreshTokenRequestValidator
     {
         private readonly ISystemClock _clock;
         private readonly IRefreshTokenStore _refreshTokenStore;

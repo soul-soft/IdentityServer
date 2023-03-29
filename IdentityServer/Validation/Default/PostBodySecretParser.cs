@@ -2,7 +2,7 @@
 
 namespace IdentityServer.Validation
 {
-    public class PostBodySecretParser : ISecretParser
+    internal class PostBodySecretParser : ISecretParser
     {
 
         private readonly IdentityServerOptions _options;
