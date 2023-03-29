@@ -101,7 +101,7 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 return new ResourceStore(new Resources(_resources));
             });
-            services.AddSigningCredentialStore(sp =>
+            services.AddSigningCredentialsStore(sp =>
             {
                 return new SigningCredentialsStore(_signingCredentials);
             });

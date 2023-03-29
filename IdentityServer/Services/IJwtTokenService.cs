@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Services
 {
-    public interface ISecurityTokenService
+    public interface IJwtTokenService
     {
         Task<string> CreateTokenAsync(ReferenceToken token);
     }

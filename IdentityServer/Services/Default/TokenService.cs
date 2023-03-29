@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using IdentityServer.Storage.Models;
+using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 
 namespace IdentityServer.Services
@@ -9,14 +10,14 @@ namespace IdentityServer.Services
         private readonly IReferenceTokenStore _referenceTokenStore;
         private readonly IIdGenerator _handleGenerator;
         private readonly IRefreshTokenStore _refreshTokenStore;
-        private readonly ISecurityTokenService _securityTokenService;
+        private readonly IJwtTokenService _securityTokenService;
 
         public TokenService(
             ISystemClock clock,
             IIdGenerator handleGenerator,
             IReferenceTokenStore referenceTokenService,
             IRefreshTokenStore refreshTokenStore,
-            ISecurityTokenService securityTokenService)
+            IJwtTokenService securityTokenService)
         {
             _clock = clock;
             _handleGenerator = handleGenerator;
@@ -25,9 +26,9 @@ namespace IdentityServer.Services
             _securityTokenService = securityTokenService;
         }
 
-      
 
-        public async Task<string> CreateSecurityTokenAsync(ReferenceToken token)
+
+        public async Task<string> CreateAccessTokenAsync(Token token)
         {
             string securityToken;
             if (token.Type == TokenTypes.AccessToken)
@@ -52,26 +53,38 @@ namespace IdentityServer.Services
             }
             return securityToken;
         }
-        public async Task<ReferenceToken> CreateAccessTokenAsync(Client client, ClaimsPrincipal subject)
+
+        public async Task<Token> CreateTokenAsync(string type, Client client, ClaimsPrincipal subject)
         {
             var id = await _handleGenerator.GenerateAsync();
-            var token = new ReferenceToken(
-                id,
-                TokenTypes.AccessToken,
-                client.AccessTokenType,
-                subject.Claims,
-                client.AllowedSigningAlgorithms);
-            return token;
+            var lifetime = -1;
+            if (type == TokenTypes.AccessToken)
+            {
+                lifetime = client.AccessTokenLifetime;
+            }
+            else if (type == TokenTypes.RefreshToken)
+            {
+                lifetime = client.RefreshTokenLifetime;
+            }
+            else if (type == TokenTypes.IdentityToken)
+            {
+                lifetime = client.RefreshTokenLifetime;
+            }
+            else
+            {
+                throw new InvalidOperationException($"Invalid token type {type}");
+            }
+            return new Token(id, type, lifetime, client.AccessTokenType, subject.Claims);
         }
 
-        public async Task<string> CreateRefreshTokenAsync(ReferenceToken token, int refreshTokenLifetime)
+        public async Task<string> CreateRefreshTokenAsync(Token token, int refreshTokenLifetime)
         {
             var id = await _handleGenerator.GenerateAsync();
             var creationTime = _clock.UtcNow.UtcDateTime;
             var refreshToken = new RefreshToken(
-                id, 
-                token, 
-                refreshTokenLifetime, 
+                id,
+                token,
+                refreshTokenLifetime,
                 creationTime);
             await _refreshTokenStore.StoreRefreshTokenAsync(refreshToken);
             return id;

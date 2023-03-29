@@ -25,9 +25,9 @@
 
         private async Task<(string accessToken, string? refreshToken)> CreateAccessTokenAsync(TokenGeneratorRequest request)
         {
-            var token = await _tokenService.CreateAccessTokenAsync(request.Client, request.Subject);
+            var token = await _tokenService.CreateTokenAsync(request.Client, request.Subject);
 
-            var accessToken = await _tokenService.CreateSecurityTokenAsync(token);
+            var accessToken = await _tokenService.CreateAccessTokenAsync(token);
 
             if (request.Resources.OfflineAccess)
             {

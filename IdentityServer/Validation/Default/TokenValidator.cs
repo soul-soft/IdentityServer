@@ -13,7 +13,7 @@ namespace IdentityServer.Validation
         private readonly ISystemClock _systemClock;
         private readonly IdentityServerOptions _options;
         private readonly IProfileService _profileService;
-        private readonly ISigningCredentialStore _credentials;
+        private readonly ISigningCredentialsStore _credentials;
 
         public TokenValidator(
             IReferenceTokenStore tokens,
@@ -22,7 +22,7 @@ namespace IdentityServer.Validation
             ISystemClock systemClock,
             IdentityServerOptions options,
             IProfileService profileService,
-            ISigningCredentialStore credentials)
+            ISigningCredentialsStore credentials)
         {
             _tokens = tokens;
             _clients = clients;

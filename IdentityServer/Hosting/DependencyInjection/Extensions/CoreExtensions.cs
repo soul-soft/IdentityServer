@@ -57,7 +57,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<ICache, Cache>();
             builder.Services.TryAddTransient<ITokenService, TokenService>();
             builder.Services.TryAddTransient<IAuthorizeCodeService, AuthorizeCodeService>();
-            builder.Services.TryAddTransient<ISecurityTokenService, SecurityTokenService>();
+            builder.Services.TryAddTransient<IJwtTokenService, JwtTokenService>();
             return builder;
         }
         #endregion

@@ -37,18 +37,18 @@ namespace Microsoft.Extensions.DependencyInjection
         }
         #endregion
 
-        #region ISigningCredentialStore
-        public static IIdentityServerBuilder AddSigningCredentialStore<T>(this IIdentityServerBuilder builder)
-            where T : class, ISigningCredentialStore
+        #region ISigningCredentialsStore
+        public static IIdentityServerBuilder AddSigningCredentialsStore<T>(this IIdentityServerBuilder builder)
+            where T : class, ISigningCredentialsStore
         {
-            builder.Services.TryAddTransient<ISigningCredentialStore, T>();
+            builder.Services.TryAddTransient<ISigningCredentialsStore, T>();
             return builder;
         }
 
-        public static IIdentityServerBuilder AddSigningCredentialStore<T>(this IIdentityServerBuilder builder, Func<IServiceProvider, T> implementationFactory)
-            where T : class, ISigningCredentialStore
+        public static IIdentityServerBuilder AddSigningCredentialsStore<T>(this IIdentityServerBuilder builder, Func<IServiceProvider, T> implementationFactory)
+            where T : class, ISigningCredentialsStore
         {
-            builder.Services.TryAddTransient<ISigningCredentialStore>(implementationFactory);
+            builder.Services.TryAddTransient<ISigningCredentialsStore>(implementationFactory);
             return builder;
         }
         #endregion
