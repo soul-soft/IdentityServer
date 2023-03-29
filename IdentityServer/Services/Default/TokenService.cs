@@ -46,13 +46,9 @@ namespace IdentityServer.Services
             return accessToken;
         }
 
-        public async Task<string> CreateRefreshTokenAsync(string accessToken, int lifetime)
+        public async Task<string> CreateRefreshTokenAsync(IEnumerable<Claim> claims, int lifetime)
         {
             var id = await _idGenerator.GenerateAsync();
-            var claims = new Claim[] 
-            {
-                new Claim(TokenTypes.AccessToken,accessToken)
-            };
             var creationTime = _clock.UtcNow.UtcDateTime;
             var token = new Token(
                  id: id,

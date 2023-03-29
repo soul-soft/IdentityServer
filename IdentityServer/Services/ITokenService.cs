@@ -6,6 +6,6 @@ namespace IdentityServer.Services
     {
         Task<string> CreateAccessTokenAsync(AccessTokenType accessTokenType, int lifetime, IEnumerable<string> algorithms, IEnumerable<Claim> claims);
 
-        Task<string> CreateRefreshTokenAsync(string accessToken, int lifetime);
+        Task<string> CreateRefreshTokenAsync(IEnumerable<Claim> claims, int lifetime);
     }
 }
