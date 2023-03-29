@@ -69,7 +69,7 @@ namespace IdentityServer.Validation
                     return TokenValidationResult.Fail(OpenIdConnectValidationErrors.InvalidToken, result.Exception.Message);
                 }
             }
-            return await ValidateSubjectAsync(result.ClaimsIdentity.Claims);
+            return await ValidateClaimsAsync(result.ClaimsIdentity.Claims);
         }
 
         private async Task<TokenValidationResult> ValidateReferenceTokenAsync(string reference)
@@ -87,10 +87,10 @@ namespace IdentityServer.Validation
             {
                 return TokenValidationResult.Fail(OpenIdConnectValidationErrors.InvalidToken, "Invalid issuer");
             }
-            return await ValidateSubjectAsync(token.Claims);
+            return await ValidateClaimsAsync(token.Claims);
         }
 
-        private async Task<TokenValidationResult> ValidateSubjectAsync(IEnumerable<Claim> claims)
+        private async Task<TokenValidationResult> ValidateClaimsAsync(IEnumerable<Claim> claims)
         {
             if (_options.EmitScopesAsCommaDelimitedStringInJwt && claims.Any(a => a.Type == JwtClaimTypes.Scope))
             {
