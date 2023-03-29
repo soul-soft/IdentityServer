@@ -19,9 +19,15 @@ namespace IdentityServer.Models
             Id = id;
             Type = type;
             Lifetime = lifetime;
-            AccessTokenType = accessTokenType;
             Claims = claims;
             CreationTime = creationTime;
+        }
+
+        public string? GetClientId()
+        {
+            return Claims
+                .Where(a => a.Type == JwtClaimTypes.ClientId)
+                .FirstOrDefault()?.Value;
         }
     }
 }

@@ -16,6 +16,10 @@
             {
                 throw new ValidationException(OpenIdConnectValidationErrors.InvalidGrant, "Invalid refresh token");
             }
+            if (token.GetClientId() != request.Client.ClientId)
+            {
+                throw new ValidationException(OpenIdConnectValidationErrors.InvalidGrant, "Invalid refresh token");
+            }
             await _tokenStore.RevomeTokenAsync(token);
             return new RefreshTokenValidationResult(token.Claims);
         }
