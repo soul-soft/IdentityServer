@@ -10,17 +10,18 @@ namespace IdentityServer.Models
 
         public int Lifetime { get; set; }
 
-        public AccessTokenType AccessTokenType { get; set; }
-
         public IEnumerable<Claim> Claims { get; set; } = new List<Claim>();
 
-        public Token(string id, string type, int lifetime, AccessTokenType accessTokenType, IEnumerable<Claim> claims)
+        public DateTime CreationTime { get; set; }
+
+        public Token(string id, string type, int lifetime, IEnumerable<Claim> claims, DateTime creationTime)
         {
             Id = id;
             Type = type;
             Lifetime = lifetime;
             AccessTokenType = accessTokenType;
             Claims = claims;
+            CreationTime = creationTime;
         }
     }
 }

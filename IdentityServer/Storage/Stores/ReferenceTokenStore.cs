@@ -28,7 +28,7 @@
 
         private string GenerateStoreKey(string id)
         {
-            return $"{_options.DistributedStorageKeyPrefix}:Token:{id}";
+            return $"{_options.StorageKeyPrefix}:Token:{id}";
         }
     }
 }

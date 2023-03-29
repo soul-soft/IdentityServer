@@ -2,6 +2,6 @@
 {
     public interface IJwtTokenService
     {
-        Task<string> CreateTokenAsync(Token token);
+        Task<string> CreateJwtTokenAsync(Token token, IEnumerable<string> algorithms);
     }
 }

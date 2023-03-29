@@ -36,7 +36,7 @@ namespace IdentityServer.Storage
 
         private string GenerateStoreKey(string id)
         {
-            return $"{_options.DistributedStorageKeyPrefix}:AuthorizeCode:{id}";
+            return $"{_options.StorageKeyPrefix}:AuthorizeCode:{id}";
         }
     }
 }

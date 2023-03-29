@@ -9,7 +9,7 @@
         /// <summary>
         /// 存储key
         /// </summary>
-        public string DistributedStorageKeyPrefix { get; set; } = "IdentityServer";
+        public string StorageKeyPrefix { get; set; } = "IdentityServer";
         /// <summary>
         /// 是否使用小写的签发url
         /// </summary>

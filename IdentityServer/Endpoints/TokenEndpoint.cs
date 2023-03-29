@@ -7,15 +7,15 @@ namespace IdentityServer.Endpoints
 {
     public class TokenEndpoint : EndpointBase
     {
-        private readonly IdentityServerOptions _options;
         private readonly IClaimService _claimService;
+        private readonly IdentityServerOptions _options;
         private readonly IProfileService _profileService;
         private readonly ITokenResponseGenerator _generator;
         private readonly IResourceValidator _resourceValidator;
         private readonly IClientSecretValidator _clientSecretValidator;
 
         public TokenEndpoint(
-            IClaimService singInService,
+            IClaimService claimService,
             IdentityServerOptions options,
             IProfileService profileService,
             ITokenResponseGenerator generator,
@@ -24,7 +24,7 @@ namespace IdentityServer.Endpoints
         {
             _options = options;
             _generator = generator;
-            _claimService = singInService;
+            _claimService = claimService;
             _profileService = profileService;
             _clientSecretValidator = clientSecretValidator;
             _resourceValidator = resourceValidator;
@@ -92,44 +92,34 @@ namespace IdentityServer.Endpoints
             GrantValidationResult result;
             if (GrantTypes.RefreshToken.Equals(request.GrantType))
             {
-                var validator = context.RequestServices.GetRequiredService<IRefreshTokenRequestValidator>();
-                result = await ValidateRefreshTokenRequestAsync(validator, request);
+                result = await ValidateRefreshTokenRequestAsync(context, request);
             }
             //验证客户端凭据授权
             else if (GrantTypes.ClientCredentials.Equals(request.GrantType))
             {
-                var validator = context.RequestServices.GetRequiredService<IClientCredentialsRequestValidator>();
-                result = await ValidateClientCredentialsRequestAsync(validator, request);
+                result = await ValidateClientCredentialsRequestAsync(context, request);
             }
             //授权码凭据授权
             else if (GrantTypes.AuthorizationCode.Equals(request.GrantType))
             {
-                var validator = context.RequestServices.GetRequiredService<IAuthorizeCodeRequestValidator>();
-                result = await ValidateAuthorizeCodeRequestAsync(validator, request);
+                result = await ValidateAuthorizeCodeRequestAsync(context, request);
             }
             //验证资源所有者密码授权
             else if (GrantTypes.Password.Equals(request.GrantType))
             {
-                var validator = context.RequestServices.GetRequiredService<IResourceOwnerCredentialRequestValidator>();
-                result = await ValidateResourceOwnerCredentialRequestAsync(validator, request);
+                result = await ValidateResourceOwnerCredentialRequestAsync(context, request);
             }
             //验证自定义授权
             else
             {
-                var validator = context.RequestServices.GetRequiredService<IExtensionGrantListValidator>();
-                result = await ValidateExtensionGrantRequestAsync(validator, request);
+                result = await ValidateExtensionGrantRequestAsync(context, request);
             }
-            //验证用户是否启用
-            if (!string.IsNullOrEmpty(result.Subject.GetSubjectId()))
+            //验证是否启用
+            var isActiveRequest = new IsActiveRequest(ProfileIsActiveCallers.TokenEndpoint, request.Client, result.Subject);
+            var isActive = await _profileService.IsActiveAsync(isActiveRequest);
+            if (!isActive)
             {
-                var isActive = await _profileService.IsActiveAsync(new IsActiveRequest(
-                    ProfileIsActiveCallers.TokenEndpoint,
-                    request.Client,
-                    result.Subject));
-                if (!isActive)
-                {
-                    throw new ValidationException(OpenIdConnectValidationErrors.InvalidGrant, string.Format("User has been disabled:{0}", result.Subject.GetSubjectId()));
-                }
+                throw new ValidationException(OpenIdConnectValidationErrors.InvalidGrant, string.Format("User has been disabled:{0}", result.Subject.GetSubjectId()));
             }
             //issue claims
             var accessTokenClaimsRequest = new ProfileClaimsRequest(result.Subject, request.Client, request.Resources);
@@ -139,15 +129,16 @@ namespace IdentityServer.Endpoints
         #endregion
 
         #region ClientCredentialsRequest
-        private static async Task<GrantValidationResult> ValidateClientCredentialsRequestAsync(IClientCredentialsRequestValidator validator, GrantValidationRequest request)
+        private static async Task<GrantValidationResult> ValidateClientCredentialsRequestAsync(HttpContext context, GrantValidationRequest request)
         {
+            var validator = context.RequestServices.GetRequiredService<IClientCredentialsRequestValidator>();
             var grantContext = new ClientCredentialsValidationRequest(request);
             return await validator.ValidateAsync(grantContext);
         }
         #endregion
 
         #region AuthorizeCodeRequest
-        private static async Task<GrantValidationResult> ValidateAuthorizeCodeRequestAsync(IAuthorizeCodeRequestValidator validator, GrantValidationRequest request)
+        private static async Task<GrantValidationResult> ValidateAuthorizeCodeRequestAsync(HttpContext context, GrantValidationRequest request)
         {
             var code = request.Form[OpenIdConnectParameterNames.Code];
             if (string.IsNullOrEmpty(code))
@@ -155,12 +146,13 @@ namespace IdentityServer.Endpoints
                 throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, "Code is missing");
             }
             var grantContext = new AuthorizeCodeValidationRequest(code, request);
+            var validator = context.RequestServices.GetRequiredService<IAuthorizeCodeRequestValidator>();
             return await validator.ValidateAsync(grantContext);
         }
         #endregion
 
         #region ResourceOwnerCredentialRequest
-        private async Task<GrantValidationResult> ValidateResourceOwnerCredentialRequestAsync(IResourceOwnerCredentialRequestValidator validator, GrantValidationRequest request)
+        private async Task<GrantValidationResult> ValidateResourceOwnerCredentialRequestAsync(HttpContext context, GrantValidationRequest request)
         {
             var username = request.Form[OpenIdConnectParameterNames.Username];
             var password = request.Form[OpenIdConnectParameterNames.Password];
@@ -181,12 +173,13 @@ namespace IdentityServer.Endpoints
                 throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, "Password too long");
             }
             var validation = new ResourceOwnerCredentialValidationRequest(username, password, request);
+            var validator = context.RequestServices.GetRequiredService<IResourceOwnerCredentialRequestValidator>();
             return await validator.ValidateAsync(validation);
         }
         #endregion
 
         #region RefreshTokenRequest
-        private async Task<GrantValidationResult> ValidateRefreshTokenRequestAsync(IRefreshTokenRequestValidator validator, GrantValidationRequest request)
+        private async Task<GrantValidationResult> ValidateRefreshTokenRequestAsync(HttpContext context, GrantValidationRequest request)
         {
             var refreshToken = request.Form[OpenIdConnectParameterNames.RefreshToken];
             if (refreshToken == null)
@@ -197,14 +190,16 @@ namespace IdentityServer.Endpoints
             {
                 throw new ValidationException(OpenIdConnectValidationErrors.InvalidRequest, "RefreshToken too long");
             }
+            var validator = context.RequestServices.GetRequiredService<IRefreshTokenRequestValidator>();
             return await validator.ValidateAsync(new RefreshTokenValidationRequest(refreshToken, request));
         }
         #endregion
 
         #region ExtensionGrantRequest
-        private static async Task<GrantValidationResult> ValidateExtensionGrantRequestAsync(IExtensionGrantListValidator validator, GrantValidationRequest request)
+        private static async Task<GrantValidationResult> ValidateExtensionGrantRequestAsync(HttpContext context, GrantValidationRequest request)
         {
             var grantContext = new ExtensionGrantValidationRequest(request);
+            var validator = context.RequestServices.GetRequiredService<IExtensionGrantListValidator>();
             var result = await validator.ValidateAsync(grantContext);
             return result;
         }

@@ -1,14 +1,11 @@
-﻿using IdentityServer.Storage.Models;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 
 namespace IdentityServer.Services
 {
     public interface ITokenService
-    {        
-        Task<Token> CreateTokenAsync(Client client, ClaimsPrincipal subject);
+    {
+        Task<string> CreateAccessTokenAsync(AccessTokenType accessTokenType, int lifetime, IEnumerable<string> algorithms, IEnumerable<Claim> claims);
 
-        Task<string> CreateAccessTokenAsync(Token token);
-
-        Task<string> CreateRefreshTokenAsync(Token token, int refreshTokenLifetime);
+        Task<string> CreateRefreshTokenAsync(string accessToken, int lifetime);
     }
 }

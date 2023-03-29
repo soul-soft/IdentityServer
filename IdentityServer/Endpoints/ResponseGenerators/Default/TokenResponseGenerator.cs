@@ -11,27 +11,30 @@
 
         public async Task<TokenGeneratorResponse> ProcessAsync(TokenGeneratorRequest request)
         {
-            (string accessToken, string? refreshToken) = await CreateAccessTokenAsync(request);
+            (string accessToken, string? refreshToken) = await CreateTokenAsync(request);
             var scope = string.Join(",", request.Resources.Scopes);
+            var tokenLifetime = request.Client.AccessTokenLifetime;
             var response = new TokenGeneratorResponse()
             {
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
-                TokenLifetime = request.Client.AccessTokenLifetime,
+                TokenLifetime = tokenLifetime,
                 Scope = scope,
             };
             return response;
         }
 
-        private async Task<(string accessToken, string? refreshToken)> CreateAccessTokenAsync(TokenGeneratorRequest request)
+        private async Task<(string accessToken, string? refreshToken)> CreateTokenAsync(TokenGeneratorRequest request)
         {
-            var token = await _tokenService.CreateTokenAsync(request.Client, request.Subject);
-
-            var accessToken = await _tokenService.CreateAccessTokenAsync(token);
+            var accessToken = await _tokenService.CreateAccessTokenAsync(
+                request.Client.AccessTokenType,
+                request.Client.AccessTokenLifetime,
+                request.Client.AllowedSigningAlgorithms,
+                request.Subject.Claims);
 
             if (request.Resources.OfflineAccess)
             {
-                var refreshToken = await _tokenService.CreateRefreshTokenAsync(token, request.Client.RefreshTokenLifetime);
+                var refreshToken = await _tokenService.CreateRefreshTokenAsync(accessToken, request.Client.RefreshTokenLifetime);
                 return (accessToken, refreshToken);
             }
             return (accessToken, null);

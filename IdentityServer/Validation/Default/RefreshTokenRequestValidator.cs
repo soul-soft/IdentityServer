@@ -1,35 +1,23 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using System.Security.Claims;
-
-namespace IdentityServer.Validation
+﻿namespace IdentityServer.Validation
 {
     internal class RefreshTokenRequestValidator : IRefreshTokenRequestValidator
     {
-        private readonly ISystemClock _clock;
-        private readonly IRefreshTokenStore _refreshTokenStore;
+        private readonly ITokenStore _tokenStore;
 
-        public RefreshTokenRequestValidator(
-            ISystemClock clock,
-            IRefreshTokenStore refreshTokenStore)
+        public RefreshTokenRequestValidator(ITokenStore tokenStore)
         {
-            _clock = clock;
-            _refreshTokenStore = refreshTokenStore;
+            _tokenStore = tokenStore;
         }
 
         public async Task<RefreshTokenValidationResult> ValidateAsync(RefreshTokenValidationRequest request)
         {
-            var refreshToken = await _refreshTokenStore.FindRefreshTokenAsync(request.RefreshToken);
-            if (refreshToken == null)
+            var token = await _tokenStore.FindTokenAsync(request.RefreshToken);
+            if (token == null)
             {
                 throw new ValidationException(OpenIdConnectValidationErrors.InvalidGrant, "Invalid refresh token");
             }
-            if (_clock.UtcNow.UtcDateTime > refreshToken.Expiration)
-            {
-                await _refreshTokenStore.RevomeRefreshTokenAsync(refreshToken);
-                throw new ValidationException(OpenIdConnectValidationErrors.InvalidGrant, "Refresh token has expired");
-            }
-            await _refreshTokenStore.RevomeRefreshTokenAsync(refreshToken);
-            return new RefreshTokenValidationResult(Array.Empty<Claim>());
+            await _tokenStore.RevomeTokenAsync(token);
+            return new RefreshTokenValidationResult(token.Claims);
         }
     }
 }
