@@ -30,7 +30,7 @@ namespace IdentityServer.Storage
         public async Task StoreAuthorizeCodeAsync(AuthorizeCode Code)
         {
             var key = GenerateStoreKey(Code.Id);
-            await _cache.SetAsync(key, Code, TimeSpan.FromSeconds(Code.Lifetime));
+            await _cache.SaveAsync(key, Code, TimeSpan.FromSeconds(Code.Lifetime));
         }
 
 

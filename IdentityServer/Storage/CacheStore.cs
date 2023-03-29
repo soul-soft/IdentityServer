@@ -12,12 +12,12 @@ namespace IdentityServer.Storage
             _distributedCache = distributedCache;
         }
 
-        public async Task SetAsync(string key, object value, TimeSpan timeSpan)
+        public async Task SaveAsync(string key, object value, TimeSpan timeSpan)
         {
             var json = ObjectSerializer.Serialize(value);
             await _distributedCache.SetStringAsync(key, json, new DistributedCacheEntryOptions
             {
-                SlidingExpiration = timeSpan,
+                AbsoluteExpirationRelativeToNow = timeSpan,
             });
         }
 

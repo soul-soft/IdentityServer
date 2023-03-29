@@ -21,7 +21,7 @@
         {
             var key = BuildStoreKey(token.Id);
             var span = TimeSpan.FromSeconds(token.Lifetime);
-            await _cache.SetAsync(key, token, span);
+            await _cache.SaveAsync(key, token, span);
         }
 
         public async Task RevomeTokenAsync(Token token)

@@ -38,12 +38,6 @@ namespace Microsoft.Extensions.DependencyInjection
         #endregion
 
         #region CacheStore
-        public static IIdentityServerBuilder AddDistributedMemoryCache(this IIdentityServerBuilder builder)
-        {
-            builder.Services.AddDistributedMemoryCache();
-            builder.Services.TryAddTransient<ICacheStore, CacheStore>();
-            return builder;
-        }
         public static IIdentityServerBuilder AddCacheStore<T>(this IIdentityServerBuilder builder)
             where T : class, ICacheStore
         {
@@ -110,7 +104,6 @@ namespace Microsoft.Extensions.DependencyInjection
             var inMemoryStoreBuilder = new InMemoryStoreBuilder();
             setup(inMemoryStoreBuilder);
             inMemoryStoreBuilder.Build(builder);
-            builder.Services.AddDistributedMemoryCache();
             return builder;
         }
         #endregion

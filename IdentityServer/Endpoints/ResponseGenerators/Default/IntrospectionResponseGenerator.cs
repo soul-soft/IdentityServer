@@ -21,10 +21,10 @@
             {
                 return Task.FromResult(new IntrospectionGeneratorResponse(response));
             }
-            var entities = request.Subject.Claims
+            var entity = request.Subject.Claims
                 .Where(a => a.Type != JwtClaimTypes.Scope)
                 .ToClaimsDictionary();
-            response = new Dictionary<string, object>(entities)
+            response = new Dictionary<string, object>(entity)
             {
                 { "active", true }
             };
