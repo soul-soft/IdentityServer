@@ -105,9 +105,8 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 return new SigningCredentialsStore(_signingCredentials);
             });
-            services.AddRefreshTokenStore<TokenStore>();
+            services.AddTokenStore<TokenStore>();
             services.AddAuthorizeCodeStore<AuthorizeCodeStore>();
-            services.AddReferenceTokenStore<ReferenceTokenStore>();
         }
         #endregion
     }

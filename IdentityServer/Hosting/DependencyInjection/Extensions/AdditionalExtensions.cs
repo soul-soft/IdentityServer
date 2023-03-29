@@ -53,32 +53,17 @@ namespace Microsoft.Extensions.DependencyInjection
         }
         #endregion
 
-        #region IRefreshTokenStore
-        public static IIdentityServerBuilder AddRefreshTokenStore<T>(this IIdentityServerBuilder builder)
-            where T : class, ITokenStore
+        #region ITokenStore
+        public static IIdentityServerBuilder AddTokenStore<T>(this IIdentityServerBuilder builder)
+          where T : class, ITokenStore
         {
-            builder.Services.TryAddTransient<ITokenStore,T>();
+            builder.Services.TryAddTransient<ITokenStore, T>();
             return builder;
         }
-        public static IIdentityServerBuilder AddRefreshTokenStore<T>(this IIdentityServerBuilder builder, Func<IServiceProvider, T> implementationFactory)
+        public static IIdentityServerBuilder AddTokenStore<T>(this IIdentityServerBuilder builder, Func<IServiceProvider, T> implementationFactory)
             where T : class, ITokenStore
         {
             builder.Services.TryAddTransient<ITokenStore>(implementationFactory);
-            return builder;
-        }
-        #endregion
-
-        #region IReferenceTokenStore
-        public static IIdentityServerBuilder AddReferenceTokenStore<T>(this IIdentityServerBuilder builder)
-          where T : class, IReferenceTokenStore
-        {
-            builder.Services.TryAddTransient<IReferenceTokenStore, T>();
-            return builder;
-        }
-        public static IIdentityServerBuilder AddReferenceTokenStore<T>(this IIdentityServerBuilder builder, Func<IServiceProvider, T> implementationFactory)
-            where T : class, IReferenceTokenStore
-        {
-            builder.Services.TryAddTransient<IReferenceTokenStore>(implementationFactory);
             return builder;
         }
         #endregion

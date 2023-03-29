@@ -7,7 +7,7 @@ namespace IdentityServer.Validation
 {
     internal class TokenValidator : ITokenValidator
     {
-        private readonly IReferenceTokenStore _tokens;
+        private readonly ITokenStore _tokens;
         private readonly IClientStore _clients;
         private readonly IServerUrl _serverUrl;
         private readonly ISystemClock _systemClock;
@@ -15,7 +15,7 @@ namespace IdentityServer.Validation
         private readonly ISigningCredentialsStore _credentials;
 
         public TokenValidator(
-            IReferenceTokenStore tokens,
+            ITokenStore tokens,
             IClientStore clients,
             IServerUrl serverUrl,
             ISystemClock systemClock,
@@ -53,6 +53,7 @@ namespace IdentityServer.Validation
             var parameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
+                ValidateLifetime = true,
                 ValidateAudience = false,
                 ValidIssuer = _serverUrl.GetIdentityServerIssuerUri(),
                 IssuerSigningKeys = securityKeys,
@@ -79,11 +80,12 @@ namespace IdentityServer.Validation
             {
                 return TokenValidationResult.Fail(OpenIdConnectValidationErrors.InvalidToken, "Invalid reference token");
             }
-            if (token.Expiration < _systemClock.UtcNow.UtcDateTime)
+            var span = _systemClock.UtcNow.UtcDateTime - token.CreationTime;
+            if (span.TotalSeconds > token.Lifetime)
             {
                 return TokenValidationResult.Fail(OpenIdConnectValidationErrors.ExpiredToken, "The access token has expired");
             }
-            if (token.Issuer != _serverUrl.GetIdentityServerIssuerUri())
+            if (token.GetIssuer() != _serverUrl.GetIdentityServerIssuerUri())
             {
                 return TokenValidationResult.Fail(OpenIdConnectValidationErrors.InvalidToken, "Invalid issuer");
             }

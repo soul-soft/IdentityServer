@@ -29,5 +29,12 @@ namespace IdentityServer.Models
                 .Where(a => a.Type == JwtClaimTypes.ClientId)
                 .FirstOrDefault()?.Value;
         }
+
+        public string? GetIssuer()
+        {
+            return Claims
+               .Where(a => a.Type == JwtClaimTypes.Issuer)
+               .FirstOrDefault()?.Value;
+        }
     }
 }
