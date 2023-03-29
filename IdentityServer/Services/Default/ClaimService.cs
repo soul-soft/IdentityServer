@@ -94,7 +94,7 @@ namespace IdentityServer.Services
             if (_options.EnableClaimTypeFilter)
             {
                 return claims.Where(a => claimTypes.Contains(a.Type))
-                    .Where(a => !Constants.ClaimTypeFilters.ClaimsServiceFilterClaimTypes.Contains(a.Type));
+                    .Where(a => !internalConstants.ClaimTypeFilters.ClaimsServiceFilterClaimTypes.Contains(a.Type));
             }
             return claims;
         }

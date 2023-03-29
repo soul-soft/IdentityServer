@@ -14,12 +14,12 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IIdentityServerBuilder AddRequiredPlatformEndpoints(this IIdentityServerBuilder builder)
         {
             builder.Services.AddTransient<IEndpointRouter, EndpointRouter>();
-            builder.AddEndpoint<TokenEndpoint>(Constants.EndpointNames.Token, Constants.EndpointRutePaths.Token);
-            builder.AddEndpoint<UserInfoEndpoint>(Constants.EndpointNames.UserInfo, Constants.EndpointRutePaths.UserInfo);
-            builder.AddEndpoint<AuthorizeEndpoint>(Constants.EndpointNames.Authorize, Constants.EndpointRutePaths.Authorize);
-            builder.AddEndpoint<DiscoveryEndpoint>(Constants.EndpointNames.Discovery, Constants.EndpointRutePaths.Discovery);
-            builder.AddEndpoint<IntrospectionEndpoint>(Constants.EndpointNames.Introspection, Constants.EndpointRutePaths.Introspection);
-            builder.AddEndpoint<DiscoveryKeyEndpoint>(Constants.EndpointNames.DiscoveryJwks, Constants.EndpointRutePaths.DiscoveryJwks);
+            builder.AddEndpoint<TokenEndpoint>(internalConstants.EndpointNames.Token, internalConstants.EndpointRutePaths.Token);
+            builder.AddEndpoint<UserInfoEndpoint>(internalConstants.EndpointNames.UserInfo, internalConstants.EndpointRutePaths.UserInfo);
+            builder.AddEndpoint<AuthorizeEndpoint>(internalConstants.EndpointNames.Authorize, internalConstants.EndpointRutePaths.Authorize);
+            builder.AddEndpoint<DiscoveryEndpoint>(internalConstants.EndpointNames.Discovery, internalConstants.EndpointRutePaths.Discovery);
+            builder.AddEndpoint<IntrospectionEndpoint>(internalConstants.EndpointNames.Introspection, internalConstants.EndpointRutePaths.Introspection);
+            builder.AddEndpoint<DiscoveryKeyEndpoint>(internalConstants.EndpointNames.DiscoveryJwks, internalConstants.EndpointRutePaths.DiscoveryJwks);
             return builder;
         }
         #endregion

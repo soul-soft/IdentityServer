@@ -1,7 +1,6 @@
-﻿using IdentityServer.Models;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 
-namespace IdentityServer.Storage.Models
+namespace IdentityServer.Models
 {
     public class Token
     {

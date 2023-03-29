@@ -7,23 +7,23 @@ namespace IdentityServer.Services
     internal class TokenService : ITokenService
     {
         private readonly ISystemClock _clock;
+        private readonly IIdGenerator _idGenerator;
         private readonly IReferenceTokenStore _referenceTokenStore;
-        private readonly IIdGenerator _handleGenerator;
         private readonly IRefreshTokenStore _refreshTokenStore;
-        private readonly IJwtTokenService _securityTokenService;
+        private readonly IJwtTokenService _jwtTokenService;
 
         public TokenService(
             ISystemClock clock,
-            IIdGenerator handleGenerator,
+            IIdGenerator idGenerator,
             IReferenceTokenStore referenceTokenService,
             IRefreshTokenStore refreshTokenStore,
-            IJwtTokenService securityTokenService)
+            IJwtTokenService jwtTokenService)
         {
             _clock = clock;
-            _handleGenerator = handleGenerator;
+            _idGenerator = idGenerator;
             _refreshTokenStore = refreshTokenStore;
             _referenceTokenStore = referenceTokenService;
-            _securityTokenService = securityTokenService;
+            _jwtTokenService = jwtTokenService;
         }
 
 
@@ -35,7 +35,7 @@ namespace IdentityServer.Services
             {
                 if (token.AccessTokenType == AccessTokenType.Jwt)
                 {
-                    securityToken = await _securityTokenService.CreateTokenAsync(token);
+                    securityToken = await _jwtTokenService.CreateTokenAsync(token);
                 }
                 else
                 {
@@ -45,7 +45,7 @@ namespace IdentityServer.Services
             }
             else if (token.Type == TokenTypes.IdentityToken)
             {
-                securityToken = await _securityTokenService.CreateTokenAsync(token);
+                securityToken = await _jwtTokenService.CreateTokenAsync(token);
             }
             else
             {
@@ -56,7 +56,7 @@ namespace IdentityServer.Services
 
         public async Task<Token> CreateTokenAsync(string type, Client client, ClaimsPrincipal subject)
         {
-            var id = await _handleGenerator.GenerateAsync();
+            var id = await _idGenerator.GenerateAsync();
             var lifetime = -1;
             if (type == TokenTypes.AccessToken)
             {
@@ -79,7 +79,7 @@ namespace IdentityServer.Services
 
         public async Task<string> CreateRefreshTokenAsync(Token token, int refreshTokenLifetime)
         {
-            var id = await _handleGenerator.GenerateAsync();
+            var id = await _idGenerator.GenerateAsync();
             var creationTime = _clock.UtcNow.UtcDateTime;
             var refreshToken = new RefreshToken(
                 id,

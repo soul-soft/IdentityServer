@@ -19,27 +19,27 @@
 
         public bool IsEndpointEnabled(EndpointDescriptor endpoint)
         {
-            if (endpoint.Name == Constants.EndpointNames.Discovery)
+            if (endpoint.Name == internalConstants.EndpointNames.Discovery)
             {
                 return EnableDiscoveryEndpoint;
             }
-            else if (endpoint.Name == Constants.EndpointNames.Authorize)
+            else if (endpoint.Name == internalConstants.EndpointNames.Authorize)
             {
                 return EnableAuthorizeEndpoint;
             }
-            else if (endpoint.Name == Constants.EndpointNames.DiscoveryJwks)
+            else if (endpoint.Name == internalConstants.EndpointNames.DiscoveryJwks)
             {
                 return EnableDiscoveryJwksEndpoint;
             }
-            else if (endpoint.Name == Constants.EndpointNames.Token)
+            else if (endpoint.Name == internalConstants.EndpointNames.Token)
             {
                 return EnableTokenEndpoint;
             }
-            else if (endpoint.Name == Constants.EndpointNames.UserInfo)
+            else if (endpoint.Name == internalConstants.EndpointNames.UserInfo)
             {
                 return EnableUserInfoEndpoint;
             }
-            else if (endpoint.Name == Constants.EndpointNames.Introspection)
+            else if (endpoint.Name == internalConstants.EndpointNames.Introspection)
             {
                 return EnableIntrospectionEndpoint;
             }

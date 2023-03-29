@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using static IdentityServer.OpenIdConnects;
 
 namespace IdentityServer.Models
 {

@@ -31,11 +31,11 @@ namespace IdentityServer.Endpoints
             var configuration = new OpenIdConnectConfiguration
             {
                 Issuer = issuer,
-                JwksUri = baseUrl + _options.Endpoints.GetEndpointFullPath(Constants.EndpointRutePaths.DiscoveryJwks),
-                AuthorizationEndpoint = baseUrl + _options.Endpoints.GetEndpointFullPath(Constants.EndpointRutePaths.Authorize),
-                TokenEndpoint = baseUrl + _options.Endpoints.GetEndpointFullPath(Constants.EndpointRutePaths.Token),
-                UserInfoEndpoint = baseUrl + _options.Endpoints.GetEndpointFullPath(Constants.EndpointRutePaths.UserInfo),
-                IntrospectionEndpoint = baseUrl + _options.Endpoints.GetEndpointFullPath(Constants.EndpointRutePaths.Introspection),
+                JwksUri = baseUrl + _options.Endpoints.GetEndpointFullPath(internalConstants.EndpointRutePaths.DiscoveryJwks),
+                AuthorizationEndpoint = baseUrl + _options.Endpoints.GetEndpointFullPath(internalConstants.EndpointRutePaths.Authorize),
+                TokenEndpoint = baseUrl + _options.Endpoints.GetEndpointFullPath(internalConstants.EndpointRutePaths.Token),
+                UserInfoEndpoint = baseUrl + _options.Endpoints.GetEndpointFullPath(internalConstants.EndpointRutePaths.UserInfo),
+                IntrospectionEndpoint = baseUrl + _options.Endpoints.GetEndpointFullPath(internalConstants.EndpointRutePaths.Introspection),
             };
             var supportedExtensionsGrantTypes = _extensionGrantValidators.GetSupportedGrantTypes();
             foreach (var item in supportedExtensionsGrantTypes)

@@ -2,6 +2,6 @@
 {
     public interface IJwtTokenService
     {
-        Task<string> CreateTokenAsync(ReferenceToken token);
+        Task<string> CreateTokenAsync(Token token);
     }
 }
