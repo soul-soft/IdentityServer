@@ -46,7 +46,7 @@ namespace Hosting.Configuration
             new Client()
             {
                 ClientId = "client3",
-                AccessTokenType = AccessTokenType.Reference,
+                AccessTokenType = AccessTokenType.Jwt,
                 OfflineAccess=true,
                 AllowedGrantTypes = new []
                 {
