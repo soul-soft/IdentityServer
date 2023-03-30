@@ -72,7 +72,7 @@ namespace IdentityServer.Validation
 
         private async Task<TokenValidationResult> ValidateReferenceTokenAsync(string reference)
         {
-            var token = await _tokens.FindTokenAsync(reference);
+            var token = await _tokens.FindAccessTokenAsync(reference);
             if (token == null)
             {
                 return TokenValidationResult.Fail(ValidationErrors.InvalidToken, "Invalid reference token");

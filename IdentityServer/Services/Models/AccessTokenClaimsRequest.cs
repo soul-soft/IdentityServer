@@ -2,15 +2,17 @@
 
 namespace IdentityServer.Models
 {
-    public class ProfileClaimsRequest
+    public class AccessTokenClaimsRequest
     {
         public Client Client { get; }
+        public string GrantType { get; }
         public Resources Resources { get; }
         public ClaimsPrincipal Subject { get; }
         public IEnumerable<string> ClaimTypes => Resources.AllowedClaimTypes;
 
-        public ProfileClaimsRequest(ClaimsPrincipal subject, Client client, Resources resources)
+        public AccessTokenClaimsRequest(string grantType, ClaimsPrincipal subject, Client client, Resources resources)
         {
+            GrantType = grantType;
             Subject = subject;
             Client = client;
             Resources = resources;

@@ -4,7 +4,7 @@ namespace IdentityServer.Services
 {
     public interface IClaimService
     {
-        Task<ClaimsPrincipal> GetProfileClaimsAsync(ProfileClaimsRequest context);
-        Task<ClaimsPrincipal> GetAccessTokenClaimsAsync(string grantType, ProfileClaimsRequest context);
+        Task<ClaimsPrincipal> GetProfileClaimsAsync(ProfileClaimsRequest request);
+        Task<ClaimsPrincipal> GetAccessTokenClaimsAsync(AccessTokenClaimsRequest request);
     }
 }

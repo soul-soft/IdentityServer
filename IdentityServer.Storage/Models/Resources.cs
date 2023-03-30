@@ -37,7 +37,7 @@ namespace IdentityServer.Models
             }
         }
 
-        public IReadOnlyCollection<string> ClaimTypes
+        public IReadOnlyCollection<string> AllowedClaimTypes
         {
             get
             {

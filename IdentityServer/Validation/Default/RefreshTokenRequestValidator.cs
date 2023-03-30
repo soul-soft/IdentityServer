@@ -11,7 +11,7 @@
 
         public async Task<GrantValidationResult> ValidateAsync(RefreshTokenValidationRequest request)
         {
-            var token = await _tokenStore.FindTokenAsync(request.RefreshToken);
+            var token = await _tokenStore.FindRefreshTokenAsync(request.RefreshToken);
             if (token == null)
             {
                 throw new ValidationException(ValidationErrors.InvalidGrant, "Invalid refresh token");

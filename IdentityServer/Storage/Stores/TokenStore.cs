@@ -9,7 +9,7 @@ namespace IdentityServer.Storage
         private readonly IdentityServerOptions _options;
 
         public TokenStore(
-            ICacheStore cache, 
+            ICacheStore cache,
             ISystemClock clock,
             IdentityServerOptions options)
         {
@@ -22,6 +22,26 @@ namespace IdentityServer.Storage
         {
             var key = BuildStoreKey(token);
             return await _cache.GetAsync<Token>(key);
+        }
+
+        public async Task<Token?> FindAccessTokenAsync(string token)
+        {
+            var accessToken = await FindTokenAsync(token);
+            if (accessToken?.Type != TokenTypes.AccessToken)
+            {
+                return null;
+            }
+            return accessToken;
+        }
+
+        public async Task<Token?> FindRefreshTokenAsync(string token)
+        {
+            var accessToken = await FindTokenAsync(token);
+            if (accessToken?.Type != TokenTypes.RefreshToken)
+            {
+                return null;
+            }
+            return accessToken;
         }
 
         public async Task SaveTokenAsync(Token token)

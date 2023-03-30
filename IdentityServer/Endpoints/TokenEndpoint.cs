@@ -76,12 +76,12 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Validate Grant
-            var subject = await RunGrantValidationAsync(context, new GrantValidationRequest(client, grantType, resources, body, _options));
+            var grantSubject = await RunGrantValidationAsync(context, new GrantValidationRequest(client, grantType, resources, body, _options));
             #endregion
 
             #region Response Generator
-
-            var response = await _generator.ProcessAsync(new TokenGeneratorRequest(grantType, subject, client, resources, _options));
+            var subject = await _claimService.GetAccessTokenClaimsAsync(new AccessTokenClaimsRequest(grantType, grantSubject, client, resources));
+            var response = await _generator.ProcessAsync(new TokenGeneratorRequest(grantType, subject, client, resources));
             return TokenEndpointResult(response);
             #endregion
         }
