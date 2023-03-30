@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace IdentityServer.Hosting.DependencyInjection
 {
     public class IdentityServerBuilder
         : IIdentityServerBuilder

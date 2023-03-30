@@ -1,4 +1,5 @@
 ﻿using IdentityServer;
+using IdentityServer.Hosting.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -23,7 +24,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IServiceCollection AddIdentityServerAuthentication(this IServiceCollection services)
         {
-            services.AddAuthentication(LocalAuthenticationDefaults.Scheme)
+            services.AddAuthentication(IdentityServerAuthenticationDefaults.Scheme)
                 .AddIdentityServer();
             return services;
         }

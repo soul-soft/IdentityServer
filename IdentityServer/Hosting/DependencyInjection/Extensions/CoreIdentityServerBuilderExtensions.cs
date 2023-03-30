@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using IdentityServer.Hosting.DependencyInjection;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -8,7 +9,7 @@ namespace Microsoft.Extensions.DependencyInjection
     /// <summary>
     /// 核心服务
     /// </summary>
-    internal static class CoreExtensions
+    internal static class CoreIdentityServerBuilderExtensions
     {
         #region RequiredPlatformEndpoints
         public static IIdentityServerBuilder AddRequiredPlatformEndpoints(this IIdentityServerBuilder builder)
@@ -57,6 +58,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<ITokenService, TokenService>();
             builder.Services.TryAddTransient<IAuthorizeCodeService, AuthorizeCodeService>();
             builder.Services.TryAddTransient<ISecurityTokenService, SecurityTokenService>();
+            builder.Services.TryAddTransient<ISigningCredentialsService, SigningCredentialsService>();
             return builder;
         }
         #endregion

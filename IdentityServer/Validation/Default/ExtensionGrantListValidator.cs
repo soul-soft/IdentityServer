@@ -9,7 +9,7 @@
             _extensions = extensions;
         }
 
-        public Task<ExtensionGrantValidationResult> ValidateAsync(ExtensionGrantValidationRequest request)
+        public Task<GrantValidationResult> ValidateAsync(ExtensionGrantValidationRequest request)
         {
             var validator = _extensions
                 .Where(a => a.GrantType == request.GrantType)

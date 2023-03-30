@@ -6,11 +6,11 @@ namespace IdentityServer.Services
     internal class SecurityTokenService : ISecurityTokenService
     {
         private readonly IdentityServerOptions _options;
-        private readonly ISigningCredentialsStore _credentials;
+        private readonly ISigningCredentialsService _credentials;
 
         public SecurityTokenService(
             IdentityServerOptions options,
-            ISigningCredentialsStore credentials)
+            ISigningCredentialsService credentials)
         {
             _options = options;
             _credentials = credentials;
@@ -18,8 +18,8 @@ namespace IdentityServer.Services
 
         public async Task<string> CreateJwtTokenAsync(Token token, IEnumerable<string> algorithms)
         {
-            var credential = await _credentials.GetSigningCredentialsByAlgorithmsAsync(algorithms);
-            var header = CreateJwtHeader(token, credential);
+            var credentials = await _credentials.FindByAlgorithmsAsync(algorithms);
+            var header = CreateJwtHeader(token, credentials);
             var payload = CreateJwtPayload(token);
             var handler = new JwtSecurityTokenHandler();
             return handler.WriteToken(new JwtSecurityToken(header, payload));

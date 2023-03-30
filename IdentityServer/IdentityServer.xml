@@ -182,26 +182,26 @@
             凭据解析器集
             </summary>
         </member>
-        <member name="T:Microsoft.Extensions.DependencyInjection.CoreExtensions">
+        <member name="T:Microsoft.Extensions.DependencyInjection.CoreIdentityServerBuilderExtensions">
             <summary>
             核心服务
             </summary>
         </member>
-        <member name="M:Microsoft.Extensions.DependencyInjection.CoreExtensions.AddRequiredPlatformServices(Microsoft.Extensions.DependencyInjection.IIdentityServerBuilder)">
+        <member name="M:Microsoft.Extensions.DependencyInjection.CoreIdentityServerBuilderExtensions.AddRequiredPlatformServices(IdentityServer.Hosting.DependencyInjection.IIdentityServerBuilder)">
             <summary>
             必要的平台服务
             </summary>
             <param name="builder"></param>
             <returns></returns>
         </member>
-        <member name="M:Microsoft.Extensions.DependencyInjection.CoreExtensions.AddPluggableServices(Microsoft.Extensions.DependencyInjection.IIdentityServerBuilder)">
+        <member name="M:Microsoft.Extensions.DependencyInjection.CoreIdentityServerBuilderExtensions.AddPluggableServices(IdentityServer.Hosting.DependencyInjection.IIdentityServerBuilder)">
             <summary>
             可插拔的服务
             </summary>
             <param name="builder"></param>
             <returns></returns>
         </member>
-        <member name="M:Microsoft.Extensions.DependencyInjection.CoreExtensions.AddPluggableValidators(Microsoft.Extensions.DependencyInjection.IIdentityServerBuilder)">
+        <member name="M:Microsoft.Extensions.DependencyInjection.CoreIdentityServerBuilderExtensions.AddPluggableValidators(IdentityServer.Hosting.DependencyInjection.IIdentityServerBuilder)">
             <summary>
             可插拔的验证器
             </summary>

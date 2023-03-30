@@ -2,7 +2,7 @@
 
 namespace IdentityServer.Hosting
 {
-    public class LocalAuthenticationOptions
+    public class IdentityServerAuthenticationOptions
         : AuthenticationSchemeOptions
     {
         public bool SaveToken { get; set; } = true;

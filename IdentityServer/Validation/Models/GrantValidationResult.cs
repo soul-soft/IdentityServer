@@ -4,11 +4,25 @@ namespace IdentityServer.Validation
 {
     public class GrantValidationResult
     {
-        public ClaimsPrincipal Subject { get; }
+        public IEnumerable<Claim> Claims { get; }
 
-        public GrantValidationResult(ClaimsPrincipal subject)
+        public GrantValidationResult()
         {
-            Subject = subject;
+            Claims = new List<Claim>();
         }
+
+        public GrantValidationResult(IEnumerable<Claim> claims)
+        {
+            Claims = claims;
+        }
+
+        public GrantValidationResult(string subject, IEnumerable<Claim>? claims = null)
+            : this(new List<Claim>(claims ?? new Claim[0])
+            {
+                new Claim(JwtClaimTypes.Subject,subject)
+            })
+        {
+        }
+
     }
 }

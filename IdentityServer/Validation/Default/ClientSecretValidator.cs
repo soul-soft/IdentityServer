@@ -21,7 +21,7 @@ namespace IdentityServer.Validation
         public async Task<Client> ValidateAsync(HttpContext context)
         {
             var parsedSecret = await _secretListParser.ParseAsync(context);
-            var client = await _clients.FindByClientIdAsync(parsedSecret.ClientId);
+            var client = await _clients.FindClientAsync(parsedSecret.ClientId);
             if (client == null)
             {
                 throw new ValidationException(ValidationErrors.InvalidClient, "Invalid client credentials");

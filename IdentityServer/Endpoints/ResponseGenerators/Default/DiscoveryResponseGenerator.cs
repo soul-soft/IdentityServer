@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+﻿using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace IdentityServer.Endpoints
 {
@@ -9,14 +8,14 @@ namespace IdentityServer.Endpoints
         private readonly IResourceStore _resources;
         private readonly IdentityServerOptions _options;
         private readonly ISecretListParser _secretParsers;
-        private readonly ISigningCredentialsStore _credentials;
+        private readonly ISigningCredentialsService _credentials;
         private readonly IExtensionGrantListValidator _extensionGrantValidators;
 
         public DiscoveryResponseGenerator(
             IResourceStore resources,
             IdentityServerOptions options,
             ISecretListParser secretParsers,
-            ISigningCredentialsStore credentials,
+            ISigningCredentialsService credentials,
             IExtensionGrantListValidator extensionGrantValidators)
         {
             _resources = resources;

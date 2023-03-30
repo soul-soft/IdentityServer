@@ -6,9 +6,9 @@ namespace Hosting.Configuration
     {
         public string GrantType => "myGrant";
 
-        public Task<ExtensionGrantValidationResult> ValidateAsync(ExtensionGrantValidationRequest request)
+        public Task<GrantValidationResult> ValidateAsync(ExtensionGrantValidationRequest request)
         {
-            return Task.FromResult(new ExtensionGrantValidationResult("10", GrantType));
+            return Task.FromResult(new GrantValidationResult());
         }
     }
 }

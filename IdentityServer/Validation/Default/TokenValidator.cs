@@ -10,23 +10,20 @@ namespace IdentityServer.Validation
         private readonly ITokenStore _tokens;
         private readonly IClientStore _clients;
         private readonly IServerUrl _serverUrl;
-        private readonly ISystemClock _systemClock;
         private readonly IdentityServerOptions _options;
-        private readonly ISigningCredentialsStore _credentials;
+        private readonly ISigningCredentialsService _credentials;
 
         public TokenValidator(
             ITokenStore tokens,
             IClientStore clients,
             IServerUrl serverUrl,
-            ISystemClock systemClock,
             IdentityServerOptions options,
-            ISigningCredentialsStore credentials)
+            ISigningCredentialsService credentials)
         {
             _tokens = tokens;
             _clients = clients;
             _options = options;
             _serverUrl = serverUrl;
-            _systemClock = systemClock;
             _credentials = credentials;
         }
 
@@ -80,16 +77,13 @@ namespace IdentityServer.Validation
             {
                 return TokenValidationResult.Fail(ValidationErrors.InvalidToken, "Invalid reference token");
             }
-            var span = _systemClock.UtcNow.UtcDateTime - token.CreationTime;
-            if (span.TotalSeconds > token.Lifetime)
-            {
-                return TokenValidationResult.Fail(ValidationErrors.ExpiredToken, "The access token has expired");
-            }
             if (token.GetIssuer() != _serverUrl.GetIdentityServerIssuerUri())
             {
                 return TokenValidationResult.Fail(ValidationErrors.InvalidToken, "Invalid issuer");
             }
-            return await ValidateClaimsAsync(token.Claims);
+            var result = await ValidateClaimsAsync(token.Claims);
+            await _tokens.SetLifetimeAsync(token);
+            return result;
         }
 
         private async Task<TokenValidationResult> ValidateClaimsAsync(IEnumerable<Claim> claims)
@@ -109,11 +103,11 @@ namespace IdentityServer.Validation
             {
                 return TokenValidationResult.Fail(ValidationErrors.InvalidToken, $"Token contains no client_id claim");
             }
-            var client = await _clients.FindByClientIdAsync(clientId);
+            var client = await _clients.FindClientAsync(clientId);
             if (client == null)
             {
                 return TokenValidationResult.Fail(ValidationErrors.InvalidClient, $"Client does not exist anymore");
-            }           
+            }
             return TokenValidationResult.Success(client, subject.Claims);
         }
     }

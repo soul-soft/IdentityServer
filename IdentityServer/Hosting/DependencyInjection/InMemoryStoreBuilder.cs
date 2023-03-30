@@ -1,8 +1,9 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace IdentityServer.Hosting.DependencyInjection
 {
     public class InMemoryStoreBuilder
     {
@@ -36,7 +37,7 @@ namespace Microsoft.Extensions.DependencyInjection
             AddSigningCredentials(credential);
             return this;
         }
-        public InMemoryStoreBuilder AddDeveloperSigningCredentials(bool persistKey = true,string? filename = null,string signingAlgorithm = SecurityAlgorithms.RsaSha256)
+        public InMemoryStoreBuilder AddDeveloperSigningCredentials(bool persistKey = true, string? filename = null, string signingAlgorithm = SecurityAlgorithms.RsaSha256)
         {
             if (filename == null)
             {

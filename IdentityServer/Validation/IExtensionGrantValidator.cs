@@ -3,6 +3,6 @@
     public interface IExtensionGrantValidator
     {
         string GrantType { get; }
-        Task<ExtensionGrantValidationResult> ValidateAsync(ExtensionGrantValidationRequest request);
+        Task<GrantValidationResult> ValidateAsync(ExtensionGrantValidationRequest request);
     }
 }

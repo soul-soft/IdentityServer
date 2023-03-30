@@ -6,8 +6,8 @@
 		<AssemblyName>Soul.$(MSBuildProjectName)</AssemblyName>
 		<PackageTags>OAuth2;OAuth 2.0;OpenID Connect;IdentityServer</PackageTags>
 		<Copyright>MIT</Copyright>
-		<PackageProjectUrl>https://github.com/1448376744/IdentityServer</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/1448376744/IdentityServer</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/soul-soft/IdentityServer</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/soul-soft/IdentityServer</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageReleaseNotes>预览版</PackageReleaseNotes>
 		<Description>Simple identityServer storage.</Description>

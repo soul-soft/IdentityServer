@@ -25,7 +25,7 @@ namespace IdentityServer.Services
             _profileService = profileService;
         }
 
-        public async Task<ClaimsPrincipal> GetAccessTokenClaimsAsync(string grantType, ProfileClaimsRequest request)
+        public async Task<ClaimsPrincipal> GetAccessTokenClaimsAsync(ProfileClaimsRequest request)
         {
             #region Jwt Claims
             //request jwt
@@ -76,7 +76,7 @@ namespace IdentityServer.Services
             claims.AddRange(FilterRequestClaims(profileDataClaims, request.Resources.ClaimTypes));
             #endregion
 
-            return new ClaimsPrincipal(new ClaimsIdentity(claims, grantType));
+            return new ClaimsPrincipal(new ClaimsIdentity(claims));
         }
 
         public async Task<ClaimsPrincipal> GetProfileClaimsAsync(ProfileClaimsRequest context)

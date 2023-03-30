@@ -6,16 +6,16 @@ using System.Text.Encodings.Web;
 
 namespace IdentityServer.Hosting
 {
-    internal class LocalAuthenticationHandler
-        : AuthenticationHandler<LocalAuthenticationOptions>
+    internal class IdentityServerAuthenticationHandler
+        : AuthenticationHandler<IdentityServerAuthenticationOptions>
     {
         private readonly ITokenParser _tokenParser;
         private readonly ITokenValidator _tokenValidator;
 
-        public LocalAuthenticationHandler(
+        public IdentityServerAuthenticationHandler(
             ITokenValidator tokenValidator,
             ITokenParser tokenParser,
-            IOptionsMonitor<LocalAuthenticationOptions> options,
+            IOptionsMonitor<IdentityServerAuthenticationOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
             ISystemClock clock) : base(options, logger, encoder, clock)

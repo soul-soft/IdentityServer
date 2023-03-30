@@ -76,10 +76,11 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Validate Grant
-            var subject = await RunGrantValidationAsync(context, new GrantValidationRequest(client, grantType, resources, body, _options));
+            var claims = await RunGrantValidationAsync(context, new GrantValidationRequest(client, grantType, resources, body, _options));
             #endregion
 
             #region Response Generator
+            var subject = await _claimService.GetAccessTokenClaimsAsync(new ProfileClaimsRequest(claims, client, resources));
             var response = await _generator.ProcessAsync(new TokenGeneratorRequest(grantType, subject, client, resources, _options));
             return TokenEndpointResult(response);
             #endregion
@@ -115,15 +116,12 @@ namespace IdentityServer.Endpoints
                 result = await ValidateExtensionGrantRequestAsync(context, request);
             }
             //验证是否启用
-            var isActiveRequest = new IsActiveRequest(ProfileIsActiveCallers.TokenEndpoint, request.Client, result.Subject);
-            var isActive = await _profileService.IsActiveAsync(isActiveRequest);
-            if (!isActive)
+            var subject = new ClaimsPrincipal(new ClaimsIdentity(result.Claims, request.GrantType));
+            var isActive = await _profileService.IsActiveAsync(new IsActiveRequest(ProfileIsActiveCallers.TokenEndpoint, request.Client, subject));
+            if (!isActive && subject.GetSubjectId() != null)
             {
-                throw new ValidationException(ValidationErrors.InvalidGrant, string.Format("User has been disabled:{0}", result.Subject.GetSubjectId()));
+                throw new ValidationException(ValidationErrors.InvalidGrant, string.Format("User has been disabled:{0}", subject.GetSubjectId()));
             }
-            //issue claims
-            var accessTokenClaimsRequest = new ProfileClaimsRequest(result.Subject, request.Client, request.Resources);
-            var subject = await _claimService.GetAccessTokenClaimsAsync(request.GrantType, accessTokenClaimsRequest);
             return subject;
         }
         #endregion

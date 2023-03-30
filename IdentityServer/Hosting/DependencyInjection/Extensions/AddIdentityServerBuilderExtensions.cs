@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using IdentityServer.Hosting.DependencyInjection;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class AdditionalExtensions
+    public static class AddIdentityServerBuilderExtensions
     {             
         #region IClientStore
         public static IIdentityServerBuilder AddClientStore<T>(this IIdentityServerBuilder builder)

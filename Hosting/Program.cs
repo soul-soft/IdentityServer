@@ -1,5 +1,6 @@
 using Hosting.Configuration;
 using IdentityServer;
+using IdentityServer.Hosting;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Cryptography.X509Certificates;
 
@@ -11,8 +12,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddIdentityServerAuthentication();
-builder.Services.AddAuthentication().AddIdentityCookies();
+builder.Services.AddAuthentication(IdentityServerAuthenticationDefaults.Scheme)
+    .AddIdentityServer();
 builder.Services.AddAuthorization()
     .AddAuthorization(configure =>
     {
@@ -20,7 +21,7 @@ builder.Services.AddAuthorization()
     });
 builder.Services.AddStackExchangeRedisCache(c => 
 {
-    c.Configuration = "127.0.0.1";
+    c.Configuration = "124.71.130.192,password=Juzhen88!";
 });
 builder.Services.AddIdentityServer(o =>
     {
