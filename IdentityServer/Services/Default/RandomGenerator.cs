@@ -4,7 +4,7 @@
     {
         public Task<string> GenerateAsync(int length = 32)
         {
-            var handle = CryptoRandomUtility.CreateUniqueId(length, CryptoRandomUtility.OutputFormat.Base64Url);
+            var handle = CryptoUtility.CreateUniqueId(length, CryptoUtility.OutputFormat.Base64Url);
             return Task.FromResult(handle);
         }
     }

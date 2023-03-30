@@ -21,10 +21,10 @@ namespace Microsoft.Extensions.DependencyInjection
             return services;
         }
 
-        public static IServiceCollection AddLoaclApiAuthentication(this IServiceCollection services)
+        public static IServiceCollection AddIdentityServerAuthentication(this IServiceCollection services)
         {
             services.AddAuthentication(LocalAuthenticationDefaults.Scheme)
-                .AddLoaclApiAuthentication();
+                .AddIdentityServer();
             return services;
         }
 

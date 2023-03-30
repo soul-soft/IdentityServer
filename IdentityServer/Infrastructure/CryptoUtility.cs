@@ -3,7 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityServer.Infrastructure
 {
-    public static class CryptoRandomUtility
+    public static class CryptoUtility
     {
         private static readonly RandomNumberGenerator Rng = RandomNumberGenerator.Create();
      
@@ -31,7 +31,7 @@ namespace IdentityServer.Infrastructure
         {
             return new RsaSecurityKey(RSA.Create(keySize))
             {
-                KeyId = CreateUniqueId(16, OutputFormat.Hex)
+                KeyId = CreateUniqueId(32, OutputFormat.Hex)
             };
         }
       

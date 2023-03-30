@@ -4,7 +4,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class LocalAuthenticationExtensions
     {
-        public static AuthenticationBuilder AddLoaclApiAuthentication(this AuthenticationBuilder builder)
+        public static AuthenticationBuilder AddIdentityServer(this AuthenticationBuilder builder)
         {
             return builder.AddScheme<LocalAuthenticationOptions, LocalAuthenticationHandler>(
                 LocalAuthenticationDefaults.Scheme,
@@ -12,7 +12,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 configure => { });
         }
 
-        public static AuthenticationBuilder AddLoaclApiAuthentication(this AuthenticationBuilder builder, string scheme, string displayName, Action<LocalAuthenticationOptions> configure)
+        public static AuthenticationBuilder AddIdentityServer(this AuthenticationBuilder builder, string scheme, string displayName, Action<LocalAuthenticationOptions> configure)
         {
             return builder.AddScheme<LocalAuthenticationOptions, LocalAuthenticationHandler>(scheme, displayName, configure);
         }

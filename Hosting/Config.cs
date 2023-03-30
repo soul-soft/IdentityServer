@@ -24,7 +24,7 @@ namespace Hosting.Configuration
                     "api"
                 },
                 AllowedRedirectUris = new string[]
-                { 
+                {
                     "http://www.baidu.com/callbck"
                 },
                 RequireClientSecret = false
@@ -73,20 +73,20 @@ namespace Hosting.Configuration
             //用来给api资源进行分组，apiResource和apiScope是多对多的关系
             new ApiScope("api")
             {
-               
+
             },
             //name要和client_id相同，还需要配置secret
             new ApiResource("orderapi")
             {
                 ClaimTypes = new string[]
-                { 
+                {
                     JwtClaimTypes.Role
                 },
                 Scopes =
                 {
                     "api",
                 },
-                ApiSecrets = 
+                ApiSecrets =
                 {
                     new Secret("secret".Sha256())
                 }

@@ -51,7 +51,7 @@ namespace Microsoft.Extensions.DependencyInjection
             }
             else
             {
-                var key = CryptoRandomUtility.CreateRsaSecurityKey();
+                var key = CryptoUtility.CreateRsaSecurityKey();
                 var jwk = JsonWebKeyConverter.ConvertFromRSASecurityKey(key);
                 jwk.Alg = signingAlgorithm.ToString();
                 if (persistKey)
