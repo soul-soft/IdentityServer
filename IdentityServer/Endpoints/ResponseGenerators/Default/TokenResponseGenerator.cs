@@ -32,7 +32,7 @@
                 request.Client.AllowedSigningAlgorithms,
                 request.Subject.Claims);
 
-            if (request.Resources.OfflineAccess)
+            if (request.Client.OfflineAccess)
             {
                 var refreshToken = await _tokenService.CreateRefreshTokenAsync(
                     request.Subject.Claims, 

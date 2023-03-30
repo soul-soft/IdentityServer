@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Services
 {
-    public interface IIdGenerator
+    public interface IRandomGenerator
     {
         Task<string> GenerateAsync(int length = 32);
     }

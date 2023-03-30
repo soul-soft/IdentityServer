@@ -7,19 +7,19 @@ namespace IdentityServer.Services
     {
         private readonly IServerUrl _serverUrl;
         private readonly ISystemClock _systemClock;
-        private readonly IIdGenerator _idGenerator;
         private readonly IdentityServerOptions _options;
+        private readonly IRandomGenerator _randomGenerator;
         private readonly IProfileService _profileService;
 
         public ClaimService(
             IServerUrl serverUrl,
-            IIdGenerator idGenerator,
             ISystemClock systemClock,
             IdentityServerOptions options,
-            IProfileService profileService)
+            IProfileService profileService, 
+            IRandomGenerator randomGenerator)
         {
             _options = options;
-            _idGenerator = idGenerator;
+            _randomGenerator = randomGenerator;
             _serverUrl = serverUrl;
             _systemClock = systemClock;
             _profileService = profileService;
@@ -29,7 +29,7 @@ namespace IdentityServer.Services
         {
             #region Jwt Claims
             //request jwt
-            var jwtId = await _idGenerator.GenerateAsync(16);
+            var jwtId = await _randomGenerator.GenerateAsync(16);
             var issuer = _serverUrl.GetIdentityServerIssuerUri();
             var issuedAt = _systemClock.UtcNow.ToUnixTimeSeconds();
             var expiration = issuedAt + request.Client.AccessTokenLifetime;

@@ -3,12 +3,12 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace IdentityServer.Services
 {
-    internal class JwtTokenService : IJwtTokenService
+    internal class SecurityTokenService : ISecurityTokenService
     {
         private readonly IdentityServerOptions _options;
         private readonly ISigningCredentialsStore _credentials;
 
-        public JwtTokenService(
+        public SecurityTokenService(
             IdentityServerOptions options,
             ISigningCredentialsStore credentials)
         {

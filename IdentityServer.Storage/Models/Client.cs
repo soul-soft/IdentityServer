@@ -14,6 +14,7 @@
         public bool RequireClientSecret { get; set; } = true;
         public AccessTokenType AccessTokenType { get; set; } = AccessTokenType.Jwt;
         public ICollection<Secret> ClientSecrets { get; set; } = new HashSet<Secret>();
+        public bool OfflineAccess { get; set; } = false;
         public ICollection<string> AllowedGrantTypes { get; set; } = new HashSet<string>();
         public ICollection<string> AllowedRedirectUris { get; set; } = new HashSet<string>();
         public ICollection<string> AllowedSigningAlgorithms { get; set; } = new HashSet<string>();

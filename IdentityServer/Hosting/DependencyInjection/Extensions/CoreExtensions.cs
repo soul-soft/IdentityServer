@@ -51,12 +51,12 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IIdentityServerBuilder AddPluggableServices(this IIdentityServerBuilder builder)
         {
             builder.Services.TryAddTransient<IServerUrl, ServerUrl>();
-            builder.Services.TryAddTransient<IIdGenerator, IdGenerator>();
+            builder.Services.TryAddTransient<IRandomGenerator, RandomGenerator>();
             builder.Services.TryAddTransient<IProfileService, ProfileService>();
             builder.Services.TryAddTransient<IClaimService, ClaimService>();           
             builder.Services.TryAddTransient<ITokenService, TokenService>();
             builder.Services.TryAddTransient<IAuthorizeCodeService, AuthorizeCodeService>();
-            builder.Services.TryAddTransient<IJwtTokenService, JwtTokenService>();
+            builder.Services.TryAddTransient<ISecurityTokenService, SecurityTokenService>();
             return builder;
         }
         #endregion

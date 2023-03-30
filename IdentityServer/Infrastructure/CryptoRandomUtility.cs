@@ -3,11 +3,11 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityServer.Infrastructure
 {
-    public static class CryptoRandom
+    public static class CryptoRandomUtility
     {
         private static readonly RandomNumberGenerator Rng = RandomNumberGenerator.Create();
      
-        public static byte[] CreateRandomKey(int length)
+        public static byte[] CreateRandomData(int length)
         {
             byte[] array = new byte[length];
             Rng.GetBytes(array);
@@ -16,7 +16,7 @@ namespace IdentityServer.Infrastructure
 
         public static string CreateUniqueId(int length = 32, OutputFormat format= OutputFormat.Base64Url)
         {
-            byte[] array = CreateRandomKey(length);
+            byte[] array = CreateRandomData(length);
 
             return format switch
             {
