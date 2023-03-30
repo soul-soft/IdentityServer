@@ -2,7 +2,7 @@
 {
     internal class ResourceOwnerCredentialRequestValidator : IResourceOwnerCredentialRequestValidator
     {
-        public Task<ResourceOwnerCredentialValidationResult> ValidateAsync(ResourceOwnerCredentialValidationRequest request)
+        public Task<GrantValidationResult> ValidateAsync(ResourceOwnerCredentialValidationRequest request)
         {
             throw new ValidationException(ValidationErrors.InvalidGrant, "Invalid username or password");
         }

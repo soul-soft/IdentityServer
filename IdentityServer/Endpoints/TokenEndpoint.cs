@@ -76,11 +76,11 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Validate Grant
-            var claims = await RunGrantValidationAsync(context, new GrantValidationRequest(client, grantType, resources, body, _options));
+            var grantSubject = await RunGrantValidationAsync(context, new GrantValidationRequest(client, grantType, resources, body, _options));
             #endregion
 
             #region Response Generator
-            var subject = await _claimService.GetAccessTokenClaimsAsync(new ProfileClaimsRequest(claims, client, resources));
+            var subject = await _claimService.GetAccessTokenClaimsAsync(new ProfileClaimsRequest(grantSubject, client, resources));
             var response = await _generator.ProcessAsync(new TokenGeneratorRequest(grantType, subject, client, resources, _options));
             return TokenEndpointResult(response);
             #endregion
@@ -116,13 +116,13 @@ namespace IdentityServer.Endpoints
                 result = await ValidateExtensionGrantRequestAsync(context, request);
             }
             //验证是否启用
-            var subject = new ClaimsPrincipal(new ClaimsIdentity(result.Claims, request.GrantType));
-            var isActive = await _profileService.IsActiveAsync(new IsActiveRequest(ProfileIsActiveCallers.TokenEndpoint, request.Client, subject));
-            if (!isActive && subject.GetSubjectId() != null)
+            var grantSubject = new ClaimsPrincipal(new ClaimsIdentity(result.Claims, request.GrantType));
+            var isActive = await _profileService.IsActiveAsync(new IsActiveRequest(ProfileIsActiveCallers.TokenEndpoint, request.Client, grantSubject));
+            if (!isActive && grantSubject.GetSubjectId() != null)
             {
-                throw new ValidationException(ValidationErrors.InvalidGrant, string.Format("User has been disabled:{0}", subject.GetSubjectId()));
+                throw new ValidationException(ValidationErrors.InvalidGrant, string.Format("User has been disabled:{0}", grantSubject.GetSubjectId()));
             }
-            return subject;
+            return grantSubject;
         }
         #endregion
 

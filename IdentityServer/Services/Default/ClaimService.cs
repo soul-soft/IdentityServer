@@ -15,7 +15,7 @@ namespace IdentityServer.Services
             IServerUrl serverUrl,
             ISystemClock systemClock,
             IdentityServerOptions options,
-            IProfileService profileService, 
+            IProfileService profileService,
             IRandomGenerator randomGenerator)
         {
             _options = options;
@@ -92,7 +92,7 @@ namespace IdentityServer.Services
         private IEnumerable<Claim> FilterRequestClaims(IEnumerable<Claim> claims, IEnumerable<string> claimTypes)
         {
             return claims.Where(a => claimTypes.Contains(a.Type))
-               .Where(a => !OpenIdConnectConstants.ClaimTypeFilters.ClaimsServiceFilterClaimTypes.Contains(a.Type));
+                .Where(a => !OpenIdConnectConstants.ClaimTypeFilters.ClaimsServiceFilterClaimTypes.Contains(a.Type));
         }
 
         private IEnumerable<Claim> GetStandardSubjectClaims(ClaimsPrincipal subject, IEnumerable<string> claimTypes)
@@ -100,9 +100,14 @@ namespace IdentityServer.Services
             if (claimTypes.Contains(JwtClaimTypes.Subject))
             {
                 yield return subject.Claims.Where(a => a.Type == JwtClaimTypes.Subject).First();
-                yield return subject.Claims.Where(a => a.Type == JwtClaimTypes.IdentityProvider).First();
-                yield return subject.Claims.Where(a => a.Type == JwtClaimTypes.AuthenticationTime).First();
                 yield return subject.Claims.Where(a => a.Type == JwtClaimTypes.AuthenticationMethod).First();
+              
+                yield return subject.Claims.Where(a => a.Type == JwtClaimTypes.IdentityProvider)
+                    .FirstOrDefault() ?? new Claim(JwtClaimTypes.IdentityProvider, "idsv");
+
+                yield return subject.Claims.Where(a => a.Type == JwtClaimTypes.AuthenticationTime).FirstOrDefault()
+                    ?? new Claim(JwtClaimTypes.AuthenticationTime, new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64);
+
             }
         }
     }

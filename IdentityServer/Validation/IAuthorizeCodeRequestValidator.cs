@@ -2,6 +2,6 @@
 {
     public interface IAuthorizeCodeRequestValidator
     {
-        Task<AuthorizeCodeValidationResult> ValidateAsync(AuthorizeCodeValidationRequest request);
+        Task<GrantValidationResult> ValidateAsync(AuthorizeCodeValidationRequest request);
     }
 }

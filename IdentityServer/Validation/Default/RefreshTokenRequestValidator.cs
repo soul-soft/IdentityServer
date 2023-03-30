@@ -9,7 +9,7 @@
             _tokenStore = tokenStore;
         }
 
-        public async Task<RefreshTokenValidationResult> ValidateAsync(RefreshTokenValidationRequest request)
+        public async Task<GrantValidationResult> ValidateAsync(RefreshTokenValidationRequest request)
         {
             var token = await _tokenStore.FindTokenAsync(request.RefreshToken);
             if (token == null)
@@ -21,7 +21,7 @@
                 throw new ValidationException(ValidationErrors.InvalidGrant, "Invalid refresh token");
             }
             await _tokenStore.RevomeTokenAsync(token);
-            return new RefreshTokenValidationResult(token.Claims);
+            return new GrantValidationResult(token.Claims);
         }
     }
 }

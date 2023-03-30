@@ -16,7 +16,7 @@ namespace IdentityServer.Validation
             _authorizeCodeStore = authorizeCodeStore;
         }
 
-        public async Task<AuthorizeCodeValidationResult> ValidateAsync(AuthorizeCodeValidationRequest request)
+        public async Task<GrantValidationResult> ValidateAsync(AuthorizeCodeValidationRequest request)
         {
             var authorizeCode = await _authorizeCodeStore.FindByAuthorizeCodeAsync(request.Code);
             if (authorizeCode == null)
@@ -29,8 +29,7 @@ namespace IdentityServer.Validation
                 throw new ValidationException(ValidationErrors.InvalidGrant, "Refresh token has expired");
             }
             await _authorizeCodeStore.RevomeAuthorizeCodeAsync(authorizeCode.Id);
-            var claims = new ClaimsPrincipal(new ClaimsIdentity(authorizeCode.Claims, GrantTypes.AuthorizationCode));
-            return new AuthorizeCodeValidationResult(claims);
+            return new GrantValidationResult(authorizeCode.Claims);
         }
     }
 }
