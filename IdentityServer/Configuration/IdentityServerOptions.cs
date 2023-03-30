@@ -1,4 +1,6 @@
-﻿namespace IdentityServer.Configuration
+﻿using System.Security.Claims;
+
+namespace IdentityServer.Configuration
 {
     public class IdentityServerOptions
     {
@@ -38,5 +40,9 @@
         /// 认证方式
         /// </summary>
         public string AuthenticationMethod { get; set; } = EndpointAuthenticationMethods.PostBody;
+        /// <summary>
+        /// idp
+        /// </summary>
+        public string IdentityProvider { get; set; } = "idsv";
     }
 }

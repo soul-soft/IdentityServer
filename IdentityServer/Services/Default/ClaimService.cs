@@ -103,7 +103,7 @@ namespace IdentityServer.Services
                 yield return subject.Claims.Where(a => a.Type == JwtClaimTypes.AuthenticationMethod).First();
               
                 yield return subject.Claims.Where(a => a.Type == JwtClaimTypes.IdentityProvider)
-                    .FirstOrDefault() ?? new Claim(JwtClaimTypes.IdentityProvider, "idsv");
+                    .FirstOrDefault() ?? new Claim(JwtClaimTypes.IdentityProvider, _options.IdentityProvider);
 
                 yield return subject.Claims.Where(a => a.Type == JwtClaimTypes.AuthenticationTime).FirstOrDefault()
                     ?? new Claim(JwtClaimTypes.AuthenticationTime, new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64);
