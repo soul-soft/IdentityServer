@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Models
 {
-    internal static class internalConstants
+    internal static class OpenIdConnectConstants
     {
         public static class EndpointNames
         {

@@ -92,7 +92,7 @@ namespace IdentityServer.Services
         private IEnumerable<Claim> FilterRequestClaims(IEnumerable<Claim> claims, IEnumerable<string> claimTypes)
         {
             return claims.Where(a => claimTypes.Contains(a.Type))
-               .Where(a => !internalConstants.ClaimTypeFilters.ClaimsServiceFilterClaimTypes.Contains(a.Type));
+               .Where(a => !OpenIdConnectConstants.ClaimTypeFilters.ClaimsServiceFilterClaimTypes.Contains(a.Type));
         }
 
         private IEnumerable<Claim> GetStandardSubjectClaims(ClaimsPrincipal subject, IEnumerable<string> claimTypes)

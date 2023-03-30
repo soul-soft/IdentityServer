@@ -14,12 +14,12 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IIdentityServerBuilder AddRequiredPlatformEndpoints(this IIdentityServerBuilder builder)
         {
             builder.Services.AddTransient<IEndpointRouter, EndpointRouter>();
-            builder.AddEndpoint<TokenEndpoint>(internalConstants.EndpointNames.Token, internalConstants.EndpointRutePaths.Token);
-            builder.AddEndpoint<UserInfoEndpoint>(internalConstants.EndpointNames.UserInfo, internalConstants.EndpointRutePaths.UserInfo);
-            builder.AddEndpoint<AuthorizeEndpoint>(internalConstants.EndpointNames.Authorize, internalConstants.EndpointRutePaths.Authorize);
-            builder.AddEndpoint<DiscoveryEndpoint>(internalConstants.EndpointNames.Discovery, internalConstants.EndpointRutePaths.Discovery);
-            builder.AddEndpoint<IntrospectionEndpoint>(internalConstants.EndpointNames.Introspection, internalConstants.EndpointRutePaths.Introspection);
-            builder.AddEndpoint<DiscoveryKeyEndpoint>(internalConstants.EndpointNames.DiscoveryJwks, internalConstants.EndpointRutePaths.DiscoveryJwks);
+            builder.AddEndpoint<TokenEndpoint>(OpenIdConnectConstants.EndpointNames.Token, OpenIdConnectConstants.EndpointRutePaths.Token);
+            builder.AddEndpoint<UserInfoEndpoint>(OpenIdConnectConstants.EndpointNames.UserInfo, OpenIdConnectConstants.EndpointRutePaths.UserInfo);
+            builder.AddEndpoint<AuthorizeEndpoint>(OpenIdConnectConstants.EndpointNames.Authorize, OpenIdConnectConstants.EndpointRutePaths.Authorize);
+            builder.AddEndpoint<DiscoveryEndpoint>(OpenIdConnectConstants.EndpointNames.Discovery, OpenIdConnectConstants.EndpointRutePaths.Discovery);
+            builder.AddEndpoint<IntrospectionEndpoint>(OpenIdConnectConstants.EndpointNames.Introspection, OpenIdConnectConstants.EndpointRutePaths.Introspection);
+            builder.AddEndpoint<DiscoveryKeyEndpoint>(OpenIdConnectConstants.EndpointNames.DiscoveryJwks, OpenIdConnectConstants.EndpointRutePaths.DiscoveryJwks);
             return builder;
         }
         #endregion
