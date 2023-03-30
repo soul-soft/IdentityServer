@@ -4,8 +4,8 @@ namespace IdentityServer.Services
 {
     public interface ITokenService
     {
-        Task<string> CreateAccessTokenAsync(AccessTokenType accessTokenType, int lifetime, IEnumerable<string> algorithms, IEnumerable<Claim> claims);
+        Task<string> CreateAccessTokenAsync(Client client, ClaimsPrincipal subject);
 
-        Task<string> CreateRefreshTokenAsync(IEnumerable<Claim> claims, int lifetime);
+        Task<string> CreateRefreshTokenAsync(Client client, ClaimsPrincipal subject);
     }
 }

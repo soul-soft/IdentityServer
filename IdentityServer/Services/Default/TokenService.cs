@@ -1,11 +1,5 @@
-﻿using IdentityServer.Models;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.IdentityModel.JsonWebTokens;
-using Microsoft.IdentityModel.Tokens;
-using System.Buffers.Text;
-using System.Net;
+﻿using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
-using System.Web;
 
 namespace IdentityServer.Services
 {
@@ -28,7 +22,7 @@ namespace IdentityServer.Services
             _jwtTokenService = jwtTokenService;
         }
 
-        public async Task<string> CreateAccessTokenAsync(AccessTokenType accessTokenType, int lifetime, IEnumerable<string> algorithms, IEnumerable<Claim> claims)
+        public async Task<string> CreateAccessTokenAsync(Client client, ClaimsPrincipal subject)
         {
             string accessToken;
             var id = await _randomGenerator.GenerateAsync();
@@ -36,12 +30,12 @@ namespace IdentityServer.Services
             var token = new Token(
                 id: id,
                 type: TokenTypes.AccessToken,
-                lifetime: lifetime,
-                claims: claims,
+                lifetime: client.AccessTokenLifetime,
+                claims: subject.Claims,
                 creationTime: creationTime);
-            if (accessTokenType == AccessTokenType.Jwt)
+            if (client.AccessTokenType == AccessTokenType.Jwt)
             {
-                accessToken = await _jwtTokenService.CreateJwtTokenAsync(token, algorithms);
+                accessToken = await _jwtTokenService.CreateJwtTokenAsync(token, client.AllowedSigningAlgorithms);
             }
             else
             {
@@ -51,15 +45,15 @@ namespace IdentityServer.Services
             return accessToken;
         }
 
-        public async Task<string> CreateRefreshTokenAsync(IEnumerable<Claim> claims, int lifetime)
+        public async Task<string> CreateRefreshTokenAsync(Client client, ClaimsPrincipal subject)
         {
             var id = await _randomGenerator.GenerateAsync();
             var creationTime = _clock.UtcNow.UtcDateTime;
             var token = new Token(
                  id: id,
                  type: TokenTypes.RefreshToken,
-                 lifetime: lifetime,
-                 claims: claims,
+                 lifetime: client.RefreshTokenLifetime,
+                 claims: subject.Claims,
                  creationTime: creationTime);
             await _tokenStore.SaveTokenAsync(token);
             return id;

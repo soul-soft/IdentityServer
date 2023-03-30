@@ -117,6 +117,11 @@
             认证方式
             </summary>
         </member>
+        <member name="P:IdentityServer.Configuration.IdentityServerOptions.IdentityProvider">
+            <summary>
+            idp
+            </summary>
+        </member>
         <member name="P:IdentityServer.Configuration.InputLengthRestrictions.AccessToken">
             <summary>
             Max length for AccessToken
