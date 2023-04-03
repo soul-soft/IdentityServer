@@ -19,8 +19,9 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.AddEndpoint<TokenEndpoint>(OpenIdConnectConstants.EndpointNames.Token, OpenIdConnectConstants.EndpointPaths.Token);
             builder.AddEndpoint<UserInfoEndpoint>(OpenIdConnectConstants.EndpointNames.UserInfo, OpenIdConnectConstants.EndpointPaths.UserInfo);
             builder.AddEndpoint<AuthorizeEndpoint>(OpenIdConnectConstants.EndpointNames.Authorize, OpenIdConnectConstants.EndpointPaths.Authorize);
-            builder.AddEndpoint<DiscoveryEndpoint>(OpenIdConnectConstants.EndpointNames.Discovery, OpenIdConnectConstants.EndpointPaths.Discovery);
+            builder.AddEndpoint<RevocationEndpoint>(OpenIdConnectConstants.EndpointNames.Revocation, OpenIdConnectConstants.EndpointPaths.Revocation);
             builder.AddEndpoint<IntrospectionEndpoint>(OpenIdConnectConstants.EndpointNames.Introspection, OpenIdConnectConstants.EndpointPaths.Introspection);
+            builder.AddEndpoint<DiscoveryEndpoint>(OpenIdConnectConstants.EndpointNames.Discovery, OpenIdConnectConstants.EndpointPaths.Discovery);
             builder.AddEndpoint<DiscoveryKeyEndpoint>(OpenIdConnectConstants.EndpointNames.DiscoveryJwks, OpenIdConnectConstants.EndpointPaths.DiscoveryJwks);
             return builder;
         }

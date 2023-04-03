@@ -9,6 +9,7 @@
             public const string Discovery = "Discovery";
             public const string DiscoveryJwks = "Jwks";
             public const string UserInfo = "Userinfo";
+            public const string Revocation = "revocation";
             public const string Introspection = "Introspection";
         }
 
@@ -24,6 +25,8 @@
             public const string Token = "token";
 
             public const string UserInfo = "userinfo";
+
+            public const string Revocation = "revocation";
 
             public const string Introspection = "introspect";
         }

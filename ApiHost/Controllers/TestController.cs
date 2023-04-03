@@ -1,6 +1,8 @@
 using IdentityModel.Client;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace ApiHost.Controllers
 {
@@ -20,7 +22,7 @@ namespace ApiHost.Controllers
         public async Task<object> GetAsync()
         {
             var client = new HttpClient();
-
+            var accessToken = await HttpContext.GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
             var disco = await client.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest 
             {
                 Address= "https://localhost:7150",

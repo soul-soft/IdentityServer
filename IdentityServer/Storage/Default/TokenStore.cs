@@ -46,7 +46,7 @@
             await _cache.RevomeAsync(key);
         }
 
-        private async Task<Token?> FindTokenAsync(string token)
+        public async Task<Token?> FindTokenAsync(string token)
         {
             var key = BuildKey(token);
             return await _cache.GetAsync<Token>(key);

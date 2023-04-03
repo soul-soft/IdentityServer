@@ -1,25 +1,18 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
 
 namespace IdentityServer.Endpoints
 {
     internal class RevocationEndpoint : EndpointBase
     {
-        private readonly ITokenValidator _tokenValidator;
-        private readonly IProfileService _profileService;
-        private readonly IApiSecretValidator _apiSecretParsers;
-        private readonly IIntrospectionResponseGenerator _generator;
+        private readonly ITokenStore _tokens;
+        private readonly IdentityServerOptions _options;
 
         public RevocationEndpoint(
-            ITokenValidator tokenValidator,
-            IProfileService profileService,
-            IApiSecretValidator apiSecretParsers,
-            IIntrospectionResponseGenerator generator)
+            ITokenStore tokens,
+            IdentityServerOptions options)
         {
-            _generator = generator;
-            _profileService = profileService;
-            _tokenValidator = tokenValidator;
-            _apiSecretParsers = apiSecretParsers;
+            _tokens = tokens;
+            _options = options;
         }
 
         public override async Task<IEndpointResult> HandleAsync(HttpContext context)
@@ -35,45 +28,45 @@ namespace IdentityServer.Endpoints
             }
             #endregion
 
-            #region Validate ApiSecret
-            var apiResource = await _apiSecretParsers.ValidateAsync(context);
-            #endregion
-
-            #region Validate Token
+            #region Parse Parameters
             var body = await context.Request.ReadFormAsync();
             var form = body.AsNameValueCollection();
+            #endregion
+
+            #region Parse Token
             var token = form.Get("token");
             if (string.IsNullOrEmpty(token))
             {
-                return BadRequest(ValidationErrors.InvalidRequest, "Token is missing");
+                return BadRequest(ValidationErrors.InvalidRequest, "token is missing");
             }
-            var tokenValidationResult = await _tokenValidator.ValidateAccessTokenAsync(token);
-            #endregion
-
-            #region Validate Subject
-            var subject = new ClaimsPrincipal(new ClaimsIdentity(tokenValidationResult.Claims, "Introspection"));
-            if (!string.IsNullOrEmpty(subject.GetSubjectId()))
+            if (token.Length > _options.InputLengthRestrictions.AccessToken)
             {
-                var isActive = await _profileService.IsActiveAsync(new IsActiveRequest(
-                    ProfileIsActiveCallers.TokenEndpoint,
-                    tokenValidationResult.Client,
-                    subject));
-                if (!isActive)
-                {
-                    throw new ValidationException(ValidationErrors.InvalidGrant, string.Format("User has been disabled:{0}", subject.GetSubjectId()));
-                }
+                return BadRequest(ValidationErrors.InvalidRequest, "Grant type is too long");
             }
             #endregion
 
-            #region Response Generator
-            var response = await _generator.ProcessAsync(new IntrospectionGeneratorRequest(
-                !tokenValidationResult.IsError,
-                tokenValidationResult.Client,
-                subject,
-                apiResource));
+            #region Parse TokenTypeHint
+            var tokenTypeHint = form.Get("token_type_hint");
+            if (string.IsNullOrEmpty(token))
+            {
+                return BadRequest(ValidationErrors.InvalidRequest, "token_type_hint is missing");
+            }
+            if (!new string[] {TokenTypes.AccessToken,TokenTypes.RefreshToken}.Contains(tokenTypeHint))
+            {
+                return BadRequest(ValidationErrors.InvalidRequest, "Invalid token_type_hint");
+            }
             #endregion
 
-            return IntrospectionResult(response);
+            #region RevomeToken
+            var accessToken = await _tokens.FindAccessTokenAsync(token);
+            if (accessToken != null)
+            {
+                await _tokens.RevomeTokenAsync(accessToken);
+
+            }
+            #endregion
+
+            return OK();
         }
     }
 }

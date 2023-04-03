@@ -31,8 +31,8 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
-builder.Services.AddAuthentication("Reference")
-    .AddOAuth2Introspection("Reference", options => 
+builder.Services.AddAuthentication("OAuth")
+    .AddOAuth2Introspection("OAuth", options => 
     {
         options.Authority = "https://localhost:7150/";
         options.ClientId = "orderapi";

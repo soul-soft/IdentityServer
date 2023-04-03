@@ -39,6 +39,8 @@ namespace IdentityServer.Endpoints
                 UserInfoEndpoint = baseUrl + _endpoints.GetEndpoint(OpenIdConnectConstants.EndpointNames.UserInfo),
                 IntrospectionEndpoint = baseUrl + _endpoints.GetEndpoint(OpenIdConnectConstants.EndpointNames.Introspection),
             };
+            var revocationEndpoint = baseUrl + _endpoints.GetEndpoint(OpenIdConnectConstants.EndpointNames.Revocation);
+            configuration.AdditionalData.Add("revocation_endpoint", revocationEndpoint);
             var supportedExtensionsGrantTypes = _extensionGrantValidators.GetSupportedGrantTypes();
             foreach (var item in supportedExtensionsGrantTypes)
             {
