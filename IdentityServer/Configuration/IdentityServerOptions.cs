@@ -7,7 +7,7 @@ namespace IdentityServer.Configuration
         /// <summary>
         /// 签发url
         /// </summary>
-        public string IssuerUri { get; set; } = string.Empty;
+        public string Issuer { get; set; } = string.Empty;
         /// <summary>
         /// 存储key
         /// </summary>

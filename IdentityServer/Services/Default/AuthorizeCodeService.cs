@@ -6,12 +6,12 @@ namespace IdentityServer.Services
     internal class AuthorizeCodeService : IAuthorizeCodeService
     {
         private readonly ISystemClock _clock;
-        private readonly IAuthorizeCodeStore _store;
+        private readonly IAuthorizationCodeStore _store;
         private readonly IRandomGenerator _randomGenerator;
 
         public AuthorizeCodeService(
             ISystemClock clock,
-            IAuthorizeCodeStore store,
+            IAuthorizationCodeStore store,
             IRandomGenerator randomGenerator)
         {
             _clock = clock;
@@ -23,8 +23,8 @@ namespace IdentityServer.Services
         {
             var id = await _randomGenerator.GenerateAsync(16);
             var creationTime = _clock.UtcNow.DateTime;
-            var authorizeCode = new AuthorizeCode(id, client.AuthorizeCodeLifetime, subject.Claims, creationTime);
-            await _store.StoreAuthorizeCodeAsync(authorizeCode);
+            var authorizeCode = new AuthorizationCode(id, client.AuthorizeCodeLifetime, subject.Claims, creationTime);
+            await _store.StoreAuthorizationCodeAsync(authorizeCode);
             return authorizeCode.Id;
         }
     }

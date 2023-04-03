@@ -12,6 +12,8 @@ namespace IdentityServer.Models
 
         public IEnumerable<Claim> Claims { get; set; } = new List<Claim>();
 
+        public DateTime ExpirationTime { get; set; }
+
         public DateTime CreationTime { get; set; }
 
         public Token(string id, string type, int lifetime, IEnumerable<Claim> claims, DateTime creationTime)
@@ -20,6 +22,7 @@ namespace IdentityServer.Models
             Type = type;
             Lifetime = lifetime;
             Claims = claims;
+            ExpirationTime = creationTime.AddSeconds(lifetime);
             CreationTime = creationTime;
         }
 

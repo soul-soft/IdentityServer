@@ -1,8 +1,6 @@
-﻿using IdentityServer.Models;
-
-namespace IdentityServer.Storage
+﻿namespace IdentityServer.Storage
 {
-    internal class AuthorizeCodeStore : IAuthorizeCodeStore
+    internal class AuthorizeCodeStore : IAuthorizationCodeStore
     {
         private readonly ICacheStore _cache;
         private readonly IdentityServerOptions _options;
@@ -15,26 +13,26 @@ namespace IdentityServer.Storage
             _options = options;
         }
 
-        public async Task<AuthorizeCode?> FindByAuthorizeCodeAsync(string id)
+        public async Task<AuthorizationCode?> FindAuthorizationCodeAsync(string id)
         {
-            var key = GenerateStoreKey(id);
-            return await _cache.GetAsync<AuthorizeCode>(key);
+            var key = BuildKey(id);
+            return await _cache.GetAsync<AuthorizationCode>(key);
         }
 
-        public async Task RevomeAuthorizeCodeAsync(string id)
+        public async Task RevomeAuthorizationCodeAsync(AuthorizationCode code)
         {
-            var key = GenerateStoreKey(id);
+            var key = BuildKey(code.Id);
             await _cache.RevomeAsync(key);
         }
 
-        public async Task StoreAuthorizeCodeAsync(AuthorizeCode Code)
+        public async Task StoreAuthorizationCodeAsync(AuthorizationCode Code)
         {
-            var key = GenerateStoreKey(Code.Id);
+            var key = BuildKey(Code.Id);
             await _cache.SaveAsync(key, Code, TimeSpan.FromSeconds(Code.Lifetime));
         }
 
 
-        private string GenerateStoreKey(string id)
+        private string BuildKey(string id)
         {
             return $"{_options.StorageKeyPrefix}:AuthorizeCode:{id}";
         }

@@ -27,7 +27,7 @@ builder.Services.AddIdentityServer(o =>
     {
         //o.Endpoints.EndpointPathPrefix = "/api/connect";
         o.Endpoints.EnableEndpoint("aa");
-        o.IssuerUri = "https://www.example.com";
+        o.Issuer = "https://www.example.com";
     })
     .AddResourceOwnerCredentialRequestValidator<ResourceOwnerCredentialRequestValidator>()
     .AddExtensionGrantValidator<MyExtensionGrantValidator>()

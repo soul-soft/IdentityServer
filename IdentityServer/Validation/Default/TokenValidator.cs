@@ -2,12 +2,14 @@
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
+using System.Security.Cryptography.Xml;
 
 namespace IdentityServer.Validation
 {
     internal class TokenValidator : ITokenValidator
     {
         private readonly ITokenStore _tokens;
+        private readonly ISystemClock _clock;
         private readonly IClientStore _clients;
         private readonly IServerUrl _serverUrl;
         private readonly IdentityServerOptions _options;
@@ -15,12 +17,14 @@ namespace IdentityServer.Validation
 
         public TokenValidator(
             ITokenStore tokens,
+            ISystemClock clock,
             IClientStore clients,
             IServerUrl serverUrl,
             IdentityServerOptions options,
             ISigningCredentialsService credentials)
         {
             _tokens = tokens;
+            _clock = clock;
             _clients = clients;
             _options = options;
             _serverUrl = serverUrl;
@@ -39,21 +43,36 @@ namespace IdentityServer.Validation
             }
             else
             {
-                return await ValidateReferenceTokenAsync(token);
+                var refToken = await _tokens.FindAccessTokenAsync(token);
+                var result = await ValidateReferenceTokenAsync(refToken);
+                if (refToken != null)
+                {
+                    if (result.IsError)
+                    {
+                        await _tokens.RevomeTokenAsync(refToken);
+                    }
+                    else 
+                    {
+                        refToken.ExpirationTime = _clock.UtcNow.UtcDateTime.AddSeconds(refToken.Lifetime);
+                        await _tokens.SaveTokenAsync(refToken);
+                    }
+                }
+                return result;
             }
         }
 
         private async Task<TokenValidationResult> ValidateJwtTokenAsync(string token)
         {
             var handler = new JsonWebTokenHandler();
-            var securityKeys = await _credentials.GetSecurityKeysAsync();
+            var issuer = _serverUrl.GetIdentityServerIssuer();
+            var signingKeys = await _credentials.GetSecurityKeysAsync();
             var parameters = new TokenValidationParameters
             {
+                ValidIssuer = issuer,
                 ValidateIssuer = true,
                 ValidateLifetime = true,
                 ValidateAudience = false,
-                ValidIssuer = _serverUrl.GetIdentityServerIssuerUri(),
-                IssuerSigningKeys = securityKeys,
+                IssuerSigningKeys = signingKeys,
             };
             var result = handler.ValidateToken(token, parameters);
             if (!result.IsValid)
@@ -70,19 +89,22 @@ namespace IdentityServer.Validation
             return await ValidateClaimsAsync(result.ClaimsIdentity.Claims);
         }
 
-        private async Task<TokenValidationResult> ValidateReferenceTokenAsync(string reference)
+        private async Task<TokenValidationResult> ValidateReferenceTokenAsync(Token? token)
         {
-            var token = await _tokens.FindAccessTokenAsync(reference);
+            var issuer = _serverUrl.GetIdentityServerIssuer();
             if (token == null)
             {
                 return TokenValidationResult.Fail(ValidationErrors.InvalidToken, "Invalid reference token");
             }
-            if (token.GetIssuer() != _serverUrl.GetIdentityServerIssuerUri())
+            if (token.ExpirationTime < _clock.UtcNow.UtcDateTime)
+            {
+                return TokenValidationResult.Fail(ValidationErrors.InvalidToken, "Token expired");
+            }
+            if (token.GetIssuer() != issuer)
             {
                 return TokenValidationResult.Fail(ValidationErrors.InvalidToken, "Invalid issuer");
             }
             var result = await ValidateClaimsAsync(token.Claims);
-            await _tokens.SetLifetimeAsync(token);
             return result;
         }
 

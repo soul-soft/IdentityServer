@@ -2,6 +2,6 @@
 {
     public interface ISecurityTokenService
     {
-        Task<string> CreateJwtTokenAsync(Token token, IEnumerable<string> algorithms);
+        Task<string> CreateJwtTokenAsync(Client client, Token token);
     }
 }

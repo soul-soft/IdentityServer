@@ -70,15 +70,15 @@ namespace Microsoft.Extensions.DependencyInjection
 
         #region IAuthorizeCodeStore
         public static IIdentityServerBuilder AddAuthorizeCodeStore<T>(this IIdentityServerBuilder builder)
-          where T : class, IAuthorizeCodeStore
+          where T : class, IAuthorizationCodeStore
         {
-            builder.Services.TryAddTransient<IAuthorizeCodeStore, T>();
+            builder.Services.TryAddTransient<IAuthorizationCodeStore, T>();
             return builder;
         }
         public static IIdentityServerBuilder AddAuthorizeCodeStore<T>(this IIdentityServerBuilder builder, Func<IServiceProvider, T> implementationFactory)
-            where T : class, IAuthorizeCodeStore
+            where T : class, IAuthorizationCodeStore
         {
-            builder.Services.TryAddTransient<IAuthorizeCodeStore>(implementationFactory);
+            builder.Services.TryAddTransient<IAuthorizationCodeStore>(implementationFactory);
             return builder;
         }
         #endregion

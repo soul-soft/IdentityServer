@@ -16,8 +16,9 @@ namespace IdentityServer.Services
             _credentials = credentials;
         }
 
-        public async Task<string> CreateJwtTokenAsync(Token token, IEnumerable<string> algorithms)
+        public async Task<string> CreateJwtTokenAsync(Client client, Token token)
         {
+            var algorithms = client.AllowedSigningAlgorithms;
             var credentials = await _credentials.FindByAlgorithmsAsync(algorithms);
             var header = CreateJwtHeader(token, credentials);
             var payload = CreateJwtPayload(token);

@@ -35,5 +35,10 @@ namespace IdentityServer.Storage
             }
             return ObjectSerializer.Deserialize<T>(json);
         }
+
+        public async Task RefreshAsync(string key)
+        {
+            await _distributedCache.RefreshAsync(key);
+        }
     }
 }

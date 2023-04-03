@@ -72,7 +72,7 @@
             Adds custom entries to the discovery document
             </summary>
         </member>
-        <member name="P:IdentityServer.Configuration.IdentityServerOptions.IssuerUri">
+        <member name="P:IdentityServer.Configuration.IdentityServerOptions.Issuer">
             <summary>
             签发url
             </summary>
