@@ -11,16 +11,17 @@ namespace Microsoft.Extensions.DependencyInjection
     /// </summary>
     internal static class CoreIdentityServerBuilderExtensions
     {
-        #region RequiredPlatformEndpoints
+        #region RequiredEndpoints
         public static IIdentityServerBuilder AddRequiredPlatformEndpoints(this IIdentityServerBuilder builder)
         {
+            builder.Services.AddSingleton<EndpointDescriptors>();
             builder.Services.AddTransient<IEndpointRouter, EndpointRouter>();
-            builder.AddEndpoint<TokenEndpoint>(OpenIdConnectConstants.EndpointNames.Token, OpenIdConnectConstants.EndpointRutePaths.Token);
-            builder.AddEndpoint<UserInfoEndpoint>(OpenIdConnectConstants.EndpointNames.UserInfo, OpenIdConnectConstants.EndpointRutePaths.UserInfo);
-            builder.AddEndpoint<AuthorizeEndpoint>(OpenIdConnectConstants.EndpointNames.Authorize, OpenIdConnectConstants.EndpointRutePaths.Authorize);
-            builder.AddEndpoint<DiscoveryEndpoint>(OpenIdConnectConstants.EndpointNames.Discovery, OpenIdConnectConstants.EndpointRutePaths.Discovery);
-            builder.AddEndpoint<IntrospectionEndpoint>(OpenIdConnectConstants.EndpointNames.Introspection, OpenIdConnectConstants.EndpointRutePaths.Introspection);
-            builder.AddEndpoint<DiscoveryKeyEndpoint>(OpenIdConnectConstants.EndpointNames.DiscoveryJwks, OpenIdConnectConstants.EndpointRutePaths.DiscoveryJwks);
+            builder.AddEndpoint<TokenEndpoint>(OpenIdConnectConstants.EndpointNames.Token, OpenIdConnectConstants.EndpointPaths.Token);
+            builder.AddEndpoint<UserInfoEndpoint>(OpenIdConnectConstants.EndpointNames.UserInfo, OpenIdConnectConstants.EndpointPaths.UserInfo);
+            builder.AddEndpoint<AuthorizeEndpoint>(OpenIdConnectConstants.EndpointNames.Authorize, OpenIdConnectConstants.EndpointPaths.Authorize);
+            builder.AddEndpoint<DiscoveryEndpoint>(OpenIdConnectConstants.EndpointNames.Discovery, OpenIdConnectConstants.EndpointPaths.Discovery);
+            builder.AddEndpoint<IntrospectionEndpoint>(OpenIdConnectConstants.EndpointNames.Introspection, OpenIdConnectConstants.EndpointPaths.Introspection);
+            builder.AddEndpoint<DiscoveryKeyEndpoint>(OpenIdConnectConstants.EndpointNames.DiscoveryJwks, OpenIdConnectConstants.EndpointPaths.DiscoveryJwks);
             return builder;
         }
         #endregion

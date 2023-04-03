@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class AddIdentityServerBuilderExtensions
-    {             
+    {
         #region IClientStore
         public static IIdentityServerBuilder AddClientStore<T>(this IIdentityServerBuilder builder)
             where T : class, IClientStore
@@ -13,7 +13,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<IClientStore, T>();
             return builder;
         }
-        
+
         public static IIdentityServerBuilder AddClientStore<T>(this IIdentityServerBuilder builder, Func<IServiceProvider, T> implementationFactory)
             where T : class, IClientStore
         {
@@ -38,7 +38,12 @@ namespace Microsoft.Extensions.DependencyInjection
         }
         #endregion
 
-        #region CacheStore
+        #region ICacheStore
+        public static IIdentityServerBuilder AddCacheStore(this IIdentityServerBuilder builder)
+        {
+            builder.Services.TryAddTransient<ICacheStore, CacheStore>();
+            return builder;
+        }
         public static IIdentityServerBuilder AddCacheStore<T>(this IIdentityServerBuilder builder)
             where T : class, ICacheStore
         {
@@ -54,6 +59,11 @@ namespace Microsoft.Extensions.DependencyInjection
         #endregion
 
         #region ITokenStore
+        public static IIdentityServerBuilder AddTokenStore(this IIdentityServerBuilder builder)
+        {
+            builder.Services.TryAddTransient<ITokenStore, TokenStore>();
+            return builder;
+        }
         public static IIdentityServerBuilder AddTokenStore<T>(this IIdentityServerBuilder builder)
           where T : class, ITokenStore
         {
@@ -69,20 +79,25 @@ namespace Microsoft.Extensions.DependencyInjection
         #endregion
 
         #region IAuthorizeCodeStore
-        public static IIdentityServerBuilder AddAuthorizeCodeStore<T>(this IIdentityServerBuilder builder)
+        public static IIdentityServerBuilder AddAuthorizationCodeStore(this IIdentityServerBuilder builder)
+        {
+            builder.Services.TryAddTransient<IAuthorizationCodeStore, AuthorizationCodeStore>();
+            return builder;
+        }
+        public static IIdentityServerBuilder AddAuthorizationCodeStore<T>(this IIdentityServerBuilder builder)
           where T : class, IAuthorizationCodeStore
         {
             builder.Services.TryAddTransient<IAuthorizationCodeStore, T>();
             return builder;
         }
-        public static IIdentityServerBuilder AddAuthorizeCodeStore<T>(this IIdentityServerBuilder builder, Func<IServiceProvider, T> implementationFactory)
+        public static IIdentityServerBuilder AddAuthorizationCodeStore<T>(this IIdentityServerBuilder builder, Func<IServiceProvider, T> implementationFactory)
             where T : class, IAuthorizationCodeStore
         {
             builder.Services.TryAddTransient<IAuthorizationCodeStore>(implementationFactory);
             return builder;
         }
         #endregion
-        
+
         #region ISigningCredentialsStore
         public static IIdentityServerBuilder AddSigningCredentialsStore<T>(this IIdentityServerBuilder builder)
             where T : class, ISigningCredentialsStore
@@ -114,7 +129,15 @@ namespace Microsoft.Extensions.DependencyInjection
             where T : class, IEndpointHandler
         {
             builder.Services.AddTransient<T>();
-            builder.Services.AddSingleton(new EndpointDescriptor(name, path, typeof(T)));
+            builder.Services.AddSingleton(sp =>
+            {
+                var options = sp.GetRequiredService<IdentityServerOptions>();
+                if (!path.StartsWith('/'))
+                {
+                    path = $"{options.Endpoints.PathPrefix}/{path}";
+                }
+                return new EndpointDescriptor(name, path, typeof(T));
+            });
             return builder;
         }
         #endregion

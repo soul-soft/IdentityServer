@@ -12,7 +12,7 @@
             public const string Introspection = "Introspection";
         }
 
-        public static class EndpointRutePaths
+        public static class EndpointPaths
         {
 
             public const string Authorize = "authorize";
@@ -26,31 +26,6 @@
             public const string UserInfo = "userinfo";
 
             public const string Introspection = "introspect";
-        }
-
-        public static class Endpoints
-        {
-            public const string Authorize = "/authorize";
-
-            public const string Discovery = "/.well-known/openid-configuration";
-                         
-            public const string DiscoveryJwks = Discovery + "/jwks";
-                         
-            public const string Token = "/token";
-                         
-            public const string UserInfo = "/userinfo";
-                         
-            public const string Introspection = "/introspect";
-        }
-
-        public static class AuthenticationSchemes
-        {
-            public const string AuthorizationHeaderBearer = "Bearer";
-            public const string FormPostBearer = "access_token";
-            public const string QueryStringBearer = "access_token";
-            public const string AuthorizationHeaderPop = "PoP";
-            public const string FormPostPop = "pop_access_token";
-            public const string QueryStringPop = "pop_access_token";
         }
 
         public static class ClaimTypeFilters

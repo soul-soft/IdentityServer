@@ -106,9 +106,9 @@ namespace IdentityServer.Hosting.DependencyInjection
             {
                 return new SigningCredentialsStore(_signingCredentials);
             });
-            services.AddCacheStore<CacheStore>();
-            services.AddTokenStore<TokenStore>();
-            services.AddAuthorizeCodeStore<AuthorizeCodeStore>();
+            services.AddCacheStore();
+            services.AddTokenStore();
+            services.AddAuthorizationCodeStore();
         }
         #endregion
     }

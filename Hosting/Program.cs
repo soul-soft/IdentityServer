@@ -26,7 +26,6 @@ builder.Services.AddStackExchangeRedisCache(c =>
 builder.Services.AddIdentityServer(o =>
     {
         //o.Endpoints.EndpointPathPrefix = "/api/connect";
-        o.Endpoints.EnableEndpoint("aa");
         o.Issuer = "https://www.example.com";
     })
     .AddResourceOwnerCredentialRequestValidator<ResourceOwnerCredentialRequestValidator>()

@@ -98,10 +98,12 @@ namespace IdentityServer.Authentication
         private async Task<IntrospectionResponse> TokenIntrospectionAsync(string token)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, _configuration!.IntrospectionEndpoint);
-            var parameters = new Dictionary<string, string>();
-            parameters.Add(OpenIdConnectParameterNames.ClientId, Options.ClientId);
-            parameters.Add(OpenIdConnectParameterNames.ClientSecret, Options.ClientSecret);
-            parameters.Add("token", token);
+            var parameters = new Dictionary<string, string>
+            {
+                { OpenIdConnectParameterNames.ClientId, Options.ClientId },
+                { OpenIdConnectParameterNames.ClientSecret, Options.ClientSecret },
+                { "token", token }
+            };
             request.Content = new FormUrlEncodedContent(parameters);
             var response = await Options.Backchannel.SendAsync(request);
             var content = await response.Content.ReadAsStringAsync();

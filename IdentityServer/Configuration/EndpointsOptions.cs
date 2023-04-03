@@ -8,14 +8,8 @@
         public bool EnableTokenEndpoint { get; set; } = true;
         public bool EnableUserInfoEndpoint { get; set; } = true;
         public bool EnableIntrospectionEndpoint { get; set; } = true;
-        public string EndpointPathPrefix { get; set; } = "/connect";
-      
-        public void EnableEndpoint(string name)
-        {
-            _enableEndpoints.Add(name);
-        }
-       
-        private readonly List<string> _enableEndpoints = new List<string>();
+        public bool EnableRevocationEndpoint { get; set; } = true;
+        public string PathPrefix { get; set; } = "/connect";
 
         public bool IsEndpointEnabled(EndpointDescriptor endpoint)
         {
@@ -43,20 +37,10 @@
             {
                 return EnableIntrospectionEndpoint;
             }
-            else if (_enableEndpoints.Any(a => a == endpoint.Name))
+            else
             {
                 return true;
             }
-            return false;
-        }
-
-        public string GetEndpointFullPath(string path)
-        {
-            if (path.StartsWith('/'))
-            {
-                return path;
-            }
-            return $"{EndpointPathPrefix}/{path}";
         }
     }
 }

@@ -24,8 +24,7 @@ namespace IdentityServer.Hosting
         {
             foreach (var endpoint in _endpoints)
             {
-                var endpointPath = _options.Endpoints.GetEndpointFullPath(endpoint.Path);
-                if (context.Request.Path.Equals(endpointPath, StringComparison.OrdinalIgnoreCase))
+                if (context.Request.Path.Equals(endpoint.Path, StringComparison.OrdinalIgnoreCase))
                 {
                     if (!_options.Endpoints.IsEndpointEnabled(endpoint))
                     {

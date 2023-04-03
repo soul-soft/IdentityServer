@@ -6,6 +6,7 @@ namespace IdentityServer.Endpoints
         : IDiscoveryResponseGenerator
     {
         private readonly IResourceStore _resources;
+        private readonly EndpointDescriptors _endpoints;
         private readonly IdentityServerOptions _options;
         private readonly ISecretListParser _secretParsers;
         private readonly ISigningCredentialsService _credentials;
@@ -13,6 +14,7 @@ namespace IdentityServer.Endpoints
 
         public DiscoveryResponseGenerator(
             IResourceStore resources,
+            EndpointDescriptors endpoints,
             IdentityServerOptions options,
             ISecretListParser secretParsers,
             ISigningCredentialsService credentials,
@@ -20,6 +22,7 @@ namespace IdentityServer.Endpoints
         {
             _resources = resources;
             _options = options;
+            _endpoints = endpoints;
             _credentials = credentials;
             _secretParsers = secretParsers;
             _extensionGrantValidators = extensionGrantValidators;
@@ -30,11 +33,11 @@ namespace IdentityServer.Endpoints
             var configuration = new OpenIdConnectConfiguration
             {
                 Issuer = issuer,
-                JwksUri = baseUrl + _options.Endpoints.GetEndpointFullPath(OpenIdConnectConstants.EndpointRutePaths.DiscoveryJwks),
-                AuthorizationEndpoint = baseUrl + _options.Endpoints.GetEndpointFullPath(OpenIdConnectConstants.EndpointRutePaths.Authorize),
-                TokenEndpoint = baseUrl + _options.Endpoints.GetEndpointFullPath(OpenIdConnectConstants.EndpointRutePaths.Token),
-                UserInfoEndpoint = baseUrl + _options.Endpoints.GetEndpointFullPath(OpenIdConnectConstants.EndpointRutePaths.UserInfo),
-                IntrospectionEndpoint = baseUrl + _options.Endpoints.GetEndpointFullPath(OpenIdConnectConstants.EndpointRutePaths.Introspection),
+                JwksUri = baseUrl + _endpoints.GetEndpoint(OpenIdConnectConstants.EndpointNames.DiscoveryJwks),
+                AuthorizationEndpoint = baseUrl + _endpoints.GetEndpoint(OpenIdConnectConstants.EndpointNames.Authorize),
+                TokenEndpoint = baseUrl + _endpoints.GetEndpoint(OpenIdConnectConstants.EndpointNames.Token),
+                UserInfoEndpoint = baseUrl + _endpoints.GetEndpoint(OpenIdConnectConstants.EndpointNames.UserInfo),
+                IntrospectionEndpoint = baseUrl + _endpoints.GetEndpoint(OpenIdConnectConstants.EndpointNames.Introspection),
             };
             var supportedExtensionsGrantTypes = _extensionGrantValidators.GetSupportedGrantTypes();
             foreach (var item in supportedExtensionsGrantTypes)

@@ -6,10 +6,10 @@
         public string Path { get; set; }
         public Type HandlerType { get; set; }
 
-        public EndpointDescriptor(string name, string path, Type handler)
+        public EndpointDescriptor(string name, string uri, Type handler)
         {
             Name = name;
-            Path = path;
+            Path = uri;
             HandlerType = handler;
         }
 
