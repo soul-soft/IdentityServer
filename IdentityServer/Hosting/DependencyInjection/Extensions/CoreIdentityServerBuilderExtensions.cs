@@ -16,13 +16,13 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             builder.Services.AddSingleton<EndpointDescriptors>();
             builder.Services.AddTransient<IEndpointRouter, EndpointRouter>();
-            builder.AddEndpoint<TokenEndpoint>(OpenIdConnectConstants.EndpointNames.Token, OpenIdConnectConstants.EndpointPaths.Token);
-            builder.AddEndpoint<UserInfoEndpoint>(OpenIdConnectConstants.EndpointNames.UserInfo, OpenIdConnectConstants.EndpointPaths.UserInfo);
-            builder.AddEndpoint<AuthorizeEndpoint>(OpenIdConnectConstants.EndpointNames.Authorize, OpenIdConnectConstants.EndpointPaths.Authorize);
-            builder.AddEndpoint<RevocationEndpoint>(OpenIdConnectConstants.EndpointNames.Revocation, OpenIdConnectConstants.EndpointPaths.Revocation);
-            builder.AddEndpoint<IntrospectionEndpoint>(OpenIdConnectConstants.EndpointNames.Introspection, OpenIdConnectConstants.EndpointPaths.Introspection);
-            builder.AddEndpoint<DiscoveryEndpoint>(OpenIdConnectConstants.EndpointNames.Discovery, OpenIdConnectConstants.EndpointPaths.Discovery);
-            builder.AddEndpoint<DiscoveryKeyEndpoint>(OpenIdConnectConstants.EndpointNames.DiscoveryJwks, OpenIdConnectConstants.EndpointPaths.DiscoveryJwks);
+            builder.AddEndpoint<TokenEndpoint>(Constants.EndpointNames.Token, Constants.EndpointPaths.Token);
+            builder.AddEndpoint<UserInfoEndpoint>(Constants.EndpointNames.UserInfo, Constants.EndpointPaths.UserInfo);
+            builder.AddEndpoint<AuthorizeEndpoint>(Constants.EndpointNames.Authorize, Constants.EndpointPaths.Authorize);
+            builder.AddEndpoint<RevocationEndpoint>(Constants.EndpointNames.Revocation, Constants.EndpointPaths.Revocation);
+            builder.AddEndpoint<IntrospectionEndpoint>(Constants.EndpointNames.Introspection, Constants.EndpointPaths.Introspection);
+            builder.AddEndpoint<DiscoveryEndpoint>(Constants.EndpointNames.Discovery, Constants.EndpointPaths.Discovery);
+            builder.AddEndpoint<DiscoveryKeyEndpoint>(Constants.EndpointNames.DiscoveryJwks, Constants.EndpointPaths.DiscoveryJwks);
             return builder;
         }
         #endregion

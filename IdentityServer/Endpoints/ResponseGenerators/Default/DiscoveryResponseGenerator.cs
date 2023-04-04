@@ -33,13 +33,13 @@ namespace IdentityServer.Endpoints
             var configuration = new OpenIdConnectConfiguration
             {
                 Issuer = issuer,
-                JwksUri = baseUrl + _endpoints.GetEndpoint(OpenIdConnectConstants.EndpointNames.DiscoveryJwks),
-                AuthorizationEndpoint = baseUrl + _endpoints.GetEndpoint(OpenIdConnectConstants.EndpointNames.Authorize),
-                TokenEndpoint = baseUrl + _endpoints.GetEndpoint(OpenIdConnectConstants.EndpointNames.Token),
-                UserInfoEndpoint = baseUrl + _endpoints.GetEndpoint(OpenIdConnectConstants.EndpointNames.UserInfo),
-                IntrospectionEndpoint = baseUrl + _endpoints.GetEndpoint(OpenIdConnectConstants.EndpointNames.Introspection),
+                JwksUri = baseUrl + _endpoints.GetEndpoint(Constants.EndpointNames.DiscoveryJwks),
+                AuthorizationEndpoint = baseUrl + _endpoints.GetEndpoint(Constants.EndpointNames.Authorize),
+                TokenEndpoint = baseUrl + _endpoints.GetEndpoint(Constants.EndpointNames.Token),
+                UserInfoEndpoint = baseUrl + _endpoints.GetEndpoint(Constants.EndpointNames.UserInfo),
+                IntrospectionEndpoint = baseUrl + _endpoints.GetEndpoint(Constants.EndpointNames.Introspection),
             };
-            var revocationEndpoint = baseUrl + _endpoints.GetEndpoint(OpenIdConnectConstants.EndpointNames.Revocation);
+            var revocationEndpoint = baseUrl + _endpoints.GetEndpoint(Constants.EndpointNames.Revocation);
             configuration.AdditionalData.Add("revocation_endpoint", revocationEndpoint);
             var supportedExtensionsGrantTypes = _extensionGrantValidators.GetSupportedGrantTypes();
             foreach (var item in supportedExtensionsGrantTypes)

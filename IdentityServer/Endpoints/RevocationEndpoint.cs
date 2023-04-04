@@ -6,13 +6,16 @@ namespace IdentityServer.Endpoints
     {
         private readonly ITokenStore _tokens;
         private readonly IdentityServerOptions _options;
+        private readonly IClientSecretValidator _clientSecretValidator;
 
         public RevocationEndpoint(
             ITokenStore tokens,
-            IdentityServerOptions options)
+            IdentityServerOptions options,
+            IClientSecretValidator clientSecretValidator)
         {
             _tokens = tokens;
             _options = options;
+            _clientSecretValidator = clientSecretValidator;
         }
 
         public override async Task<IEndpointResult> HandleAsync(HttpContext context)
@@ -26,6 +29,10 @@ namespace IdentityServer.Endpoints
             {
                 return BadRequest(ValidationErrors.InvalidRequest, "Invalid contextType");
             }
+            #endregion
+
+            #region Validate Client
+            var client = await _clientSecretValidator.ValidateAsync(context);
             #endregion
 
             #region Parse Parameters
@@ -45,24 +52,11 @@ namespace IdentityServer.Endpoints
             }
             #endregion
 
-            #region Parse TokenTypeHint
-            var tokenTypeHint = form.Get("token_type_hint");
-            if (string.IsNullOrEmpty(token))
-            {
-                return BadRequest(ValidationErrors.InvalidRequest, "token_type_hint is missing");
-            }
-            if (!new string[] {TokenTypes.AccessToken,TokenTypes.RefreshToken}.Contains(tokenTypeHint))
-            {
-                return BadRequest(ValidationErrors.InvalidRequest, "Invalid token_type_hint");
-            }
-            #endregion
-
             #region RevomeToken
             var accessToken = await _tokens.FindAccessTokenAsync(token);
             if (accessToken != null)
             {
                 await _tokens.RevomeTokenAsync(accessToken);
-
             }
             #endregion
 

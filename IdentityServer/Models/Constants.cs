@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Models
 {
-    internal static class OpenIdConnectConstants
+    internal static class Constants
     {
         public static class EndpointNames
         {
@@ -9,7 +9,7 @@
             public const string Discovery = "Discovery";
             public const string DiscoveryJwks = "Jwks";
             public const string UserInfo = "Userinfo";
-            public const string Revocation = "revocation";
+            public const string Revocation = "Revocation";
             public const string Introspection = "Introspection";
         }
 
