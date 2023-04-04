@@ -30,7 +30,7 @@ namespace IdentityServer.Services
             #region Jwt Claims
             //request jwt
             var jwtId = await _randomGenerator.GenerateAsync(16);
-            var issuer = _serverUrl.GetIdentityServerIssuer();
+            var issuer = _serverUrl.GetServerIssuer();
             var issuedAt = _systemClock.UtcNow.ToUnixTimeSeconds();
             var expiration = issuedAt + request.Client.AccessTokenLifetime;
             var claims = new List<Claim>

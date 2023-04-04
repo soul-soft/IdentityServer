@@ -8,25 +8,29 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllersWithViews();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddAuthentication(IdentityServerAuthenticationDefaults.Scheme)
-    .AddIdentityServer();
-builder.Services.AddAuthorization()
-    .AddAuthorization(configure =>
+builder.Services.AddAuthentication("Cookie")
+    .AddCookie("Cookie", configureOptions =>
     {
-        configure.AddPolicy("default", p => p.RequireAuthenticatedUser());
+
+    });
+   
+builder.Services.AddAuthorization()
+    .AddAuthorization(configureOptions =>
+    {
+        configureOptions.AddPolicy("default", p => p.RequireAuthenticatedUser());
     });
 builder.Services.AddStackExchangeRedisCache(c => 
 {
     c.Configuration = "124.71.130.192,password=Juzhen88!";
 });
-builder.Services.AddIdentityServer(o =>
+builder.Services.AddIdentityServer(configureOptions =>
     {
         //o.Endpoints.PathPrefix = "/oauth2";
-        o.Issuer = "https://www.example.com";
+        configureOptions.Issuer = "https://www.example.com";
     })
     .AddResourceOwnerCredentialRequestValidator<ResourceOwnerCredentialRequestValidator>()
     .AddExtensionGrantValidator<MyExtensionGrantValidator>()
@@ -55,6 +59,6 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.MapControllers()
+app.MapDefaultControllerRoute()
     .RequireAuthorization("default");
 app.Run();

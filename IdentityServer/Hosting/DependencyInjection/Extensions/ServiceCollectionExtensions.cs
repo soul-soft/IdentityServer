@@ -48,9 +48,9 @@ namespace Microsoft.Extensions.DependencyInjection
             return builder;
         }
 
-        public static IIdentityServerBuilder AddIdentityServer(this IServiceCollection services, Action<IdentityServerOptions> setupAction)
+        public static IIdentityServerBuilder AddIdentityServer(this IServiceCollection services, Action<IdentityServerOptions> configureOptions)
         {
-            services.Configure(setupAction);
+            services.Configure(configureOptions);
             return services.AddIdentityServer();
         }
     }

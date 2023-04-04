@@ -64,7 +64,7 @@ namespace IdentityServer.Validation
         private async Task<TokenValidationResult> ValidateJwtTokenAsync(string token)
         {
             var handler = new JsonWebTokenHandler();
-            var issuer = _serverUrl.GetIdentityServerIssuer();
+            var issuer = _serverUrl.GetServerIssuer();
             var signingKeys = await _credentials.GetSecurityKeysAsync();
             var parameters = new TokenValidationParameters
             {
@@ -91,7 +91,7 @@ namespace IdentityServer.Validation
 
         private async Task<TokenValidationResult> ValidateReferenceTokenAsync(Token? token)
         {
-            var issuer = _serverUrl.GetIdentityServerIssuer();
+            var issuer = _serverUrl.GetServerIssuer();
             if (token == null)
             {
                 return TokenValidationResult.Fail(ValidationErrors.InvalidToken, "Invalid reference token");

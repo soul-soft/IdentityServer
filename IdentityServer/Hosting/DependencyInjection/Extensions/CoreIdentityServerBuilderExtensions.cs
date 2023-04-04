@@ -14,7 +14,6 @@ namespace Microsoft.Extensions.DependencyInjection
         #region RequiredEndpoints
         public static IIdentityServerBuilder AddRequiredPlatformEndpoints(this IIdentityServerBuilder builder)
         {
-            builder.Services.AddSingleton<EndpointDescriptors>();
             builder.Services.AddTransient<IEndpointRouter, EndpointRouter>();
             builder.AddEndpoint<TokenEndpoint>(Constants.EndpointNames.Token, Constants.EndpointPaths.Token);
             builder.AddEndpoint<UserInfoEndpoint>(Constants.EndpointNames.UserInfo, Constants.EndpointPaths.UserInfo);

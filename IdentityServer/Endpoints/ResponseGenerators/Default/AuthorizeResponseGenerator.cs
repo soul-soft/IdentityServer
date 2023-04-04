@@ -12,10 +12,9 @@ namespace IdentityServer.Endpoints
             _authorizeCodeService = authorizeCodeService;
         }
 
-        public async Task<AuthorizeGeneratorResponse> ProcessAsync(AuthorizeGeneratorRequest request)
+        public  Task<AuthorizeGeneratorResponse> ProcessAsync(AuthorizeGeneratorRequest request)
         {
-            var code = await _authorizeCodeService.CreateAuthorizeCodeAsync(request.Client, request.Subject);
-            return new AuthorizeGeneratorResponse(code, request.State, request.RedirectUri);
+            return Task.FromResult(new AuthorizeGeneratorResponse("", null,""));
         }
     }
 }

@@ -2,6 +2,6 @@
 {
     public interface IAuthorizeResponseGenerator
     {
-        Task<AuthorizeGeneratorResponse> ProcessAsync(AuthorizeGeneratorRequest context);
+        Task<AuthorizeGeneratorResponse> ProcessAsync(AuthorizeGeneratorRequest request);
     }
 }

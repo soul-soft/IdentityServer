@@ -2,7 +2,9 @@
 {
     public interface IServerUrl
     {
-        string GetIdentityServerIssuer();
-        string GetIdentityServerBaseUrl();
+        string GetServerIssuer();
+        string GetServerBaseUri();
+        string GetEndpointUri(string name);
+        string GetEndpointPath(string name);
     }
 }

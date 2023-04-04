@@ -5,42 +5,38 @@ namespace IdentityServer.Endpoints
     internal class DiscoveryResponseGenerator
         : IDiscoveryResponseGenerator
     {
+        private readonly IServerUrl _urls;
         private readonly IResourceStore _resources;
-        private readonly EndpointDescriptors _endpoints;
-        private readonly IdentityServerOptions _options;
         private readonly ISecretListParser _secretParsers;
         private readonly ISigningCredentialsService _credentials;
         private readonly IExtensionGrantListValidator _extensionGrantValidators;
 
         public DiscoveryResponseGenerator(
+            IServerUrl urls,
             IResourceStore resources,
-            EndpointDescriptors endpoints,
-            IdentityServerOptions options,
             ISecretListParser secretParsers,
             ISigningCredentialsService credentials,
             IExtensionGrantListValidator extensionGrantValidators)
         {
+            _urls = urls;
             _resources = resources;
-            _options = options;
-            _endpoints = endpoints;
             _credentials = credentials;
             _secretParsers = secretParsers;
             _extensionGrantValidators = extensionGrantValidators;
         }
 
-        public async Task<DiscoveryGeneratorResponse> GetDiscoveryDocumentAsync(string issuer, string baseUrl)
+        public async Task<DiscoveryGeneratorResponse> GetDiscoveryDocumentAsync()
         {
             var configuration = new OpenIdConnectConfiguration
             {
-                Issuer = issuer,
-                JwksUri = baseUrl + _endpoints.GetEndpoint(Constants.EndpointNames.DiscoveryJwks),
-                AuthorizationEndpoint = baseUrl + _endpoints.GetEndpoint(Constants.EndpointNames.Authorize),
-                TokenEndpoint = baseUrl + _endpoints.GetEndpoint(Constants.EndpointNames.Token),
-                UserInfoEndpoint = baseUrl + _endpoints.GetEndpoint(Constants.EndpointNames.UserInfo),
-                IntrospectionEndpoint = baseUrl + _endpoints.GetEndpoint(Constants.EndpointNames.Introspection),
+                Issuer = _urls.GetServerIssuer(),
+                JwksUri = _urls.GetEndpointUri(Constants.EndpointNames.DiscoveryJwks),
+                AuthorizationEndpoint = _urls.GetEndpointUri(Constants.EndpointNames.Authorize),
+                TokenEndpoint = _urls.GetEndpointUri(Constants.EndpointNames.Token),
+                UserInfoEndpoint = _urls.GetEndpointUri(Constants.EndpointNames.UserInfo),
+                IntrospectionEndpoint = _urls.GetEndpointUri(Constants.EndpointNames.Introspection),
             };
-            var revocationEndpoint = baseUrl + _endpoints.GetEndpoint(Constants.EndpointNames.Revocation);
-            configuration.AdditionalData.Add("revocation_endpoint", revocationEndpoint);
+            configuration.AdditionalData.Add("revocation_endpoint", _urls.GetEndpointUri(Constants.EndpointNames.Revocation));
             var supportedExtensionsGrantTypes = _extensionGrantValidators.GetSupportedGrantTypes();
             foreach (var item in supportedExtensionsGrantTypes)
             {

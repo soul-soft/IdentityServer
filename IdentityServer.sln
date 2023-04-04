@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiHost", "ApiHost\ApiHost.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer.Storage", "IdentityServer.Storage\IdentityServer.Storage.csproj", "{0C3009E5-56E6-4193-A72A-E61481954A29}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityServer.Authentication", "IdentityServer.Authentication\IdentityServer.Authentication.csproj", "{4DB1E5ED-4634-437F-BB83-62B9F1B9773F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer.Authentication", "IdentityServer.Authentication\IdentityServer.Authentication.csproj", "{4DB1E5ED-4634-437F-BB83-62B9F1B9773F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

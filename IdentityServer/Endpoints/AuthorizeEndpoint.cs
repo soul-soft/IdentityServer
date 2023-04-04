@@ -1,4 +1,5 @@
 ﻿using IdentityServer.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.Net;
@@ -9,47 +10,47 @@ namespace IdentityServer.Endpoints
 {
     internal class AuthorizeEndpoint : EndpointBase
     {
-        private readonly ITokenParser _tokenParser;
-        private readonly ITokenValidator _tokenValidator;
-        private readonly IProfileService _profileService;
+        private readonly IClientStore _clientStore;
         private readonly IdentityServerOptions _options;
         private readonly IResourceValidator _resourceValidator;
         private readonly IAuthorizeResponseGenerator _generator;
-        private readonly IClientSecretValidator _clientSecretValidator;
 
         public AuthorizeEndpoint(
-            ITokenParser tokenParser,
-            ITokenValidator tokenValidator,
-            IProfileService profileService,
             IdentityServerOptions options,
             IResourceValidator resourceValidator,
-            IAuthorizeResponseGenerator generator,
-            IClientSecretValidator clientSecretValidator)
+            IClientStore clientStore, 
+            IAuthorizeResponseGenerator generator)
         {
             _options = options;
             _generator = generator;
-            _tokenParser = tokenParser;
-            _profileService = profileService;
-            _tokenValidator = tokenValidator;
+            _clientStore = clientStore;
             _resourceValidator = resourceValidator;
-            _clientSecretValidator = clientSecretValidator;
         }
 
         public override async Task<IEndpointResult> HandleAsync(HttpContext context)
         {
             #region Validate Request
-            if (!HttpMethods.IsPost(context.Request.Method))
+            if (!HttpMethods.IsGet(context.Request.Method))
             {
                 return MethodNotAllowed();
             }
-            if (!context.Request.HasFormContentType)
-            {
-                return BadRequest(ValidationErrors.InvalidRequest, "Invalid contextType");
-            }
+            #endregion
+
+            #region Read Query
+            var parameters = context.Request.Query.AsNameValueCollection();
             #endregion
 
             #region Validate Client
-            var client = await _clientSecretValidator.ValidateAsync(context);
+            var clientId = parameters[OpenIdConnectParameterNames.ClientId];
+            if (string.IsNullOrEmpty(clientId))
+            {
+                return BadRequest(ValidationErrors.InvalidScope, "ClientId is missing");
+            }
+            var client = await _clientStore.FindClientAsync(clientId);
+            if (client == null)
+            {
+                return BadRequest(ValidationErrors.InvalidScope, "ClientId is missing");
+            }
             #endregion
 
             #region GrantType
@@ -59,72 +60,42 @@ namespace IdentityServer.Endpoints
             }
             #endregion
 
-            #region Validate Resources
-            var from = await context.Request.ReadFormAsync();
-            var parameters = from.AsNameValueCollection();
-            var scope = parameters[OpenIdConnectParameterNames.Scope] ?? string.Empty;
-            if (scope.Length > _options.InputLengthRestrictions.Scope)
-            {
-                return BadRequest(ValidationErrors.InvalidScope, "Scope is too long");
-            }
-            var scopes = scope.Split(",").Where(a => !string.IsNullOrWhiteSpace(a));
-            var resources = await _resourceValidator.ValidateAsync(client, scopes);
-            #endregion
-
             #region RedirectUri
             var redirectUri = parameters[OpenIdConnectParameterNames.RedirectUri];
-            redirectUri = WebUtility.UrlDecode(redirectUri);
             if (string.IsNullOrEmpty(redirectUri))
             {
                 return BadRequest(ValidationErrors.InvalidRequest, "RedirectUri type is missing");
             }
             if (!client.AllowedRedirectUris.Any(a => a == redirectUri))
             {
-                return BadRequest(ValidationErrors.InvalidGrant, "Unauthorized redirectUri");
+                return BadRequest(ValidationErrors.InvalidGrant, "Not allowed redirectUri");
             }
+            redirectUri = WebUtility.UrlDecode(redirectUri);
+            #endregion
+
+            #region Validate Resources
+            var scope = parameters[OpenIdConnectParameterNames.Scope] ?? string.Empty;
+            if (scope.Length > _options.InputLengthRestrictions.Scope)
+            {
+                return BadRequest(ValidationErrors.InvalidScope, "Scope is too long");
+            }
+            var scopes = scope.Split(" ").Where(a => !string.IsNullOrWhiteSpace(a));
+            var resources = await _resourceValidator.ValidateAsync(client, scopes);
             #endregion
 
             #region State
             var state = parameters[OpenIdConnectParameterNames.State];
             #endregion
 
-
             #region ResponseType
-            var responseType = "code";
-            #endregion
-
-            #region Token
-            var token = await _tokenParser.ParserAsync(context);
-            if (string.IsNullOrEmpty(token))
+            var responseType = parameters[OpenIdConnectParameterNames.ResponseType];
+            if (responseType == null)
             {
-                return BadRequest(ValidationErrors.InvalidRequest, "Token is missing");
-            }
-            var tokenValidationResult = await _tokenValidator.ValidateAccessTokenAsync(token);
-            if (tokenValidationResult.IsError)
-            {
-                return Unauthorized(tokenValidationResult.Error, tokenValidationResult.ErrorDescription);
-            }
-            var subject = new ClaimsPrincipal(new ClaimsIdentity(tokenValidationResult.Claims, "UserInfo"));
-            if (!subject.Claims.Any(a => a.Type == JwtClaimTypes.Subject))
-            {
-                return Unauthorized(ValidationErrors.InsufficientScope, $"Token contains no sub claim");
-            }
-            var isActive = await _profileService.IsActiveAsync(new IsActiveRequest(
-                ProfileIsActiveCallers.AuthorizeEndpoint,
-                tokenValidationResult.Client,
-                subject));
-            if (!isActive)
-            {
-                return BadRequest(ValidationErrors.InvalidRequest, $"User marked as not active: {subject.GetSubjectId()}");
+                responseType = "";
             }
             #endregion
-
-            #region Generator
-            var request = new AuthorizeGeneratorRequest(state, redirectUri,responseType, client, resources, subject, _options);
-            var response = await _generator.ProcessAsync(request);
-            #endregion
-
-            return AuthorizeEndpointResult(response);
+            var request = new AuthorizeGeneratorRequest(state,redirectUri,responseType,client,resources,_options);
+            return AuthorizeEndpointResult(request);
         }
     }
 }

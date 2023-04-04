@@ -1,22 +1,40 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.Net.Mime;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using System.Text;
 
 namespace IdentityServer.Endpoints
 {
     public class AuthorizeResult : IEndpointResult
     {
-        private readonly AuthorizeGeneratorResponse _response;
-        
-        public AuthorizeResult(AuthorizeGeneratorResponse response)
+        private readonly AuthorizeGeneratorRequest _request;
+       
+        public AuthorizeResult(AuthorizeGeneratorRequest request)
         {
-            _response = response;
+            _request = request;
         }
 
         public async Task ExecuteAsync(HttpContext context)
         {
-            var json = _response.Serialize();
-            context.Response.ContentType = MediaTypeNames.Application.Json;
-            await context.Response.WriteAsync(json, System.Text.Encoding.UTF8);
+            var result = await context.AuthenticateAsync();
+            if (!result.Succeeded)
+            {
+                await ChallengeAsync(context);
+            }
+            else
+            {
+
+            }
+        }
+
+        private async Task ChallengeAsync(HttpContext context)
+        {
+            var redirectUri = $"{context.Request.Path}/{context.Request.QueryString}";
+            await context.ChallengeAsync(new AuthenticationProperties() 
+            {
+                RedirectUri = redirectUri,
+            });
         }
     }
 }

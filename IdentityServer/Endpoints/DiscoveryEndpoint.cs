@@ -24,9 +24,7 @@ namespace IdentityServer.Endpoints
             {
                 return MethodNotAllowed();
             }
-            var baseUrl = _urls.GetIdentityServerBaseUrl();
-            var issuerUrl = _urls.GetIdentityServerIssuer();
-            var response = await _generator.GetDiscoveryDocumentAsync(issuerUrl, baseUrl);
+            var response = await _generator.GetDiscoveryDocumentAsync();
             return DiscoveryEndpointResult(response);
         }
 

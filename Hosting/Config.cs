@@ -25,7 +25,7 @@ namespace Hosting.Configuration
                 },
                 AllowedRedirectUris = new string[]
                 {
-                    "http://www.baidu.com/callbck"
+                    "http://www.baidu.com"
                 },
                 RequireClientSecret = false
             },

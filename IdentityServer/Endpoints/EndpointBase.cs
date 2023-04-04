@@ -17,9 +17,9 @@ namespace IdentityServer.Endpoints
             return new JwkDiscoveryResult(response);
         }
 
-        protected static IEndpointResult AuthorizeEndpointResult(AuthorizeGeneratorResponse response)
+        protected static IEndpointResult AuthorizeEndpointResult(AuthorizeGeneratorRequest request)
         {
-            return new AuthorizeResult(response);
+            return new AuthorizeResult(request);
         }
 
         protected static IEndpointResult TokenEndpointResult(TokenGeneratorResponse response)
