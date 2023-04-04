@@ -25,7 +25,7 @@ namespace IdentityServer.Validation
             if (_clock.UtcNow.UtcDateTime > authorizeCode.ExpirationTime)
             {
                 await _authorizeCodeStore.RevomeAuthorizationCodeAsync(authorizeCode);
-                throw new ValidationException(ValidationErrors.InvalidGrant, "Invalid lifetime");
+                throw new ValidationException(ValidationErrors.InvalidGrant, "Code expired");
             }
             await _authorizeCodeStore.RevomeAuthorizationCodeAsync(authorizeCode);
             return new GrantValidationResult(authorizeCode.Claims);

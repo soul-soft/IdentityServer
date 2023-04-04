@@ -22,7 +22,7 @@ namespace IdentityServer.Services
         public async Task<string> GenerateCodeAsync(Client client, ClaimsPrincipal subject)
         {
             var id = await _randomGenerator.GenerateAsync();
-            var creationTime = _clock.UtcNow.DateTime;
+            var creationTime = _clock.UtcNow.UtcDateTime;
             var code = new AuthorizationCode(id, client.AuthorizeCodeLifetime, subject.Claims, creationTime);
             await _store.SaveAuthorizationCodeAsync(code);
             return code.Id;

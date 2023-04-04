@@ -13,9 +13,9 @@
             _options = options;
         }
 
-        public async Task<AuthorizationCode?> FindAuthorizationCodeAsync(string id)
+        public async Task<AuthorizationCode?> FindAuthorizationCodeAsync(string code)
         {
-            var key = BuildKey(id);
+            var key = BuildKey(code);
             return await _cache.GetAsync<AuthorizationCode>(key);
         }
 
@@ -25,10 +25,10 @@
             await _cache.RevomeAsync(key);
         }
 
-        public async Task SaveAuthorizationCodeAsync(AuthorizationCode Code)
+        public async Task SaveAuthorizationCodeAsync(AuthorizationCode code)
         {
-            var key = BuildKey(Code.Id);
-            await _cache.SaveAsync(key, Code, TimeSpan.FromSeconds(Code.Lifetime));
+            var key = BuildKey(code.Id);
+            await _cache.SaveAsync(key, code, TimeSpan.FromSeconds(code.Lifetime));
         }
 
 

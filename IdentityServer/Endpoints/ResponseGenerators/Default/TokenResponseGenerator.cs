@@ -21,6 +21,7 @@ namespace IdentityServer.Endpoints
             {
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
+                IdentityToken = accessToken,
                 TokenLifetime = tokenLifetime,
                 Scope = scope,
             };

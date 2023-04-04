@@ -16,7 +16,7 @@ namespace IdentityServer.Models
             Id = id;
             Lifetime = lifetime;
             Claims = claims;
-            ExpirationTime = creationTime.AddSeconds(lifetime); ;
+            ExpirationTime = creationTime.AddSeconds(lifetime);
             CreationTime = creationTime;
         }
     }

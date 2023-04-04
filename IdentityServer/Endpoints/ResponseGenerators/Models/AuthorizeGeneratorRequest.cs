@@ -5,20 +5,24 @@ namespace IdentityServer.Endpoints
     public class AuthorizeGeneratorRequest
     {
         public string? State { get; set; }
+        public string? None { get; set; }
         public string RedirectUri { get; }
-        public string ResponseType { get; }
+        public string? ResponseType { get; }
+        public string? ResponseMode { get; }
         public ClaimsPrincipal Subject { get; }
         public Client Client { get; }
         public Resources Resources { get; }
 
-        public AuthorizeGeneratorRequest(string? state, string redirctUri, string responseType, Client client, Resources resources, ClaimsPrincipal subject)
+        public AuthorizeGeneratorRequest(string? none, string? state, string redirectUri, string? responseType, string? responseMode, Client client, Resources resources, ClaimsPrincipal subject)
         {
+            None = none;
             State = state;
-            RedirectUri = redirctUri;
-            ResponseType = responseType;
+            RedirectUri = redirectUri;
             Client = client;
             Resources = resources;
             Subject = subject;
+            ResponseType = responseType;
+            ResponseMode = responseMode;
         }
     }
 }

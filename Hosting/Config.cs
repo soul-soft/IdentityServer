@@ -21,12 +21,15 @@ namespace Hosting.Configuration
                 },
                 AllowedScopes = new[]
                 {
-                    "api"
+                    "api",
+                    StandardScopes.OpenId,
+                    StandardScopes.Profile,
                 },
                 AllowedRedirectUris = new string[]
                 {
                     "http://www.baidu.com",
-                    "https://localhost:49962/oidc-sign"
+                    "https://localhost:49962/oidc-sign",
+                    "https://localhost:7098/signin-oidc"
                 },
                 RequireClientSecret = false
             },

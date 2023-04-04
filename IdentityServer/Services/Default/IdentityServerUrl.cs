@@ -47,7 +47,7 @@ namespace IdentityServer.Services
 
         public string GetEndpointUri(string name)
         {
-            return $"{GetServerBaseUri()}/{GetEndpointPath(name)}";
+            return $"{GetServerBaseUri()}{GetEndpointPath(name)}";
         }
     }
 }

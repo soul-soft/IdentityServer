@@ -85,11 +85,19 @@ namespace IdentityServer.Endpoints
             var state = parameters[OpenIdConnectParameterNames.State];
             #endregion
 
+            #region None
+            var none = parameters[OpenIdConnectParameterNames.Nonce];
+            #endregion
+
+            #region None
+            var responseMode = parameters[OpenIdConnectParameterNames.ResponseMode];
+            #endregion
+
             #region ResponseType
             var responseType = parameters[OpenIdConnectParameterNames.ResponseType];
             if (responseType == null)
             {
-                responseType = "";
+                return BadRequest(ValidationErrors.InvalidScope, "responseType is null or empty");
             }
             #endregion
 
@@ -101,7 +109,15 @@ namespace IdentityServer.Endpoints
             }
             else
             {
-                var request = new AuthorizeGeneratorRequest(state, redirectUri, responseType, client, resources, result.Principal);
+                var request = new AuthorizeGeneratorRequest(
+                    none: none,
+                    state: state,
+                    redirectUri: redirectUri,
+                    responseType: responseType,
+                    responseMode: responseMode,
+                    client: client,
+                    resources: resources,
+                    subject: result.Principal);
                 var url = await _generator.GenerateAsync(request);
                 return Redirect(url);
             }

@@ -19,7 +19,7 @@ namespace IdentityServer.Endpoints
             var buffer = new StringBuilder();
             buffer.Append(request.RedirectUri);
             buffer.AppendFormat("?{0}={1}", OpenIdConnectParameterNames.Code, code);
-            buffer.AppendFormat("{0}={1}", OpenIdConnectParameterNames.State, request.State);
+            buffer.AppendFormat("&{0}={1}", OpenIdConnectParameterNames.State, request.State);
             return buffer.ToString();
         }
     }

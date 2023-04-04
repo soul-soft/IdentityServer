@@ -7,7 +7,7 @@
         public string? Description { get; set; }
         public string? ClientUri { get; set; }
         public bool Enabled { get; set; } = true;
-        public int AuthorizeCodeLifetime { get; set; } = 60;
+        public int AuthorizeCodeLifetime { get; set; } = 180;
         public int AccessTokenLifetime { get; set; } = 3600;
         public int RefreshTokenLifetime { get; set; } = 3600 * 24 * 30;
         public int IdentityTokenLifetime { get; set; } = 300;
