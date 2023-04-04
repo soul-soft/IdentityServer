@@ -5,14 +5,14 @@ namespace IdentityServer.Services
 {
     public class ClaimService : IClaimService
     {
-        private readonly IServerUrl _serverUrl;
+        private readonly IIdentityServerUrl _serverUrl;
         private readonly ISystemClock _systemClock;
         private readonly IdentityServerOptions _options;
         private readonly IRandomGenerator _randomGenerator;
         private readonly IProfileService _profileService;
 
         public ClaimService(
-            IServerUrl serverUrl,
+            IIdentityServerUrl serverUrl,
             ISystemClock systemClock,
             IdentityServerOptions options,
             IProfileService profileService,
@@ -92,7 +92,7 @@ namespace IdentityServer.Services
         private IEnumerable<Claim> FilterRequestClaims(IEnumerable<Claim> claims, IEnumerable<string> claimTypes)
         {
             return claims.Where(a => claimTypes.Contains(a.Type))
-                .Where(a => !Constants.ClaimTypeFilters.ClaimsServiceFilterClaimTypes.Contains(a.Type));
+                .Where(a => !ClaimTypeFilters.ClaimsServiceFilterClaimTypes.Contains(a.Type));
         }
 
         private IEnumerable<Claim> GetStandardSubjectClaims(string grantType, IEnumerable<Claim> claims, IEnumerable<string> allowedClaimTypes)

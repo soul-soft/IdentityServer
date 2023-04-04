@@ -15,13 +15,13 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IIdentityServerBuilder AddRequiredPlatformEndpoints(this IIdentityServerBuilder builder)
         {
             builder.Services.AddTransient<IEndpointRouter, EndpointRouter>();
-            builder.AddEndpoint<TokenEndpoint>(Constants.EndpointNames.Token, Constants.EndpointPaths.Token);
-            builder.AddEndpoint<UserInfoEndpoint>(Constants.EndpointNames.UserInfo, Constants.EndpointPaths.UserInfo);
-            builder.AddEndpoint<AuthorizeEndpoint>(Constants.EndpointNames.Authorize, Constants.EndpointPaths.Authorize);
-            builder.AddEndpoint<RevocationEndpoint>(Constants.EndpointNames.Revocation, Constants.EndpointPaths.Revocation);
-            builder.AddEndpoint<IntrospectionEndpoint>(Constants.EndpointNames.Introspection, Constants.EndpointPaths.Introspection);
-            builder.AddEndpoint<DiscoveryEndpoint>(Constants.EndpointNames.Discovery, Constants.EndpointPaths.Discovery);
-            builder.AddEndpoint<DiscoveryKeyEndpoint>(Constants.EndpointNames.DiscoveryJwks, Constants.EndpointPaths.DiscoveryJwks);
+            builder.AddEndpoint<TokenEndpoint>(IdentityServerEndpointNames.Token, IdentityEndpointPaths.Token);
+            builder.AddEndpoint<UserInfoEndpoint>(IdentityServerEndpointNames.UserInfo, IdentityEndpointPaths.UserInfo);
+            builder.AddEndpoint<AuthorizeEndpoint>(IdentityServerEndpointNames.Authorize, IdentityEndpointPaths.Authorize);
+            builder.AddEndpoint<RevocationEndpoint>(IdentityServerEndpointNames.Revocation, IdentityEndpointPaths.Revocation);
+            builder.AddEndpoint<IntrospectionEndpoint>(IdentityServerEndpointNames.Introspection, IdentityEndpointPaths.Introspection);
+            builder.AddEndpoint<DiscoveryEndpoint>(IdentityServerEndpointNames.Discovery, IdentityEndpointPaths.Discovery);
+            builder.AddEndpoint<DiscoveryKeyEndpoint>(IdentityServerEndpointNames.DiscoveryJwks, IdentityEndpointPaths.DiscoveryJwks);
             return builder;
         }
         #endregion
@@ -52,7 +52,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns></returns>
         public static IIdentityServerBuilder AddPluggableServices(this IIdentityServerBuilder builder)
         {
-            builder.Services.TryAddTransient<IServerUrl, ServerUrl>();
+            builder.Services.TryAddTransient<IIdentityServerUrl, IdentityServerUrl>();
             builder.Services.TryAddTransient<IRandomGenerator, RandomGenerator>();
             builder.Services.TryAddTransient<IProfileService, ProfileService>();
             builder.Services.TryAddTransient<IClaimService, ClaimService>();           

@@ -6,11 +6,11 @@ using System.Text;
 
 namespace IdentityServer.Endpoints
 {
-    public class AuthorizeResult : IEndpointResult
+    public class AuthorizedResult : IEndpointResult
     {
         private readonly AuthorizeGeneratorRequest _request;
        
-        public AuthorizeResult(AuthorizeGeneratorRequest request)
+        public AuthorizedResult(AuthorizeGeneratorRequest request)
         {
             _request = request;
         }

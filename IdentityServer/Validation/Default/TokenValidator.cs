@@ -2,7 +2,6 @@
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
-using System.Security.Cryptography.Xml;
 
 namespace IdentityServer.Validation
 {
@@ -11,7 +10,7 @@ namespace IdentityServer.Validation
         private readonly ITokenStore _tokens;
         private readonly ISystemClock _clock;
         private readonly IClientStore _clients;
-        private readonly IServerUrl _serverUrl;
+        private readonly IIdentityServerUrl _serverUrl;
         private readonly IdentityServerOptions _options;
         private readonly ISigningCredentialsService _credentials;
 
@@ -19,7 +18,7 @@ namespace IdentityServer.Validation
             ITokenStore tokens,
             ISystemClock clock,
             IClientStore clients,
-            IServerUrl serverUrl,
+            IIdentityServerUrl serverUrl,
             IdentityServerOptions options,
             ISigningCredentialsService credentials)
         {

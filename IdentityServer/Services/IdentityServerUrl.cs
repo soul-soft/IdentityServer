@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Services
 {
-    public interface IServerUrl
+    public interface IIdentityServerUrl
     {
         string GetServerIssuer();
         string GetServerBaseUri();

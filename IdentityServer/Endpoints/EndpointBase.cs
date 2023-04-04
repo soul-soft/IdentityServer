@@ -19,7 +19,7 @@ namespace IdentityServer.Endpoints
 
         protected static IEndpointResult AuthorizeEndpointResult(AuthorizeGeneratorRequest request)
         {
-            return new AuthorizeResult(request);
+            return new AuthorizedResult(request);
         }
 
         protected static IEndpointResult TokenEndpointResult(TokenGeneratorResponse response)
@@ -27,7 +27,7 @@ namespace IdentityServer.Endpoints
             return new TokenResult(response);
         }
 
-        protected static IEndpointResult IntrospectionResult(IntrospectionGeneratorResponse response)
+        protected static IEndpointResult IntrospectionEndpointResult(IntrospectionGeneratorResponse response)
         {
             return new IntrospectionResult(response);
         }

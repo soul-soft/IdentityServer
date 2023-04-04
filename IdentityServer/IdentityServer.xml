@@ -122,6 +122,11 @@
             idp
             </summary>
         </member>
+        <member name="P:IdentityServer.Configuration.IdentityServerOptions.Authentication">
+            <summary>
+            认证
+            </summary>
+        </member>
         <member name="P:IdentityServer.Configuration.InputLengthRestrictions.AccessToken">
             <summary>
             Max length for AccessToken

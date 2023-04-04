@@ -44,5 +44,9 @@ namespace IdentityServer.Configuration
         /// idp
         /// </summary>
         public string IdentityProvider { get; set; } = "idsv";
+        /// <summary>
+        /// 认证
+        /// </summary>
+        public AuthenticationOptions Authentication { get; set; } = new AuthenticationOptions();
     }
 }

@@ -5,14 +5,14 @@ namespace IdentityServer.Endpoints
     internal class DiscoveryResponseGenerator
         : IDiscoveryResponseGenerator
     {
-        private readonly IServerUrl _urls;
+        private readonly IIdentityServerUrl _urls;
         private readonly IResourceStore _resources;
         private readonly ISecretListParser _secretParsers;
         private readonly ISigningCredentialsService _credentials;
         private readonly IExtensionGrantListValidator _extensionGrantValidators;
 
         public DiscoveryResponseGenerator(
-            IServerUrl urls,
+            IIdentityServerUrl urls,
             IResourceStore resources,
             ISecretListParser secretParsers,
             ISigningCredentialsService credentials,
@@ -30,13 +30,13 @@ namespace IdentityServer.Endpoints
             var configuration = new OpenIdConnectConfiguration
             {
                 Issuer = _urls.GetServerIssuer(),
-                JwksUri = _urls.GetEndpointUri(Constants.EndpointNames.DiscoveryJwks),
-                AuthorizationEndpoint = _urls.GetEndpointUri(Constants.EndpointNames.Authorize),
-                TokenEndpoint = _urls.GetEndpointUri(Constants.EndpointNames.Token),
-                UserInfoEndpoint = _urls.GetEndpointUri(Constants.EndpointNames.UserInfo),
-                IntrospectionEndpoint = _urls.GetEndpointUri(Constants.EndpointNames.Introspection),
+                JwksUri = _urls.GetEndpointUri(IdentityServerEndpointNames.DiscoveryJwks),
+                AuthorizationEndpoint = _urls.GetEndpointUri(IdentityServerEndpointNames.Authorize),
+                TokenEndpoint = _urls.GetEndpointUri(IdentityServerEndpointNames.Token),
+                UserInfoEndpoint = _urls.GetEndpointUri(IdentityServerEndpointNames.UserInfo),
+                IntrospectionEndpoint = _urls.GetEndpointUri(IdentityServerEndpointNames.Introspection),
             };
-            configuration.AdditionalData.Add("revocation_endpoint", _urls.GetEndpointUri(Constants.EndpointNames.Revocation));
+            configuration.AdditionalData.Add("revocation_endpoint", _urls.GetEndpointUri(IdentityServerEndpointNames.Revocation));
             var supportedExtensionsGrantTypes = _extensionGrantValidators.GetSupportedGrantTypes();
             foreach (var item in supportedExtensionsGrantTypes)
             {

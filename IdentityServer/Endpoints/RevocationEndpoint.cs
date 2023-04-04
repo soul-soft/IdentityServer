@@ -32,10 +32,10 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Validate Client
-            var client = await _clientSecretValidator.ValidateAsync(context);
+            await _clientSecretValidator.ValidateAsync(context);
             #endregion
 
-            #region Parse Parameters
+            #region Read Form
             var body = await context.Request.ReadFormAsync();
             var form = body.AsNameValueCollection();
             #endregion

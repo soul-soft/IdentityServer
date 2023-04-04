@@ -96,4 +96,33 @@
         public const string UserInfoEndpoint = "UserInfoEndpoint";
         public const string AuthorizeEndpoint = "AuthorizeEndpoint";
     }
+
+    public static class IdentityServerEndpointNames
+    {
+        public const string Authorize = "Authorize";
+        public const string Token = "Token";
+        public const string Discovery = "Discovery";
+        public const string DiscoveryJwks = "Jwks";
+        public const string UserInfo = "Userinfo";
+        public const string Revocation = "Revocation";
+        public const string Introspection = "Introspection";
+    }
+
+    public static class IdentityEndpointPaths
+    {
+
+        public const string Authorize = "authorize";
+
+        public const string Discovery = "/.well-known/openid-configuration";
+
+        public const string DiscoveryJwks = Discovery + "/jwks";
+
+        public const string Token = "token";
+
+        public const string UserInfo = "userinfo";
+
+        public const string Revocation = "revocation";
+
+        public const string Introspection = "introspect";
+    }
 }

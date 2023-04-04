@@ -73,7 +73,7 @@ namespace IdentityServer.Endpoints
                 apiResource));
             #endregion
 
-            return IntrospectionResult(response);
+            return IntrospectionEndpointResult(response);
         }
     }
 }
