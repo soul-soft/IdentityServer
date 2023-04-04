@@ -3,11 +3,11 @@ using System.Net.Mime;
 
 namespace IdentityServer.Endpoints
 {
-    public class DiscoveryResult : IEndpointResult
+    internal class DiscoveryEndpointResult : IEndpointResult
     {
         private readonly DiscoveryGeneratorResponse _discovery;
 
-        public DiscoveryResult(DiscoveryGeneratorResponse discovery)
+        public DiscoveryEndpointResult(DiscoveryGeneratorResponse discovery)
         {
             _discovery = discovery;
         }

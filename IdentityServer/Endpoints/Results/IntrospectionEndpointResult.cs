@@ -3,11 +3,11 @@ using System.Net.Mime;
 
 namespace IdentityServer.Endpoints
 {
-    internal class IntrospectionResult : IEndpointResult
+    internal class IntrospectionEndpointResult : IEndpointResult
     {
         private readonly IntrospectionGeneratorResponse _response;
 
-        public IntrospectionResult(IntrospectionGeneratorResponse response)
+        public IntrospectionEndpointResult(IntrospectionGeneratorResponse response)
         {
             _response = response;
         }

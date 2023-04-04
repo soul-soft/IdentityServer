@@ -5,7 +5,7 @@ using System.Net;
 
 namespace IdentityServer.Endpoints
 {
-    public class UnauthorizedResult : IEndpointResult
+    internal class UnauthorizedResult : IEndpointResult
     {
         public string Error { get; }
 

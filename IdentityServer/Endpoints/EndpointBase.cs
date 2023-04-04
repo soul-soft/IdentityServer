@@ -7,34 +7,24 @@ namespace IdentityServer.Endpoints
     {
         public abstract Task<IEndpointResult> HandleAsync(HttpContext context);
 
-        protected static IEndpointResult DiscoveryEndpointResult(DiscoveryGeneratorResponse response)
-        {
-            return new DiscoveryResult(response);
-        }
-
-        protected static IEndpointResult JwkDiscoveryEndpointResult(JwkDiscoveryGeneratorResponse response)
-        {
-            return new JwkDiscoveryResult(response);
-        }
-
         protected static IEndpointResult AuthorizeEndpointResult(AuthorizeGeneratorRequest request)
         {
-            return new AuthorizedResult(request);
-        }
-
-        protected static IEndpointResult TokenEndpointResult(TokenGeneratorResponse response)
-        {
-            return new TokenResult(response);
-        }
-
-        protected static IEndpointResult IntrospectionEndpointResult(IntrospectionGeneratorResponse response)
-        {
-            return new IntrospectionResult(response);
+            return new AuthorizeEndpointResult(request);
         }
 
         protected static IEndpointResult BadRequest(string error, string? errorDescription)
         {
             return new BadRequestResult(error, errorDescription);
+        }
+
+        protected static IEndpointResult Challenge()
+        {
+            return new ChallengeResult();
+        }
+
+        protected static IEndpointResult Json(string json)
+        {
+            return new JsonResult(json);
         }
 
         protected static IEndpointResult Unauthorized(string error, string? errorDescription)

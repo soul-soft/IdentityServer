@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Http;
 
 namespace IdentityServer.Endpoints
 {
-    public class UserInfoResult : IEndpointResult
+    internal class UserInfoEndpointResult : IEndpointResult
     {
         private readonly UserInfoGeneratorResponse _response;
 
-        public UserInfoResult(UserInfoGeneratorResponse response)
+        public UserInfoEndpointResult(UserInfoGeneratorResponse response)
         {
             _response = response;
         }

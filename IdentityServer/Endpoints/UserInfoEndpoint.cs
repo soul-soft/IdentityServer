@@ -54,7 +54,8 @@ namespace IdentityServer.Endpoints
             var client = tokenValidationResult.Client;
             var resources = await _resourceStore.FindResourcesByScopesAsync(scopes);
             var response = await _generator.ProcessAsync(subject, client, resources);
-            return new UserInfoEndpointResult(response);
+
+            return Json(response.Serialize());
         }
     }
 }

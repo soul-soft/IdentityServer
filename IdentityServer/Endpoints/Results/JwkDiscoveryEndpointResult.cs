@@ -3,11 +3,11 @@ using System.Net.Mime;
 
 namespace IdentityServer.Endpoints
 {
-    public class JwkDiscoveryResult : IEndpointResult
+    public class JwkDiscoveryEndpointResult : IEndpointResult
     {
         public JwkDiscoveryGeneratorResponse _response;
 
-        public JwkDiscoveryResult(JwkDiscoveryGeneratorResponse response)
+        public JwkDiscoveryEndpointResult(JwkDiscoveryGeneratorResponse response)
         {
             _response = response;
         }

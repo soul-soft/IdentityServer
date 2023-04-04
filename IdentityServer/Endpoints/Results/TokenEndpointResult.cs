@@ -3,11 +3,11 @@ using System.Net.Mime;
 
 namespace IdentityServer.Endpoints
 {
-    public class TokenResult : IEndpointResult
+    internal class TokenEndpointResult : IEndpointResult
     {
         private readonly TokenGeneratorResponse _response;
 
-        public TokenResult(TokenGeneratorResponse response)
+        public TokenEndpointResult(TokenGeneratorResponse response)
         {
             _response = response;
         }

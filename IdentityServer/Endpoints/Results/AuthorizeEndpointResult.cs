@@ -1,16 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using System.Text;
 
 namespace IdentityServer.Endpoints
 {
-    public class AuthorizedResult : IEndpointResult
+    public class AuthorizeEndpointResult : IEndpointResult
     {
         private readonly AuthorizeGeneratorRequest _request;
        
-        public AuthorizedResult(AuthorizeGeneratorRequest request)
+        public AuthorizeEndpointResult(AuthorizeGeneratorRequest request)
         {
             _request = request;
         }
@@ -18,23 +15,6 @@ namespace IdentityServer.Endpoints
         public async Task ExecuteAsync(HttpContext context)
         {
             var result = await context.AuthenticateAsync();
-            if (!result.Succeeded)
-            {
-                await ChallengeAsync(context);
-            }
-            else
-            {
-
-            }
-        }
-
-        private async Task ChallengeAsync(HttpContext context)
-        {
-            var redirectUri = $"{context.Request.Path}/{context.Request.QueryString}";
-            await context.ChallengeAsync(new AuthenticationProperties() 
-            {
-                RedirectUri = redirectUri,
-            });
         }
     }
 }

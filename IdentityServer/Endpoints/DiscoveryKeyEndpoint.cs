@@ -18,7 +18,7 @@ namespace IdentityServer.Endpoints
         {
             var response = await _generator.CreateJwkDiscoveryDocumentAsync();
 
-            return JwkDiscoveryEndpointResult(response);
+            return Json(response.Serialize());
         }
     }
 }

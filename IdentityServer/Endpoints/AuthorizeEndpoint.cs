@@ -1,10 +1,7 @@
-﻿using IdentityServer.Models;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.Net;
-using System.Security.Claims;
-using System.Text.Encodings.Web;
 
 namespace IdentityServer.Endpoints
 {
@@ -13,16 +10,13 @@ namespace IdentityServer.Endpoints
         private readonly IClientStore _clientStore;
         private readonly IdentityServerOptions _options;
         private readonly IResourceValidator _resourceValidator;
-        private readonly IAuthorizeResponseGenerator _generator;
 
         public AuthorizeEndpoint(
             IdentityServerOptions options,
             IResourceValidator resourceValidator,
-            IClientStore clientStore, 
-            IAuthorizeResponseGenerator generator)
+            IClientStore clientStore)
         {
             _options = options;
-            _generator = generator;
             _clientStore = clientStore;
             _resourceValidator = resourceValidator;
         }
@@ -94,8 +88,19 @@ namespace IdentityServer.Endpoints
                 responseType = "";
             }
             #endregion
-            var request = new AuthorizeGeneratorRequest(state,redirectUri,responseType,client,resources,_options);
-            return AuthorizeEndpointResult(request);
+
+            #region Authenticate
+            var result = await context.AuthenticateAsync();
+            if (result.Succeeded)
+            {
+                var request = new AuthorizeGeneratorRequest(state,redirectUri,responseType,client,resources,_options);
+                return AuthorizeEndpointResult(request);
+            }
+            else
+            {
+                return Challenge();
+            }
+            #endregion
         }
     }
 }

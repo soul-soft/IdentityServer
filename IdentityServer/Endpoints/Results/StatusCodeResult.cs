@@ -3,7 +3,7 @@ using System.Net;
 
 namespace IdentityServer.Endpoints
 {
-    public class StatusCodeResult : IEndpointResult
+    internal class StatusCodeResult : IEndpointResult
     {
         public HttpStatusCode StatusCode { get; }
 
