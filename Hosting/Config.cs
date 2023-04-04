@@ -25,7 +25,8 @@ namespace Hosting.Configuration
                 },
                 AllowedRedirectUris = new string[]
                 {
-                    "http://www.baidu.com"
+                    "http://www.baidu.com",
+                    "https://localhost:49962/oidc-sign"
                 },
                 RequireClientSecret = false
             },

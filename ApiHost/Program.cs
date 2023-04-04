@@ -55,7 +55,14 @@ builder.Services.AddAuthentication("OAuth")
     });
 
 var app = builder.Build();
-
+app.Use(async (context, next) => 
+{
+    if (context.Request.Path.StartsWithSegments("/oidc-sign"))
+    {
+        Console.WriteLine(context.Request.QueryString);
+    }
+    await next();
+});
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

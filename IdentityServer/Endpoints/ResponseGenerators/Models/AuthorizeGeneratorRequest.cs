@@ -7,18 +7,18 @@ namespace IdentityServer.Endpoints
         public string? State { get; set; }
         public string RedirectUri { get; }
         public string ResponseType { get; }
+        public ClaimsPrincipal Subject { get; }
         public Client Client { get; }
         public Resources Resources { get; }
-        public IdentityServerOptions Options { get; }
 
-        public AuthorizeGeneratorRequest(string? state, string redirctUri, string responseType, Client client, Resources resources, IdentityServerOptions options)
+        public AuthorizeGeneratorRequest(string? state, string redirctUri, string responseType, Client client, Resources resources, ClaimsPrincipal subject)
         {
             State = state;
             RedirectUri = redirctUri;
             ResponseType = responseType;
             Client = client;
-            Options = options;
             Resources = resources;
+            Subject = subject;
         }
     }
 }

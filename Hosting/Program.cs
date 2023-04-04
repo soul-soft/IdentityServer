@@ -1,7 +1,4 @@
 using Hosting.Configuration;
-using IdentityServer;
-using IdentityServer.Hosting;
-using Microsoft.AspNetCore.Identity;
 using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,10 +9,9 @@ builder.Services.AddControllersWithViews();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddAuthentication()
+builder.Services.AddAuthentication("Cookie")
     .AddCookie("Cookie", configureOptions =>
     {
-
     });
    
 builder.Services.AddAuthorization()
@@ -53,12 +49,17 @@ app.UseStaticFiles();
 app.UseDefaultFiles();
 app.UseHttpsRedirection();
 
+app.UseRouting();
+
 app.UseIdentityServer();
 
 app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.MapDefaultControllerRoute()
-    .RequireAuthorization("default");
+app.UseEndpoints(endpoints => 
+{
+    endpoints.MapDefaultControllerRoute().RequireAuthorization("default"); ;
+});
+    
 app.Run();

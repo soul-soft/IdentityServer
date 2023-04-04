@@ -7,18 +7,18 @@ using System.Security.Claims;
 
 namespace Hosting.Controllers
 {
+    [AllowAnonymous]
     public class AccountController : Controller
     {
-        [AllowAnonymous]
         [HttpGet]
+        
         public IActionResult Login(string returnUrl)
         {
             return View(new { ReturnUrl  = returnUrl });
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> LoginPost([FromForm]LoginModel model)
+        public async Task<IActionResult> Login([FromForm]LoginModel model)
         {
             if (ModelState.IsValid)
             {
@@ -32,7 +32,7 @@ namespace Hosting.Controllers
             {
                 return Redirect(model.ReturnUrl);
             }
-            return Ok();
+            return Redirect("/");
         }
     }
 }

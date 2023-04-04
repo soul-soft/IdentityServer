@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.Net;
+using System.Reflection.Emit;
 
 namespace IdentityServer.Endpoints
 {
@@ -10,15 +11,18 @@ namespace IdentityServer.Endpoints
         private readonly IClientStore _clientStore;
         private readonly IdentityServerOptions _options;
         private readonly IResourceValidator _resourceValidator;
+        private readonly IAuthorizeResponseGenerator _generator;
 
         public AuthorizeEndpoint(
+            IClientStore clientStore,
             IdentityServerOptions options,
             IResourceValidator resourceValidator,
-            IClientStore clientStore)
+            IAuthorizeResponseGenerator generator)
         {
             _options = options;
             _clientStore = clientStore;
             _resourceValidator = resourceValidator;
+            _generator = generator;
         }
 
         public override async Task<IEndpointResult> HandleAsync(HttpContext context)
@@ -91,14 +95,15 @@ namespace IdentityServer.Endpoints
 
             #region Authenticate
             var result = await context.AuthenticateAsync();
-            if (result.Succeeded)
+            if (!result.Succeeded)
             {
-                var request = new AuthorizeGeneratorRequest(state,redirectUri,responseType,client,resources,_options);
-                return AuthorizeEndpointResult(request);
+                return Challenge();
             }
             else
             {
-                return Challenge();
+                var request = new AuthorizeGeneratorRequest(state, redirectUri, responseType, client, resources, result.Principal);
+                var url = await _generator.GenerateAsync(request);
+                return Redirect(url);
             }
             #endregion
         }

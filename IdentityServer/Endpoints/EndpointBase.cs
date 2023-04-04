@@ -7,19 +7,19 @@ namespace IdentityServer.Endpoints
     {
         public abstract Task<IEndpointResult> HandleAsync(HttpContext context);
 
-        protected static IEndpointResult AuthorizeEndpointResult(AuthorizeGeneratorRequest request)
+        protected static IEndpointResult Challenge()
         {
-            return new AuthorizeEndpointResult(request);
+            return new ChallengeResult();
+        }
+
+        protected static IEndpointResult Redirect(string url)
+        {
+            return new RedirectResult(url);
         }
 
         protected static IEndpointResult BadRequest(string error, string? errorDescription)
         {
             return new BadRequestResult(error, errorDescription);
-        }
-
-        protected static IEndpointResult Challenge()
-        {
-            return new ChallengeResult();
         }
 
         protected static IEndpointResult Json(string json)

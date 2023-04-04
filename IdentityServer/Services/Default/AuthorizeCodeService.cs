@@ -19,13 +19,13 @@ namespace IdentityServer.Services
             _randomGenerator = randomGenerator;
         }
 
-        public async Task<string> CreateAuthorizeCodeAsync(Client client, ClaimsPrincipal subject)
+        public async Task<string> GenerateCodeAsync(Client client, ClaimsPrincipal subject)
         {
-            var id = await _randomGenerator.GenerateAsync(16);
+            var id = await _randomGenerator.GenerateAsync();
             var creationTime = _clock.UtcNow.DateTime;
-            var authorizeCode = new AuthorizationCode(id, client.AuthorizeCodeLifetime, subject.Claims, creationTime);
-            await _store.StoreAuthorizationCodeAsync(authorizeCode);
-            return authorizeCode.Id;
+            var code = new AuthorizationCode(id, client.AuthorizeCodeLifetime, subject.Claims, creationTime);
+            await _store.SaveAuthorizationCodeAsync(code);
+            return code.Id;
         }
     }
 }

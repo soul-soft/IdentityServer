@@ -25,7 +25,7 @@
             await _cache.RevomeAsync(key);
         }
 
-        public async Task StoreAuthorizationCodeAsync(AuthorizationCode Code)
+        public async Task SaveAuthorizationCodeAsync(AuthorizationCode Code)
         {
             var key = BuildKey(Code.Id);
             await _cache.SaveAsync(key, Code, TimeSpan.FromSeconds(Code.Lifetime));

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using System.Text;
 
 namespace IdentityServer.Endpoints
 {
@@ -12,9 +13,14 @@ namespace IdentityServer.Endpoints
             _authorizeCodeService = authorizeCodeService;
         }
 
-        public  Task<AuthorizeGeneratorResponse> ProcessAsync(AuthorizeGeneratorRequest request)
+        public async Task<string> GenerateAsync(AuthorizeGeneratorRequest request)
         {
-            return Task.FromResult(new AuthorizeGeneratorResponse("", null,""));
+            var code = await _authorizeCodeService.GenerateCodeAsync(request.Client, request.Subject);
+            var buffer = new StringBuilder();
+            buffer.Append(request.RedirectUri);
+            buffer.AppendFormat("?{0}={1}", OpenIdConnectParameterNames.Code, code);
+            buffer.AppendFormat("{0}={1}", OpenIdConnectParameterNames.State, request.State);
+            return buffer.ToString();
         }
     }
 }
