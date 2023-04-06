@@ -12,6 +12,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication("Cookie")
     .AddCookie("Cookie", configureOptions =>
     {
+
     });
    
 builder.Services.AddAuthorization()
