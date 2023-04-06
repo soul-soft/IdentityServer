@@ -17,10 +17,6 @@ namespace IdentityServer.Endpoints
 
         public override async Task<IEndpointResult> HandleAsync(HttpContext context)
         {
-            if (!HttpMethods.IsGet(context.Request.Method))
-            {
-                return MethodNotAllowed();
-            }
             var response = await _generator.GetDiscoveryDocumentAsync();
             return Json(response.Serialize());
         }

@@ -31,7 +31,7 @@ namespace IdentityServer.Endpoints
             }
             if (!context.Request.HasFormContentType)
             {
-                return BadRequest(ValidationErrors.InvalidRequest, "Invalid contextType");
+                return StatusCode(System.Net.HttpStatusCode.UnsupportedMediaType);
             }
             #endregion
 

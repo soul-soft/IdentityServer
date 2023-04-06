@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using System.Collections.Specialized;
 using System.Net;
 using System.Reflection.Emit;
 
@@ -27,16 +28,27 @@ namespace IdentityServer.Endpoints
 
         public override async Task<IEndpointResult> HandleAsync(HttpContext context)
         {
+            NameValueCollection parameters;
             #region Validate Request
-            if (!HttpMethods.IsGet(context.Request.Method))
+            if (HttpMethods.IsGet(context.Request.Method))
             {
-                return MethodNotAllowed();
+                parameters = context.Request.Query.AsNameValueCollection();
+            }
+            else if (HttpMethods.IsPost(context.Request.Method))
+            {
+                if (!context.Request.HasFormContentType)
+                {
+                    return StatusCode(HttpStatusCode.UnsupportedMediaType);
+                }
+                parameters = context.Request.Form.AsNameValueCollection();
+            }
+            else
+            {
+
             }
             #endregion
 
-            #region Read Query
-            var parameters = context.Request.Query.AsNameValueCollection();
-            #endregion
+          
 
             #region Validate Client
             var clientId = parameters[OpenIdConnectParameterNames.ClientId];

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.Net;
 
 namespace IdentityServer.Endpoints
 {
@@ -60,7 +61,7 @@ namespace IdentityServer.Endpoints
             }
             #endregion
 
-            return OK();
+            return StatusCode(HttpStatusCode.OK);
         }
     }
 }
