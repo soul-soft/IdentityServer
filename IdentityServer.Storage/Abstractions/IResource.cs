@@ -2,7 +2,7 @@
 {
     public interface IResource
     {
-        bool Enabled { get;  } 
+        bool Enabled { get; }
         string Name { get; }
         string? DisplayName { get; }
         string? Description { get; }

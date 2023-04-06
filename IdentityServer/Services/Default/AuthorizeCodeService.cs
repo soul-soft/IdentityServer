@@ -25,7 +25,7 @@ namespace IdentityServer.Services
             var creationTime = _clock.UtcNow.UtcDateTime;
             var code = new AuthorizationCode(id, client.AuthorizeCodeLifetime, subject.Claims, creationTime);
             await _store.SaveAuthorizationCodeAsync(code);
-            return code.Id;
+            return code.Code;
         }
     }
 }

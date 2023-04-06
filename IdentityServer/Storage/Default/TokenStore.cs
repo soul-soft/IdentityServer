@@ -35,14 +35,14 @@
 
         public async Task SaveTokenAsync(Token token)
         {
-            var key = BuildKey(token.Id);
+            var key = BuildKey(token.Code);
             var span = TimeSpan.FromSeconds(token.Lifetime);
             await _cache.SaveAsync(key, token, span);
         }
 
         public async Task RevomeTokenAsync(Token token)
         {
-            var key = BuildKey(token.Id);
+            var key = BuildKey(token.Code);
             await _cache.RevomeAsync(key);
         }
 

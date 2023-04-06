@@ -7,7 +7,5 @@ namespace IdentityServer.Storage
         Task SaveTokenAsync(Token token);
         Task RevomeTokenAsync(Token token);
         Task<Token?> FindTokenAsync(string token);
-        Task<Token?> FindAccessTokenAsync(string token);
-        Task<Token?> FindRefreshTokenAsync(string token);
     }
 }

@@ -3,7 +3,7 @@ using System.Security.Claims;
 
 namespace IdentityServer.Services
 {
-    public class ClaimService : IClaimService
+    internal class ClaimService : IClaimService
     {
         private readonly IIdentityServerUrl _serverUrl;
         private readonly ISystemClock _systemClock;

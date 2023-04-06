@@ -25,7 +25,7 @@ namespace IdentityServer.Validation
             {
                 throw new ValidationException(ValidationErrors.InvalidRequest, "Client credentials is missing");
             }
-            var apiResources = await _resources.FindApiResourcesByNameAsync(parsedSecret.ClientId);
+            var apiResources = await _resources.FindApiResourcesAsync(parsedSecret.ClientId);
             if (!apiResources.Any())
             {
                 throw new ValidationException(ValidationErrors.InvalidClient, "No API resource with that name found. aborting");

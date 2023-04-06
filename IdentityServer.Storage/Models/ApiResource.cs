@@ -4,13 +4,13 @@
     {
         public bool Required { get; set; } = false;
 
-        public ICollection<string> Scopes { get; set; } = new HashSet<string>();
+        public string Scope { get; set; }
         
         public ICollection<Secret> ApiSecrets { get; set; } = new HashSet<Secret>();
         
-        public ApiResource(string name) : base(name)
+        public ApiResource(string name,string scope) : base(name)
         {
-
+            Scope = scope;
         }
     }
 }

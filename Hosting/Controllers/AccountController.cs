@@ -26,7 +26,12 @@ namespace Hosting.Controllers
                 {
                     new Claim(JwtClaimTypes.Subject,"10")
                 }, "password");
-                await HttpContext.SignInAsync(new ClaimsPrincipal(identity));
+                await HttpContext.SignInAsync(new ClaimsPrincipal(identity),new AuthenticationProperties 
+                {
+                    AllowRefresh= true,
+                    IsPersistent=true,
+                    ExpiresUtc=DateTimeOffset.UtcNow.AddMinutes(10)
+                });
             }
             if (model.ReturnUrl != null)
             {

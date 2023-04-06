@@ -81,29 +81,20 @@ namespace Hosting.Configuration
 
             },
             //name要和client_id相同，还需要配置secret
-            new ApiResource("orderapi")
+            new ApiResource("orderapi","api")
             {
                 ClaimTypes = new string[]
                 {
                     JwtClaimTypes.Role
-                },
-                Scopes =
-                {
-                    "api",
                 },
                 ApiSecrets =
                 {
                     new Secret("secret".Sha256())
                 }
             },
-            new ApiResource("emailapi")
+            new ApiResource("emailapi","api")
             {
-                Scopes = new string[]
-                {
-                    "api",
-                    "profile",
-                    "api"
-                }
+               
             },
             IdentityResources.OpenId,
             IdentityResources.OfflineAccess,

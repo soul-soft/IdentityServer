@@ -1,4 +1,8 @@
+using Microsoft.EntityFrameworkCore;
 using Hosting.Configuration;
+using IdentityServer.EntityFramework;
+using Microsoft.Extensions.Options;
+using IdentityServer.Hosting.DependencyInjection;
 using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,31 +18,40 @@ builder.Services.AddAuthentication("Cookie")
     {
 
     });
-   
 
 builder.Services.AddAuthorization()
     .AddAuthorization(configureOptions =>
     {
         configureOptions.AddPolicy("default", p => p.RequireAuthenticatedUser());
     });
-builder.Services.AddStackExchangeRedisCache(c => 
+builder.Services.AddStackExchangeRedisCache(c =>
 {
     c.Configuration = "124.71.130.192,password=Juzhen88!";
+});
+builder.Services.AddDbContext<IdentityServerDbContext>(configureOptions => 
+{
+    var connectStr = "server=127.0.0.1;user id=root;password=1024;database=identity_server;connection timeout=180;";
+    configureOptions.UseMySql(connectStr, ServerVersion.AutoDetect(connectStr), o => o.MigrationsAssembly("Hosting.dll"));
 });
 builder.Services.AddIdentityServer(configureOptions =>
     {
         //o.Endpoints.PathPrefix = "/oauth2";
         configureOptions.Issuer = "https://www.example.com";
     })
-    .AddResourceOwnerCredentialRequestValidator<ResourceOwnerCredentialRequestValidator>()
+    //.AddCacheStore()
+    //.AddTokenStore()
+    //.AddAuthorizationCodeStore()
     .AddExtensionGrantValidator<MyExtensionGrantValidator>()
+    .AddResourceOwnerCredentialRequestValidator<ResourceOwnerCredentialRequestValidator>()
     .AddProfileService<ProfileService>()
-    .AddInMemoryStore(store =>
+    //.AddInMemoryClients(Config.Clients)
+    .AddInMemoryResources(Config.Resources)
+    .AddInMemoryDeveloperSigningCredentials()
+    .AddEntityFrameworkStore(configureOptions =>
     {
-        store.AddClients(Config.Clients);
-        store.AddResources(Config.Resources);
-        store.AddSigningCredentials(new X509Certificate2("idsvr.pfx", "nbjc"));
+       
     });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -59,9 +72,9 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints => 
+app.UseEndpoints(endpoints =>
 {
     endpoints.MapDefaultControllerRoute().RequireAuthorization("default"); ;
 });
-    
+
 app.Run();

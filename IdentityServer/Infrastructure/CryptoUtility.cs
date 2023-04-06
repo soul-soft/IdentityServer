@@ -3,7 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityServer.Infrastructure
 {
-    public static class CryptoUtility
+    internal static class CryptoUtility
     {
         private static readonly RandomNumberGenerator Rng = RandomNumberGenerator.Create();
      

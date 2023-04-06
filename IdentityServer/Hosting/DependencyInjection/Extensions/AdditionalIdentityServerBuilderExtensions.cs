@@ -1,10 +1,9 @@
 ﻿using IdentityServer.Hosting.DependencyInjection;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class AddIdentityServerBuilderExtensions
+    public static class AdditionalIdentityServerBuilderExtensions
     {
         #region IClientStore
         public static IIdentityServerBuilder AddClientStore<T>(this IIdentityServerBuilder builder)
@@ -110,16 +109,6 @@ namespace Microsoft.Extensions.DependencyInjection
             where T : class, ISigningCredentialsStore
         {
             builder.Services.TryAddTransient<ISigningCredentialsStore>(implementationFactory);
-            return builder;
-        }
-        #endregion
-
-        #region InMemoryStoreBuilder
-        public static IIdentityServerBuilder AddInMemoryStore(this IIdentityServerBuilder builder, Action<InMemoryStoreBuilder> setup)
-        {
-            var inMemoryStoreBuilder = new InMemoryStoreBuilder();
-            setup(inMemoryStoreBuilder);
-            inMemoryStoreBuilder.Build(builder);
             return builder;
         }
         #endregion

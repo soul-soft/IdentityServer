@@ -5,15 +5,15 @@ namespace IdentityServer.Models
 {
     public class AuthorizationCode
     {
-        public string Id { get; set; }
+        public string Code { get; set; }
         public IEnumerable<Claim> Claims { get; set; } = new List<Claim>();
         public int Lifetime { get; set; }
         public DateTime ExpirationTime { get; set; }
-        public DateTime CreationTime { get; }
+        public DateTime CreationTime { get; set; }
 
-        public AuthorizationCode(string id, int lifetime, IEnumerable<Claim> claims, DateTime creationTime)
+        public AuthorizationCode(string code, int lifetime, IEnumerable<Claim> claims, DateTime creationTime)
         {
-            Id = id;
+            Code = code;
             Lifetime = lifetime;
             Claims = claims;
             ExpirationTime = creationTime.AddSeconds(lifetime);

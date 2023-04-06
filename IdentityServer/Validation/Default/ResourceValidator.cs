@@ -29,7 +29,7 @@
                     }
                 }
             }
-            var resources = await _resources.FindResourcesByScopesAsync(scopes);
+            var resources = await _resources.FindResourcesAsync(scopes);
             foreach (var scope in scopes)
             {
                 if (!resources.Scopes.Contains(scope))

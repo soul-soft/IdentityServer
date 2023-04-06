@@ -48,7 +48,6 @@ namespace IdentityServer.Endpoints
             }
             #endregion
 
-          
 
             #region Validate Client
             var clientId = parameters[OpenIdConnectParameterNames.ClientId];

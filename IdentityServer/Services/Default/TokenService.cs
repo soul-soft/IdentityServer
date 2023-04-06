@@ -29,10 +29,10 @@ namespace IdentityServer.Services
             var creationTime = _clock.UtcNow.UtcDateTime;
             var lifetime = client.AccessTokenLifetime;
             var token = new Token(
-                id: id,
+                code: id,
                 type: TokenTypes.AccessToken,
                 lifetime: lifetime,
-                claims: subject.Claims,
+                claims: subject.Claims.ToArray(),
                 creationTime: creationTime);
             if (client.AccessTokenType == AccessTokenType.Jwt)
             {
@@ -41,7 +41,7 @@ namespace IdentityServer.Services
             else
             {
                 await _tokenStore.SaveTokenAsync(token);
-                accessToken = token.Id;
+                accessToken = token.Code;
             }
             return accessToken;
         }
@@ -52,10 +52,10 @@ namespace IdentityServer.Services
             var lifetime = client.RefreshTokenLifetime;
             var creationTime = _clock.UtcNow.UtcDateTime;
             var token = new Token(
-                 id: id,
+                 code: id,
                  type: TokenTypes.RefreshToken,
                  lifetime: lifetime,
-                 claims: subject.Claims,
+                 claims: subject.Claims.ToArray(),
                  creationTime: creationTime);
             await _tokenStore.SaveTokenAsync(token);
             return id;

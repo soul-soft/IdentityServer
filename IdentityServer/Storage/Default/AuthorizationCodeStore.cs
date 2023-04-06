@@ -21,13 +21,13 @@
 
         public async Task RevomeAuthorizationCodeAsync(AuthorizationCode code)
         {
-            var key = BuildKey(code.Id);
+            var key = BuildKey(code.Code);
             await _cache.RevomeAsync(key);
         }
 
         public async Task SaveAuthorizationCodeAsync(AuthorizationCode code)
         {
-            var key = BuildKey(code.Id);
+            var key = BuildKey(code.Code);
             await _cache.SaveAsync(key, code, TimeSpan.FromSeconds(code.Lifetime));
         }
 

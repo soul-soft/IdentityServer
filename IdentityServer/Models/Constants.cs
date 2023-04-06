@@ -23,6 +23,6 @@
                 JwtClaimTypes.SessionId,
                 JwtClaimTypes.Scope,
                 JwtClaimTypes.Confirmation,
-            };
+        };
     }
 }
