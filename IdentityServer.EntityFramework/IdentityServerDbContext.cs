@@ -1,8 +1,10 @@
 ﻿using IdentityServer.EntityFramework.Configuration;
+using IdentityServer.EntityFramework.Entities;
 using IdentityServer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Options;
+using System.Security.Claims;
 
 namespace IdentityServer.EntityFramework
 {
@@ -14,55 +16,58 @@ namespace IdentityServer.EntityFramework
 
         }
 
-        public DbSet<Token> Tokens => Set<Token>();
-        public DbSet<Client> Clients => Set<Client>();
-        public DbSet<Secret> Secrets => Set<Secret>();
-        public DbSet<ApiScope> ApiScopes => Set<ApiScope>();
-        public DbSet<ApiResource> ApiResources => Set<ApiResource>();
-        public DbSet<IdentityResource> IdentityResources => Set<IdentityResource>();
-        public DbSet<AuthorizationCode> AuthorizationCodes => Set<AuthorizationCode>();
+        public DbSet<TokenEntity> Tokens => Set<TokenEntity>();
+        public DbSet<ClientEntity> Clients => Set<ClientEntity>();
+        public DbSet<ApiScopeEntity> ApiScopes => Set<ApiScopeEntity>();
+        public DbSet<ApiResourceEntity> ApiResources => Set<ApiResourceEntity>();
+        public DbSet<IdentityResourceEntity> IdentityResources => Set<IdentityResourceEntity>();
+        public DbSet<AuthorizationCodeEntity> AuthorizationCodes => Set<AuthorizationCodeEntity>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //var options = GetOptions();
+            var options = GetOptions();
 
             #region Token
-            modelBuilder.Entity<Token>().HasKey(a => a.Code);
-            modelBuilder.Entity<Token>().OwnsMany(a => a.Claims, x =>
+            modelBuilder.Entity<TokenEntity>().ToTable(options.GetTableName("Tokens"));
+            modelBuilder.Entity<TokenEntity>().Property(a => a.Code).IsRequired();
+            modelBuilder.Entity<TokenEntity>().Ignore(a => a.Claims);
+            modelBuilder.Entity<TokenEntity>().OwnsMany(a => a.Claims, x =>
             {
                 x.WithOwner().HasForeignKey("OwnerId");
                 x.Property<int>("Id");
                 x.HasKey("Id");
+                x.ToTable(options.GetTableName("TokenClaims"));
             });
             #endregion
 
             #region Client
-            modelBuilder.Entity<Client>().HasKey(a => a.ClientId);
-            modelBuilder.Entity<Client>().OwnsMany(a => a.ClientSecrets, x =>
+            modelBuilder.Entity<ClientEntity>().HasKey(a => a.ClientId);
+            modelBuilder.Entity<ClientEntity>().Ignore(a => a.ClientSecrets);
+            modelBuilder.Entity<ClientEntity>().OwnsMany(a => a.ClientSecrets, x =>
             {
                 x.WithOwner().HasForeignKey("OwnerId");
                 x.Property<int>("Id");
                 x.HasKey("Id");
             });
-            modelBuilder.Entity<Client>().OwnsMany(a => a.AllowedScopes, x =>
+            modelBuilder.Entity<ClientEntity>().OwnsMany(a => a.AllowedScopes, x =>
             {
                 x.WithOwner().HasForeignKey("OwnerId");
                 x.Property<int>("Id");
                 x.HasKey("Id");
             });
-            modelBuilder.Entity<Client>().OwnsMany(a => a.AllowedGrantTypes, x =>
+            modelBuilder.Entity<ClientEntity>().OwnsMany(a => a.AllowedGrantTypes, x =>
             {
                 x.WithOwner().HasForeignKey("OwnerId");
                 x.Property<int>("Id");
                 x.HasKey("Id");
             });
-            modelBuilder.Entity<Client>().OwnsMany(a => a.AllowedRedirectUris, x =>
+            modelBuilder.Entity<ClientEntity>().OwnsMany(a => a.AllowedRedirectUris, x =>
             {
                 x.WithOwner().HasForeignKey("OwnerId");
                 x.Property<int>("Id");
                 x.HasKey("Id");
             });
-            modelBuilder.Entity<Client>().OwnsMany(a => a.AllowedSigningAlgorithms, x =>
+            modelBuilder.Entity<ClientEntity>().OwnsMany(a => a.AllowedSigningAlgorithms, x =>
             {
                 x.WithOwner().HasForeignKey("OwnerId");
                 x.Property<int>("Id");
@@ -71,8 +76,8 @@ namespace IdentityServer.EntityFramework
             #endregion
 
             #region ApiScope
-            modelBuilder.Entity<ApiScope>().HasKey(a => a.Name);
-            modelBuilder.Entity<ApiScope>().OwnsMany(a => a.ClaimTypes, x =>
+            modelBuilder.Entity<ApiScopeEntity>().HasKey(a => a.Name);
+            modelBuilder.Entity<ApiScopeEntity>().OwnsMany(a => a.ClaimTypes, x =>
             {
                 x.WithOwner().HasForeignKey("OwnerId");
                 x.Property<int>("Id");
@@ -81,14 +86,14 @@ namespace IdentityServer.EntityFramework
             #endregion
 
             #region ApiResource
-            modelBuilder.Entity<ApiResource>().HasKey(a => a.Name);
-            modelBuilder.Entity<ApiResource>().OwnsMany(a => a.ApiSecrets, x =>
+            modelBuilder.Entity<ApiResourceEntity>().HasKey(a => a.Name);
+            modelBuilder.Entity<ApiResourceEntity>().OwnsMany(a => a.ApiSecrets, x =>
             {
                 x.WithOwner().HasForeignKey("OwnerId");
                 x.Property<int>("Id");
                 x.HasKey("Id");
             });
-            modelBuilder.Entity<ApiResource>().OwnsMany(a => a.ClaimTypes, x =>
+            modelBuilder.Entity<ApiResourceEntity>().OwnsMany(a => a.ClaimTypes, x =>
             {
                 x.WithOwner().HasForeignKey("OwnerId");
                 x.Property<int>("Id");
@@ -97,8 +102,8 @@ namespace IdentityServer.EntityFramework
             #endregion
 
             #region IdentityResource
-            modelBuilder.Entity<IdentityResource>().HasKey(a => a.Name);
-            modelBuilder.Entity<IdentityResource>().OwnsMany(a => a.ClaimTypes, x =>
+            modelBuilder.Entity<IdentityResourceEntity>().HasKey(a => a.Name);
+            modelBuilder.Entity<IdentityResourceEntity>().OwnsMany(a => a.ClaimTypes, x =>
             {
                 x.WithOwner().HasForeignKey("OwnerId");
                 x.Property<int>("Id");
@@ -107,8 +112,9 @@ namespace IdentityServer.EntityFramework
             #endregion
 
             #region AuthorizationCode
-            modelBuilder.Entity<AuthorizationCode>().HasKey(a => a.Code);
-            modelBuilder.Entity<AuthorizationCode>().OwnsMany(a => a.Claims, x =>
+            modelBuilder.Entity<AuthorizationCodeEntity>().HasKey(a => a.Code);
+            modelBuilder.Entity<AuthorizationCodeEntity>().Ignore(a => a.Claims);
+            modelBuilder.Entity<AuthorizationCodeEntity>().OwnsMany(a => a.Claims, x =>
             {
                 x.WithOwner().HasForeignKey("OwnerId");
                 x.Property<int>("Id");

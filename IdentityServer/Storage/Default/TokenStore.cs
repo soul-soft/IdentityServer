@@ -13,14 +13,14 @@
             _options = options;
         }
 
-        public async Task<Token?> FindAccessTokenAsync(string token)
+        public async Task<Token?> FindAccessTokenAsync(string code)
         {
-            var accessToken = await FindTokenAsync(token);
-            if (accessToken?.Type != TokenTypes.AccessToken)
+            var token = await FindTokenAsync(code);
+            if (token?.Type != TokenTypes.AccessToken)
             {
                 return null;
             }
-            return accessToken;
+            return token;
         }
 
         public async Task<Token?> FindRefreshTokenAsync(string token)

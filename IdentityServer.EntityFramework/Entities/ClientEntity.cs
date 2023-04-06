@@ -1,7 +1,10 @@
-﻿namespace IdentityServer.Models
+﻿using IdentityServer.Models;
+
+namespace IdentityServer.EntityFramework.Entities
 {
-    public class Client
+    public class ClientEntity: Entity
     {
+        public int Id { get; set; }
         public string ClientId { get; set; } = null!;
         public string? ClientName { get; set; }
         public string? Description { get; set; }
@@ -14,10 +17,10 @@
         public bool RequireClientSecret { get; set; } = true;
         public bool OfflineAccess { get; set; } = false;
         public AccessTokenType AccessTokenType { get; set; } = AccessTokenType.Jwt;
-        public ICollection<Secret> ClientSecrets { get; set; } = Array.Empty<Secret>();
-        public ICollection<string> AllowedScopes { get; set; } = Array.Empty<string>();
-        public ICollection<string> AllowedGrantTypes { get; set; } = Array.Empty<string>();
-        public ICollection<string> AllowedRedirectUris { get; set; } = Array.Empty<string>();
-        public ICollection<string> AllowedSigningAlgorithms { get; set; } = Array.Empty<string>();
+        public ICollection<SecretEntity> ClientSecrets { get; set; } = Array.Empty<SecretEntity>();
+        public ICollection<StringEntity> AllowedScopes { get; set; } = Array.Empty<StringEntity>();
+        public ICollection<StringEntity> AllowedGrantTypes { get; set; } = Array.Empty<StringEntity>();
+        public ICollection<StringEntity> AllowedRedirectUris { get; set; } = Array.Empty<StringEntity>();
+        public ICollection<StringEntity> AllowedSigningAlgorithms { get; set; } = Array.Empty<StringEntity>();
     }
 }

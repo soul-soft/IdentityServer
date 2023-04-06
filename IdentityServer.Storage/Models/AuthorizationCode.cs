@@ -5,11 +5,16 @@ namespace IdentityServer.Models
 {
     public class AuthorizationCode
     {
-        public string Code { get; set; }
+        public string Code { get; set; } = default!;
         public IEnumerable<Claim> Claims { get; set; } = new List<Claim>();
         public int Lifetime { get; set; }
         public DateTime ExpirationTime { get; set; }
         public DateTime CreationTime { get; set; }
+       
+        protected AuthorizationCode()
+        {
+
+        }
 
         public AuthorizationCode(string code, int lifetime, IEnumerable<Claim> claims, DateTime creationTime)
         {

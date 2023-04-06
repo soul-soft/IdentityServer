@@ -9,7 +9,7 @@
             _resources = resources;
         }
 
-        public Task<IEnumerable<ApiResource>> FindApiResourcesAsync(string name)
+        public Task<IEnumerable<ApiResource>> GetApiResourcesByNameAsync(string name)
         {
             var resources = _resources.ApiResources
                 .Where(a => a.Enabled)
@@ -18,7 +18,7 @@
             return Task.FromResult(resources);
         }
 
-        public Task<Resources> FindResourcesAsync(IEnumerable<string> scopes)
+        public Task<Resources> GetResourcesByScopesAsync(IEnumerable<string> scopes)
         {
             var identityResources = _resources.IdentityResources
                 .Where(a => a.Enabled)

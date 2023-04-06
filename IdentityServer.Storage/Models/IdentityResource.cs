@@ -6,6 +6,11 @@
         
         public string Scope => Name;
 
+        protected IdentityResource()
+        {
+
+        }
+
         public IdentityResource(string name) : base(name)
         {
 

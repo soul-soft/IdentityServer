@@ -1,15 +1,34 @@
 ﻿using Microsoft.EntityFrameworkCore;
-
+using System.Text;
 namespace IdentityServer.EntityFramework.Configuration
 {
     public class EntityFrameworkStoreOptions
     {
-        public string TokenTableName { get; set; } = "Tokens";
-        public string ClientTableName { get; set; } = "Clients";
-        public string ApiScopeTableName { get; set; } = "ApiScopes";
-        public string ApiResourceTableName { get; set; } = "ApiResources";
-        public string IdentityResourceTableName { get; set; } = "IdentityResources";
-        public string AuthorizationCodeTableName { get; set; } = "AuthorizationCodes";
-        public Action<DbContextOptionsBuilder>? ConfigureDbContextOptions { get; set; } 
+        public bool TableNameToLower { get; set; } = true;
+        public string TableNamePrefix { get; set; } = string.Empty;
+        public Action<DbContextOptionsBuilder>? ConfigureDbContextOptions { get; set; }
+
+        internal string GetTableName(string name)
+        {
+            if (TableNameToLower)
+            {
+                var sb = new StringBuilder();
+                for (int i = 0; i < name.Length; i++)
+                {
+                    var item = name[i];
+                    if (i > 0 && char.IsUpper(item))
+                    {
+                        sb.Append('_');
+                        sb.Append(char.ToLower(item));
+                    }
+                    else
+                    {
+                        sb.Append(item);
+                    }
+                }
+                return $"{TableNamePrefix}{name}";
+            }
+            return $"{TableNamePrefix}{name}";
+        }
     }
 }

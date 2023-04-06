@@ -4,11 +4,16 @@
     {
         public bool Required { get; set; } = false;
 
-        public string Scope { get; set; }
-        
+        public string Scope { get; set; } = default!;
+
         public ICollection<Secret> ApiSecrets { get; set; } = new HashSet<Secret>();
-        
-        public ApiResource(string name,string scope) : base(name)
+       
+        protected ApiResource()
+        {
+
+        }
+
+        public ApiResource(string name, string scope) : base(name)
         {
             Scope = scope;
         }

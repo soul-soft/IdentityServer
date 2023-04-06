@@ -4,9 +4,9 @@ namespace IdentityServer.Models
 {
     public class Token
     {
-        public string Code { get; set; }
+        public string Code { get; set; } = default!;
 
-        public string Type { get; set; }
+        public string Type { get; set; } = default!;
 
         public int Lifetime { get; set; }
 
@@ -15,6 +15,11 @@ namespace IdentityServer.Models
         public DateTime ExpirationTime { get; set; }
 
         public DateTime CreationTime { get; set; }
+        
+        protected Token()
+        {
+
+        }
 
         public Token(string code, string type, int lifetime, ICollection<Claim> claims, DateTime creationTime)
         {

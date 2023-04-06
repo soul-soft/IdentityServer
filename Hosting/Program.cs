@@ -44,7 +44,10 @@ builder.Services.AddIdentityServer(configureOptions =>
     .AddExtensionGrantValidator<MyExtensionGrantValidator>()
     .AddResourceOwnerCredentialRequestValidator<ResourceOwnerCredentialRequestValidator>()
     .AddProfileService<ProfileService>()
-    //.AddInMemoryClients(Config.Clients)
+    .AddInMemoryClients(Config.Clients)
+    .AddCacheStore()
+    .AddTokenStore()
+    .AddAuthorizationCodeStore()
     .AddInMemoryResources(Config.Resources)
     .AddInMemoryDeveloperSigningCredentials()
     .AddEntityFrameworkStore(configureOptions =>
