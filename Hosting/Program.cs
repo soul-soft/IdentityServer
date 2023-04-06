@@ -15,6 +15,7 @@ builder.Services.AddAuthentication("Cookie")
 
     });
    
+
 builder.Services.AddAuthorization()
     .AddAuthorization(configureOptions =>
     {
