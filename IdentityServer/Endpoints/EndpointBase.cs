@@ -37,9 +37,9 @@ namespace IdentityServer.Endpoints
             return new StatusCodeResult(HttpStatusCode.MethodNotAllowed);
         }
 
-        protected static IEndpointResult StatusCode()
+        protected static IEndpointResult StatusCode(HttpStatusCode statusCode)
         {
-            return new StatusCodeResult(HttpStatusCode.OK);
+            return new StatusCodeResult(statusCode);
         }
     }
 }

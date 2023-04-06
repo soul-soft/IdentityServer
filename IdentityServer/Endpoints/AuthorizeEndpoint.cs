@@ -44,7 +44,7 @@ namespace IdentityServer.Endpoints
             }
             else
             {
-
+                return MethodNotAllowed();
             }
             #endregion
 
