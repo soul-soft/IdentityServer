@@ -6,6 +6,6 @@
 
         public string Scope { get; set; } = default!;
 
-        public ICollection<SecretEntity> ApiSecrets { get; set; } = Array.Empty<SecretEntity>();
+        public ICollection<SecretEntity> Secrets { get; set; } = Array.Empty<SecretEntity>();
     }
 }

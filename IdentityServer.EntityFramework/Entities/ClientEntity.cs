@@ -17,7 +17,7 @@ namespace IdentityServer.EntityFramework.Entities
         public bool RequireClientSecret { get; set; } = true;
         public bool OfflineAccess { get; set; } = false;
         public AccessTokenType AccessTokenType { get; set; } = AccessTokenType.Jwt;
-        public ICollection<SecretEntity> ClientSecrets { get; set; } = Array.Empty<SecretEntity>();
+        public ICollection<SecretEntity> Secrets { get; set; } = Array.Empty<SecretEntity>();
         public ICollection<StringEntity> AllowedScopes { get; set; } = Array.Empty<StringEntity>();
         public ICollection<StringEntity> AllowedGrantTypes { get; set; } = Array.Empty<StringEntity>();
         public ICollection<StringEntity> AllowedRedirectUris { get; set; } = Array.Empty<StringEntity>();
