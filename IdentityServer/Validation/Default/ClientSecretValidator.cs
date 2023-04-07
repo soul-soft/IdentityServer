@@ -28,7 +28,7 @@ namespace IdentityServer.Validation
             }
             if (client.RequireClientSecret)
             {
-                await _secretListValidator.ValidateAsync(parsedSecret, client.ClientSecrets);
+                await _secretListValidator.ValidateAsync(parsedSecret, client.Secrets);
             }
             return client;
         }

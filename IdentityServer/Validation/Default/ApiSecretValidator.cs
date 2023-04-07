@@ -35,7 +35,7 @@ namespace IdentityServer.Validation
                 throw new ValidationException(ValidationErrors.InvalidClient, "More than one API resource with that name found. aborting");
             }
             var apiResource = apiResources.First();
-            await _secretListValidator.ValidateAsync(parsedSecret, apiResource.ApiSecrets);
+            await _secretListValidator.ValidateAsync(parsedSecret, apiResource.Secrets);
             return apiResource;
         }
     }

@@ -6,7 +6,7 @@
 
         public string Scope { get; set; } = default!;
 
-        public ICollection<Secret> ApiSecrets { get; set; } = new HashSet<Secret>();
+        public ICollection<Secret> Secrets { get; set; } = new HashSet<Secret>();
        
         protected ApiResource()
         {

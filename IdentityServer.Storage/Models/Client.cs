@@ -14,7 +14,7 @@
         public bool RequireClientSecret { get; set; } = true;
         public bool OfflineAccess { get; set; } = false;
         public AccessTokenType AccessTokenType { get; set; } = AccessTokenType.Jwt;
-        public ICollection<Secret> ClientSecrets { get; set; } = Array.Empty<Secret>();
+        public ICollection<Secret> Secrets { get; set; } = Array.Empty<Secret>();
         public ICollection<string> AllowedScopes { get; set; } = Array.Empty<string>();
         public ICollection<string> AllowedGrantTypes { get; set; } = Array.Empty<string>();
         public ICollection<string> AllowedRedirectUris { get; set; } = Array.Empty<string>();

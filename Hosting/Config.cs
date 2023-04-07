@@ -15,7 +15,7 @@ namespace Hosting.Configuration
                     GrantTypes.ClientCredentials,
                     GrantTypes.AuthorizationCode
                 },
-                ClientSecrets = new Secret[]
+                Secrets = new Secret[]
                 {
                     new Secret("secret".Sha512())
                 },
@@ -59,7 +59,7 @@ namespace Hosting.Configuration
                     GrantTypes.Password,
                     "myGrant"
                 },
-                ClientSecrets = new Secret[]
+                Secrets = new Secret[]
                 {
                     new Secret("secret".Sha512())
                 },
@@ -87,7 +87,7 @@ namespace Hosting.Configuration
                 {
                     JwtClaimTypes.Role
                 },
-                ApiSecrets =
+                Secrets =
                 {
                     new Secret("secret".Sha256())
                 }
