@@ -4,7 +4,7 @@
     {
         public bool Enabled { get; set; } = true;
 
-        public string Name { get; set; } = default!;
+        public string Name { get; } = default!;
 
         public string? DisplayName { get; set; }
 

@@ -11,7 +11,7 @@
         public int AccessTokenLifetime { get; set; } = 3600;
         public int RefreshTokenLifetime { get; set; } = 3600 * 24 * 30;
         public int IdentityTokenLifetime { get; set; } = 300;
-        public bool RequireClientSecret { get; set; } = true;
+        public bool RequireSecret { get; set; } = true;
         public bool OfflineAccess { get; set; } = false;
         public AccessTokenType AccessTokenType { get; set; } = AccessTokenType.Jwt;
         public ICollection<Secret> Secrets { get; set; } = Array.Empty<Secret>();

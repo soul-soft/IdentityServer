@@ -31,12 +31,12 @@ namespace Hosting.Configuration
                     "https://localhost:49962/oidc-sign",
                     "https://localhost:7098/signin-oidc"
                 },
-                RequireClientSecret = false
+                RequireSecret = false
             },
             new Client()
             {
                 ClientId = "client2",
-                RequireClientSecret = false,
+                RequireSecret = false,
                 AllowedGrantTypes = new []
                 {
                     "myGrant",

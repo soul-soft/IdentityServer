@@ -4,7 +4,7 @@
     {
         public bool Required { get; set; } = false;
 
-        public string Scope { get; set; } = default!;
+        public string Scope { get;  } = default!;
 
         public ICollection<Secret> Secrets { get; set; } = new HashSet<Secret>();
        

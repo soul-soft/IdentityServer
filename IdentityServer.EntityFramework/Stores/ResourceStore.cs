@@ -62,3 +62,4 @@ namespace IdentityServer.EntityFramework.Stores
         }
     }
 }
+
