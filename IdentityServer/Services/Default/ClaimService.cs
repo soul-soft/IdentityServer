@@ -25,11 +25,11 @@ namespace IdentityServer.Services
             _profileService = profileService;
         }
 
-        public async Task<ClaimsPrincipal> GetAccessTokenClaimsAsync(AccessTokenClaimsRequest request)
+        public async Task<ClaimsPrincipal> GetTokenClaimsAsync(AccessTokenClaimsRequest request)
         {
             #region Jwt Claims
             //request jwt
-            var jwtId = await _randomGenerator.GenerateAsync(16);
+            var jwtId = await _randomGenerator.GenerateAsync();
             var issuer = _serverUrl.GetServerIssuer();
             var issuedAt = _systemClock.UtcNow.ToUnixTimeSeconds();
             var expiration = issuedAt + request.Client.AccessTokenLifetime;

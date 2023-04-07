@@ -12,6 +12,7 @@
         public Task<Client?> FindClientAsync(string clientId)
         {
             var client = _clients
+                .Where(a => a.Enabled)
                 .Where(a => a.ClientId == clientId)
                 .FirstOrDefault();
 

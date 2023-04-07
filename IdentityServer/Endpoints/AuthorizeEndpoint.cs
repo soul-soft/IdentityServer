@@ -10,26 +10,29 @@ namespace IdentityServer.Endpoints
     internal class AuthorizeEndpoint : EndpointBase
     {
         private readonly IClientStore _clientStore;
+        private readonly IClaimService _claimService;
         private readonly IdentityServerOptions _options;
         private readonly IResourceValidator _resourceValidator;
         private readonly IAuthorizeResponseGenerator _generator;
 
         public AuthorizeEndpoint(
             IClientStore clientStore,
+            IClaimService claimService,
             IdentityServerOptions options,
             IResourceValidator resourceValidator,
             IAuthorizeResponseGenerator generator)
         {
             _options = options;
             _clientStore = clientStore;
+            _claimService = claimService;
             _resourceValidator = resourceValidator;
             _generator = generator;
         }
 
         public override async Task<IEndpointResult> HandleAsync(HttpContext context)
         {
-            NameValueCollection parameters;
             #region Validate Request
+            NameValueCollection parameters;
             if (HttpMethods.IsGet(context.Request.Method))
             {
                 parameters = context.Request.Query.AsNameValueCollection();
@@ -47,7 +50,6 @@ namespace IdentityServer.Endpoints
                 return MethodNotAllowed();
             }
             #endregion
-
 
             #region Validate Client
             var clientId = parameters[OpenIdConnectParameterNames.ClientId];
@@ -120,15 +122,18 @@ namespace IdentityServer.Endpoints
             }
             else
             {
+                var subject = result.Principal;
                 var request = new AuthorizeGeneratorRequest(
                     none: none,
+                    scope: scope,
                     state: state,
+                    clientId: clientId,
                     redirectUri: redirectUri,
                     responseType: responseType,
                     responseMode: responseMode,
                     client: client,
                     resources: resources,
-                    subject: result.Principal);
+                    subject: subject);
                 var url = await _generator.GenerateAsync(request);
                 return Redirect(url);
             }

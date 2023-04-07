@@ -22,7 +22,7 @@ namespace IdentityServer.Validation
             {
                 throw new ValidationException(ValidationErrors.InvalidGrant, "Invalid code");
             }
-            if (_clock.UtcNow.UtcDateTime > authorizeCode.ExpirationTime)
+            if (authorizeCode.ExpirationTime < _clock.UtcNow.UtcDateTime)
             {
                 await _authorizeCodeStore.RevomeAuthorizationCodeAsync(authorizeCode);
                 throw new ValidationException(ValidationErrors.InvalidGrant, "Code expired");

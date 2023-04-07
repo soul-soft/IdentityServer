@@ -2,6 +2,6 @@
 {
     public interface IRandomGenerator
     {
-        Task<string> GenerateAsync(int length = 32);
+        Task<string> GenerateAsync();
     }
 }

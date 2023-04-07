@@ -1,11 +1,14 @@
-﻿namespace IdentityServer.Services
+﻿using System;
+
+namespace IdentityServer.Services
 {
     internal class RandomGenerator : IRandomGenerator
     {
-        public Task<string> GenerateAsync(int length = 32)
+        public Task<string> GenerateAsync()
         {
-            var handle = CryptoUtility.CreateUniqueId(length, CryptoUtility.OutputFormat.Hex);
-            return Task.FromResult(handle);
+            var bytes = Guid.NewGuid().ToByteArray();
+            var code = BitConverter.ToString(bytes).Replace("-", "");
+            return Task.FromResult(code);
         }
     }
 }

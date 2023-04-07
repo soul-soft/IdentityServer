@@ -80,7 +80,7 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Response Generator
-            var subject = await _claimService.GetAccessTokenClaimsAsync(new AccessTokenClaimsRequest(grantType, grantSubject, client, resources));
+            var subject = await _claimService.GetTokenClaimsAsync(new AccessTokenClaimsRequest(grantType, grantSubject, client, resources));
             var response = await _generator.ProcessAsync(new TokenGeneratorRequest(grantType, subject, client, resources));
             return Json(response.Serialize());
             #endregion

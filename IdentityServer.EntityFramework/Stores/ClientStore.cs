@@ -17,6 +17,7 @@ namespace IdentityServer.EntityFramework.Stores
         {
             return (await _context.Clients
                 .Where(a => a.ClientId == clientId)
+                .Where(a => a.Enabled)
                 .Include(a => a.Secrets)
                 .Include(a => a.Properties)
                 .Include(a => a.AllowedScopes)
