@@ -21,7 +21,8 @@ namespace IdentityServer.EntityFramework.Entities
         public ICollection<StringEntity> AllowedGrantTypes { get; set; } = Array.Empty<StringEntity>();
         public ICollection<StringEntity> AllowedRedirectUris { get; set; } = Array.Empty<StringEntity>();
         public ICollection<StringEntity> AllowedSigningAlgorithms { get; set; } = Array.Empty<StringEntity>();
-
+        public ICollection<PropertyEntity> Properties { get; set; } = new List<PropertyEntity>();
+       
         public static implicit operator Client?(ClientEntity? entity)
         {
             if (entity == null) return null;
@@ -43,6 +44,7 @@ namespace IdentityServer.EntityFramework.Entities
                 AllowedGrantTypes = entity.AllowedGrantTypes.Select(s => s.Value).ToArray(),
                 AllowedRedirectUris = entity.AllowedRedirectUris.Select(s => s.Value).ToArray(),
                 AllowedScopes = entity.AllowedScopes.Select(s => s.Value).ToArray(),
+                Properties = entity.Properties.Select(s => new KeyValuePair<string, string>(s.Key, s.Value)).ToArray(),
                 AllowedSigningAlgorithms = entity.AllowedSigningAlgorithms.Select(s => s.Value).ToArray(),
                 Secrets = entity.Secrets.Select(s => new Secret
                 {
@@ -69,6 +71,7 @@ namespace IdentityServer.EntityFramework.Entities
                 AccessTokenLifetime = client.AccessTokenLifetime,
                 RefreshTokenLifetime = client.RefreshTokenLifetime,
                 IdentityTokenLifetime = client.IdentityTokenLifetime,
+                Properties = client.Properties.Select(s => new PropertyEntity(s.Key, s.Value)).ToArray(),
                 AllowedGrantTypes = client.AllowedGrantTypes.Select(s => new StringEntity(s)).ToArray(),
                 AllowedRedirectUris = client.AllowedRedirectUris.Select(s => new StringEntity(s)).ToArray(),
                 AllowedScopes = client.AllowedScopes.Select(s => new StringEntity(s)).ToArray(),

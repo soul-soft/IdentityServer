@@ -10,6 +10,8 @@ namespace IdentityServer.EntityFramework.Entities
 
         public ICollection<SecretEntity> Secrets { get; set; } = Array.Empty<SecretEntity>();
 
+        public ICollection<PropertyEntity> Properties { get; set; } = new List<PropertyEntity>();
+
         public static implicit operator ApiResource?(ApiResourceEntity? entity)
         {
             if (entity == null) return null;
@@ -21,6 +23,7 @@ namespace IdentityServer.EntityFramework.Entities
                 Description = entity.Description,
                 ShowInDiscoveryDocument = entity.ShowInDiscoveryDocument,
                 ClaimTypes = entity.ClaimTypes.Select(s => s.Value).ToArray(),
+                Properties = entity.Properties.Select(s=>new KeyValuePair<string,string>(s.Key,s.Value)).ToArray(),
                 Secrets = entity.Secrets.Select(s => new Secret
                 {
                     Description = s.Description,
@@ -41,6 +44,7 @@ namespace IdentityServer.EntityFramework.Entities
                 Description = resource.Description,
                 ShowInDiscoveryDocument = resource.ShowInDiscoveryDocument,
                 ClaimTypes = resource.ClaimTypes.Select(s => new StringEntity(s)).ToArray(),
+                Properties = resource.Properties.Select(s=>new PropertyEntity(s.Key,s.Value)).ToArray(),
                 AllowedScopes = resource.AllowedScopes.Select(s => new StringEntity(s)).ToArray(),
                 Secrets = resource.Secrets.Select(s => new SecretEntity(s.Value, s.Expiration, s.Description)).ToArray(),
             };

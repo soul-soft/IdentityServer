@@ -12,7 +12,7 @@
 
         public bool ShowInDiscoveryDocument { get; set; } = true;
 
-        public ICollection<string> ClaimTypes { get; set; } = new HashSet<string>();
+        public ICollection<string> ClaimTypes { get; set; } = new List<string>();
       
         protected Resource() 
         {

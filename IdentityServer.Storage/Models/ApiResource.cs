@@ -4,10 +4,12 @@
     {
         public bool Required { get; set; } = false;
 
-        public ICollection<Secret> Secrets { get; set; } = new HashSet<Secret>();
+        public ICollection<Secret> Secrets { get; set; } = new List<Secret>();
       
-        public ICollection<string> AllowedScopes { get;  } = default!;
-       
+        public ICollection<string> AllowedScopes { get; set; } = new List<string>();
+
+        public ICollection<KeyValuePair<string, string>> Properties { get; set; } = new Dictionary<string, string>();
+
         protected ApiResource()
         {
 

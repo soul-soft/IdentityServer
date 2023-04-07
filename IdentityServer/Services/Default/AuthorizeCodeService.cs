@@ -23,7 +23,7 @@ namespace IdentityServer.Services
         {
             var id = await _randomGenerator.GenerateAsync();
             var creationTime = _clock.UtcNow.UtcDateTime;
-            var code = new AuthorizationCode(id, client.AuthorizeCodeLifetime, subject.Claims, creationTime);
+            var code = new AuthorizationCode(id, client.AuthorizeCodeLifetime, subject.Claims.ToArray(), creationTime);
             await _store.SaveAuthorizationCodeAsync(code);
             return code.Code;
         }

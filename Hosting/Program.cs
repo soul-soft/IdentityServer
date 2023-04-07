@@ -4,6 +4,7 @@ using IdentityServer.EntityFramework;
 using Microsoft.Extensions.Options;
 using IdentityServer.Hosting.DependencyInjection;
 using System.Security.Cryptography.X509Certificates;
+using IdentityServer.EntityFramework.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,7 +32,7 @@ builder.Services.AddStackExchangeRedisCache(c =>
 builder.Services.AddDbContext<IdentityServerDbContext>(configureOptions => 
 {
     var connectStr = "server=127.0.0.1;user id=root;password=1024;database=identity_server;connection timeout=180;";
-    configureOptions.UseMySql(connectStr, ServerVersion.AutoDetect(connectStr), o => o.MigrationsAssembly("Hosting.dll"));
+    configureOptions.UseMySql(connectStr, ServerVersion.AutoDetect(connectStr), o => o.MigrationsAssembly("Hosting"));
 });
 builder.Services.AddIdentityServer(configureOptions =>
     {
@@ -52,7 +53,7 @@ builder.Services.AddIdentityServer(configureOptions =>
     .AddInMemoryDeveloperSigningCredentials()
     .AddEntityFrameworkStore(configureOptions =>
     {
-       
+        configureOptions.TableNameToLower = true;
     });
 
 var app = builder.Build();

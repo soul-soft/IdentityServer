@@ -14,10 +14,11 @@
         public bool RequireSecret { get; set; } = true;
         public bool OfflineAccess { get; set; } = false;
         public AccessTokenType AccessTokenType { get; set; } = AccessTokenType.Jwt;
-        public ICollection<Secret> Secrets { get; set; } = Array.Empty<Secret>();
-        public ICollection<string> AllowedScopes { get; set; } = Array.Empty<string>();
-        public ICollection<string> AllowedGrantTypes { get; set; } = Array.Empty<string>();
-        public ICollection<string> AllowedRedirectUris { get; set; } = Array.Empty<string>();
-        public ICollection<string> AllowedSigningAlgorithms { get; set; } = Array.Empty<string>();
+        public ICollection<Secret> Secrets { get; set; } = new List<Secret>();
+        public ICollection<string> AllowedScopes { get; set; } = new List<string>();
+        public ICollection<string> AllowedGrantTypes { get; set; } = new List<string>();
+        public ICollection<string> AllowedRedirectUris { get; set; } = new List<string>();
+        public ICollection<string> AllowedSigningAlgorithms { get; set; } = new List<string>();
+        public ICollection<KeyValuePair<string, string>> Properties { get; set; } = new Dictionary<string, string>();
     }
 }

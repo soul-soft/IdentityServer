@@ -1,12 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Text;
+﻿using System.Text;
 namespace IdentityServer.EntityFramework.Configuration
 {
     public class EntityFrameworkStoreOptions
     {
-        public bool TableNameToLower { get; set; } = true;
+        public bool TableNameToLower { get; set; } = false;
         public string TableNamePrefix { get; set; } = string.Empty;
-        public Action<DbContextOptionsBuilder>? ConfigureDbContextOptions { get; set; }
+        public int KeyMaxLength { get; set; } = 50;
 
         internal string GetTableName(string name)
         {
@@ -26,7 +25,7 @@ namespace IdentityServer.EntityFramework.Configuration
                         sb.Append(item);
                     }
                 }
-                return $"{TableNamePrefix}{name}";
+                return $"{TableNamePrefix}{sb}";
             }
             return $"{TableNamePrefix}{name}";
         }
