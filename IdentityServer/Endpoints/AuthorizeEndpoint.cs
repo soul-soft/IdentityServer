@@ -96,6 +96,10 @@ namespace IdentityServer.Endpoints
 
             #region State
             var state = parameters[OpenIdConnectParameterNames.State];
+            if (string.IsNullOrEmpty(state))
+            {
+                return BadRequest(ValidationErrors.InvalidState, "State is too missing");
+            }
             #endregion
 
             #region None

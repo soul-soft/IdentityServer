@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hosting.Migrations
 {
     [DbContext(typeof(IdentityServerDbContext))]
-    [Migration("20230407050609_init")]
+    [Migration("20230407095717_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -173,6 +173,10 @@ namespace Hosting.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
+                    b.Property<string>("ClientId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime(6)");
 
@@ -181,6 +185,28 @@ namespace Hosting.Migrations
 
                     b.Property<int>("Lifetime")
                         .HasColumnType("int");
+
+                    b.Property<string>("None")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("RedirectUri")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ResponseMode")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ResponseType")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Scope")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.HasKey("Code");
 

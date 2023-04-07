@@ -8,6 +8,7 @@
         public const string UnauthorizedClient = "unauthorized_client";
         public const string UnsupportedResponseType = "unsupported_response_type";
         public const string InvalidScope = "invalid_scope";
+        public const string InvalidState = "invalid_state";
         public const string AuthorizationPending = "authorization_pending";
         public const string AccessDenied = "access_denied";
         public const string UnsupportedGrantType = "unsupported_grant_type";
