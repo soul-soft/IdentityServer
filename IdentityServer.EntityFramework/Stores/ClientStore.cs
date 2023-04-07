@@ -15,9 +15,15 @@ namespace IdentityServer.EntityFramework.Stores
 
         public async Task<Client?> FindClientAsync(string clientId)
         {
-            return await _context.Clients
+            return (await _context.Clients
                 .Where(a => a.ClientId == clientId)
-                .FirstOrDefaultAsync();
+                .Include(a => a.Secrets)
+                .Include(a => a.Properties)
+                .Include(a => a.AllowedScopes)
+                .Include(a => a.AllowedGrantTypes)
+                .Include(a => a.AllowedRedirectUris)
+                .Include(a => a.AllowedSigningAlgorithms)
+                .FirstOrDefaultAsync())?.Cast();
         }
     }
 }

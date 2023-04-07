@@ -1,15 +1,13 @@
-using Microsoft.EntityFrameworkCore;
 using Hosting.Configuration;
 using IdentityServer.EntityFramework;
-using Microsoft.Extensions.Options;
 using IdentityServer.Hosting.DependencyInjection;
-using System.Security.Cryptography.X509Certificates;
-using IdentityServer.EntityFramework.Configuration;
+using IdentityServer.Models;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+var ff = "secret".Sha512();
 builder.Services.AddControllersWithViews();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -45,11 +43,11 @@ builder.Services.AddIdentityServer(configureOptions =>
     .AddExtensionGrantValidator<MyExtensionGrantValidator>()
     .AddResourceOwnerCredentialRequestValidator<ResourceOwnerCredentialRequestValidator>()
     .AddProfileService<ProfileService>()
-    .AddInMemoryClients(Config.Clients)
     //.AddCacheStore()
     //.AddTokenStore()
     //.AddAuthorizationCodeStore()
-    .AddInMemoryResources(Config.Resources)
+    //.AddInMemoryClients(Config.Clients)
+    //.AddInMemoryResources(Config.Resources)
     .AddInMemoryDeveloperSigningCredentials()
     .AddEntityFrameworkStore(configureOptions =>
     {

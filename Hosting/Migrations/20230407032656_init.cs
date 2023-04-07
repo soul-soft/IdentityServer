@@ -181,6 +181,31 @@ namespace Hosting.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Api_resource_properties",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Key = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Value = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    OwnerId = table.Column<string>(type: "varchar(50)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Api_resource_properties", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Api_resource_properties_Api_resources_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "Api_resources",
+                        principalColumn: "Name",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Api_resource_secrets",
                 columns: table => new
                 {
@@ -230,7 +255,7 @@ namespace Hosting.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Authorization_code_claim_types",
+                name: "Authorization_code_claims",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -248,9 +273,9 @@ namespace Hosting.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Authorization_code_claim_types", x => x.Id);
+                    table.PrimaryKey("PK_Authorization_code_claims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Authorization_code_claim_types_Authorization_codes_OwnerId",
+                        name: "FK_Authorization_code_claims_Authorization_codes_OwnerId",
                         column: x => x.OwnerId,
                         principalTable: "Authorization_codes",
                         principalColumn: "Code",
@@ -351,6 +376,31 @@ namespace Hosting.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Client_properties",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Key = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Value = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    OwnerId = table.Column<string>(type: "varchar(50)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Client_properties", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Client_properties_Clients_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "Clients",
+                        principalColumn: "ClientId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Client_secrets",
                 columns: table => new
                 {
@@ -439,6 +489,11 @@ namespace Hosting.Migrations
                 column: "OwnerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Api_resource_properties_OwnerId",
+                table: "Api_resource_properties",
+                column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Api_resource_secrets_OwnerId",
                 table: "Api_resource_secrets",
                 column: "OwnerId");
@@ -449,8 +504,8 @@ namespace Hosting.Migrations
                 column: "OwnerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Authorization_code_claim_types_OwnerId",
-                table: "Authorization_code_claim_types",
+                name: "IX_Authorization_code_claims_OwnerId",
+                table: "Authorization_code_claims",
                 column: "OwnerId");
 
             migrationBuilder.CreateIndex(
@@ -474,6 +529,11 @@ namespace Hosting.Migrations
                 column: "OwnerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Client_properties_OwnerId",
+                table: "Client_properties",
+                column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Client_secrets_OwnerId",
                 table: "Client_secrets",
                 column: "OwnerId");
@@ -493,13 +553,16 @@ namespace Hosting.Migrations
                 name: "Api_resource_claim_types");
 
             migrationBuilder.DropTable(
+                name: "Api_resource_properties");
+
+            migrationBuilder.DropTable(
                 name: "Api_resource_secrets");
 
             migrationBuilder.DropTable(
                 name: "Api_scope_claim_types");
 
             migrationBuilder.DropTable(
-                name: "Authorization_code_claim_types");
+                name: "Authorization_code_claims");
 
             migrationBuilder.DropTable(
                 name: "Client_allowed_grant_types");
@@ -512,6 +575,9 @@ namespace Hosting.Migrations
 
             migrationBuilder.DropTable(
                 name: "Client_allowed_signing_algorithms");
+
+            migrationBuilder.DropTable(
+                name: "Client_properties");
 
             migrationBuilder.DropTable(
                 name: "Client_secrets");

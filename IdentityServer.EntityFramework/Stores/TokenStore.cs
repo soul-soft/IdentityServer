@@ -15,9 +15,9 @@ namespace IdentityServer.EntityFramework.Stores
 
         public async Task<Token?> FindTokenAsync(string token)
         {
-            return await _context.Tokens
+            return (await _context.Tokens
                .Where(a => a.Code == token)
-               .FirstOrDefaultAsync();
+               .FirstOrDefaultAsync())?.Cast();
         }
 
         public async Task RevomeTokenAsync(Token token)

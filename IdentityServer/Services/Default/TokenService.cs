@@ -40,7 +40,7 @@ namespace IdentityServer.Services
             }
             else
             {
-                await _tokenStore.SetExpirationAsync(token);
+                await _tokenStore.SaveTokenAsync(token);
                 accessToken = token.Code;
             }
             return accessToken;
@@ -57,7 +57,7 @@ namespace IdentityServer.Services
                  lifetime: lifetime,
                  claims: subject.Claims.ToArray(),
                  creationTime: creationTime);
-            await _tokenStore.SetExpirationAsync(token);
+            await _tokenStore.SaveTokenAsync(token);
             return id;
         }
     }

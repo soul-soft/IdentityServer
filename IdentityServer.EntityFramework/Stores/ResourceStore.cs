@@ -18,6 +18,8 @@ namespace IdentityServer.EntityFramework.Stores
             return (await _context.ApiResources
                 .Where(a => a.Enabled)
                 .Where(a => a.Name == name)
+                .Include(a => a.ClaimTypes)
+                .Include(a => a.Properties)
                 .ToListAsync())
                 .Cast<ApiResource>();
         }
@@ -27,22 +29,25 @@ namespace IdentityServer.EntityFramework.Stores
             var identityResources = (await _context.IdentityResources
                 .Where(a => a.Enabled)
                 .Where(a => scopes.Contains(a.Name))
+                .Include(a => a.ClaimTypes)
                 .ToListAsync())
-                .Cast<IdentityResource>();
+                .Select(s => s.Cast());
 
             var apiScopes = (await _context.ApiScopes
                 .Where(a => a.Enabled)
                 .Where(a => scopes.Contains(a.Name))
+                .Include(a => a.ClaimTypes)
                 .ToListAsync())
-                .Cast<ApiScope>();
+                .Select(s => s.Cast());
 
             var apiScopeNames = apiScopes.Select(s => s.Name);
 
             var apiResources = (await _context.ApiResources
                 .Where(a => a.Enabled)
-                .Where(a => a.AllowedScopes.Any(a=> apiScopeNames.Contains(a.Value)))
+                .Where(a => a.AllowedScopes.Any(a => apiScopeNames.Contains(a.Value)))
+                .Include(a => a.ClaimTypes)
                 .ToListAsync())
-                .Cast<ApiResource>();
+                .Select(s => s.Cast());
 
             return new Resources(identityResources, apiScopes, apiResources);
         }

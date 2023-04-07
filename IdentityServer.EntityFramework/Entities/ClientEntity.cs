@@ -16,37 +16,35 @@ namespace IdentityServer.EntityFramework.Entities
         public bool RequireSecret { get; set; } = true;
         public bool OfflineAccess { get; set; } = false;
         public AccessTokenType AccessTokenType { get; set; } = AccessTokenType.Jwt;
-        public ICollection<SecretEntity> Secrets { get; set; } = Array.Empty<SecretEntity>();
-        public ICollection<StringEntity> AllowedScopes { get; set; } = Array.Empty<StringEntity>();
-        public ICollection<StringEntity> AllowedGrantTypes { get; set; } = Array.Empty<StringEntity>();
-        public ICollection<StringEntity> AllowedRedirectUris { get; set; } = Array.Empty<StringEntity>();
-        public ICollection<StringEntity> AllowedSigningAlgorithms { get; set; } = Array.Empty<StringEntity>();
-        public ICollection<PropertyEntity> Properties { get; set; } = new List<PropertyEntity>();
-       
-        public static implicit operator Client?(ClientEntity? entity)
-        {
-            if (entity == null) return null;
+        public ICollection<SecretEntity> Secrets { get; set; } = new HashSet<SecretEntity>();
+        public ICollection<StringEntity> AllowedScopes { get; set; } = new HashSet<StringEntity>();
+        public ICollection<StringEntity> AllowedGrantTypes { get; set; } = new HashSet<StringEntity>();
+        public ICollection<StringEntity> AllowedRedirectUris { get; set; } = new HashSet<StringEntity>();
+        public ICollection<StringEntity> AllowedSigningAlgorithms { get; set; } = new HashSet<StringEntity>();
+        public ICollection<PropertyEntity> Properties { get; set; } = new HashSet<PropertyEntity>();
 
+        public Client Cast()
+        {
             return new Client()
             {
-                ClientId = entity.ClientId,
-                ClientName = entity.ClientName,
-                Description = entity.Description,
-                ClientUri = entity.ClientUri,
-                Enabled = entity.Enabled,
-                AuthorizeCodeLifetime = entity.AuthorizeCodeLifetime,
-                RequireSecret = entity.RequireSecret,
-                OfflineAccess = entity.OfflineAccess,
-                AccessTokenType = entity.AccessTokenType,
-                AccessTokenLifetime = entity.AccessTokenLifetime,
-                RefreshTokenLifetime = entity.RefreshTokenLifetime,
-                IdentityTokenLifetime = entity.IdentityTokenLifetime,
-                AllowedGrantTypes = entity.AllowedGrantTypes.Select(s => s.Value).ToArray(),
-                AllowedRedirectUris = entity.AllowedRedirectUris.Select(s => s.Value).ToArray(),
-                AllowedScopes = entity.AllowedScopes.Select(s => s.Value).ToArray(),
-                Properties = entity.Properties.Select(s => new KeyValuePair<string, string>(s.Key, s.Value)).ToArray(),
-                AllowedSigningAlgorithms = entity.AllowedSigningAlgorithms.Select(s => s.Value).ToArray(),
-                Secrets = entity.Secrets.Select(s => new Secret
+                ClientId = ClientId,
+                ClientName = ClientName,
+                Description = Description,
+                ClientUri = ClientUri,
+                Enabled = Enabled,
+                AuthorizeCodeLifetime = AuthorizeCodeLifetime,
+                RequireSecret = RequireSecret,
+                OfflineAccess = OfflineAccess,
+                AccessTokenType = AccessTokenType,
+                AccessTokenLifetime = AccessTokenLifetime,
+                RefreshTokenLifetime = RefreshTokenLifetime,
+                IdentityTokenLifetime = IdentityTokenLifetime,
+                AllowedGrantTypes = AllowedGrantTypes.Select(s => s.Value).ToArray(),
+                AllowedRedirectUris = AllowedRedirectUris.Select(s => s.Value).ToArray(),
+                AllowedScopes = AllowedScopes.Select(s => s.Value).ToArray(),
+                Properties = Properties.Select(s => new KeyValuePair<string, string>(s.Key, s.Value)).ToArray(),
+                AllowedSigningAlgorithms = AllowedSigningAlgorithms.Select(s => s.Value).ToArray(),
+                Secrets = Secrets.Select(s => new Secret
                 {
                     Value = s.Value,
                     Expiration = s.Expiration,

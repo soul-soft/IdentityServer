@@ -25,16 +25,15 @@ namespace IdentityServer.Models
             Claims = claims;
         }
 
-        public static implicit operator AuthorizationCode?(AuthorizationCodeEntity? entity)
+        public  AuthorizationCode Cast()
         {
-            if (entity == null) return null;
-            var claims = entity.Claims
+            var claims = Claims
                 .Select(s => new Claim(s.Type, s.Value, s.ValueType, s.Issuer))
                 .ToArray();
             return new AuthorizationCode(
-                code: entity.Code,
-                lifetime: entity.Lifetime,
-                creationTime: entity.CreationTime,
+                code: Code,
+                lifetime: Lifetime,
+                creationTime: CreationTime,
                 claims: claims);
         }
 

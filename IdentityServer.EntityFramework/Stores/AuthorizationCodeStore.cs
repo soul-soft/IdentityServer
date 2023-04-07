@@ -15,9 +15,10 @@ namespace IdentityServer.EntityFramework.Stores
 
         public async Task<AuthorizationCode?> FindAuthorizationCodeAsync(string code)
         {
-            return await _context.AuthorizationCodes
+            return (await _context.AuthorizationCodes
                 .Where(a => a.Code == code)
-                .FirstOrDefaultAsync();
+                .Include(a=>a.Claims)
+                .FirstOrDefaultAsync())?.Cast();
         }
 
         public async Task RevomeAuthorizationCodeAsync(AuthorizationCode code)

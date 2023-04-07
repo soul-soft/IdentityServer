@@ -15,29 +15,25 @@ namespace IdentityServer.EntityFramework.Entities
 
         public DateTime CreationTime { get; set; }
 
-        public ICollection<ClaimEntity> Claims { get; set; } = Array.Empty<ClaimEntity>();
+        public ICollection<ClaimEntity> Claims { get; set; } = new HashSet<ClaimEntity>();
 
-        public static implicit operator Token?(TokenEntity? entity)
+        public Token Cast()
         {
-            if (entity == null)
-            {
-                return null;
-            }
-            var claims = entity.Claims
+            var claims = Claims
                 .Select(s => new Claim(s.Type, s.Value, s.ValueType, s.Issuer))
                 .ToArray();
             return new Token(
-                code: entity.Code,
-                type: entity.Type,
-                lifetime: entity.Lifetime,
-                creationTime: entity.CreationTime,
+                code: Code,
+                type: Type,
+                lifetime: Lifetime,
+                creationTime: CreationTime,
                 claims: claims);
         }
 
         public static implicit operator TokenEntity(Token token)
         {
             var claims = token.Claims
-                .Select(s => new ClaimEntity(s.Type,s.Value,s.ValueType,s.Issuer))
+                .Select(s => new ClaimEntity(s.Type, s.Value, s.ValueType, s.Issuer))
                 .ToArray();
             return new TokenEntity
             {

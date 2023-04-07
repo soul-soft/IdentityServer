@@ -8,17 +8,16 @@ namespace IdentityServer.EntityFramework.Entities
 
         public string Scope => Name;
 
-        public static implicit operator ApiScope?(ApiScopeEntity? entity)
+        public ApiScope Cast()
         {
-            if (entity == null) return null;
-            return new ApiScope(entity.Name)
+            return new ApiScope(Name)
             {
-                Required = entity.Required,
-                Enabled = entity.Enabled,
-                DisplayName = entity.DisplayName,
-                Description = entity.Description,
-                ShowInDiscoveryDocument = entity.ShowInDiscoveryDocument,
-                ClaimTypes = entity.ClaimTypes.Select(s => s.Value).ToArray(),
+                Required = Required,
+                Enabled = Enabled,
+                DisplayName = DisplayName,
+                Description = Description,
+                ShowInDiscoveryDocument = ShowInDiscoveryDocument,
+                ClaimTypes = ClaimTypes.Select(s => s.Value).ToArray(),
             };
         }
 

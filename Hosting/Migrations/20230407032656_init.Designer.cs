@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hosting.Migrations
 {
     [DbContext(typeof(IdentityServerDbContext))]
-    [Migration("20230407025132_init")]
+    [Migration("20230407032656_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -237,6 +237,34 @@ namespace Hosting.Migrations
                                 .HasForeignKey("OwnerId");
                         });
 
+                    b.OwnsMany("IdentityServer.EntityFramework.Entities.PropertyEntity", "Properties", b1 =>
+                        {
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Key")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.Property<string>("OwnerId")
+                                .IsRequired()
+                                .HasColumnType("varchar(50)");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("OwnerId");
+
+                            b1.ToTable("Api_resource_properties", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("OwnerId");
+                        });
+
                     b.OwnsMany("IdentityServer.EntityFramework.Entities.SecretEntity", "Secrets", b1 =>
                         {
                             b1.Property<int>("Id")
@@ -270,6 +298,8 @@ namespace Hosting.Migrations
                     b.Navigation("AllowedScopes");
 
                     b.Navigation("ClaimTypes");
+
+                    b.Navigation("Properties");
 
                     b.Navigation("Secrets");
                 });
@@ -401,6 +431,34 @@ namespace Hosting.Migrations
                                 .HasForeignKey("OwnerId");
                         });
 
+                    b.OwnsMany("IdentityServer.EntityFramework.Entities.PropertyEntity", "Properties", b1 =>
+                        {
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            b1.Property<string>("Key")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.Property<string>("OwnerId")
+                                .IsRequired()
+                                .HasColumnType("varchar(50)");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("longtext");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("OwnerId");
+
+                            b1.ToTable("Client_properties", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("OwnerId");
+                        });
+
                     b.OwnsMany("IdentityServer.EntityFramework.Entities.SecretEntity", "Secrets", b1 =>
                         {
                             b1.Property<int>("Id")
@@ -438,6 +496,8 @@ namespace Hosting.Migrations
                     b.Navigation("AllowedScopes");
 
                     b.Navigation("AllowedSigningAlgorithms");
+
+                    b.Navigation("Properties");
 
                     b.Navigation("Secrets");
                 });
@@ -539,7 +599,7 @@ namespace Hosting.Migrations
 
                             b1.HasIndex("OwnerId");
 
-                            b1.ToTable("Authorization_code_claim_types", (string)null);
+                            b1.ToTable("Authorization_code_claims", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("OwnerId");

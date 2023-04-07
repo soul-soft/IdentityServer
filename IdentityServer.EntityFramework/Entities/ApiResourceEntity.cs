@@ -8,23 +8,22 @@ namespace IdentityServer.EntityFramework.Entities
 
         public ICollection<StringEntity> AllowedScopes { get; set; } = default!;
 
-        public ICollection<SecretEntity> Secrets { get; set; } = Array.Empty<SecretEntity>();
+        public ICollection<SecretEntity> Secrets { get; set; } = new HashSet<SecretEntity>();
 
-        public ICollection<PropertyEntity> Properties { get; set; } = new List<PropertyEntity>();
+        public ICollection<PropertyEntity> Properties { get; set; } = new HashSet<PropertyEntity>();
 
-        public static implicit operator ApiResource?(ApiResourceEntity? entity)
+        public ApiResource Cast()
         {
-            if (entity == null) return null;
-            return new ApiResource(entity.Name)
+            return new ApiResource(Name)
             {
-                Required = entity.Required,
-                Enabled = entity.Enabled,
-                DisplayName = entity.DisplayName,
-                Description = entity.Description,
-                ShowInDiscoveryDocument = entity.ShowInDiscoveryDocument,
-                ClaimTypes = entity.ClaimTypes.Select(s => s.Value).ToArray(),
-                Properties = entity.Properties.Select(s=>new KeyValuePair<string,string>(s.Key,s.Value)).ToArray(),
-                Secrets = entity.Secrets.Select(s => new Secret
+                Required = Required,
+                Enabled = Enabled,
+                DisplayName = DisplayName,
+                Description = Description,
+                ShowInDiscoveryDocument = ShowInDiscoveryDocument,
+                ClaimTypes = ClaimTypes.Select(s => s.Value).ToArray(),
+                Properties = Properties.Select(s => new KeyValuePair<string, string>(s.Key, s.Value)).ToArray(),
+                Secrets = Secrets.Select(s => new Secret
                 {
                     Description = s.Description,
                     Expiration = s.Expiration,
@@ -44,7 +43,7 @@ namespace IdentityServer.EntityFramework.Entities
                 Description = resource.Description,
                 ShowInDiscoveryDocument = resource.ShowInDiscoveryDocument,
                 ClaimTypes = resource.ClaimTypes.Select(s => new StringEntity(s)).ToArray(),
-                Properties = resource.Properties.Select(s=>new PropertyEntity(s.Key,s.Value)).ToArray(),
+                Properties = resource.Properties.Select(s => new PropertyEntity(s.Key, s.Value)).ToArray(),
                 AllowedScopes = resource.AllowedScopes.Select(s => new StringEntity(s)).ToArray(),
                 Secrets = resource.Secrets.Select(s => new SecretEntity(s.Value, s.Expiration, s.Description)).ToArray(),
             };
