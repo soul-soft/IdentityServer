@@ -23,12 +23,31 @@ namespace IdentityServer.EntityFramework.Entities
             {
                 return null;
             }
+            var claims = entity.Claims
+                .Select(s => new Claim(s.Type, s.Value, s.ValueType, s.Issuer))
+                .ToArray();
             return new Token(
                 code: entity.Code,
                 type: entity.Type,
                 lifetime: entity.Lifetime,
                 creationTime: entity.CreationTime,
-                claims: entity.Claims.Select(s => new Claim(s.Type, s.Value, s.ValueType, s.Issuer)).ToArray());
+                claims: claims);
+        }
+
+        public static implicit operator TokenEntity(Token token)
+        {
+            var claims = token.Claims
+                .Select(s => new ClaimEntity(s.Type,s.Value,s.ValueType,s.Issuer))
+                .ToArray();
+            return new TokenEntity
+            {
+                Claims = claims,
+                Code = token.Code,
+                CreationTime = token.CreationTime,
+                ExpirationTime = token.ExpirationTime,
+                Lifetime = token.Lifetime,
+                Type = token.Type,
+            };
         }
     }
 }

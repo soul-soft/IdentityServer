@@ -32,7 +32,7 @@
 
             var apiResources = _resources.ApiResources
                 .Where(a => a.Enabled)
-                .Where(a => apiScopeNames.Contains(a.Scope));
+                .Where(a => a.AllowedScopes.Any(a => apiScopeNames.Contains(a)));
 
             var resources = new Resources(identityResources, apiScopes, apiResources);
             return Task.FromResult(resources);

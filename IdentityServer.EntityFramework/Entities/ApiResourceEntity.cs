@@ -6,14 +6,14 @@ namespace IdentityServer.EntityFramework.Entities
     {
         public bool Required { get; set; } = false;
 
-        public string Scope { get; set; } = default!;
+        public ICollection<StringEntity> AllowedScopes { get; set; } = default!;
 
         public ICollection<SecretEntity> Secrets { get; set; } = Array.Empty<SecretEntity>();
 
         public static implicit operator ApiResource?(ApiResourceEntity? entity)
         {
             if (entity == null) return null;
-            return new ApiResource(entity.Name, entity.Scope)
+            return new ApiResource(entity.Name)
             {
                 Required = entity.Required,
                 Enabled = entity.Enabled,
@@ -27,6 +27,22 @@ namespace IdentityServer.EntityFramework.Entities
                     Expiration = s.Expiration,
                     Value = s.Value,
                 }).ToArray(),
+            };
+        }
+
+        public static implicit operator ApiResourceEntity(ApiResource resource)
+        {
+            return new ApiResourceEntity
+            {
+                Name = resource.Name,
+                Required = resource.Required,
+                Enabled = resource.Enabled,
+                DisplayName = resource.DisplayName,
+                Description = resource.Description,
+                ShowInDiscoveryDocument = resource.ShowInDiscoveryDocument,
+                ClaimTypes = resource.ClaimTypes.Select(s => new StringEntity(s)).ToArray(),
+                AllowedScopes = resource.AllowedScopes.Select(s => new StringEntity(s)).ToArray(),
+                Secrets = resource.Secrets.Select(s => new SecretEntity(s.Value, s.Expiration, s.Description)).ToArray(),
             };
         }
     }

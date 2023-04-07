@@ -4,18 +4,17 @@
     {
         public bool Required { get; set; } = false;
 
-        public string Scope { get;  } = default!;
-
         public ICollection<Secret> Secrets { get; set; } = new HashSet<Secret>();
+      
+        public ICollection<string> AllowedScopes { get;  } = default!;
        
         protected ApiResource()
         {
 
         }
 
-        public ApiResource(string name, string scope) : base(name)
+        public ApiResource(string name) : base(name)
         {
-            Scope = scope;
         }
     }
 }

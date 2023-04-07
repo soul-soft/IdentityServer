@@ -13,32 +13,36 @@ namespace IdentityServer.EntityFramework.Stores
             _context = context;
         }
 
-        public async Task<IEnumerable<ApiResource>> FindApiResourcesAsync(string name)
+        public async Task<IEnumerable<ApiResource>> GetApiResourcesByNameAsync(string name)
         {
-            return await _context.ApiResources
+            return (await _context.ApiResources
                 .Where(a => a.Enabled)
                 .Where(a => a.Name == name)
-                .ToListAsync();
+                .ToListAsync())
+                .Cast<ApiResource>();
         }
 
-        public async Task<Resources> FindResourcesAsync(IEnumerable<string> scopes)
+        public async Task<Resources> GetResourcesByScopesAsync(IEnumerable<string> scopes)
         {
-            var identityResources = await _context.IdentityResources
+            var identityResources = (await _context.IdentityResources
                 .Where(a => a.Enabled)
                 .Where(a => scopes.Contains(a.Name))
-                .ToListAsync();
+                .ToListAsync())
+                .Cast<IdentityResource>();
 
-            var apiScopes = await _context.ApiScopes
+            var apiScopes = (await _context.ApiScopes
                 .Where(a => a.Enabled)
                 .Where(a => scopes.Contains(a.Name))
-                .ToListAsync();
+                .ToListAsync())
+                .Cast<ApiScope>();
 
             var apiScopeNames = apiScopes.Select(s => s.Name);
 
-            var apiResources = await _context.ApiResources
+            var apiResources = (await _context.ApiResources
                 .Where(a => a.Enabled)
-                .Where(a => apiScopeNames.Contains(a.Scope))
-                .ToListAsync();
+                .Where(a => a.AllowedScopes.Any(a=> apiScopeNames.Contains(a.Value)))
+                .ToListAsync())
+                .Cast<ApiResource>();
 
             return new Resources(identityResources, apiScopes, apiResources);
         }

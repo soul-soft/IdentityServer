@@ -22,13 +22,40 @@ namespace IdentityServer.EntityFramework.Entities
         public ICollection<StringEntity> AllowedRedirectUris { get; set; } = Array.Empty<StringEntity>();
         public ICollection<StringEntity> AllowedSigningAlgorithms { get; set; } = Array.Empty<StringEntity>();
 
-        public static implicit operator Client?(ClientEntity? client) 
+        public static implicit operator Client?(ClientEntity? entity)
         {
-            if (client == null)
-            {
-                return null;
-            }
+            if (entity == null) return null;
+
             return new Client()
+            {
+                ClientId = entity.ClientId,
+                ClientName = entity.ClientName,
+                Description = entity.Description,
+                ClientUri = entity.ClientUri,
+                Enabled = entity.Enabled,
+                AuthorizeCodeLifetime = entity.AuthorizeCodeLifetime,
+                RequireSecret = entity.RequireSecret,
+                OfflineAccess = entity.OfflineAccess,
+                AccessTokenType = entity.AccessTokenType,
+                AccessTokenLifetime = entity.AccessTokenLifetime,
+                RefreshTokenLifetime = entity.RefreshTokenLifetime,
+                IdentityTokenLifetime = entity.IdentityTokenLifetime,
+                AllowedGrantTypes = entity.AllowedGrantTypes.Select(s => s.Value).ToArray(),
+                AllowedRedirectUris = entity.AllowedRedirectUris.Select(s => s.Value).ToArray(),
+                AllowedScopes = entity.AllowedScopes.Select(s => s.Value).ToArray(),
+                AllowedSigningAlgorithms = entity.AllowedSigningAlgorithms.Select(s => s.Value).ToArray(),
+                Secrets = entity.Secrets.Select(s => new Secret
+                {
+                    Value = s.Value,
+                    Expiration = s.Expiration,
+                    Description = s.Description,
+                }).ToArray(),
+            };
+        }
+
+        public static implicit operator ClientEntity(Client client)
+        {
+            return new ClientEntity()
             {
                 ClientId = client.ClientId,
                 ClientName = client.ClientName,
@@ -42,16 +69,11 @@ namespace IdentityServer.EntityFramework.Entities
                 AccessTokenLifetime = client.AccessTokenLifetime,
                 RefreshTokenLifetime = client.RefreshTokenLifetime,
                 IdentityTokenLifetime = client.IdentityTokenLifetime,
-                AllowedGrantTypes = client.AllowedGrantTypes.Select(s => s.Value).ToArray(),
-                AllowedRedirectUris = client.AllowedRedirectUris.Select(s => s.Value).ToArray(),
-                AllowedScopes = client.AllowedScopes.Select(s => s.Value).ToArray(),
-                AllowedSigningAlgorithms = client.AllowedSigningAlgorithms.Select(s => s.Value).ToArray(),
-                Secrets = client.Secrets.Select(s => new Secret
-                {
-                    Value = s.Value,
-                    Expiration = s.Expiration,
-                    Description = s.Description,
-                }).ToArray(),
+                AllowedGrantTypes = client.AllowedGrantTypes.Select(s => new StringEntity(s)).ToArray(),
+                AllowedRedirectUris = client.AllowedRedirectUris.Select(s => new StringEntity(s)).ToArray(),
+                AllowedScopes = client.AllowedScopes.Select(s => new StringEntity(s)).ToArray(),
+                AllowedSigningAlgorithms = client.AllowedSigningAlgorithms.Select(s => new StringEntity(s)).ToArray(),
+                Secrets = client.Secrets.Select(s => new SecretEntity(s.Value, s.Expiration, s.Description)).ToArray(),
             };
         }
     }

@@ -15,7 +15,7 @@
             var tokenScopes = request.Subject.Claims
                 .Where(a => a.Type == JwtClaimTypes.Scope)
                 .Select(s => s.Value);
-            var apiResourceScopes = request.ApiResource.Scope;
+            var apiResourceScopes = request.ApiResource.AllowedScopes;
             var allowScopes = tokenScopes.Where(a => apiResourceScopes.Contains(a));
             if (!allowScopes.Any())
             {

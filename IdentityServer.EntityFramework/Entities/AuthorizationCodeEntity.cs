@@ -11,14 +11,44 @@ namespace IdentityServer.Models
         public DateTime CreationTime { get; set; }
         public IEnumerable<ClaimEntity> Claims { get; set; } = new List<ClaimEntity>();
 
+        protected AuthorizationCodeEntity()
+        {
+
+        }
+
+        public AuthorizationCodeEntity(string code, int lifetime, DateTime expirationTime, DateTime creationTime, IEnumerable<ClaimEntity> claims)
+        {
+            Code = code;
+            Lifetime = lifetime;
+            ExpirationTime = expirationTime;
+            CreationTime = creationTime;
+            Claims = claims;
+        }
+
         public static implicit operator AuthorizationCode?(AuthorizationCodeEntity? entity)
         {
             if (entity == null) return null;
+            var claims = entity.Claims
+                .Select(s => new Claim(s.Type, s.Value, s.ValueType, s.Issuer))
+                .ToArray();
             return new AuthorizationCode(
                 code: entity.Code,
                 lifetime: entity.Lifetime,
                 creationTime: entity.CreationTime,
-                claims: entity.Claims.Select(s => new Claim(s.Type, s.Value, s.ValueType, s.Issuer)).ToArray());
+                claims: claims);
+        }
+
+        public static implicit operator AuthorizationCodeEntity(AuthorizationCode entity)
+        {
+            var claims = entity.Claims
+                .Select(s => new ClaimEntity(s.Type, s.Value, s.ValueType, s.Issuer))
+                .ToArray();
+            return new AuthorizationCodeEntity(
+                code: entity.Code,
+                lifetime: entity.Lifetime,
+                creationTime: entity.CreationTime,
+                expirationTime: entity.ExpirationTime,
+                claims: claims);
         }
     }
 }

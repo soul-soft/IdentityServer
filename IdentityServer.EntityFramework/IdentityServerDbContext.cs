@@ -91,6 +91,11 @@ namespace IdentityServer.EntityFramework
                 x.ToTable(options.GetTableName("ApiResourceClaimTypes"));
                 x.WithOwner().HasForeignKey("OwnerId");
             });
+            modelBuilder.Entity<ApiResourceEntity>().OwnsMany(a => a.AllowedScopes, x =>
+            {
+                x.ToTable(options.GetTableName("ApiResourceAllowedScopes"));
+                x.WithOwner().HasForeignKey("OwnerId");
+            });
             #endregion
 
             #region IdentityResource
