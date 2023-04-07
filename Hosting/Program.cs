@@ -1,4 +1,5 @@
 using Hosting.Configuration;
+using Hosting.IdentityServer;
 using IdentityServer.EntityFramework;
 using IdentityServer.Hosting.DependencyInjection;
 using IdentityServer.Models;
@@ -7,12 +8,12 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var ff = "secret".Sha512();
 builder.Services.AddControllersWithViews();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication("Cookie")
+    .AddIdentityServer("Local")
     .AddCookie("Cookie", configureOptions =>
     {
 
@@ -37,19 +38,15 @@ builder.Services.AddIdentityServer(configureOptions =>
         //o.Endpoints.PathPrefix = "/oauth2";
         configureOptions.Issuer = "https://www.example.com";
     })
-    //.AddCacheStore()
-    //.AddTokenStore()
-    //.AddAuthorizationCodeStore()
     .AddExtensionGrantValidator<MyExtensionGrantValidator>()
     .AddResourceOwnerCredentialRequestValidator<ResourceOwnerCredentialRequestValidator>()
     .AddProfileService<ProfileService>()
-    //.AddCacheStore()
     //.AddTokenStore()
     //.AddAuthorizationCodeStore()
     //.AddInMemoryClients(Config.Clients)
     //.AddInMemoryResources(Config.Resources)
     .AddInMemoryDeveloperSigningCredentials()
-    .AddEntityFrameworkStore(configureOptions =>
+    .AddEntityFrameworkStores(configureOptions =>
     {
         configureOptions.TableNameToLower = true;
     });
@@ -62,6 +59,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.PersistIdentityServer();
 app.UseStaticFiles();
 app.UseDefaultFiles();
 app.UseHttpsRedirection();
@@ -76,7 +74,7 @@ app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapDefaultControllerRoute().RequireAuthorization("default"); ;
+    endpoints.MapDefaultControllerRoute().RequireAuthorization("default"); 
 });
 
 app.Run();

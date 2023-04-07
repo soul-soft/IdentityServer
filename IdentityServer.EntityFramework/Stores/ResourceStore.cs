@@ -44,7 +44,7 @@ namespace IdentityServer.EntityFramework.Stores
 
             var apiResources = (await _context.ApiResources
                 .Where(a => a.Enabled)
-                .Where(a => a.AllowedScopes.Any(a => apiScopeNames.Contains(a.Value)))
+                .Where(a => a.AllowedScopes.Any(a => apiScopeNames.Contains(a.Data)))
                 .Include(a => a.ClaimTypes)
                 .ToListAsync())
                 .Select(s => s.Cast());

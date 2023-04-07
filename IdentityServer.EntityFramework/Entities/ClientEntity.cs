@@ -39,11 +39,11 @@ namespace IdentityServer.EntityFramework.Entities
                 AccessTokenLifetime = AccessTokenLifetime,
                 RefreshTokenLifetime = RefreshTokenLifetime,
                 IdentityTokenLifetime = IdentityTokenLifetime,
-                AllowedGrantTypes = AllowedGrantTypes.Select(s => s.Value).ToArray(),
-                AllowedRedirectUris = AllowedRedirectUris.Select(s => s.Value).ToArray(),
-                AllowedScopes = AllowedScopes.Select(s => s.Value).ToArray(),
+                AllowedGrantTypes = AllowedGrantTypes.Select(s => s.Data).ToArray(),
+                AllowedRedirectUris = AllowedRedirectUris.Select(s => s.Data).ToArray(),
+                AllowedScopes = AllowedScopes.Select(s => s.Data).ToArray(),
                 Properties = Properties.Select(s => new KeyValuePair<string, string>(s.Key, s.Value)).ToArray(),
-                AllowedSigningAlgorithms = AllowedSigningAlgorithms.Select(s => s.Value).ToArray(),
+                AllowedSigningAlgorithms = AllowedSigningAlgorithms.Select(s => s.Data).ToArray(),
                 Secrets = Secrets.Select(s => new Secret
                 {
                     Value = s.Value,

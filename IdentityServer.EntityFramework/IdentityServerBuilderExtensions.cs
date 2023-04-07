@@ -6,7 +6,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class IdentityServerBuilderExtensions
     {
-        public static IIdentityServerBuilder AddEntityFrameworkStore(this IIdentityServerBuilder builder, Action<EntityFrameworkStoreOptions> configureOptions)
+        public static IIdentityServerBuilder AddEntityFrameworkStores(this IIdentityServerBuilder builder, Action<EntityFrameworkStoreOptions> configureOptions)
         {
             builder.Services.Configure(configureOptions);
             builder.AddTokenStore<TokenStore>();
@@ -18,7 +18,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IIdentityServerBuilder AddEntityFrameworkStore(this IIdentityServerBuilder builder)
         {
-            builder.AddEntityFrameworkStore(configureOptions => { });
+            builder.AddEntityFrameworkStores(configureOptions => { });
             return builder;
         }
     }

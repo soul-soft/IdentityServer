@@ -17,6 +17,7 @@ namespace IdentityServer.EntityFramework.Entities
 
         public ICollection<ClaimEntity> Claims { get; set; } = new HashSet<ClaimEntity>();
 
+
         public Token Cast()
         {
             var claims = Claims
@@ -30,19 +31,17 @@ namespace IdentityServer.EntityFramework.Entities
                 claims: claims);
         }
 
+
         public static implicit operator TokenEntity(Token token)
         {
-            var claims = token.Claims
-                .Select(s => new ClaimEntity(s.Type, s.Value, s.ValueType, s.Issuer))
-                .ToArray();
             return new TokenEntity
             {
-                Claims = claims,
                 Code = token.Code,
                 CreationTime = token.CreationTime,
                 ExpirationTime = token.ExpirationTime,
                 Lifetime = token.Lifetime,
                 Type = token.Type,
+                Claims = token.Claims.Select(s => new ClaimEntity(s.Type, s.Value, s.ValueType, s.Issuer)).ToArray(),
             };
         }
     }

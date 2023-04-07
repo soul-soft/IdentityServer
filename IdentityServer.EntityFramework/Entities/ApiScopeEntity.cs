@@ -17,7 +17,7 @@ namespace IdentityServer.EntityFramework.Entities
                 DisplayName = DisplayName,
                 Description = Description,
                 ShowInDiscoveryDocument = ShowInDiscoveryDocument,
-                ClaimTypes = ClaimTypes.Select(s => s.Value).ToArray(),
+                ClaimTypes = ClaimTypes.Select(s => s.Data).ToArray(),
             };
         }
 

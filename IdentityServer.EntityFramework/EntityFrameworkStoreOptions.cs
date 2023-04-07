@@ -6,7 +6,7 @@ namespace IdentityServer.EntityFramework
     {
         public bool TableNameToLower { get; set; } = false;
         public string TableNamePrefix { get; set; } = string.Empty;
-        public int KeyMaxLength { get; set; } = 50;
+        public int KeyMaxLength { get; set; } = 100;
 
         internal string GetTableName(string name)
         {

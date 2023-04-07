@@ -11,7 +11,12 @@ namespace Microsoft.Extensions.DependencyInjection
                 IdentityServerAuthenticationDefaults.DisplayName,
                 configure => { });
         }
-
+       
+        public static AuthenticationBuilder AddIdentityServer(this AuthenticationBuilder builder, string scheme)
+        {
+            return builder.AddScheme<IdentityServerAuthenticationOptions, IdentityServerAuthenticationHandler>(scheme, IdentityServerAuthenticationDefaults.DisplayName, configure => { });
+        }
+      
         public static AuthenticationBuilder AddIdentityServer(this AuthenticationBuilder builder, string scheme, string displayName, Action<IdentityServerAuthenticationOptions> configure)
         {
             return builder.AddScheme<IdentityServerAuthenticationOptions, IdentityServerAuthenticationHandler>(scheme, displayName, configure);

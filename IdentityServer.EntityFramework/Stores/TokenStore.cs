@@ -1,4 +1,5 @@
-﻿using IdentityServer.Models;
+﻿using IdentityServer.EntityFramework.Entities;
+using IdentityServer.Models;
 using IdentityServer.Storage;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,7 +35,9 @@ namespace IdentityServer.EntityFramework.Stores
 
         public async Task SetExpirationAsync(Token token)
         {
-            _context.Tokens.Update(token);
+            var entity = _context.Tokens.Where(a => a.Code == token.Code).First();
+            entity.ExpirationTime = token.ExpirationTime;
+            _context.Update(entity);
             await _context.SaveChangesAsync();
         }
     }

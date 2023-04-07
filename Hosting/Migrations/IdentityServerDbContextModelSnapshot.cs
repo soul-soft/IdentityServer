@@ -22,8 +22,8 @@ namespace Hosting.Migrations
             modelBuilder.Entity("IdentityServer.EntityFramework.Entities.ApiResourceEntity", b =>
                 {
                     b.Property<string>("Name")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
@@ -48,8 +48,8 @@ namespace Hosting.Migrations
             modelBuilder.Entity("IdentityServer.EntityFramework.Entities.ApiScopeEntity", b =>
                 {
                     b.Property<string>("Name")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
@@ -74,8 +74,8 @@ namespace Hosting.Migrations
             modelBuilder.Entity("IdentityServer.EntityFramework.Entities.ClientEntity", b =>
                 {
                     b.Property<string>("ClientId")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int>("AccessTokenLifetime")
                         .HasColumnType("int");
@@ -118,8 +118,8 @@ namespace Hosting.Migrations
             modelBuilder.Entity("IdentityServer.EntityFramework.Entities.IdentityResourceEntity", b =>
                 {
                     b.Property<string>("Name")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
@@ -144,8 +144,8 @@ namespace Hosting.Migrations
             modelBuilder.Entity("IdentityServer.EntityFramework.Entities.TokenEntity", b =>
                 {
                     b.Property<string>("Code")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime(6)");
@@ -168,8 +168,8 @@ namespace Hosting.Migrations
             modelBuilder.Entity("IdentityServer.Models.AuthorizationCodeEntity", b =>
                 {
                     b.Property<string>("Code")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime(6)");
@@ -193,13 +193,13 @@ namespace Hosting.Migrations
                                 .ValueGeneratedOnAdd()
                                 .HasColumnType("int");
 
-                            b1.Property<string>("OwnerId")
-                                .IsRequired()
-                                .HasColumnType("varchar(50)");
-
-                            b1.Property<string>("Value")
+                            b1.Property<string>("Data")
                                 .IsRequired()
                                 .HasColumnType("longtext");
+
+                            b1.Property<string>("OwnerId")
+                                .IsRequired()
+                                .HasColumnType("varchar(100)");
 
                             b1.HasKey("Id");
 
@@ -217,13 +217,13 @@ namespace Hosting.Migrations
                                 .ValueGeneratedOnAdd()
                                 .HasColumnType("int");
 
-                            b1.Property<string>("OwnerId")
-                                .IsRequired()
-                                .HasColumnType("varchar(50)");
-
-                            b1.Property<string>("Value")
+                            b1.Property<string>("Data")
                                 .IsRequired()
                                 .HasColumnType("longtext");
+
+                            b1.Property<string>("OwnerId")
+                                .IsRequired()
+                                .HasColumnType("varchar(100)");
 
                             b1.HasKey("Id");
 
@@ -247,7 +247,7 @@ namespace Hosting.Migrations
 
                             b1.Property<string>("OwnerId")
                                 .IsRequired()
-                                .HasColumnType("varchar(50)");
+                                .HasColumnType("varchar(100)");
 
                             b1.Property<string>("Value")
                                 .IsRequired()
@@ -277,7 +277,7 @@ namespace Hosting.Migrations
 
                             b1.Property<string>("OwnerId")
                                 .IsRequired()
-                                .HasColumnType("varchar(50)");
+                                .HasColumnType("varchar(100)");
 
                             b1.Property<string>("Value")
                                 .IsRequired()
@@ -310,13 +310,13 @@ namespace Hosting.Migrations
                                 .ValueGeneratedOnAdd()
                                 .HasColumnType("int");
 
-                            b1.Property<string>("OwnerId")
-                                .IsRequired()
-                                .HasColumnType("varchar(50)");
-
-                            b1.Property<string>("Value")
+                            b1.Property<string>("Data")
                                 .IsRequired()
                                 .HasColumnType("longtext");
+
+                            b1.Property<string>("OwnerId")
+                                .IsRequired()
+                                .HasColumnType("varchar(100)");
 
                             b1.HasKey("Id");
 
@@ -339,13 +339,13 @@ namespace Hosting.Migrations
                                 .ValueGeneratedOnAdd()
                                 .HasColumnType("int");
 
-                            b1.Property<string>("OwnerId")
-                                .IsRequired()
-                                .HasColumnType("varchar(50)");
-
-                            b1.Property<string>("Value")
+                            b1.Property<string>("Data")
                                 .IsRequired()
                                 .HasColumnType("longtext");
+
+                            b1.Property<string>("OwnerId")
+                                .IsRequired()
+                                .HasColumnType("varchar(100)");
 
                             b1.HasKey("Id");
 
@@ -363,13 +363,13 @@ namespace Hosting.Migrations
                                 .ValueGeneratedOnAdd()
                                 .HasColumnType("int");
 
-                            b1.Property<string>("OwnerId")
-                                .IsRequired()
-                                .HasColumnType("varchar(50)");
-
-                            b1.Property<string>("Value")
+                            b1.Property<string>("Data")
                                 .IsRequired()
                                 .HasColumnType("longtext");
+
+                            b1.Property<string>("OwnerId")
+                                .IsRequired()
+                                .HasColumnType("varchar(100)");
 
                             b1.HasKey("Id");
 
@@ -387,13 +387,13 @@ namespace Hosting.Migrations
                                 .ValueGeneratedOnAdd()
                                 .HasColumnType("int");
 
-                            b1.Property<string>("OwnerId")
-                                .IsRequired()
-                                .HasColumnType("varchar(50)");
-
-                            b1.Property<string>("Value")
+                            b1.Property<string>("Data")
                                 .IsRequired()
                                 .HasColumnType("longtext");
+
+                            b1.Property<string>("OwnerId")
+                                .IsRequired()
+                                .HasColumnType("varchar(100)");
 
                             b1.HasKey("Id");
 
@@ -411,13 +411,13 @@ namespace Hosting.Migrations
                                 .ValueGeneratedOnAdd()
                                 .HasColumnType("int");
 
-                            b1.Property<string>("OwnerId")
-                                .IsRequired()
-                                .HasColumnType("varchar(50)");
-
-                            b1.Property<string>("Value")
+                            b1.Property<string>("Data")
                                 .IsRequired()
                                 .HasColumnType("longtext");
+
+                            b1.Property<string>("OwnerId")
+                                .IsRequired()
+                                .HasColumnType("varchar(100)");
 
                             b1.HasKey("Id");
 
@@ -441,7 +441,7 @@ namespace Hosting.Migrations
 
                             b1.Property<string>("OwnerId")
                                 .IsRequired()
-                                .HasColumnType("varchar(50)");
+                                .HasColumnType("varchar(100)");
 
                             b1.Property<string>("Value")
                                 .IsRequired()
@@ -471,7 +471,7 @@ namespace Hosting.Migrations
 
                             b1.Property<string>("OwnerId")
                                 .IsRequired()
-                                .HasColumnType("varchar(50)");
+                                .HasColumnType("varchar(100)");
 
                             b1.Property<string>("Value")
                                 .IsRequired()
@@ -508,13 +508,13 @@ namespace Hosting.Migrations
                                 .ValueGeneratedOnAdd()
                                 .HasColumnType("int");
 
-                            b1.Property<string>("OwnerId")
-                                .IsRequired()
-                                .HasColumnType("varchar(50)");
-
-                            b1.Property<string>("Value")
+                            b1.Property<string>("Data")
                                 .IsRequired()
                                 .HasColumnType("longtext");
+
+                            b1.Property<string>("OwnerId")
+                                .IsRequired()
+                                .HasColumnType("varchar(100)");
 
                             b1.HasKey("Id");
 
@@ -534,7 +534,7 @@ namespace Hosting.Migrations
                     b.OwnsMany("IdentityServer.EntityFramework.Entities.ClaimEntity", "Claims", b1 =>
                         {
                             b1.Property<string>("OwnerId")
-                                .HasColumnType("varchar(50)");
+                                .HasColumnType("varchar(100)");
 
                             b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
@@ -579,7 +579,7 @@ namespace Hosting.Migrations
 
                             b1.Property<string>("OwnerId")
                                 .IsRequired()
-                                .HasColumnType("varchar(50)");
+                                .HasColumnType("varchar(100)");
 
                             b1.Property<string>("Type")
                                 .IsRequired()

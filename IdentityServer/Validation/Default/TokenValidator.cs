@@ -43,18 +43,18 @@ namespace IdentityServer.Validation
             }
             else
             {
-                var refToken = await _tokens.FindAccessTokenAsync(token);
-                var result = await ValidateReferenceTokenAsync(refToken);
-                if (refToken != null)
+                var referenceToken = await _tokens.FindAccessTokenAsync(token);
+                var result = await ValidateReferenceTokenAsync(referenceToken);
+                if (referenceToken != null)
                 {
                     if (result.IsError)
                     {
-                        await _tokens.RevomeTokenAsync(refToken);
+                        await _tokens.RevomeTokenAsync(referenceToken);
                     }
                     else 
                     {
-                        refToken.ExpirationTime = _clock.UtcNow.UtcDateTime.AddSeconds(refToken.Lifetime);
-                        await _tokens.SetExpirationAsync(refToken);
+                        referenceToken.ExpirationTime = _clock.UtcNow.UtcDateTime.AddSeconds(referenceToken.Lifetime);
+                        await _tokens.SetExpirationAsync(referenceToken);
                     }
                 }
                 return result;

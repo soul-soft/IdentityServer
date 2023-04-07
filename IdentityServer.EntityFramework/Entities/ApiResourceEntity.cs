@@ -21,7 +21,7 @@ namespace IdentityServer.EntityFramework.Entities
                 DisplayName = DisplayName,
                 Description = Description,
                 ShowInDiscoveryDocument = ShowInDiscoveryDocument,
-                ClaimTypes = ClaimTypes.Select(s => s.Value).ToArray(),
+                ClaimTypes = ClaimTypes.Select(s => s.Data).ToArray(),
                 Properties = Properties.Select(s => new KeyValuePair<string, string>(s.Key, s.Value)).ToArray(),
                 Secrets = Secrets.Select(s => new Secret
                 {
