@@ -1,5 +1,6 @@
 ﻿using System.Text;
-namespace IdentityServer.EntityFramework.Configuration
+
+namespace IdentityServer.EntityFramework
 {
     public class EntityFrameworkStoreOptions
     {

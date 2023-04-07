@@ -47,7 +47,7 @@ namespace IdentityServer.Endpoints
             {
                 return BadRequest(ValidationErrors.InvalidRequest, "Token is missing");
             }
-            var tokenValidationResult = await _tokenValidator.ValidateAccessTokenAsync(token);
+            var tokenValidationResult = await _tokenValidator.ValidateAsync(token);
             #endregion
 
             #region Validate Subject

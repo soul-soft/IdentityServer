@@ -5,6 +5,7 @@ namespace IdentityServer.Storage
     public interface ITokenStore
     {
         Task SaveTokenAsync(Token token);
+        Task SetExpirationAsync(Token token);
         Task RevomeTokenAsync(Token token);
         Task<Token?> FindTokenAsync(string code);
     }

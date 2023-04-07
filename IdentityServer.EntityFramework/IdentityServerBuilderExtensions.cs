@@ -1,4 +1,4 @@
-﻿using IdentityServer.EntityFramework.Configuration;
+﻿using IdentityServer.EntityFramework;
 using IdentityServer.EntityFramework.Stores;
 using IdentityServer.Hosting.DependencyInjection;
 

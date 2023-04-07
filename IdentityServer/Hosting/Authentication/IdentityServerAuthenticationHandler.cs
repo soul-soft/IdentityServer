@@ -31,7 +31,7 @@ namespace IdentityServer.Hosting
             {
                 return AuthenticateResult.NoResult();
             }
-            var tokenValidationResult = await _tokenValidator.ValidateAccessTokenAsync(token);
+            var tokenValidationResult = await _tokenValidator.ValidateAsync(token);
             if (tokenValidationResult.IsError)
             {
                 return AuthenticateResult.Fail(new UnauthorizedException(tokenValidationResult.Error, tokenValidationResult.ErrorDescription));

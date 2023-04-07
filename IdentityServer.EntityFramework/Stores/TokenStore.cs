@@ -31,5 +31,11 @@ namespace IdentityServer.EntityFramework.Stores
             _context.Tokens.Add(token);
             await _context.SaveChangesAsync();
         }
+
+        public async Task SetExpirationAsync(Token token)
+        {
+            _context.Tokens.Update(token);
+            await _context.SaveChangesAsync();
+        }
     }
 }

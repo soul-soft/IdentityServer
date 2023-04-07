@@ -46,9 +46,9 @@ builder.Services.AddIdentityServer(configureOptions =>
     .AddResourceOwnerCredentialRequestValidator<ResourceOwnerCredentialRequestValidator>()
     .AddProfileService<ProfileService>()
     .AddInMemoryClients(Config.Clients)
-    .AddCacheStore()
-    .AddTokenStore()
-    .AddAuthorizationCodeStore()
+    //.AddCacheStore()
+    //.AddTokenStore()
+    //.AddAuthorizationCodeStore()
     .AddInMemoryResources(Config.Resources)
     .AddInMemoryDeveloperSigningCredentials()
     .AddEntityFrameworkStore(configureOptions =>

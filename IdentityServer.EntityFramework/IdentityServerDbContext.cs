@@ -1,5 +1,4 @@
-﻿using IdentityServer.EntityFramework.Configuration;
-using IdentityServer.EntityFramework.Entities;
+﻿using IdentityServer.EntityFramework.Entities;
 using IdentityServer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;

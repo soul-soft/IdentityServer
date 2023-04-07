@@ -32,8 +32,15 @@
             }
             return accessToken;
         }
-
+     
         public async Task SaveTokenAsync(Token token)
+        {
+            var key = BuildKey(token.Code);
+            var span = TimeSpan.FromSeconds(token.Lifetime);
+            await _cache.SaveAsync(key, token, span);
+        }
+
+        public async Task SetExpirationAsync(Token token)
         {
             var key = BuildKey(token.Code);
             var span = TimeSpan.FromSeconds(token.Lifetime);

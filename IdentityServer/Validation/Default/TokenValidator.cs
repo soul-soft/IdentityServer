@@ -31,7 +31,7 @@ namespace IdentityServer.Validation
             _credentials = credentials;
         }
 
-        public async Task<TokenValidationResult> ValidateAccessTokenAsync(string token)
+        public async Task<TokenValidationResult> ValidateAsync(string token)
         {
             if (token.Length > _options.InputLengthRestrictions.AccessToken)
             {
@@ -54,7 +54,7 @@ namespace IdentityServer.Validation
                     else 
                     {
                         refToken.ExpirationTime = _clock.UtcNow.UtcDateTime.AddSeconds(refToken.Lifetime);
-                        await _tokens.SaveTokenAsync(refToken);
+                        await _tokens.SetExpirationAsync(refToken);
                     }
                 }
                 return result;
