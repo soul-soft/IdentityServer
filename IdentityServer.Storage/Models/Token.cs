@@ -21,13 +21,13 @@ namespace IdentityServer.Models
 
         }
 
-        public Token(string code, string type, int lifetime, ICollection<Claim> claims, DateTime creationTime)
+        public Token(string code, string type, int lifetime, ICollection<Claim> claims,DateTime expirationTime, DateTime creationTime)
         {
             Code = code;
             Type = type;
             Lifetime = lifetime;
             Claims = claims;
-            ExpirationTime = creationTime.AddSeconds(lifetime);
+            ExpirationTime = expirationTime;
             CreationTime = creationTime;
         }
 

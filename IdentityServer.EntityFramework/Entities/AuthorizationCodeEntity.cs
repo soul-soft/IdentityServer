@@ -33,6 +33,7 @@ namespace IdentityServer.Models
             return new AuthorizationCode(
                 code: Code,
                 lifetime: Lifetime,
+                expirationTime: ExpirationTime,
                 creationTime: CreationTime,
                 claims: claims);
         }

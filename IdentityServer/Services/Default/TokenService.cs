@@ -28,11 +28,13 @@ namespace IdentityServer.Services
             var id = await _randomGenerator.GenerateAsync();
             var creationTime = _clock.UtcNow.UtcDateTime;
             var lifetime = client.AccessTokenLifetime;
+            var expirationTime = creationTime.AddSeconds(lifetime);
             var token = new Token(
                 code: id,
                 type: TokenTypes.AccessToken,
                 lifetime: lifetime,
                 claims: subject.Claims.ToArray(),
+                expirationTime: expirationTime,
                 creationTime: creationTime);
             if (client.AccessTokenType == AccessTokenType.Jwt)
             {
@@ -51,11 +53,13 @@ namespace IdentityServer.Services
             var id = await _randomGenerator.GenerateAsync();
             var lifetime = client.RefreshTokenLifetime;
             var creationTime = _clock.UtcNow.UtcDateTime;
+            var expirationTime = creationTime.AddSeconds(lifetime);
             var token = new Token(
                  code: id,
                  type: TokenTypes.RefreshToken,
                  lifetime: lifetime,
                  claims: subject.Claims.ToArray(),
+                 expirationTime: expirationTime,
                  creationTime: creationTime);
             await _tokenStore.SaveTokenAsync(token);
             return id;

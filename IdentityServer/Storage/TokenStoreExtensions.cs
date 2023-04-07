@@ -7,11 +7,11 @@
             var result = await store.FindTokenAsync(token);
             if (result == null)
             {
-                return default;
+                return null;
             }
             if (result.Type != TokenTypes.AccessToken)
             {
-                return default;
+                return null;
             }
             return result;
         }
@@ -21,11 +21,11 @@
             var result = await store.FindTokenAsync(token);
             if (result == null)
             {
-                return default;
+                return null;
             }
             if (result.Type != TokenTypes.RefreshToken)
             {
-                return default;
+                return null;
             }
             return result;
         }

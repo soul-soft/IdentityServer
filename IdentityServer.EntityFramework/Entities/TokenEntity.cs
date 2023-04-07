@@ -28,6 +28,7 @@ namespace IdentityServer.EntityFramework.Entities
                 type: Type,
                 lifetime: Lifetime,
                 creationTime: CreationTime,
+                expirationTime: ExpirationTime,
                 claims: claims);
         }
 

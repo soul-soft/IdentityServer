@@ -46,6 +46,9 @@ namespace IdentityServer.EntityFramework.Stores
                 .Where(a => a.Enabled)
                 .Where(a => a.AllowedScopes.Any(a => apiScopeNames.Contains(a.Data)))
                 .Include(a => a.ClaimTypes)
+                .Include(a => a.Properties)
+                .Include(a => a.AllowedScopes)
+                .Include(a => a.Secrets)
                 .ToListAsync())
                 .Select(s => s.Cast());
 

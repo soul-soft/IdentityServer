@@ -23,13 +23,14 @@ namespace IdentityServer.EntityFramework.Stores
 
         public async Task RevomeAuthorizationCodeAsync(AuthorizationCode code)
         {
-            _context.AuthorizationCodes.Remove(code);
+            var entity = _context.AuthorizationCodes.Where(a => a.Code == code.Code).First();
+            _context.AuthorizationCodes.Remove(entity);
             await _context.SaveChangesAsync();
         }
 
         public async Task SaveAuthorizationCodeAsync(AuthorizationCode code)
         {
-            _context.Entry(code).State = EntityState.Modified;
+            _context.AuthorizationCodes.Add(code);
             await _context.SaveChangesAsync();
         }
     }

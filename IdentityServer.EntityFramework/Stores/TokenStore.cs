@@ -23,7 +23,8 @@ namespace IdentityServer.EntityFramework.Stores
 
         public async Task RevomeTokenAsync(Token token)
         {
-            _context.Tokens.Remove(token);
+            var entity = _context.Tokens.Where(a => a.Code == token.Code).First();
+            _context.Tokens.Remove(entity);
             await _context.SaveChangesAsync();
         }
 
