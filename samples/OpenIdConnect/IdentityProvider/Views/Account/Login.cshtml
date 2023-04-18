@@ -5,17 +5,10 @@
 </from>
 
 <script type="text/javascript">
-    function toUrl(obj){
-        var sb = '';
-        for(var key in obj){
-            sb += key + '=' + obj[key] + '&';
-        }
-        return sb;
-    }
     document.getElementById('login').addEventListener('click', function () {
-     
         var username = document.getElementById('username').value;
         var password = document.getElementById('password').value;
+        
         var data = new FormData();
         data.append("client_id", "idp");
         data.append("grant_type", "password");
