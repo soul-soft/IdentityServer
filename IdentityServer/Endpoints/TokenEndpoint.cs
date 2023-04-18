@@ -8,7 +8,6 @@ namespace IdentityServer.Endpoints
 {
     public class TokenEndpoint : EndpointBase
     {
-        private readonly IClaimService _claimService;
         private readonly IdentityServerOptions _options;
         private readonly IProfileService _profileService;
         private readonly ITokenResponseGenerator _generator;
@@ -16,7 +15,6 @@ namespace IdentityServer.Endpoints
         private readonly IClientSecretValidator _clientSecretValidator;
 
         public TokenEndpoint(
-            IClaimService claimService,
             IdentityServerOptions options,
             IProfileService profileService,
             ITokenResponseGenerator generator,
@@ -25,7 +23,6 @@ namespace IdentityServer.Endpoints
         {
             _options = options;
             _generator = generator;
-            _claimService = claimService;
             _profileService = profileService;
             _clientSecretValidator = clientSecretValidator;
             _resourceValidator = resourceValidator;

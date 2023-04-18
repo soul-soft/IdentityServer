@@ -10,21 +10,18 @@ namespace IdentityServer.Endpoints
     internal class AuthorizeEndpoint : EndpointBase
     {
         private readonly IClientStore _clientStore;
-        private readonly IClaimService _claimService;
         private readonly IdentityServerOptions _options;
         private readonly IResourceValidator _resourceValidator;
         private readonly IAuthorizeResponseGenerator _generator;
 
         public AuthorizeEndpoint(
             IClientStore clientStore,
-            IClaimService claimService,
             IdentityServerOptions options,
             IResourceValidator resourceValidator,
             IAuthorizeResponseGenerator generator)
         {
             _options = options;
             _clientStore = clientStore;
-            _claimService = claimService;
             _resourceValidator = resourceValidator;
             _generator = generator;
         }
@@ -128,7 +125,7 @@ namespace IdentityServer.Endpoints
             {
                 var subject = result.Principal;
                 var request = new AuthorizeGeneratorRequest(
-                    none: none,
+                    none: none!,
                     scope: scope,
                     state: state,
                     clientId: clientId,

@@ -5,7 +5,7 @@ namespace IdentityServer.Endpoints
 {
     public class AuthorizeGeneratorRequest
     {
-        public string? None { get; set; }
+        public string None { get; set; }
         public string Scope { get; set; }
         public string State { get; set; }
         public string? ClientId { get; set; }
@@ -16,7 +16,7 @@ namespace IdentityServer.Endpoints
         public Client Client { get; }
         public Resources Resources { get; }
 
-        public AuthorizeGeneratorRequest(string? none, string scope, string state,string clientId, string redirectUri, string responseType, string? responseMode, Client client, Resources resources, ClaimsPrincipal subject)
+        public AuthorizeGeneratorRequest(string none, string scope, string state,string clientId, string redirectUri, string responseType, string? responseMode, Client client, Resources resources, ClaimsPrincipal subject)
         {
             None = none;
             Scope = scope;

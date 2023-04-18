@@ -28,7 +28,7 @@ namespace Hosting.Configuration
                 AllowedRedirectUris = new string[]
                 {
                     "http://www.baidu.com",
-                    "https://localhost:49962/oidc-sign",
+                    "https://localhost:57738/signin-oidc",
                     "https://localhost:7098/signin-oidc"
                 },
                 RequireSecret = false
