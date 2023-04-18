@@ -64,5 +64,21 @@ namespace IdentityServer.Services
             await _tokenStore.SaveTokenAsync(token);
             return id;
         }
+
+        public async Task<string> CreateIdentityTokenAsync(Client client, ClaimsPrincipal subject, AuthorizationCode authorizationCode)
+        {
+            var id = await _randomGenerator.GenerateAsync();
+            var creationTime = _clock.UtcNow.UtcDateTime;
+            var lifetime = client.AccessTokenLifetime;
+            var expirationTime = creationTime.AddSeconds(lifetime);
+            var token = new Token(
+                code: id,
+                type: TokenTypes.IdentityToken,
+                lifetime: lifetime,
+                claims: subject.Claims.ToArray(),
+                expirationTime: expirationTime,
+                creationTime: creationTime);
+            return await _jwtTokens.CreateJwtTokenAsync(client, token);
+        }
     }
 }

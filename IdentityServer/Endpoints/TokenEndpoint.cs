@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.Security.Claims;
@@ -76,18 +77,26 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Validate Grant
-            var grantSubject = await RunGrantValidationAsync(context, new GrantValidationRequest(client, grantType, resources, body, _options));
+            var grantResult = await RunGrantValidationAsync(context, new GrantValidationRequest(client, grantType, resources, body, _options));
             #endregion
 
             #region Response Generator
-            var subject = await _claimService.GetAccessTokenClaimsAsync(new AccessTokenClaimsRequest(grantType, grantSubject, client, resources));
-            var response = await _generator.ProcessAsync(new TokenGeneratorRequest(grantType, subject, client, resources));
+            if (grantResult.Subject.GetSubjectId() != null)
+            {
+                //验证是否启用
+                var isActive = await _profileService.IsActiveAsync(new IsActiveRequest(ProfileIsActiveCallers.TokenEndpoint, client, grantResult.Subject));
+                if (!isActive)
+                {
+                    return BadRequest(ValidationErrors.InvalidGrant, string.Format("User has been disabled:{0}", grantResult.Subject.GetSubjectId()));
+                }
+            }
+            var response = await _generator.CreateTokenAsync(new TokenGeneratorRequest(grantType, grantResult.Subject, client, resources, grantResult.Code));
             return Json(response.Serialize());
             #endregion
         }
 
         #region Validate Grant
-        private async Task<ClaimsPrincipal> RunGrantValidationAsync(HttpContext context, GrantValidationRequest request)
+        private async Task<GrantValidationResult> RunGrantValidationAsync(HttpContext context, GrantValidationRequest request)
         {
             //验证刷新令牌
             GrantValidationResult result;
@@ -115,14 +124,7 @@ namespace IdentityServer.Endpoints
             {
                 result = await ValidateExtensionGrantRequestAsync(context, request);
             }
-            //验证是否启用
-            var subject = new ClaimsPrincipal(new ClaimsIdentity(result.Claims, request.GrantType));
-            var isActive = await _profileService.IsActiveAsync(new IsActiveRequest(ProfileIsActiveCallers.TokenEndpoint, request.Client, subject));
-            if (!isActive && subject.GetSubjectId() != null)
-            {
-                throw new ValidationException(ValidationErrors.InvalidGrant, string.Format("User has been disabled:{0}", subject.GetSubjectId()));
-            }
-            return subject;
+            return result;
         }
         #endregion
 

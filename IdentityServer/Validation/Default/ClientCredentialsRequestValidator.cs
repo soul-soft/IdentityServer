@@ -1,4 +1,6 @@
-﻿namespace IdentityServer.Validation
+﻿using System.Security.Claims;
+
+namespace IdentityServer.Validation
 {
     internal class ClientCredentialsRequestValidator : IClientCredentialsRequestValidator
     {
@@ -9,7 +11,8 @@
             {
                 throw new ValidationException(ValidationErrors.InvalidGrant, "Client cannot request OpenID scopes in client credentials flow");
             }
-            return Task.FromResult(new GrantValidationResult());
+            var subject = new ClaimsPrincipal(new ClaimsIdentity(GrantTypes.ClientCredentials));
+            return Task.FromResult(new GrantValidationResult(subject));
         }
     }
 }

@@ -60,6 +60,7 @@ namespace Microsoft.Extensions.DependencyInjection
         #region ITokenStore
         public static IIdentityServerBuilder AddTokenStore(this IIdentityServerBuilder builder)
         {
+            builder.AddCacheStore();
             builder.Services.TryAddTransient<ITokenStore, TokenStore>();
             return builder;
         }
@@ -80,6 +81,7 @@ namespace Microsoft.Extensions.DependencyInjection
         #region IAuthorizeCodeStore
         public static IIdentityServerBuilder AddAuthorizationCodeStore(this IIdentityServerBuilder builder)
         {
+            builder.AddCacheStore();
             builder.Services.TryAddTransient<IAuthorizationCodeStore, AuthorizationCodeStore>();
             return builder;
         }

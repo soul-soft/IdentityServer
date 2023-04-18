@@ -25,7 +25,25 @@ namespace IdentityServer.Services
             _profileService = profileService;
         }
 
-        public async Task<ClaimsPrincipal> GetAccessTokenClaimsAsync(AccessTokenClaimsRequest request)
+        public async Task<ClaimsPrincipal> GetProfileClaimsAsync(ProfileClaimsRequest request)
+        {
+            var claims = new List<Claim>();
+            var claimTypes = request.Resources.AllowedClaimTypes;
+            var profileDataClaims = await _profileService.GetProfileClaimsAsync(new ProfileClaimsRequest(request.Subject, request.Client, request.Resources));
+            profileDataClaims.Where(a => claimTypes.Contains(a.Type)).ToList();
+            return new ClaimsPrincipal(new ClaimsIdentity(claims));
+        }
+                     
+        public async Task<ClaimsPrincipal> GetTokenClaimsAsync(TokenGeneratorRequest request)
+        {
+            if (request.Code==null)
+            {
+                return await GetAccessTokenClaimsAsync(request);
+            }
+            return await GetIdentityTokenClaimsAsync(request);
+        }
+        
+        private async Task<ClaimsPrincipal> GetAccessTokenClaimsAsync(TokenGeneratorRequest request)
         {
             #region Jwt Claims
             //request jwt
@@ -68,27 +86,55 @@ namespace IdentityServer.Services
             #endregion
 
             #region Subject Claims
-            claims.AddRange(FilterRequestClaims(request.Subject.Claims, request.Resources.AllowedClaimTypes));
+            claims.AddRange(GetFilteredRequestClaims(request.Subject.Claims, request.Resources.AllowedClaimTypes));
             #endregion
 
             #region Profile Cliams
             var profileDataClaims = await _profileService.GetAccessTokenClaimsAsync(new ProfileClaimsRequest(request.Subject, request.Client, request.Resources));
-            claims.AddRange(FilterRequestClaims(profileDataClaims, request.Resources.AllowedClaimTypes));
+            claims.AddRange(GetFilteredRequestClaims(profileDataClaims, request.Resources.AllowedClaimTypes));
+            #endregion
+
+            return new ClaimsPrincipal(new ClaimsIdentity(claims, request.GrantType));
+        }
+       
+        private async Task<ClaimsPrincipal> GetIdentityTokenClaimsAsync(TokenGeneratorRequest request)
+        {
+            AuthorizationCode code = request.Code!;
+            #region Jwt Claims
+            //request jwt
+            var jwtId = await _randomGenerator.GenerateAsync();
+            var issuer = _serverUrl.GetServerIssuer();
+            var issuedAt = _systemClock.UtcNow.ToUnixTimeSeconds();
+            var expiration = issuedAt + request.Client.AccessTokenLifetime;
+            var claims = new List<Claim>
+            {
+                new Claim(JwtClaimTypes.JwtId, jwtId),
+                new Claim(JwtClaimTypes.Issuer, issuer),
+                new Claim(JwtClaimTypes.Nonce, code.None),
+                new Claim(JwtClaimTypes.ClientId, request.Client.ClientId),
+                new Claim(JwtClaimTypes.IssuedAt, issuedAt.ToString(), ClaimValueTypes.Integer64),
+                new Claim(JwtClaimTypes.NotBefore, issuedAt.ToString(), ClaimValueTypes.Integer64),
+                new Claim(JwtClaimTypes.Expiration, expiration.ToString(), ClaimValueTypes.Integer64)
+            };
+            if (request.Subject.Claims.Any(a => a.Type == JwtClaimTypes.Subject))
+            {
+                claims.AddRange(GetStandardSubjectClaims(request.GrantType, request.Subject.Claims, request.Resources.AllowedClaimTypes));
+            }
+            #endregion
+
+            #region Subject Claims
+            claims.AddRange(GetFilteredRequestClaims(request.Subject.Claims, request.Resources.AllowedClaimTypes));
+            #endregion
+
+            #region Profile Cliams
+            var profileDataClaims = await _profileService.GetAccessTokenClaimsAsync(new ProfileClaimsRequest(request.Subject, request.Client, request.Resources));
+            claims.AddRange(GetFilteredRequestClaims(profileDataClaims, request.Resources.AllowedClaimTypes));
             #endregion
 
             return new ClaimsPrincipal(new ClaimsIdentity(claims, request.GrantType));
         }
 
-        public async Task<ClaimsPrincipal> GetProfileClaimsAsync(ProfileClaimsRequest request)
-        {
-            var claims = new List<Claim>();
-            var claimTypes = request.Resources.AllowedClaimTypes;
-            var profileDataClaims = await _profileService.GetProfileClaimsAsync(new ProfileClaimsRequest(request.Subject, request.Client, request.Resources));
-            profileDataClaims.Where(a => claimTypes.Contains(a.Type)).ToList();
-            return new ClaimsPrincipal(new ClaimsIdentity(claims));
-        }
-
-        private IEnumerable<Claim> FilterRequestClaims(IEnumerable<Claim> claims, IEnumerable<string> claimTypes)
+        private IEnumerable<Claim> GetFilteredRequestClaims(IEnumerable<Claim> claims, IEnumerable<string> claimTypes)
         {
             return claims.Where(a => claimTypes.Contains(a.Type))
                 .Where(a => !ClaimTypeFilters.ClaimsServiceFilterClaimTypes.Contains(a.Type));

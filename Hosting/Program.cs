@@ -24,15 +24,15 @@ builder.Services.AddAuthorization()
     {
         configureOptions.AddPolicy("default", p => p.RequireAuthenticatedUser());
     });
-builder.Services.AddStackExchangeRedisCache(c =>
-{
-    c.Configuration = "124.71.130.192,password=Juzhen88!";
-});
-builder.Services.AddDbContext<IdentityServerDbContext>(configureOptions => 
-{
-    var connectStr = "server=127.0.0.1;user id=root;password=1024;database=identity_server;connection timeout=180;";
-    configureOptions.UseMySql(connectStr, ServerVersion.AutoDetect(connectStr), o => o.MigrationsAssembly("Hosting"));
-});
+//builder.Services.AddStackExchangeRedisCache(c =>
+//{
+//    c.Configuration = "124.71.130.192,password=Juzhen88!";
+//});
+//builder.Services.AddDbContext<IdentityServerDbContext>(configureOptions => 
+//{
+//    var connectStr = "server=127.0.0.1;user id=root;password=1024;database=identity_server;connection timeout=180;";
+//    configureOptions.UseMySql(connectStr, ServerVersion.AutoDetect(connectStr), o => o.MigrationsAssembly("Hosting"));
+//});
 builder.Services.AddIdentityServer(configureOptions =>
     {
         //o.Endpoints.PathPrefix = "/oauth2";
@@ -41,10 +41,10 @@ builder.Services.AddIdentityServer(configureOptions =>
     .AddExtensionGrantValidator<MyExtensionGrantValidator>()
     .AddResourceOwnerCredentialRequestValidator<ResourceOwnerCredentialRequestValidator>()
     .AddProfileService<ProfileService>()
-    //.AddTokenStore()
-    //.AddAuthorizationCodeStore()
-    //.AddInMemoryClients(Config.Clients)
-    //.AddInMemoryResources(Config.Resources)
+    .AddTokenStore()
+    .AddAuthorizationCodeStore()
+    .AddInMemoryClients(Config.Clients)
+    .AddInMemoryResources(Config.Resources)
     .AddInMemoryDeveloperSigningCredentials()
     .AddEntityFrameworkStores(configureOptions =>
     {
@@ -59,7 +59,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.PersistIdentityServer();
+//app.PersistIdentityServer();
 app.UseStaticFiles();
 app.UseDefaultFiles();
 app.UseHttpsRedirection();

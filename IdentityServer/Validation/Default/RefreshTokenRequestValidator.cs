@@ -1,4 +1,6 @@
-﻿namespace IdentityServer.Validation
+﻿using System.Security.Claims;
+
+namespace IdentityServer.Validation
 {
     internal class RefreshTokenRequestValidator : IRefreshTokenRequestValidator
     {
@@ -21,7 +23,8 @@
                 throw new ValidationException(ValidationErrors.InvalidGrant, "Invalid refresh token");
             }
             await _tokenStore.RevomeTokenAsync(token);
-            return new GrantValidationResult(token.Claims);
+            var subject = new ClaimsPrincipal(new ClaimsIdentity(token.Claims, GrantTypes.RefreshToken));
+            return new GrantValidationResult(subject);
         }
     }
 }

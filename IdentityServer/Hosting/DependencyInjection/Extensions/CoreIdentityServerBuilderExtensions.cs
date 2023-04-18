@@ -36,6 +36,8 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             builder.Services.AddOptions();
             builder.Services.TryAddSingleton<ISystemClock, SystemClock>();
+            builder.Services.AddMemoryCache();
+            builder.Services.AddDistributedMemoryCache();
             builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             builder.Services.AddSingleton(
                 resolver => resolver.GetRequiredService<IOptions<IdentityServerOptions>>().Value);

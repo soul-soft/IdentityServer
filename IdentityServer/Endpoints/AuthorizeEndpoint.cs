@@ -106,7 +106,7 @@ namespace IdentityServer.Endpoints
             var none = parameters[OpenIdConnectParameterNames.Nonce];
             #endregion
 
-            #region None
+            #region ResponseMode
             var responseMode = parameters[OpenIdConnectParameterNames.ResponseMode];
             #endregion
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
 
 namespace IdentityServer.Validation
 {
@@ -28,7 +29,8 @@ namespace IdentityServer.Validation
                 throw new ValidationException(ValidationErrors.InvalidGrant, "Code expired");
             }
             await _authorizeCodeStore.RevomeAuthorizationCodeAsync(authorizeCode);
-            return new GrantValidationResult(authorizeCode.Claims);
+            var subject = new ClaimsPrincipal(new ClaimsIdentity(authorizeCode.Claims, GrantTypes.AuthorizationCode));
+            return new GrantValidationResult(subject, authorizeCode);
         }
     }
 }
