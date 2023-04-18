@@ -1,0 +1,36 @@
+﻿<from>
+    <input id="username" name="username" value="" type="text" /><br />
+    <input id="password" name="password" value="" type="text" /><br />
+    <input id="login" type="submit" value="login" />
+</from>
+
+<script type="text/javascript">
+    function toUrl(obj){
+        var sb = '';
+        for(var key in obj){
+            sb += key + '=' + obj[key] + '&';
+        }
+        return sb;
+    }
+    document.getElementById('login').addEventListener('click', function () {
+     
+        var username = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+        var data = new FormData();
+        data.append("client_id", "idp");
+        data.append("grant_type", "password");
+        data.append("username", username);
+        data.append("password", password);
+      
+        fetch('/connect/token', {
+            method: 'post',
+            body: data
+        }).then(res => {
+            res.json().then(json=>{
+                console.log(json);
+            });
+        });
+        //截取ReturnUrl
+        //如果成功跳转到ReturnUrl
+    });
+</script>

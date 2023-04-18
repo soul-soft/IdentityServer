@@ -24,7 +24,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IServiceCollection AddIdentityServerAuthentication(this IServiceCollection services)
         {
-            services.AddAuthentication(IdentityServerAuthenticationDefaults.Scheme)
+            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddIdentityServer();
             return services;
         }
@@ -39,9 +39,10 @@ namespace Microsoft.Extensions.DependencyInjection
             var builder = services.AddIdentityServerBuilder();
 
             builder
-                .AddRequiredPlatformServices()
-                .AddPluggableValidators()
                 .AddPluggableServices()
+                .AddPluggableValidators()
+                .AddPluggableStores()
+                .AddRequiredPlatformServices()
                 .AddRequiredPlatformEndpoints()
                 .AddPluggableResponseGenerators();
 

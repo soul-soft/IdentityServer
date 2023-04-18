@@ -35,9 +35,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IIdentityServerBuilder AddRequiredPlatformServices(this IIdentityServerBuilder builder)
         {
             builder.Services.AddOptions();
-            builder.Services.TryAddSingleton<ISystemClock, SystemClock>();
-            builder.Services.AddMemoryCache();
-            builder.Services.AddDistributedMemoryCache();
+            builder.Services.TryAddSingleton<ISystemClock, SystemClock>();            
             builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             builder.Services.AddSingleton(
                 resolver => resolver.GetRequiredService<IOptions<IdentityServerOptions>>().Value);
@@ -61,6 +59,16 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<ITokenService, TokenService>();
             builder.Services.TryAddTransient<ISecurityTokenService, SecurityTokenService>();
             builder.Services.TryAddTransient<ISigningCredentialsService, SigningCredentialsService>();
+            return builder;
+        }
+        #endregion
+
+        #region PluggableStores
+        public static IIdentityServerBuilder AddPluggableStores(this IIdentityServerBuilder builder)
+        {
+            builder.AddTokenStore();
+            builder.AddAuthorizationCodeStore();
+            builder.Services.AddDistributedMemoryCache();
             return builder;
         }
         #endregion
