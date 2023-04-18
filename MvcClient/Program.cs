@@ -17,10 +17,10 @@ builder.Services.AddAuthentication(configureOptions =>
     configureOptions.ClientSecret = "secret";
     configureOptions.ResponseType = "code";
     configureOptions.Scope.Add("api");
-    configureOptions.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters() 
-    {
-        ValidateAudience=false
-    };
+    //configureOptions.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters() 
+    //{
+    //    ValidateAudience=false
+    //};
     configureOptions.SaveTokens = true;
 });
 var app = builder.Build();

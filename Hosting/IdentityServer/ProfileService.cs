@@ -11,6 +11,12 @@ namespace Hosting.Configuration
             return Task.FromResult<IEnumerable<Claim>>(new Claim[0]);
         }
 
+        public Task<IEnumerable<Claim>> GetIdentityTokenClaimsAsync(ProfileClaimsRequest request)
+        {
+            IEnumerable<Claim> result = Array.Empty<Claim>();
+            return Task.FromResult(result);
+        }
+
         public Task<IEnumerable<Claim>> GetProfileClaimsAsync(ProfileClaimsRequest context)
         {
             var profiles = new List<Claim>();

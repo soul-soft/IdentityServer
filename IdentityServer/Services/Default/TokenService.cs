@@ -69,7 +69,7 @@ namespace IdentityServer.Services
         {
             var id = await _randomGenerator.GenerateAsync();
             var creationTime = _clock.UtcNow.UtcDateTime;
-            var lifetime = client.AccessTokenLifetime;
+            var lifetime = client.IdentityTokenLifetime;
             var expirationTime = creationTime.AddSeconds(lifetime);
             var token = new Token(
                 code: id,

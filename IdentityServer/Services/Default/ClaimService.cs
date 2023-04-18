@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace IdentityServer.Services
 {
@@ -33,17 +34,8 @@ namespace IdentityServer.Services
             profileDataClaims.Where(a => claimTypes.Contains(a.Type)).ToList();
             return new ClaimsPrincipal(new ClaimsIdentity(claims));
         }
-                     
-        public async Task<ClaimsPrincipal> GetTokenClaimsAsync(TokenGeneratorRequest request)
-        {
-            if (request.Code==null)
-            {
-                return await GetAccessTokenClaimsAsync(request);
-            }
-            return await GetIdentityTokenClaimsAsync(request);
-        }
-        
-        private async Task<ClaimsPrincipal> GetAccessTokenClaimsAsync(TokenGeneratorRequest request)
+
+        public async Task<ClaimsPrincipal> GetAccessTokenClaimsAsync(TokenGeneratorRequest request)
         {
             #region Jwt Claims
             //request jwt
@@ -78,7 +70,13 @@ namespace IdentityServer.Services
                     .Select(scope => new Claim(JwtClaimTypes.Scope, scope));
                 claims.AddRange(scopes);
             }
+            if (request.Client.OfflineAccess)
+            {
+                claims.Add(new Claim(JwtClaimTypes.Scope, StandardScopes.OfflineAccess));
+            }
+            #endregion
 
+            #region Standard Claims
             if (request.Subject.Claims.Any(a => a.Type == JwtClaimTypes.Subject))
             {
                 claims.AddRange(GetStandardSubjectClaims(request.GrantType, request.Subject.Claims, request.Resources.AllowedClaimTypes));
@@ -96,10 +94,9 @@ namespace IdentityServer.Services
 
             return new ClaimsPrincipal(new ClaimsIdentity(claims, request.GrantType));
         }
-       
-        private async Task<ClaimsPrincipal> GetIdentityTokenClaimsAsync(TokenGeneratorRequest request)
+
+        public async Task<ClaimsPrincipal> GetIdentityTokenClaimsAsync(TokenGeneratorRequest request)
         {
-            AuthorizationCode code = request.Code!;
             #region Jwt Claims
             //request jwt
             var jwtId = await _randomGenerator.GenerateAsync();
@@ -108,14 +105,17 @@ namespace IdentityServer.Services
             var expiration = issuedAt + request.Client.AccessTokenLifetime;
             var claims = new List<Claim>
             {
-                new Claim(JwtClaimTypes.JwtId, jwtId),
                 new Claim(JwtClaimTypes.Issuer, issuer),
-                new Claim(JwtClaimTypes.Nonce, code.None),
+                new Claim(JwtClaimTypes.Nonce, request!.Code!.None!),
+                new Claim(JwtClaimTypes.Audience, request.Client.ClientId),
                 new Claim(JwtClaimTypes.ClientId, request.Client.ClientId),
                 new Claim(JwtClaimTypes.IssuedAt, issuedAt.ToString(), ClaimValueTypes.Integer64),
-                new Claim(JwtClaimTypes.NotBefore, issuedAt.ToString(), ClaimValueTypes.Integer64),
                 new Claim(JwtClaimTypes.Expiration, expiration.ToString(), ClaimValueTypes.Integer64)
             };
+
+            #endregion
+
+            #region Standard Claims
             if (request.Subject.Claims.Any(a => a.Type == JwtClaimTypes.Subject))
             {
                 claims.AddRange(GetStandardSubjectClaims(request.GrantType, request.Subject.Claims, request.Resources.AllowedClaimTypes));
@@ -127,7 +127,7 @@ namespace IdentityServer.Services
             #endregion
 
             #region Profile Cliams
-            var profileDataClaims = await _profileService.GetAccessTokenClaimsAsync(new ProfileClaimsRequest(request.Subject, request.Client, request.Resources));
+            var profileDataClaims = await _profileService.GetIdentityTokenClaimsAsync(new ProfileClaimsRequest(request.Subject, request.Client, request.Resources));
             claims.AddRange(GetFilteredRequestClaims(profileDataClaims, request.Resources.AllowedClaimTypes));
             #endregion
 

@@ -29,7 +29,7 @@ namespace IdentityServer.Endpoints
             }
             if (request.GrantType == GrantTypes.AuthorizationCode)
             {
-                refreshToken = await CreateIdentityTokenAsync(request);
+                identityToken = await CreateIdentityTokenAsync(request);
             }
             var response = new TokenGeneratorResponse()
             {
@@ -44,19 +44,19 @@ namespace IdentityServer.Endpoints
 
         private async Task<string> CreateAccessTokenAsync(TokenGeneratorRequest request)
         {
-            var subject = await _claimService.GetTokenClaimsAsync(request);
+            var subject = await _claimService.GetAccessTokenClaimsAsync(request);
             return await _tokenService.CreateAccessTokenAsync(request.Client, subject);
         }
 
         private async Task<string> CreateIdentityTokenAsync(TokenGeneratorRequest request)
         {
-            var subject = await _claimService.GetTokenClaimsAsync(request);
+            var subject = await _claimService.GetIdentityTokenClaimsAsync(request);
             return await _tokenService.CreateIdentityTokenAsync(request.Client, subject, request.Code!);
         }
 
         private async Task<string> CreateRefreshTokenAsync(TokenGeneratorRequest request)
         {
-            var subject = await _claimService.GetTokenClaimsAsync(request);
+            var subject = await _claimService.GetAccessTokenClaimsAsync(request);
             return await _tokenService.CreateRefreshTokenAsync(request.Client, subject);
         }
     }

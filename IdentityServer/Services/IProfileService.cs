@@ -7,5 +7,6 @@ namespace IdentityServer.Services
         Task<bool> IsActiveAsync(IsActiveRequest request);
         Task<IEnumerable<Claim>> GetProfileClaimsAsync(ProfileClaimsRequest request);
         Task<IEnumerable<Claim>> GetAccessTokenClaimsAsync(ProfileClaimsRequest request);
+        Task<IEnumerable<Claim>> GetIdentityTokenClaimsAsync(ProfileClaimsRequest request);
     }
 }

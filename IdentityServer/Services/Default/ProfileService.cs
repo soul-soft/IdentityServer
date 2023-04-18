@@ -20,5 +20,11 @@ namespace IdentityServer.Services
             IEnumerable<Claim> result = Array.Empty<Claim>();
             return Task.FromResult(result);
         }
+
+        public Task<IEnumerable<Claim>> GetIdentityTokenClaimsAsync(ProfileClaimsRequest request)
+        {
+            IEnumerable<Claim> result = Array.Empty<Claim>();
+            return Task.FromResult(result);
+        }
     }
 }
