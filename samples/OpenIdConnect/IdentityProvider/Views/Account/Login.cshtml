@@ -17,6 +17,9 @@
       
         fetch('/connect/token', {
             method: 'post',
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
             body: data
         }).then(res => {
             res.json().then(json=>{
