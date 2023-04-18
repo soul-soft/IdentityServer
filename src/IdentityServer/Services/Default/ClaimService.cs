@@ -99,7 +99,6 @@ namespace IdentityServer.Services
         {
             #region Jwt Claims
             //request jwt
-            var jwtId = await _randomGenerator.GenerateAsync();
             var issuer = _serverUrl.GetServerIssuer();
             var issuedAt = _systemClock.UtcNow.ToUnixTimeSeconds();
             var expiration = issuedAt + request.Client.AccessTokenLifetime;
@@ -134,7 +133,7 @@ namespace IdentityServer.Services
             return new ClaimsPrincipal(new ClaimsIdentity(claims, request.GrantType));
         }
 
-        private IEnumerable<Claim> GetFilteredRequestClaims(IEnumerable<Claim> claims, IEnumerable<string> claimTypes)
+        private static IEnumerable<Claim> GetFilteredRequestClaims(IEnumerable<Claim> claims, IEnumerable<string> claimTypes)
         {
             return claims.Where(a => claimTypes.Contains(a.Type))
                 .Where(a => !ClaimTypeFilters.ClaimsServiceFilterClaimTypes.Contains(a.Type));
