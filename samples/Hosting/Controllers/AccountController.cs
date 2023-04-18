@@ -17,8 +17,13 @@ namespace Hosting.Controllers
             return View(new { ReturnUrl  = returnUrl });
         }
 
+        /// <summary>
+        /// 第一种登入方式
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> Login([FromForm]LoginModel model)
+        public async Task<IActionResult> Login1([FromForm]LoginModel model)
         {
             if (ModelState.IsValid)
             {
