@@ -4,6 +4,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	  <PackageProjectUrl>https://github.com/soul-soft/IdentityServer</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/soul-soft/IdentityServer</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>

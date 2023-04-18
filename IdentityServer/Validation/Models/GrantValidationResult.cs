@@ -6,6 +6,8 @@ namespace IdentityServer.Validation
     {
         public IEnumerable<Claim> Claims { get; }
 
+        public Dictionary<string, object> Properties { get; } = new();
+
         public GrantValidationResult()
         {
             Claims = new List<Claim>();
@@ -23,6 +25,5 @@ namespace IdentityServer.Validation
             })
         {
         }
-
     }
 }
