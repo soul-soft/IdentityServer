@@ -26,8 +26,13 @@ namespace IdentityServer.Validation
             {
                 throw new ValidationException(ValidationErrors.InvalidClient, "Invalid client credentials");
             }
+           
             if (client.RequireSecret)
             {
+                if (parsedSecret.Type == ClientSecretTypes.NoSecret)
+                {
+                    throw new ValidationException(ValidationErrors.InvalidClient, "Invalid client credentials");
+                }
                 await _secretListValidator.ValidateAsync(parsedSecret, client.Secrets);
             }
             return client;

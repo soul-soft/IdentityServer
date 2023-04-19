@@ -50,6 +50,7 @@ namespace IdentityProvider.IdentityServer
             get
             {
                 yield return IdentityResources.OpenId;
+                yield return IdentityResources.Profile;
                 yield return new ApiScope("basic");
             }
         }

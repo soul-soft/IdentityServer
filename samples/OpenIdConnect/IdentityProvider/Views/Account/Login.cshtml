@@ -1,31 +1,48 @@
 ﻿<from>
-    <input id="username" name="username" value="" type="text" /><br />
-    <input id="password" name="password" value="" type="text" /><br />
+    <input id="username" name="username" value="admin" type="text" /><br />
+    <input id="password" name="password" value="123" type="text" /><br />
     <input id="login" type="submit" value="login" />
 </from>
 
 <script type="text/javascript">
-    document.getElementById('login').addEventListener('click', function () {
+    function toUrl(data) {
+        var buffer = '';
+        for (var key in data) {
+            buffer += key + '=' + data[key] + '&';
+        }
+        return buffer;
+    }
+    document.getElementById('login').addEventListener('click', async function () {
         var username = document.getElementById('username').value;
         var password = document.getElementById('password').value;
-        
-        var data = new FormData();
-        data.append("client_id", "idp");
-        data.append("grant_type", "password");
-        data.append("username", username);
-        data.append("password", password);
-      
-        fetch('/connect/token', {
+        var data = {
+            client_id: "idp",
+            grant_type: "password",
+            username: username,
+            password: password
+        };
+
+        var response = await fetch('/connect/token', {
             method: 'post',
             headers: {
-                'Content-Type': 'multipart/form-data'
+                'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: data
-        }).then(res => {
-            res.json().then(json=>{
-                console.log(json);
-            });
+            body: toUrl(data)
         });
+
+        var json = await response.json();
+        console.log(json);
+        if (response.status != 200) {
+            alert(json.error_description);
+        }
+        else {
+            await fetch('/account/login', {
+                headers: {
+                    "Authorization": 'Bearer ' + json.access_token
+                },
+                method: 'post'
+            });
+        }
         //如果成功跳转到/Account/Login
     });
 </script>

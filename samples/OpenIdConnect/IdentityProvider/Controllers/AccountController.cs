@@ -23,14 +23,20 @@ namespace IdentityProvider.Controllers
 
         [HttpPost]
         [Authorize(AuthenticationSchemes = IdentityServerAuthenticationDefaults.AuthenticationScheme)]
-        public IActionResult Login(string returnUrl)
+        public async Task<IActionResult> Login(string returnUrl)
         {
-            HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,HttpContext.User);
-            if (!string.IsNullOrEmpty(returnUrl))
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,HttpContext.User);
+            if (string.IsNullOrEmpty(returnUrl))
             {
-                return Redirect(returnUrl);
+                return Redirect("/");
             }
-            return Redirect("/");
+            return Redirect(returnUrl);
         }
+    }
+
+    public class LoginModel
+    {
+        public int Age { get; set; }
+        public string Name { get; set; }
     }
 }
