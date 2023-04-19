@@ -1,3 +1,5 @@
+using IdentityServer.Hosting;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +18,18 @@ namespace IdentityProvider.Controllers
         public IActionResult Login()
         {
             return View();
+        }
+
+        [HttpPost]
+        [Authorize(AuthenticationSchemes = IdentityServerAuthenticationDefaults.AuthenticationScheme)]
+        public IActionResult Login(string returnUrl)
+        {
+            HttpContext.SignInAsync();
+            if (!string.IsNullOrEmpty(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            return Redirect("/");
         }
     }
 }
