@@ -1,5 +1,6 @@
 using IdentityServer.Hosting;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,7 +25,7 @@ namespace IdentityProvider.Controllers
         [Authorize(AuthenticationSchemes = IdentityServerAuthenticationDefaults.AuthenticationScheme)]
         public IActionResult Login(string returnUrl)
         {
-            HttpContext.SignInAsync();
+            HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,HttpContext.User);
             if (!string.IsNullOrEmpty(returnUrl))
             {
                 return Redirect(returnUrl);
