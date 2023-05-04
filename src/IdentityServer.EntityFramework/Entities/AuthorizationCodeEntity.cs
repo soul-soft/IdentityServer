@@ -9,7 +9,7 @@ namespace IdentityServer.Models
         public int Lifetime { get; set; }
         public string State { get; set; } = default!;
         public string Scope { get; set; } = default!;
-        public string? None { get; set; }
+        public string None { get; set; } = default!;
         public string ClientId { get; set; } = default!;
         public string RedirectUri { get; set; } = default!;
         public string ResponseType { get; set; } = default!;
@@ -25,7 +25,7 @@ namespace IdentityServer.Models
 
         public AuthorizationCodeEntity(
              string code,
-             string? none,
+             string none,
              string state,
              string scope,
              ICollection<ClaimEntity> claims,
