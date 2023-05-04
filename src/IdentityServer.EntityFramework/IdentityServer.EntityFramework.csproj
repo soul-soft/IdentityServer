@@ -4,6 +4,7 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<AssemblyName>Soul.$(MSBuildProjectName)</AssemblyName>
 		<PackageProjectUrl>https://github.com/soul-soft/IdentityServer</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/soul-soft/IdentityServer</RepositoryUrl>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
