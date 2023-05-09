@@ -1,0 +1,13 @@
+﻿<form action="/account/login" method="post">
+    <label>username</label><br />
+    <input type="text" name="Username" value="admin" /><br />
+    <label>password</label><br />
+    <input type="password" name="Password" value="admin" /><br />
+    <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" /><br />
+    @if (Model.Error != null)
+    {
+        <label style="color:red">@Model.Error</label>
+        <br />
+    }
+    <input type="submit" value="login"/>
+</form>

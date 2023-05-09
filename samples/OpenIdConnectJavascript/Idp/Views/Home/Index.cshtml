@@ -1,0 +1,8 @@
+﻿<h1>Welcome Idp</h1>
+<h3>User Claims</h3>
+<ul>
+    @foreach (var item in Context.User.Claims)
+    {
+        <li>@(item.Type) = @(item.Value)</li>
+    }
+</ul>
