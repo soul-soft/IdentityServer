@@ -13,5 +13,7 @@ namespace Idp.Models
         [FromForm]
         [Required]
         public string Password { get; set; } = default!;
+        [FromForm]
+        public int Remember { get; set; }
     }
 }

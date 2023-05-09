@@ -3,10 +3,12 @@
     <input type="text" name="Username" value="admin" /><br />
     <label>password</label><br />
     <input type="password" name="Password" value="admin" /><br />
+    <label>30天免登入</label>
+    <input type="radio" name="Remember" value="1" /><br />
     @if (Model.Error != null)
     {
         <label style="color:red">@Model.Error</label>
         <br />
     }
-    <input type="submit" value="login"/>
+    <input type="submit" value="login" />
 </form>
