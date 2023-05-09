@@ -58,6 +58,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.TryAddTransient<IClaimService, ClaimService>();           
             builder.Services.TryAddTransient<ITokenService, TokenService>();
             builder.Services.TryAddTransient<ISecurityTokenService, SecurityTokenService>();
+            builder.Services.TryAddTransient<ICodeChallengeHashService, CodeChallengeHashService>();
             builder.Services.TryAddTransient<ISigningCredentialsService, SigningCredentialsService>();
             return builder;
         }

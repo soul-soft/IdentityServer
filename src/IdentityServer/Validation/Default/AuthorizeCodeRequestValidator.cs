@@ -1,11 +1,5 @@
-﻿using IdentityServer.Models;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.IdentityModel.Tokens;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.Intrinsics.Arm;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace IdentityServer.Validation
 {
@@ -13,13 +7,17 @@ namespace IdentityServer.Validation
     {
         private readonly ISystemClock _clock;
         private readonly IAuthorizationCodeStore _authorizeCodeStore;
+        private readonly ICodeChallengeHashService _codeChallengeHashService;
 
         public AuthorizeCodeRequestValidator(
             ISystemClock clock,
-            IAuthorizationCodeStore authorizeCodeStore)
+            IAuthorizationCodeStore authorizeCodeStore,
+            ICodeChallengeHashService codeChallengeHashService)
+            
         {
             _clock = clock;
             _authorizeCodeStore = authorizeCodeStore;
+            _codeChallengeHashService = codeChallengeHashService;
         }
 
         public async Task<GrantValidationResult> ValidateAsync(AuthorizeCodeValidationRequest request)
@@ -49,20 +47,10 @@ namespace IdentityServer.Validation
             {
                 throw new ValidationException(ValidationErrors.InvalidRequest, "code_verifier is required");
             }
-            var codeChallenge = CodeChallengeHash(authorizationCode.CodeChallengeMethod!, request.CodeVerifier!);
+            var codeChallenge = _codeChallengeHashService.ComputeHash(request.CodeVerifier!, authorizationCode.CodeChallengeMethod!);
             if (authorizationCode.CodeChallenge != codeChallenge)
             {
                 throw new ValidationException(ValidationErrors.InvalidCodeVerifier, "code_verifier validation failed");
-            }
-        }
-
-        private string CodeChallengeHash(string method, string codeVerifier)
-        {
-            using (var sha = SHA256.Create())
-            {
-                var bytes = Encoding.UTF8.GetBytes(codeVerifier);
-                var hash = sha.ComputeHash(bytes);
-                return Base64UrlEncoder.Encode(hash);
             }
         }
     }

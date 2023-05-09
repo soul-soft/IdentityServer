@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using System.Security.Claims;
-using static System.Formats.Asn1.AsnWriter;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 
 namespace IdentityServer.Services
 {

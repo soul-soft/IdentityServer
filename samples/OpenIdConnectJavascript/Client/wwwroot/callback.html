@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
 </head>
 <body>
+    <h3>Id Token</h3>
+    <div id="id_token"></div>
+    <h3>Access Token</h3>
+    <div id="access_token"></div>
     <script src="lib/oidc-client/oidc-client.js"></script>
     <script type="text/javascript">
         window.onload = callback;
@@ -22,9 +26,11 @@
             mgr.signinRedirectCallback().then(() => {
                 mgr.getUser().then((user) => {
                     if (user) {
+                        document.onload = function () {
+                            document.getElementById('id_token').setAttribute('value', user.id_token);
+                            document.getElementById('access_token').setAttribute('value', user.access_token);
+                        }
                         console.log(user)
-                        document.getElementById('id_token').setAttribute('value', user.id_token);
-                        document.getElementById('access_token').setAttribute('value', user.access_token);
                     } else {
                         console.log('unauthorize')
                     }
