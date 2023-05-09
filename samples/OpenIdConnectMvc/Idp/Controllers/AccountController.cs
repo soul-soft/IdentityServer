@@ -47,17 +47,16 @@ namespace Idp.Controllers
                 returnModel.Error = "’À∫≈ªÚ√‹¬Î¥ÌŒÛ";
                 return View(returnModel);
             }
-            var subject = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-            {
-                new Claim(JwtClaimTypes.Subject,model.Username)
-            }, "Cookie"));
+            var claims = new List<Claim>();
+            claims.Add(new Claim(JwtClaimTypes.Subject,model.Username));
             var properties = new AuthenticationProperties();
             if (model.Remember == 1)
             {
                 properties.IsPersistent = true;
                 properties.ExpiresUtc = DateTime.UtcNow.AddDays(30);
             }
-            await HttpContext.SignInAsync("Cookie",subject, properties);
+            var subject = new ClaimsPrincipal(new ClaimsIdentity(claims, "Cookie"));
+            await HttpContext.SignInAsync("Cookie", subject, properties);
             if (!string.IsNullOrEmpty(model.ReturnUrl))
             {
                 return Redirect(model.ReturnUrl);

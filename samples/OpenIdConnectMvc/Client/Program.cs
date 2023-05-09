@@ -31,18 +31,18 @@ builder.Services.AddAuthentication(configureOptions =>
         configureOptions.SaveTokens = true;
         configureOptions.ResponseMode = OpenIdConnectParameterNames.Code;
         configureOptions.Authority = "https://localhost:8080";
-        //configureOptions.Events = new Microsoft.AspNetCore.Authentication.OpenIdConnect.OpenIdConnectEvents()
-        //{
-        //    OnTicketReceived = context => 
-        //    {
-        //        var claims = context.HttpContext.User.Claims;
-        //        var properties = new Microsoft.AspNetCore.Authentication.AuthenticationProperties();
-        //        properties.IsPersistent = true;
-        //        properties.ExpiresUtc = DateTime.UtcNow.AddDays(30);
-        //        context.Properties = properties;
-        //        return Task.CompletedTask;
-        //    }
-        //};
+        configureOptions.Events = new Microsoft.AspNetCore.Authentication.OpenIdConnect.OpenIdConnectEvents()
+        {
+            OnTokenValidated = context =>
+            {
+                var claims = context.HttpContext.User.Claims;
+                var properties = new Microsoft.AspNetCore.Authentication.AuthenticationProperties();
+                properties.IsPersistent = true;
+                properties.ExpiresUtc = DateTime.UtcNow.AddDays(30);
+                context.Properties = properties;
+                return Task.CompletedTask;
+            }
+        };
     });
 //Ìí¼ÓÊÚÈ¨²ßÂÔ
 builder.Services.AddAuthorization(configure =>
