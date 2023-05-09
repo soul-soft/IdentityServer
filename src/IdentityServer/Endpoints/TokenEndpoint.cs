@@ -136,11 +136,12 @@ namespace IdentityServer.Endpoints
         private static async Task<GrantValidationResult> ValidateAuthorizeCodeRequestAsync(HttpContext context, GrantValidationRequest request)
         {
             var code = request.Form[OpenIdConnectParameterNames.Code];
+            var codeVerifier = request.Form["code_verifier"];
             if (string.IsNullOrEmpty(code))
             {
                 throw new ValidationException(ValidationErrors.InvalidRequest, "Code is missing");
             }
-            var grantContext = new AuthorizeCodeValidationRequest(code, request);
+            var grantContext = new AuthorizeCodeValidationRequest(code, codeVerifier,request);
             var validator = context.RequestServices.GetRequiredService<IAuthorizeCodeRequestValidator>();
             return await validator.ValidateAsync(grantContext);
         }

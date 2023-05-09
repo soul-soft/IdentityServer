@@ -14,6 +14,8 @@ namespace IdentityServer.Models
         public string RedirectUri { get; set; } = default!;
         public string ResponseType { get; set; } = default!;
         public string? ResponseMode { get; set; }
+        public string? CodeChallenge { get; }
+        public string? CodeChallengeMethod { get; set; }
         public DateTime ExpirationTime { get; set; }
         public DateTime CreationTime { get; set; }
         public IEnumerable<ClaimEntity> Claims { get; set; } = new List<ClaimEntity>();
@@ -35,7 +37,9 @@ namespace IdentityServer.Models
              string? responseMode,
              int lifetime,
              DateTime expirationTime,
-             DateTime creationTime)
+             DateTime creationTime,
+             string? codeChallenge,
+             string? codeChallengeMethod)
         {
             Code = code;
             None = none;
@@ -49,6 +53,8 @@ namespace IdentityServer.Models
             Lifetime = lifetime;
             CreationTime = creationTime;
             ExpirationTime = expirationTime;
+            CodeChallenge = codeChallenge;
+            CodeChallengeMethod = codeChallengeMethod;
         }
 
         public AuthorizationCode Cast()
@@ -68,7 +74,9 @@ namespace IdentityServer.Models
                 clientId: ClientId,
                 redirectUri: RedirectUri,
                 responseType: ResponseType,
-                responseMode: ResponseMode);
+                responseMode: ResponseMode,
+                codeChallenge: CodeChallenge,
+                codeChallengeMethod: CodeChallengeMethod);
         }
 
         public static implicit operator AuthorizationCodeEntity(AuthorizationCode entity)
@@ -88,7 +96,9 @@ namespace IdentityServer.Models
                clientId: entity.ClientId,
                redirectUri: entity.RedirectUri,
                responseType: entity.ResponseType,
-               responseMode: entity.ResponseMode);
+               responseMode: entity.ResponseMode,
+               codeChallenge: entity.CodeChallenge,
+               codeChallengeMethod: entity.CodeChallengeMethod);
         }
     }
 }

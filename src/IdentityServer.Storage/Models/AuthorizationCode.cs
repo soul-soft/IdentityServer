@@ -12,15 +12,12 @@ namespace IdentityServer.Models
         public string ClientId { get; set; } = default!;
         public string RedirectUri { get; set; } = default!;
         public string ResponseType { get; set; } = default!;
+        public string? CodeChallenge { get; } 
+        public string? CodeChallengeMethod { get; set; } 
         public string? ResponseMode { get; set; }
         public DateTime ExpirationTime { get; set; }
         public DateTime CreationTime { get; set; }
         public ICollection<Claim> Claims { get; set; } = new List<Claim>();
-
-        protected AuthorizationCode()
-        {
-
-        }
 
         public AuthorizationCode(
             string code,
@@ -34,7 +31,9 @@ namespace IdentityServer.Models
             string? responseMode,
             int lifetime,
             DateTime expirationTime,
-            DateTime creationTime)
+            DateTime creationTime,
+            string? codeChallenge,
+            string? codeChallengeMethod)
         {
             Code = code;
             None = none;
@@ -48,6 +47,8 @@ namespace IdentityServer.Models
             Lifetime = lifetime;
             CreationTime = creationTime;
             ExpirationTime = expirationTime;
+            CodeChallenge = codeChallenge;
+            CodeChallengeMethod = codeChallengeMethod;
         }
     }
 }

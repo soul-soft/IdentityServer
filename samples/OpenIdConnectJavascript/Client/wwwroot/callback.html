@@ -6,21 +6,31 @@
 <body>
     <script src="lib/oidc-client/oidc-client.js"></script>
     <script type="text/javascript">
-        var config = {
-            authority: 'https://localhost:8080',
-            client_id: 'js',
-            redirect_uri: `${window.location.origin}/callback.html`,
-            response_type: 'code',
-            scope: 'openid profile api',
-        };
-        const mgr = new Oidc.UserManager(config)
-        async function check() {
-            var user = await mgr.getUser();
-            if (user != null) {
-                window.location = '/';
-            }
+        window.onload = callback;
+
+        function callback() {
+            const config = {
+                authority: 'https://localhost:8080',
+                client_id: 'js',
+                redirect_uri: `${window.location.origin}/callback.html`,
+                response_type: 'code',
+                scope: 'openid profile api',
+                loadUserInfo: false
+            };
+            const mgr = new Oidc.UserManager(config);
+
+            mgr.signinRedirectCallback().then(() => {
+                mgr.getUser().then((user) => {
+                    if (user) {
+                        console.log(user)
+                        document.getElementById('id_token').setAttribute('value', user.id_token);
+                        document.getElementById('access_token').setAttribute('value', user.access_token);
+                    } else {
+                        console.log('unauthorize')
+                    }
+                })
+            });
         }
-        check();
     </script>
 </body>
 </html>

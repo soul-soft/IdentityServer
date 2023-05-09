@@ -5,19 +5,23 @@
     <title></title>
 </head>
 <body>
+    <h3>Id Token</h3>
+    <div id="id_token"></div>
+    <h3>Access Token</h3>
+    <div id="access_token"></div>
     <script src="lib/oidc-client/oidc-client.js"></script>
-    <script src="auth.js"></script>
     <script>
-        var config = {
-            authority: 'https://localhost:8080',
-            client_id: 'js',
-            redirect_uri: `${window.location.origin}/callback.html`,
-            response_type: 'code',
-            scope: 'openid profile api',
-        };
-        const mgr = new Oidc.UserManager(config);
-      
-        window.onload = function () {
+        function login() {
+            const config = {
+                authority: 'https://localhost:8080',
+                client_id: 'js',
+                redirect_uri: `${window.location.origin}/callback.html`,
+                response_type: 'code',
+                scope: 'openid profile api',
+                loadUserInfo: false
+            };
+            const mgr = new Oidc.UserManager(config);
+
             let nonce = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
             mgr.signinRedirect({
                 extraQueryParams: {
@@ -25,6 +29,7 @@
                 }
             })
         }
+        login();
     </script>
 </body>
 </html>

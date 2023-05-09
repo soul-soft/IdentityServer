@@ -106,10 +106,6 @@ namespace IdentityServer.Endpoints
             }
             #endregion
 
-            #region ResponseMode
-            var responseMode = parameters[OpenIdConnectParameterNames.ResponseMode];
-            #endregion
-
             #region ResponseType
             var responseType = parameters[OpenIdConnectParameterNames.ResponseType];
             if (string.IsNullOrEmpty(responseType))
@@ -127,17 +123,7 @@ namespace IdentityServer.Endpoints
             else
             {
                 var subject = result.Principal;
-                var request = new AuthorizeGeneratorRequest(
-                    none: none!,
-                    scope: scope,
-                    state: state,
-                    clientId: clientId,
-                    redirectUri: redirectUri,
-                    responseType: responseType,
-                    responseMode: responseMode,
-                    client: client,
-                    resources: resources,
-                    subject: subject);
+                var request = new AuthorizeGeneratorRequest(body: parameters, client: client, resources: resources, subject: subject);
                 var url = await _generator.GenerateAsync(request);
                 return Authorized(url);
             }
