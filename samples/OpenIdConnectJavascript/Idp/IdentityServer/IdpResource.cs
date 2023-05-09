@@ -10,10 +10,10 @@ namespace Idp.IdentityServer
             {
                 yield return new Client()
                 {
-                    ClientId = "mvc",
+                    ClientId = "js",
                     Secrets =
                     {
-                        new Secret("mvc".Sha256())
+                        new Secret("js".Sha256())
                     },
                     AllowedGrantTypes =
                     {
