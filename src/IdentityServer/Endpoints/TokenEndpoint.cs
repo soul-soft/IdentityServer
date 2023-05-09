@@ -51,7 +51,7 @@ namespace IdentityServer.Endpoints
             var scope = body[OpenIdConnectParameterNames.Scope] ?? string.Empty;
             if (scope.Length > _options.InputLengthRestrictions.Scope)
             {
-                return BadRequest(ValidationErrors.InvalidScope, "Scope is too long");
+                return BadRequest(ValidationErrors.InvalidRequest, "Scope is too long");
             }
             var scopes = scope.Split(",").Where(a => !string.IsNullOrWhiteSpace(a));
             var resources = await _resourceValidator.ValidateAsync(client, scopes);

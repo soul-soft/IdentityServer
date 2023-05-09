@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using System.Collections.Specialized;
+using System.Net;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using System.Collections.Specialized;
-using System.Net;
-using System.Reflection.Emit;
 
 namespace IdentityServer.Endpoints
 {
@@ -52,12 +51,12 @@ namespace IdentityServer.Endpoints
             var clientId = parameters[OpenIdConnectParameterNames.ClientId];
             if (string.IsNullOrEmpty(clientId))
             {
-                return BadRequest(ValidationErrors.InvalidScope, "ClientId is missing");
+                return BadRequest(ValidationErrors.InvalidRequest, $"{OpenIdConnectParameterNames.ClientId} is missing");
             }
             var client = await _clientStore.FindClientAsync(clientId);
             if (client == null)
             {
-                return BadRequest(ValidationErrors.InvalidScope, "ClientId is missing");
+                return BadRequest(ValidationErrors.InvalidClient, $"{OpenIdConnectParameterNames.ClientId} is missing");
             }
             #endregion
 
@@ -72,7 +71,7 @@ namespace IdentityServer.Endpoints
             var redirectUri = parameters[OpenIdConnectParameterNames.RedirectUri];
             if (string.IsNullOrEmpty(redirectUri))
             {
-                return BadRequest(ValidationErrors.InvalidRequest, "RedirectUri type is missing");
+                return BadRequest(ValidationErrors.InvalidRequest, $"{OpenIdConnectParameterNames.RedirectUri} is missing");
             }
             if (!client.AllowedRedirectUris.Any(a => a == redirectUri))
             {
@@ -85,7 +84,7 @@ namespace IdentityServer.Endpoints
             var scope = parameters[OpenIdConnectParameterNames.Scope] ?? string.Empty;
             if (scope.Length > _options.InputLengthRestrictions.Scope)
             {
-                return BadRequest(ValidationErrors.InvalidScope, "Scope is too long");
+                return BadRequest(ValidationErrors.InvalidRequest, $"{OpenIdConnectParameterNames.Scope} is too long");
             }
             var scopes = scope.Split(" ").Where(a => !string.IsNullOrWhiteSpace(a));
             var resources = await _resourceValidator.ValidateAsync(client, scopes);
@@ -95,12 +94,16 @@ namespace IdentityServer.Endpoints
             var state = parameters[OpenIdConnectParameterNames.State];
             if (string.IsNullOrEmpty(state))
             {
-                return BadRequest(ValidationErrors.InvalidState, "State is too missing");
+                return BadRequest(ValidationErrors.InvalidRequest, $"{OpenIdConnectParameterNames.State} is too missing");
             }
             #endregion
 
             #region None
             var none = parameters[OpenIdConnectParameterNames.Nonce];
+            if (string.IsNullOrEmpty(none))
+            {
+                return BadRequest(ValidationErrors.InvalidNone, $"{OpenIdConnectParameterNames.Nonce} is null or empty");
+            }
             #endregion
 
             #region ResponseMode
@@ -109,9 +112,9 @@ namespace IdentityServer.Endpoints
 
             #region ResponseType
             var responseType = parameters[OpenIdConnectParameterNames.ResponseType];
-            if (responseType == null)
+            if (string.IsNullOrEmpty(responseType))
             {
-                return BadRequest(ValidationErrors.InvalidScope, "responseType is null or empty");
+                return BadRequest(ValidationErrors.InvalidRequest, $"{OpenIdConnectParameterNames.ResponseType} is null or empty");
             }
             #endregion
 
@@ -136,7 +139,7 @@ namespace IdentityServer.Endpoints
                     resources: resources,
                     subject: subject);
                 var url = await _generator.GenerateAsync(request);
-                return Redirect(url);
+                return Authorized(url);
             }
             #endregion
         }

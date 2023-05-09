@@ -2,9 +2,10 @@
 {
     public class ValidationErrors
     {
-        public const string InvalidRequest = "invalid_request";
-        public const string InvalidClient = "invalid_client";
+        public const string InvalidNone = "invalid_none";
         public const string InvalidGrant = "invalid_grant";
+        public const string InvalidClient = "invalid_client";
+        public const string InvalidRequest = "invalid_request";
         public const string UnauthorizedClient = "unauthorized_client";
         public const string UnsupportedResponseType = "unsupported_response_type";
         public const string InvalidScope = "invalid_scope";

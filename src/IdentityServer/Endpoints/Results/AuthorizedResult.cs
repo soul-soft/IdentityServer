@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace IdentityServer.Endpoints
 {
-    internal class RedirectResult : IEndpointResult
+    internal class AuthorizedResult : IEndpointResult
     {
         private readonly string _url;
        
-        public RedirectResult(string url)
+        public AuthorizedResult(string url)
         {
             _url = url;
         }
