@@ -1,0 +1,8 @@
+﻿<a href="/">Home</a>
+<h3>Api</h3>
+<ul>
+    @foreach (var item in Model)
+    {
+        <li>@Json.Serialize(item)</li>
+    }
+</ul>

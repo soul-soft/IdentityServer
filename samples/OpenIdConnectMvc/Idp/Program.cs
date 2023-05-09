@@ -26,7 +26,11 @@ builder.Services.AddAuthorization(configure =>
     });
 });
 //注册身份认证Idp
-builder.Services.AddIdentityServer()
+builder.Services.AddIdentityServer(configureOptions => 
+    {
+        configureOptions.Issuer = "Idp";
+        configureOptions.EmitScopesAsCommaDelimitedStringInJwt = false;
+    })
     .AddInMemoryClients(IdpResource.Clients)
     .AddInMemoryResources(IdpResource.Resources)
     .AddProfileService<ProfileService>()

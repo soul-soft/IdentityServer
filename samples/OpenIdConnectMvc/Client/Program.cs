@@ -1,5 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.Extensions.Options;
+using Client.Apis;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +10,11 @@ builder.Services.AddControllersWithViews();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpContextAccessor();
+//注册api资源
+builder.Services.AddTransient<ApiDelegatingHandler>();
+builder.Services.AddHttpClient<ApiClient>()
+    .AddHttpMessageHandler<ApiDelegatingHandler>();
 //添加认证方案
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 builder.Services.AddAuthentication(configureOptions =>

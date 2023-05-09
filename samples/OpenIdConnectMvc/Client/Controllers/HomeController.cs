@@ -1,3 +1,4 @@
+using Client.Apis;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Client.Controllers
@@ -10,10 +11,16 @@ namespace Client.Controllers
         {
             _logger = logger;
         }
-        
+
         public IActionResult Index()
         {
             return View();
+        }
+
+        public async Task<IActionResult> WeatherForecast([FromServices] ApiClient client)
+        {
+            var model = await client.GetWeatherForecastListAsync();
+            return View(model);
         }
     }
 }

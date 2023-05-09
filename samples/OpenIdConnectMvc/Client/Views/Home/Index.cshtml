@@ -1,4 +1,13 @@
-﻿<h1>Welcome Client</h1>
+﻿@using Client.Apis;
+@using Microsoft.AspNetCore.Authentication;
+@using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+@model IEnumerable<WeatherForecast>;
+@{
+    var idToken = await Context.GetTokenAsync(OpenIdConnectParameterNames.IdToken);
+    var accessToken = await Context.GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
+}
+<h1>Welcome Client</h1>
+
 <h3>User Claims</h3>
 <ul>
     @foreach (var item in Context.User.Claims)
@@ -6,3 +15,17 @@
         <li>@(item.Type) = @(item.Value)</li>
     }
 </ul>
+
+<h3>Id Token</h3>
+<div>@idToken</div>
+
+<h3>Access Token</h3>
+<div>@accessToken</div>
+
+<h3>JWT IO</h3>
+<a href="http://jwt.io" target="_blank">JWT IO</a>
+
+<h3>Call Api</h3>
+<a href="/Home/WeatherForecast" target="_blank">Call</a>
+
+

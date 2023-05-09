@@ -19,26 +19,28 @@ namespace Idp.IdentityServer
                     {
                         GrantTypes.AuthorizationCode
                     },
-                    AllowedScopes = 
+                    AllowedScopes =
                     {
+                        "api",
                         StandardScopes.OpenId,
-                        StandardScopes.Profile
+                        StandardScopes.Profile,
                     },
-                    AllowedRedirectUris = 
+                    AllowedRedirectUris =
                     {
                         "https://localhost:8081/signin-oidc"
                     },
                 };
             }
         }
-      
-        public static IEnumerable<Resource> Resources 
-        {   
+
+        public static IEnumerable<Resource> Resources
+        {
             get
             {
                 yield return IdentityResources.OpenId;
                 yield return IdentityResources.Profile;
-            } 
+                yield return new ApiScope("api");
+            }
         }
     }
 }
