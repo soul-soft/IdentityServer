@@ -5,7 +5,6 @@ namespace Idp.Models
 {
     public class AccountLoginModel
     {
-        [FromForm]
         [FromQuery]
         public string? ReturnUrl { get; set; }
         [FromForm]

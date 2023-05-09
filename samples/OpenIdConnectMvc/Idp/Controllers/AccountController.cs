@@ -1,4 +1,6 @@
+using System.Net;
 using System.Security.Claims;
+using System.Text.Encodings.Web;
 using System.Web;
 using IdentityServer.Models;
 using Idp.Models;
@@ -23,7 +25,6 @@ namespace Idp.Controllers
         public IActionResult Login(string returnUrl)
         {
             var returnModel = new AccountLoginViewModel();
-            returnModel.ReturnUrl = returnUrl;
             return View(returnModel);
         }
 

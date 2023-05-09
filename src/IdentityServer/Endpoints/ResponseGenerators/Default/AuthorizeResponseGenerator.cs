@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using System.Text;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using System.Security.Claims;
-using System.Text;
 
 namespace IdentityServer.Endpoints
 {
