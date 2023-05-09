@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>登录 - GitHub</title>
+    <link href="/css//login.css" rel="stylesheet" />
+    <script src="/lib/oidc-client/oidc-client.js"></script>
+
+    <script>
+        function login() {
+            const config = {
+                authority: 'https://localhost:8080',
+                client_id: 'client1',
+                redirect_uri: `${window.location.origin}/callback.html`,
+                response_type: 'code',
+                scope: 'openid profile api',
+            };
+            const mgr = new Oidc.UserManager(config);
+
+            let nonce = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+            mgr.signinRedirect({
+                extraQueryParams: {
+                    nonce: nonce
+                }
+            })
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub">
+        </div>
+        <form>
+            <button type="button" onclick="login()">登录</button>
+        </form>
+    </div>
+</body>
+</html>

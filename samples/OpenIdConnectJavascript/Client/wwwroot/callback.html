@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <script src="lib/oidc-client/oidc-client.js"></script>
+    <script type="text/javascript">
+        var config = {
+            authority: 'https://localhost:8080',
+            client_id: 'js',
+            redirect_uri: `${window.location.origin}/callback.html`,
+            response_type: 'code',
+            scope: 'openid profile api',
+        };
+        const mgr = new Oidc.UserManager(config)
+        async function check() {
+            var user = await mgr.getUser();
+            if (user != null) {
+                window.location = '/';
+            }
+        }
+        check();
+    </script>
+</body>
+</html>

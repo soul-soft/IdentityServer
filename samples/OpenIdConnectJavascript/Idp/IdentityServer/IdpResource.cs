@@ -11,10 +11,7 @@ namespace Idp.IdentityServer
                 yield return new Client()
                 {
                     ClientId = "js",
-                    Secrets =
-                    {
-                        new Secret("js".Sha256())
-                    },
+                    RequireSecret = false,
                     AllowedGrantTypes =
                     {
                         GrantTypes.AuthorizationCode
@@ -27,7 +24,7 @@ namespace Idp.IdentityServer
                     },
                     AllowedRedirectUris =
                     {
-                        "https://localhost:8081/signin-oidc"
+                        "https://localhost:8081/callback.html"
                     },
                 };
             }

@@ -35,7 +35,13 @@ builder.Services.AddIdentityServer(configureOptions =>
     .AddInMemoryResources(IdpResource.Resources)
     .AddProfileService<ProfileService>()
     .AddInMemoryDeveloperSigningCredentials();
-
+builder.Services.AddCors(setupAction => 
+{
+    setupAction.AddPolicy("default", policy => 
+    {
+        policy.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod();
+    });
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -45,6 +51,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseHttpsRedirection();
+
+app.UseCors("default");
 
 app.UseIdentityServer();
 

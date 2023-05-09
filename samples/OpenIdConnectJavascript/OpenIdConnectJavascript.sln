@@ -9,6 +9,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Idp", "Idp\Idp.csproj", "{9
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client", "Client\Client.csproj", "{FBABD018-6E58-4B97-9B72-E22216AF1206}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{85249CE4-3047-4D15-A9C0-3475B9F40156}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BC56FC27-AC0B-4928-A55D-CBED8F2B61EE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer.Storage", "..\..\src\IdentityServer.Storage\IdentityServer.Storage.csproj", "{625488FC-163C-4BCB-9280-4ACBE2696957}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityServer", "..\..\src\IdentityServer\IdentityServer.csproj", "{903148EC-8408-43C6-97E6-2879E19072CD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,8 +35,23 @@ Global
 		{FBABD018-6E58-4B97-9B72-E22216AF1206}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBABD018-6E58-4B97-9B72-E22216AF1206}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBABD018-6E58-4B97-9B72-E22216AF1206}.Release|Any CPU.Build.0 = Release|Any CPU
+		{625488FC-163C-4BCB-9280-4ACBE2696957}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{625488FC-163C-4BCB-9280-4ACBE2696957}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{625488FC-163C-4BCB-9280-4ACBE2696957}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{625488FC-163C-4BCB-9280-4ACBE2696957}.Release|Any CPU.Build.0 = Release|Any CPU
+		{903148EC-8408-43C6-97E6-2879E19072CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{903148EC-8408-43C6-97E6-2879E19072CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{903148EC-8408-43C6-97E6-2879E19072CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{903148EC-8408-43C6-97E6-2879E19072CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{872DB6FD-D44D-455E-AD7A-2F008D188E1A} = {85249CE4-3047-4D15-A9C0-3475B9F40156}
+		{90EED3E0-0976-4FB5-B667-9CF08A39F9D2} = {85249CE4-3047-4D15-A9C0-3475B9F40156}
+		{FBABD018-6E58-4B97-9B72-E22216AF1206} = {85249CE4-3047-4D15-A9C0-3475B9F40156}
+		{625488FC-163C-4BCB-9280-4ACBE2696957} = {BC56FC27-AC0B-4928-A55D-CBED8F2B61EE}
+		{903148EC-8408-43C6-97E6-2879E19072CD} = {BC56FC27-AC0B-4928-A55D-CBED8F2B61EE}
 	EndGlobalSection
 EndGlobal
