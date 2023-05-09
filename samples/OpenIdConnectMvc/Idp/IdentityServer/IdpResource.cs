@@ -19,8 +19,26 @@ namespace Idp.IdentityServer
                     {
                         GrantTypes.AuthorizationCode
                     },
+                    AllowedScopes = 
+                    {
+                        StandardScopes.OpenId,
+                        StandardScopes.Profile
+                    },
+                    AllowedRedirectUris = 
+                    {
+                        "https://localhost:8081/signin-oidc"
+                    },
                 };
             }
+        }
+      
+        public static IEnumerable<Resource> Resources 
+        {   
+            get
+            {
+                yield return IdentityResources.OpenId;
+                yield return IdentityResources.Profile;
+            } 
         }
     }
 }
