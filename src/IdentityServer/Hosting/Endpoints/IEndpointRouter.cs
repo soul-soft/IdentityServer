@@ -8,5 +8,6 @@ namespace IdentityServer.Hosting
     public interface IEndpointRouter
     {
         IEndpointHandler? Routing(HttpContext context);
+        EndpointDescriptor? GetEndpoint(HttpContext context);
     }
 }

@@ -9,7 +9,7 @@ namespace IdentityServer.Hosting
         private readonly IdentityServerOptions _options;
         private readonly ILogger<EndpointRouter> _logger;
         private readonly IEnumerable<EndpointDescriptor> _endpoints;
-       
+
         public EndpointRouter(
             IdentityServerOptions options,
             ILogger<EndpointRouter> logger,
@@ -20,21 +20,30 @@ namespace IdentityServer.Hosting
             _endpoints = endpoints;
         }
 
-        public IEndpointHandler? Routing(HttpContext context)
+        public EndpointDescriptor? GetEndpoint(HttpContext context)
         {
             foreach (var endpoint in _endpoints)
             {
                 if (context.Request.Path.Equals(endpoint.Path, StringComparison.OrdinalIgnoreCase))
                 {
-                    if (!_options.Endpoints.IsEndpointEnabled(endpoint))
-                    {
-                        _logger.LogWarning("Endpoint disabled: {endpoint}", endpoint.Name);
-                        break;
-                    }
-                    return context.RequestServices.GetRequiredService(endpoint.HandlerType) as IEndpointHandler;
+                    return endpoint;
                 }
             }
             return null;
+        }
+
+        public IEndpointHandler? Routing(HttpContext context)
+        {
+            var endpoint = GetEndpoint(context);
+            if (endpoint == null)
+            {
+                return null;
+            }
+            if (!_options.Endpoints.IsEndpointEnabled(endpoint))
+            {
+                _logger.LogWarning("Endpoint disabled: {endpoint}", endpoint.Name);
+            }
+            return context.RequestServices.GetRequiredService(endpoint.HandlerType) as IEndpointHandler;
         }
     }
 }
