@@ -7,17 +7,17 @@ namespace IdentityServer.Validation
     {
         private readonly ISystemClock _clock;
         private readonly IAuthorizationCodeStore _authorizeCodeStore;
-        private readonly ICodeChallengeHashService _codeChallengeHashService;
+        private readonly ICodeChallengeService _codeChallengeService;
 
         public AuthorizeCodeRequestValidator(
             ISystemClock clock,
             IAuthorizationCodeStore authorizeCodeStore,
-            ICodeChallengeHashService codeChallengeHashService)
+            ICodeChallengeService codeChallengeService)
             
         {
             _clock = clock;
             _authorizeCodeStore = authorizeCodeStore;
-            _codeChallengeHashService = codeChallengeHashService;
+            _codeChallengeService = codeChallengeService;
         }
 
         public async Task<GrantValidationResult> ValidateAsync(AuthorizeCodeValidationRequest request)
@@ -47,7 +47,7 @@ namespace IdentityServer.Validation
             {
                 throw new ValidationException(ValidationErrors.InvalidRequest, "code_verifier is required");
             }
-            var codeChallenge = _codeChallengeHashService.ComputeHash(request.CodeVerifier!, authorizationCode.CodeChallengeMethod!);
+            var codeChallenge = _codeChallengeService.ComputeHash(request.CodeVerifier!, authorizationCode.CodeChallengeMethod!);
             if (authorizationCode.CodeChallenge != codeChallenge)
             {
                 throw new ValidationException(ValidationErrors.InvalidCodeVerifier, "code_verifier validation failed");

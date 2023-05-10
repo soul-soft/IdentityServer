@@ -1,6 +1,6 @@
 ﻿namespace IdentityServer.Services
 {
-    public interface ICodeChallengeHashService
+    public interface ICodeChallengeService
     {
         string ComputeHash(string code,string method);
     }

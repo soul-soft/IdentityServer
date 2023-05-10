@@ -4,7 +4,7 @@ using System.Text;
 
 namespace IdentityServer.Services
 {
-    internal class CodeChallengeHashService : ICodeChallengeHashService
+    internal class CodeChallengeService : ICodeChallengeService
     {
         public string ComputeHash(string code, string method)
         {
