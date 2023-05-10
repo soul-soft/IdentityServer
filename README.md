@@ -7,5 +7,5 @@ identityserver是开源的，免费的，简单的身份认证框架，基于微
 
 ## 赞助
 
-![](./images/wechat-pay.png)
+![](/images/wechat-pay.jpg)
 
