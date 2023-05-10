@@ -7,6 +7,4 @@ identityserver是开源的，免费的，简单的身份认证框架，基于微
 
 ## 赞助
 
-<img src="/images/aliyun-pay.jpg" style="zoom:33%;" />
-
-<img src="/images/wechat-pay.jpg" style="zoom:33%;" />
+<img src="/images/aliyun-pay.jpg" style="zoom:33%;" /><img src="/images/wechat-pay.jpg" style="zoom:33%;" />
