@@ -9,12 +9,14 @@ namespace IdentityServer.Endpoints
         private readonly IdentityServerOptions _options;
         private readonly IProfileService _profileService;
         private readonly ITokenResponseGenerator _generator;
+        private readonly ILoggerFormater _loggerFormater;
         private readonly IResourceValidator _resourceValidator;
         private readonly IClientSecretValidator _clientSecretValidator;
 
         public TokenEndpoint(
             IdentityServerOptions options,
             IProfileService profileService,
+            ILoggerFormater loggerFormater,
             ITokenResponseGenerator generator,
             IClientSecretValidator clientSecretValidator,
             IResourceValidator resourceValidator)
@@ -22,12 +24,17 @@ namespace IdentityServer.Endpoints
             _options = options;
             _generator = generator;
             _profileService = profileService;
+            _loggerFormater = loggerFormater;
             _clientSecretValidator = clientSecretValidator;
             _resourceValidator = resourceValidator;
         }
 
         public override async Task<IEndpointResult> HandleAsync(HttpContext context)
         {
+            #region Logger Request
+            await _loggerFormater.LogRequestAsync();
+            #endregion
+
             #region Validate Request
             if (!HttpMethods.IsPost(context.Request.Method))
             {

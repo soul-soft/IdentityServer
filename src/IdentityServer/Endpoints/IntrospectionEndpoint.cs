@@ -7,23 +7,30 @@ namespace IdentityServer.Endpoints
     {
         private readonly ITokenValidator _tokenValidator;
         private readonly IProfileService _profileService;
+        private readonly ILoggerFormater _loggerFormater;
         private readonly IApiSecretValidator _apiSecretParsers;
         private readonly IIntrospectionResponseGenerator _generator;
 
         public IntrospectionEndpoint(
             ITokenValidator tokenValidator,
             IProfileService profileService,
+            ILoggerFormater loggerFormater,
             IApiSecretValidator apiSecretParsers,
             IIntrospectionResponseGenerator generator)
         {
             _generator = generator;
             _profileService = profileService;
+            _loggerFormater = loggerFormater;
             _tokenValidator = tokenValidator;
             _apiSecretParsers = apiSecretParsers;
         }
 
         public override async Task<IEndpointResult> HandleAsync(HttpContext context)
         {
+            #region Logger Request
+            await _loggerFormater.LogRequestAsync();
+            #endregion
+
             #region Validate Method
             if (!HttpMethods.IsPost(context.Request.Method))
             {

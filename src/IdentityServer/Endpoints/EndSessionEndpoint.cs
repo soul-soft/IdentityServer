@@ -10,25 +10,25 @@ namespace IdentityServer.Endpoints
 {
     internal class EndSessionEndpoint : EndpointBase
     {
-        private readonly IdentityServerOptions _options;
         private readonly ITokenValidator _tokenValidator;
-        private readonly ISessionManager _sessionManager;
+        private readonly ILoggerFormater _loggerFormater;
         private readonly IIdentityServerUrl _identityServerUrl;
 
         public EndSessionEndpoint(
-            IdentityServerOptions options,
             ITokenValidator tokenValidator,
-            ISessionManager sessionManager,
+            ILoggerFormater loggerFormater,
             IIdentityServerUrl identityServerUrl)
         {
-            _options = options;
             _tokenValidator = tokenValidator;
-            _sessionManager = sessionManager;
+            _loggerFormater = loggerFormater;
             _identityServerUrl = identityServerUrl;
         }
 
         public override async Task<IEndpointResult> HandleAsync(HttpContext context)
         {
+            #region Logger Request
+            await _loggerFormater.LogRequestAsync();
+            #endregion
 
             #region Validate Request
             NameValueCollection parameters;

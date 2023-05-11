@@ -1,4 +1,5 @@
 ﻿using IdentityServer.Hosting.DependencyInjection;
+using IdentityServer.Services.Default;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -52,6 +53,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns></returns>
         public static IIdentityServerBuilder AddPluggableServices(this IIdentityServerBuilder builder)
         {
+            builder.Services.TryAddTransient<ILoggerFormater, LoggerFormater>();
             builder.Services.TryAddTransient<IIdentityServerUrl, IdentityServerUrl>();
             builder.Services.TryAddTransient<ISessionManager, SessionManager>();
             builder.Services.TryAddTransient<IRandomGenerator, RandomGenerator>();

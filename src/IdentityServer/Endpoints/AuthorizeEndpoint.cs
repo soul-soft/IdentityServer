@@ -10,6 +10,7 @@ namespace IdentityServer.Endpoints
     internal class AuthorizeEndpoint : EndpointBase
     {
         private readonly IClientStore _clientStore;
+        private readonly ILoggerFormater _loggerFormater;
         private readonly IdentityServerOptions _options;
         private readonly IResourceValidator _resourceValidator;
         private readonly IAuthorizeResponseGenerator _generator;
@@ -17,17 +18,23 @@ namespace IdentityServer.Endpoints
         public AuthorizeEndpoint(
             IClientStore clientStore,
             IdentityServerOptions options,
+            ILoggerFormater loggerFormater,
             IResourceValidator resourceValidator,
             IAuthorizeResponseGenerator generator)
         {
             _options = options;
             _clientStore = clientStore;
+            _loggerFormater = loggerFormater;
             _resourceValidator = resourceValidator;
             _generator = generator;
         }
 
         public override async Task<IEndpointResult> HandleAsync(HttpContext context)
         {
+            #region Logger Request
+            await _loggerFormater.LogRequestAsync();
+            #endregion
+
             #region Validate Request
             NameValueCollection parameters;
             if (HttpMethods.IsGet(context.Request.Method))

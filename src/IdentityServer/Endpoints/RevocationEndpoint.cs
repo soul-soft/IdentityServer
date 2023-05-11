@@ -7,20 +7,27 @@ namespace IdentityServer.Endpoints
     {
         private readonly ITokenStore _tokens;
         private readonly IdentityServerOptions _options;
+        private readonly ILoggerFormater _loggerFormater;
         private readonly IClientSecretValidator _clientSecretValidator;
 
         public RevocationEndpoint(
             ITokenStore tokens,
             IdentityServerOptions options,
+            ILoggerFormater loggerFormater,
             IClientSecretValidator clientSecretValidator)
         {
             _tokens = tokens;
             _options = options;
+            _loggerFormater = loggerFormater;
             _clientSecretValidator = clientSecretValidator;
         }
 
         public override async Task<IEndpointResult> HandleAsync(HttpContext context)
         {
+            #region Logger Request
+            await _loggerFormater.LogRequestAsync();
+            #endregion
+            
             #region Validate Method
             if (!HttpMethods.IsPost(context.Request.Method))
             {

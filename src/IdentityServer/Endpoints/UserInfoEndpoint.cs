@@ -9,6 +9,7 @@ namespace IdentityServer.Endpoints
         private readonly IResourceStore _resourceStore;
         private readonly ITokenValidator _tokenValidator;
         private readonly IProfileService _profileService;
+        private readonly ILoggerFormater _loggerFormater;
         private readonly IUserInfoResponseGenerator _generator;
 
         public UserInfoEndpoint(
@@ -16,17 +17,20 @@ namespace IdentityServer.Endpoints
             IResourceStore resourceStore,
             IProfileService profileService,
             ITokenValidator tokenValidator,
+            ILoggerFormater loggerFormater,
             IUserInfoResponseGenerator generator)
         {
             _generator = generator;
             _tokenParser = tokenParser;
             _resourceStore = resourceStore;
+            _loggerFormater = loggerFormater;
             _tokenValidator = tokenValidator;
             _profileService = profileService;
         }
 
         public override async Task<IEndpointResult> HandleAsync(HttpContext context)
         {
+            await _loggerFormater.LogRequestAsync();
             var token = await _tokenParser.ParserAsync(context);
             if (string.IsNullOrEmpty(token))
             {
