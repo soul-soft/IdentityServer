@@ -5,14 +5,14 @@ namespace IdentityServer.Services
 {
     internal class ClaimService : IClaimService
     {
-        private readonly IIdentityServerUrl _serverUrl;
+        private readonly IServerUrl _serverUrl;
         private readonly ISystemClock _systemClock;
         private readonly IdentityServerOptions _options;
         private readonly IRandomGenerator _randomGenerator;
         private readonly IProfileService _profileService;
 
         public ClaimService(
-            IIdentityServerUrl serverUrl,
+            IServerUrl serverUrl,
             ISystemClock systemClock,
             IdentityServerOptions options,
             IProfileService profileService,

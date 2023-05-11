@@ -2,7 +2,7 @@
 {
     internal class IntrospectionResponseGenerator : IIntrospectionResponseGenerator
     {
-        public Task<IntrospectionGeneratorResponse> ProcessAsync(IntrospectionGeneratorRequest request)
+        public Task<IntrospectionGeneratorResponse> GenerateAsync(IntrospectionGeneratorRequest request)
         {
             var response = new Dictionary<string, object>
             {

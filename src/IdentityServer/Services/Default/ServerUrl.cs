@@ -2,13 +2,13 @@
 
 namespace IdentityServer.Services
 {
-    internal class IdentityServerUrl : IIdentityServerUrl
+    internal class ServerUrl : IServerUrl
     {
         private readonly HttpContext _context;
         private readonly IdentityServerOptions _options;
         private readonly IEnumerable<EndpointDescriptor> _endpoints;
       
-        public IdentityServerUrl(
+        public ServerUrl(
             IHttpContextAccessor accessor,
             IdentityServerOptions options,
             IEnumerable<EndpointDescriptor> endpoints)

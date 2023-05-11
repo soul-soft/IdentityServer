@@ -5,20 +5,20 @@ namespace IdentityServer.Endpoints
     internal class DiscoveryResponseGenerator
         : IDiscoveryResponseGenerator
     {
-        private readonly IIdentityServerUrl _urls;
+        private readonly IServerUrl _serverUrl;
         private readonly IResourceStore _resources;
         private readonly ISecretListParser _secretParsers;
         private readonly ISigningCredentialsService _credentials;
         private readonly IExtensionGrantListValidator _extensionGrantValidators;
 
         public DiscoveryResponseGenerator(
-            IIdentityServerUrl urls,
+            IServerUrl serverUrl,
             IResourceStore resources,
             ISecretListParser secretParsers,
             ISigningCredentialsService credentials,
             IExtensionGrantListValidator extensionGrantValidators)
         {
-            _urls = urls;
+            _serverUrl = serverUrl;
             _resources = resources;
             _credentials = credentials;
             _secretParsers = secretParsers;
@@ -29,15 +29,15 @@ namespace IdentityServer.Endpoints
         {
             var configuration = new OpenIdConnectConfiguration
             {
-                Issuer = _urls.GetServerIssuer(),
-                JwksUri = _urls.GetEndpointUri(IdentityServerEndpointNames.DiscoveryJwks),
-                TokenEndpoint = _urls.GetEndpointUri(IdentityServerEndpointNames.Token),
-                UserInfoEndpoint = _urls.GetEndpointUri(IdentityServerEndpointNames.UserInfo),
-                EndSessionEndpoint = _urls.GetEndpointUri(IdentityServerEndpointNames.EndSession),
-                AuthorizationEndpoint = _urls.GetEndpointUri(IdentityServerEndpointNames.Authorize),
-                IntrospectionEndpoint = _urls.GetEndpointUri(IdentityServerEndpointNames.Introspection),
+                Issuer = _serverUrl.GetServerIssuer(),
+                JwksUri = _serverUrl.GetEndpointUri(IdentityServerEndpointNames.DiscoveryJwks),
+                TokenEndpoint = _serverUrl.GetEndpointUri(IdentityServerEndpointNames.Token),
+                UserInfoEndpoint = _serverUrl.GetEndpointUri(IdentityServerEndpointNames.UserInfo),
+                EndSessionEndpoint = _serverUrl.GetEndpointUri(IdentityServerEndpointNames.EndSession),
+                AuthorizationEndpoint = _serverUrl.GetEndpointUri(IdentityServerEndpointNames.Authorize),
+                IntrospectionEndpoint = _serverUrl.GetEndpointUri(IdentityServerEndpointNames.Introspection),
             };
-            configuration.AdditionalData.Add("revocation_endpoint", _urls.GetEndpointUri(IdentityServerEndpointNames.Revocation));
+            configuration.AdditionalData.Add("revocation_endpoint", _serverUrl.GetEndpointUri(IdentityServerEndpointNames.Revocation));
             var supportedExtensionsGrantTypes = _extensionGrantValidators.GetSupportedGrantTypes();
             foreach (var item in supportedExtensionsGrantTypes)
             {

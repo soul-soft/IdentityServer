@@ -10,18 +10,18 @@ namespace IdentityServer.Endpoints
 {
     internal class EndSessionEndpoint : EndpointBase
     {
+        private readonly IServerUrl _serverUrl;
         private readonly ITokenValidator _tokenValidator;
         private readonly ILoggerFormater _loggerFormater;
-        private readonly IIdentityServerUrl _identityServerUrl;
 
         public EndSessionEndpoint(
+            IServerUrl serverUrl,
             ITokenValidator tokenValidator,
-            ILoggerFormater loggerFormater,
-            IIdentityServerUrl identityServerUrl)
+            ILoggerFormater loggerFormater)
         {
+            _serverUrl = serverUrl;
             _tokenValidator = tokenValidator;
             _loggerFormater = loggerFormater;
-            _identityServerUrl = identityServerUrl;
         }
 
         public override async Task<IEndpointResult> HandleAsync(HttpContext context)
@@ -85,7 +85,7 @@ namespace IdentityServer.Endpoints
 
         private string BuildRedirectUri(string postLogoutRedirectUri, string? state)
         {
-            var address = _identityServerUrl.GetEndpointUri(IdentityServerEndpointNames.EndSessionCallback);
+            var address = _serverUrl.GetEndpointPath(IdentityServerEndpointNames.EndSessionCallback);
             var parameters = new Dictionary<string, string>();
             if (!string.IsNullOrEmpty(state))
             {

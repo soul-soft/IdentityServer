@@ -57,7 +57,7 @@ namespace IdentityServer.Endpoints
             var scopes = subject.FindAll(JwtClaimTypes.Scope).Select(s => s.Value);
             var client = tokenValidationResult.Client;
             var resources = await _resourceStore.GetResourcesByScopesAsync(scopes);
-            var response = await _generator.ProcessAsync(subject, client, resources);
+            var response = await _generator.GenerateAsync(subject, client, resources);
 
             return Json(response.Serialize());
         }

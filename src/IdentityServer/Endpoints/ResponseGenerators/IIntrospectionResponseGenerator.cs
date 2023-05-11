@@ -2,6 +2,6 @@
 {
     public interface IIntrospectionResponseGenerator
     {
-        Task<IntrospectionGeneratorResponse> ProcessAsync(IntrospectionGeneratorRequest request);
+        Task<IntrospectionGeneratorResponse> GenerateAsync(IntrospectionGeneratorRequest request);
     }
 }

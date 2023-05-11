@@ -11,7 +11,7 @@ namespace IdentityServer.Endpoints
             _claimService = claimService;
         }
 
-        public async Task<UserInfoGeneratorResponse> ProcessAsync(ClaimsPrincipal subject, Client client, Resources resources)
+        public async Task<UserInfoGeneratorResponse> GenerateAsync(ClaimsPrincipal subject, Client client, Resources resources)
         {
             var profileDataRequest = new ProfileClaimsRequest(subject, client, resources);
             var principal = await _claimService.GetProfileClaimsAsync(profileDataRequest);

@@ -54,7 +54,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IIdentityServerBuilder AddPluggableServices(this IIdentityServerBuilder builder)
         {
             builder.Services.TryAddTransient<ILoggerFormater, LoggerFormater>();
-            builder.Services.TryAddTransient<IIdentityServerUrl, IdentityServerUrl>();
+            builder.Services.TryAddTransient<IServerUrl, ServerUrl>();
             builder.Services.TryAddTransient<ISessionManager, SessionManager>();
             builder.Services.TryAddTransient<IRandomGenerator, RandomGenerator>();
             builder.Services.TryAddTransient<IProfileService, ProfileService>();
