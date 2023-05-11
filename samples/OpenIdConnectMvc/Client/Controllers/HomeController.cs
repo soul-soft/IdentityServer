@@ -1,5 +1,7 @@
 using Client.Apis;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace Client.Controllers
 {
@@ -17,10 +19,20 @@ namespace Client.Controllers
             return View();
         }
 
+        public IActionResult Welcome()
+        {
+            return View();
+        }
+
         public async Task<IActionResult> WeatherForecast([FromServices] ApiClient client)
         {
             var model = await client.GetWeatherForecastListAsync();
             return View(model);
+        }
+
+        public async Task Logout([FromServices] IdentityServer server)
+        {
+            await HttpContext.SignOutAsync("Cookie");
         }
     }
 }

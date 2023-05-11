@@ -47,7 +47,7 @@ namespace IdentityServer.Endpoints
             {
                 return BadRequest(ValidationErrors.InvalidRequest, "token is missing");
             }
-            if (token.Length > _options.InputLengthRestrictions.AccessToken)
+            if (token.Length > _options.InputLengthRestrictions.Jwt)
             {
                 return BadRequest(ValidationErrors.InvalidRequest, "Grant type is too long");
             }

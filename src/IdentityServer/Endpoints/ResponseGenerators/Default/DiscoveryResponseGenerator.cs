@@ -31,9 +31,10 @@ namespace IdentityServer.Endpoints
             {
                 Issuer = _urls.GetServerIssuer(),
                 JwksUri = _urls.GetEndpointUri(IdentityServerEndpointNames.DiscoveryJwks),
-                AuthorizationEndpoint = _urls.GetEndpointUri(IdentityServerEndpointNames.Authorize),
                 TokenEndpoint = _urls.GetEndpointUri(IdentityServerEndpointNames.Token),
                 UserInfoEndpoint = _urls.GetEndpointUri(IdentityServerEndpointNames.UserInfo),
+                EndSessionEndpoint = _urls.GetEndpointUri(IdentityServerEndpointNames.EndSession),
+                AuthorizationEndpoint = _urls.GetEndpointUri(IdentityServerEndpointNames.Authorize),
                 IntrospectionEndpoint = _urls.GetEndpointUri(IdentityServerEndpointNames.Introspection),
             };
             configuration.AdditionalData.Add("revocation_endpoint", _urls.GetEndpointUri(IdentityServerEndpointNames.Revocation));

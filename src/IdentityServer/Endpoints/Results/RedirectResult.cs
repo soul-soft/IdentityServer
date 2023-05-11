@@ -2,11 +2,11 @@
 
 namespace IdentityServer.Endpoints
 {
-    internal class AuthorizedResult : IEndpointResult
+    internal class RedirectResult : IEndpointResult
     {
         private readonly string _url;
        
-        public AuthorizedResult(string url)
+        public RedirectResult(string url)
         {
             _url = url;
         }

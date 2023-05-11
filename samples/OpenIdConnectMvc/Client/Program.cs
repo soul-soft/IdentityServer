@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using Client;
 using Client.Apis;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
@@ -15,6 +16,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<ApiDelegatingHandler>();
 builder.Services.AddHttpClient<ApiClient>()
     .AddHttpMessageHandler<ApiDelegatingHandler>();
+builder.Services.AddHttpClient<IdentityServer>();
 //添加认证方案
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 builder.Services.AddAuthentication(configureOptions =>

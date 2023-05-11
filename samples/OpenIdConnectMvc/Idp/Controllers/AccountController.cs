@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Web;
 using IdentityServer.Models;
+using IdentityServer.Services;
 using Idp.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -28,9 +29,15 @@ namespace Idp.Controllers
             return View(returnModel);
         }
 
+        /// <summary>
+        /// 处理登入请求
+        /// </summary>
+        /// <param name="manager"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(AccountLoginModel model)
+        public async Task<IActionResult> Login([FromServices] ISessionManager manager, AccountLoginModel model)
         {
             var returnModel = new AccountLoginViewModel();
             if (!ModelState.IsValid)
@@ -48,7 +55,7 @@ namespace Idp.Controllers
                 return View(returnModel);
             }
             var claims = new List<Claim>();
-            claims.Add(new Claim(JwtClaimTypes.Subject,model.Username));
+            claims.Add(new Claim(JwtClaimTypes.Subject, model.Username));
             var properties = new AuthenticationProperties();
             if (model.Remember == 1)
             {
@@ -56,7 +63,7 @@ namespace Idp.Controllers
                 properties.ExpiresUtc = DateTime.UtcNow.AddDays(30);
             }
             var subject = new ClaimsPrincipal(new ClaimsIdentity(claims, "Cookie"));
-            await HttpContext.SignInAsync("Cookie", subject, properties);
+            await manager.SignInAsync("Cookie", subject, properties);
             if (!string.IsNullOrEmpty(model.ReturnUrl))
             {
                 return Redirect(model.ReturnUrl);
@@ -65,6 +72,17 @@ namespace Idp.Controllers
             {
                 return Redirect("/");
             }
+        }
+
+        /// <summary>
+        /// 处理登出请求
+        /// </summary>
+        /// <param name="manager"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> Logout([FromServices] ISessionManager manager)
+        {
+            await manager.SignOutAsync("Cookie");
+            return Redirect("/Account/Login");
         }
     }
 }

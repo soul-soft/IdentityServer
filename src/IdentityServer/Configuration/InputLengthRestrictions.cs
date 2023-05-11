@@ -7,7 +7,7 @@
         /// <summary>
         /// Max length for AccessToken
         /// </summary>
-        public int AccessToken { get; set; } = 51200;
+        public int Jwt { get; set; } = 51200;
 
         /// <summary>
         /// Max length for client_id
@@ -41,6 +41,6 @@
         /// <summary>
         /// Max length for refresh tokens
         /// </summary>
-        public int RefreshToken { get; set; } = Default;
+        public int TokenHandler { get; set; } = Default;
     }
 }

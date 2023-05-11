@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
-using IdentityServer.Storage;
 
 namespace IdentityServer.Validation
 {
@@ -31,18 +30,22 @@ namespace IdentityServer.Validation
             _credentials = credentials;
         }
 
-        public async Task<TokenValidationResult> ValidateAsync(string token)
+        public async Task<TokenValidationResult> ValidateAccessTokenAsync(string token)
         {
-            if (token.Length > _options.InputLengthRestrictions.AccessToken)
-            {
-                return TokenValidationResult.Fail(ValidationErrors.InvalidToken, "Access token too long");
-            }
             if (token.Contains('.'))
             {
-                return await ValidateJwtTokenAsync(token);
+                if (token.Length > _options.InputLengthRestrictions.Jwt)
+                {
+                    return TokenValidationResult.Fail(ValidationErrors.InvalidToken, "Access token too long");
+                }
+                return await ValidateJwtTokenAsync(token, true);
             }
             else
             {
+                if (token.Length > _options.InputLengthRestrictions.TokenHandler)
+                {
+                    return TokenValidationResult.Fail(ValidationErrors.InvalidToken, "Access token too long");
+                }
                 var referenceToken = await _tokens.FindAccessTokenAsync(token);
                 var result = await ValidateReferenceTokenAsync(referenceToken);
                 if (referenceToken != null)
@@ -51,7 +54,7 @@ namespace IdentityServer.Validation
                     {
                         await _tokens.RevomeTokenAsync(referenceToken);
                     }
-                    else 
+                    else
                     {
                         referenceToken.ExpirationTime = _clock.UtcNow.UtcDateTime.AddSeconds(referenceToken.Lifetime);
                         await _tokens.SetExpirationAsync(referenceToken);
@@ -61,7 +64,16 @@ namespace IdentityServer.Validation
             }
         }
 
-        private async Task<TokenValidationResult> ValidateJwtTokenAsync(string token)
+        public async Task<TokenValidationResult> ValidateIdentityTokenAsync(string token)
+        {
+            if (token.Length > _options.InputLengthRestrictions.Jwt)
+            {
+                return TokenValidationResult.Fail(ValidationErrors.InvalidToken, "Access token too long");
+            }
+            return await ValidateJwtTokenAsync(token, false);
+        }
+
+        private async Task<TokenValidationResult> ValidateJwtTokenAsync(string token, bool validateLifetime)
         {
             var handler = new JsonWebTokenHandler();
             var issuer = _serverUrl.GetServerIssuer();
@@ -70,7 +82,7 @@ namespace IdentityServer.Validation
             {
                 ValidIssuer = issuer,
                 ValidateIssuer = true,
-                ValidateLifetime = true,
+                ValidateLifetime = validateLifetime,
                 ValidateAudience = false,
                 IssuerSigningKeys = signingKeys,
             };

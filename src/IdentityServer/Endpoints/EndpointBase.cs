@@ -12,9 +12,9 @@ namespace IdentityServer.Endpoints
             return new ChallengeResult();
         }
 
-        protected static IEndpointResult Authorized(string url)
+        protected static IEndpointResult Redirect(string url)
         {
-            return new AuthorizedResult(url);
+            return new RedirectResult(url);
         }
 
         protected static IEndpointResult BadRequest(string error, string? errorDescription)

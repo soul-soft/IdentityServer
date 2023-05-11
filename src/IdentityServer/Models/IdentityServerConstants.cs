@@ -104,6 +104,7 @@
         public const string Discovery = "Discovery";
         public const string DiscoveryJwks = "Jwks";
         public const string UserInfo = "Userinfo";
+        public const string EndSession = "EndSession";
         public const string Revocation = "Revocation";
         public const string Introspection = "Introspection";
     }
@@ -124,5 +125,7 @@
         public const string Revocation = "revocation";
 
         public const string Introspection = "introspect";
+
+        public const string EndSession = "endsession";
     }
 }

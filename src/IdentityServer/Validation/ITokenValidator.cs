@@ -2,6 +2,7 @@
 {
     public interface ITokenValidator
     {
-        Task<TokenValidationResult> ValidateAsync(string token);
+        Task<TokenValidationResult> ValidateIdentityTokenAsync(string token);
+        Task<TokenValidationResult> ValidateAccessTokenAsync(string token);
     }
 }

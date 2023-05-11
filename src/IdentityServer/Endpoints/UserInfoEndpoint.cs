@@ -32,7 +32,7 @@ namespace IdentityServer.Endpoints
             {
                 return BadRequest(ValidationErrors.InvalidRequest, "Token is missing");
             }
-            var tokenValidationResult = await _tokenValidator.ValidateAsync(token);
+            var tokenValidationResult = await _tokenValidator.ValidateAccessTokenAsync(token);
             if (tokenValidationResult.IsError)
             {
                 return Unauthorized(tokenValidationResult.Error, tokenValidationResult.ErrorDescription);

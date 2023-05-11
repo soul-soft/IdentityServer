@@ -182,7 +182,7 @@ namespace IdentityServer.Endpoints
             {
                 throw new ValidationException(ValidationErrors.InvalidRequest, "RefreshToken is missing");
             }
-            if (refreshToken.Length > _options.InputLengthRestrictions.RefreshToken)
+            if (refreshToken.Length > _options.InputLengthRestrictions.TokenHandler)
             {
                 throw new ValidationException(ValidationErrors.InvalidRequest, "RefreshToken too long");
             }

@@ -94,7 +94,7 @@ namespace IdentityServer.Endpoints
             var state = parameters[OpenIdConnectParameterNames.State];
             if (string.IsNullOrEmpty(state))
             {
-                return BadRequest(ValidationErrors.InvalidRequest, $"{OpenIdConnectParameterNames.State} is too missing");
+                return BadRequest(ValidationErrors.InvalidRequest, $"{OpenIdConnectParameterNames.State} is missing");
             }
             #endregion
 
@@ -114,8 +114,8 @@ namespace IdentityServer.Endpoints
             }
             #endregion
 
-            #region Authenticate
-            var result = await context.AuthenticateAsync();
+            #region Authentication
+            var result = await context.AuthenticateAsync(_options.AuthenticationScheme);
             if (!result.Succeeded)
             {
                 return Challenge();
@@ -125,7 +125,7 @@ namespace IdentityServer.Endpoints
                 var subject = result.Principal;
                 var request = new AuthorizeGeneratorRequest(body: parameters, client: client, resources: resources, subject: subject);
                 var url = await _generator.GenerateAsync(request);
-                return Authorized(url);
+                return Redirect(url);
             }
             #endregion
         }

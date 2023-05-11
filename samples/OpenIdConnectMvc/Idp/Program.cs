@@ -26,9 +26,13 @@ builder.Services.AddAuthorization(configure =>
     });
 });
 //注册身份认证Idp
-builder.Services.AddIdentityServer(configureOptions => 
+builder.Services.AddIdentityServer(configureOptions =>
     {
+        //设置签发人
         configureOptions.Issuer = "Idp";
+        //设置oidc认证方案
+        configureOptions.AuthenticationScheme = "Cookie";
+        //设置scope分割方式
         configureOptions.EmitScopesAsCommaDelimitedStringInJwt = false;
     })
     .AddInMemoryClients(IdpResource.Clients)

@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace IdentityServer.Configuration
 {
@@ -20,6 +21,10 @@ namespace IdentityServer.Configuration
         /// 是否包含终结点的错误详情
         /// </summary>
         public bool IncludeEndpointErrorDetails { get; set; } = true;
+        /// <summary>
+        /// OIDC认证方案
+        /// </summary>
+        public string AuthenticationScheme { get; set; } = CookieAuthenticationDefaults.AuthenticationScheme;
         /// <summary>
         /// 输入长度限制
         /// </summary>
