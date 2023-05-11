@@ -38,8 +38,8 @@ builder.Services.AddIdentityServer(configureOptions =>
         //设置scope分割方式
         configureOptions.EmitScopesAsCommaDelimitedStringInJwt = false;
     })
-    .AddInMemoryClients(IdpResource.Clients)
-    .AddInMemoryResources(IdpResource.Resources)
+    .AddInMemoryClients(IdpConfigs.Clients)
+    .AddInMemoryResources(IdpConfigs.Resources)
     .AddProfileService<ProfileService>()
     .AddInMemoryDeveloperSigningCredentials();
 

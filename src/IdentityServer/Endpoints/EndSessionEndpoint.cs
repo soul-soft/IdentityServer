@@ -1,7 +1,9 @@
 ﻿using System.Collections.Specialized;
+using System.Linq;
 using System.Net;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace IdentityServer.Endpoints
@@ -11,15 +13,18 @@ namespace IdentityServer.Endpoints
         private readonly IdentityServerOptions _options;
         private readonly ITokenValidator _tokenValidator;
         private readonly ISessionManager _sessionManager;
+        private readonly IIdentityServerUrl _identityServerUrl;
 
         public EndSessionEndpoint(
             IdentityServerOptions options,
             ITokenValidator tokenValidator,
-            ISessionManager sessionManager)
+            ISessionManager sessionManager,
+            IIdentityServerUrl identityServerUrl)
         {
             _options = options;
             _tokenValidator = tokenValidator;
             _sessionManager = sessionManager;
+            _identityServerUrl = identityServerUrl;
         }
 
         public override async Task<IEndpointResult> HandleAsync(HttpContext context)
@@ -61,9 +66,34 @@ namespace IdentityServer.Endpoints
             }
             #endregion
 
-            await _sessionManager.SignOutAsync(_options.AuthenticationScheme);
+            #region Validate PostLogoutRedirectUri
+            var postLogoutRedirectUri = parameters[OpenIdConnectParameterNames.PostLogoutRedirectUri];
+            if (!string.IsNullOrEmpty(postLogoutRedirectUri))
+            {
+                if (!result.Client.AllowedRedirectUris.Contains(postLogoutRedirectUri))
+                {
+                    return BadRequest(ValidationErrors.InvalidPostLogoutRedirectUri, "Not allowed redirectUri");
+                }
+                var state = parameters[OpenIdConnectParameterNames.State];
+                var redirectUri = BuildRedirectUri(postLogoutRedirectUri, state);
+                return Redirect(redirectUri);
+            }
+            #endregion
 
             return StatusCode(HttpStatusCode.OK);
+        }
+
+        private string BuildRedirectUri(string postLogoutRedirectUri, string? state)
+        {
+            var address = _identityServerUrl.GetEndpointUri(IdentityServerEndpointNames.EndSessionCallback);
+            var parameters = new Dictionary<string, string>();
+            if (!string.IsNullOrEmpty(state))
+            {
+                parameters.Add(OpenIdConnectParameterNames.State, state);
+            }
+            parameters.Add(OpenIdConnectParameterNames.PostLogoutRedirectUri, WebUtility.UrlEncode(postLogoutRedirectUri));
+            var querySting = string.Join("&", parameters.Select(s => $"{s.Key}={s.Value}"));
+            return $"{address}?{querySting}";
         }
     }
 }

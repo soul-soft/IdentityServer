@@ -2,7 +2,7 @@
 
 namespace Idp.IdentityServer
 {
-    public static class IdpResource
+    public static class IdpConfigs
     {
         public static IEnumerable<Client> Clients
         {
@@ -27,7 +27,8 @@ namespace Idp.IdentityServer
                     },
                     AllowedRedirectUris =
                     {
-                        "https://localhost:8081/signin-oidc"
+                        "https://localhost:8081/signin-oidc",
+                        "https://localhost:8081/signout-callback-oidc"
                     },
                 };
             }

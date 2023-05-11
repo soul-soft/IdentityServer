@@ -32,12 +32,6 @@ namespace Client.Controllers
             var model = await client.GetWeatherForecastListAsync();
             return View(model);
         }
-        public async Task<IActionResult> Logout([FromServices] IdentityServer server)
-        {
-            //±¾µØÍË³ö
-            await HttpContext.SignOutAsync("Cookie");
-            var returnUrl = WebUtility.UrlEncode("https://localhost:8081/Home/Welcome");
-            return Redirect($"https://localhost:8080/Account/Logout?ReturnUrl={returnUrl}");
-        }
+       
     }
 }

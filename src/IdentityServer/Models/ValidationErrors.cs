@@ -4,6 +4,7 @@
     {
         public const string InvalidNone = "invalid_none";
         public const string InvalidGrant = "invalid_grant";
+        public const string InvalidPostLogoutRedirectUri = "invalid_post_logout_redirect_uri";
         public const string InvalidCodeVerifier = "invalid_code_verifier";
         public const string InvalidClient = "invalid_client";
         public const string InvalidRequest = "invalid_request";

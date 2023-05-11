@@ -46,6 +46,7 @@ namespace IdentityServer.Endpoints
             configuration.GrantTypesSupported.Add(GrantTypes.ClientCredentials);
             configuration.GrantTypesSupported.Add(GrantTypes.Password);
             configuration.GrantTypesSupported.Add(GrantTypes.RefreshToken);
+            configuration.GrantTypesSupported.Add(GrantTypes.AuthorizationCode);
             var scopes = await _resources.GetShowInDiscoveryDocumentScopesAsync();
             foreach (var item in scopes)
             {

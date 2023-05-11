@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using Client;
 using Client.Apis;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +17,6 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<ApiDelegatingHandler>();
 builder.Services.AddHttpClient<ApiClient>()
     .AddHttpMessageHandler<ApiDelegatingHandler>();
-builder.Services.AddHttpClient<IdentityServer>();
 //添加认证方案
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 builder.Services.AddAuthentication(configureOptions =>
@@ -38,14 +38,10 @@ builder.Services.AddAuthentication(configureOptions =>
         configureOptions.Authority = "https://localhost:8080";
         configureOptions.Events = new Microsoft.AspNetCore.Authentication.OpenIdConnect.OpenIdConnectEvents()
         {
-            OnTokenValidated = context =>
+            //Idp退出之后，退出本地cookie登入
+            OnSignedOutCallbackRedirect = async context =>
             {
-                var claims = context.HttpContext.User.Claims;
-                var properties = new Microsoft.AspNetCore.Authentication.AuthenticationProperties();
-                properties.IsPersistent = true;
-                properties.ExpiresUtc = DateTime.UtcNow.AddDays(30);
-                context.Properties = properties;
-                return Task.CompletedTask;
+                await context.HttpContext.SignOutAsync("Cookie");
             }
         };
     });

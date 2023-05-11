@@ -22,6 +22,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.AddEndpoint<EndSessionEndpoint>(IdentityServerEndpointNames.EndSession, IdentityEndpointPaths.EndSession);
             builder.AddEndpoint<IntrospectionEndpoint>(IdentityServerEndpointNames.Introspection, IdentityEndpointPaths.Introspection);
             builder.AddEndpoint<DiscoveryKeyEndpoint>(IdentityServerEndpointNames.DiscoveryJwks, IdentityEndpointPaths.DiscoveryJwks);
+            builder.AddEndpoint<EndSessionCallbackEndpoint>(IdentityServerEndpointNames.EndSessionCallback, IdentityEndpointPaths.EndSessionCallback);
             return builder;
         }
         #endregion
