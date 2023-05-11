@@ -35,6 +35,14 @@ namespace IdentityServer.Endpoints
             await _loggerFormater.LogRequestAsync();
             #endregion
 
+            #region Challenge
+            var result = await context.AuthenticateAsync(_options.AuthenticationScheme);
+            if (!result.Succeeded)
+            {
+                return Challenge();
+            }
+            #endregion
+
             #region Validate Request
             NameValueCollection parameters;
             if (HttpMethods.IsGet(context.Request.Method))
@@ -122,19 +130,11 @@ namespace IdentityServer.Endpoints
             }
             #endregion
 
-            #region Authentication
-            var result = await context.AuthenticateAsync(_options.AuthenticationScheme);
-            if (!result.Succeeded)
-            {
-                return Challenge();
-            }
-            else
-            {
-                var request = new AuthorizeGeneratorRequest(parameters, client, resources, result.Principal);
-                var authorizationCode = await _generator.GenerateAsync(request);
-                var redirectUrl = CreateRedirectUrl(authorizationCode);
-                return Redirect(redirectUrl);
-            }
+            #region Response
+            var request = new AuthorizeGeneratorRequest(parameters, client, resources, result.Principal);
+            var authorizationCode = await _generator.GenerateAsync(request);
+            var redirectUrl = CreateRedirectUrl(authorizationCode);
+            return Redirect(redirectUrl);
             #endregion
         }
 
