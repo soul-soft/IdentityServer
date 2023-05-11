@@ -61,23 +61,7 @@ namespace IdentityServer.Endpoints
             }
             #endregion
 
-            #region Validate PostLogoutRedirectUri
-            var client = result.Client;
-            var postLogoutRedirectUri = parameters[OpenIdConnectParameterNames.PostLogoutRedirectUri];
-            if (!string.IsNullOrEmpty(postLogoutRedirectUri) && !client.AllowedRedirectUris.Contains(postLogoutRedirectUri))
-            {
-                return BadRequest(ValidationErrors.InvalidGrant, "Not allowed redirectUri");
-            }
-            #endregion
-
-            var propertities = new AuthenticationProperties();
-            await _sessionManager.SignOutAsync(_options.AuthenticationScheme, propertities);
-           
-            if (!string.IsNullOrEmpty(postLogoutRedirectUri))
-            {
-                var state = parameters[OpenIdConnectParameterNames.State];
-                return Redirect($"{postLogoutRedirectUri}?state={state}");
-            }
+            await _sessionManager.SignOutAsync(_options.AuthenticationScheme);
 
             return StatusCode(HttpStatusCode.OK);
         }

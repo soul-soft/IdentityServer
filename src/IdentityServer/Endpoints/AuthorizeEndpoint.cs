@@ -1,5 +1,7 @@
 ﻿using System.Collections.Specialized;
 using System.Net;
+using IdentityServer.Models;
+using System.Text;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -10,17 +12,20 @@ namespace IdentityServer.Endpoints
     {
         private readonly IClientStore _clientStore;
         private readonly IdentityServerOptions _options;
+        private readonly ISessionManager _sessionManager;
         private readonly IResourceValidator _resourceValidator;
         private readonly IAuthorizeResponseGenerator _generator;
 
         public AuthorizeEndpoint(
             IClientStore clientStore,
             IdentityServerOptions options,
+            ISessionManager sessionManager,
             IResourceValidator resourceValidator,
             IAuthorizeResponseGenerator generator)
         {
             _options = options;
             _clientStore = clientStore;
+            _sessionManager = sessionManager;
             _resourceValidator = resourceValidator;
             _generator = generator;
         }
@@ -115,19 +120,27 @@ namespace IdentityServer.Endpoints
             #endregion
 
             #region Authentication
-            var result = await context.AuthenticateAsync(_options.AuthenticationScheme);
+            var result = await _sessionManager.AuthenticateAsync(_options.AuthenticationScheme);
             if (!result.Succeeded)
             {
                 return Challenge();
             }
             else
             {
-                var subject = result.Principal;
-                var request = new AuthorizeGeneratorRequest(body: parameters, client: client, resources: resources, subject: subject);
-                var url = await _generator.GenerateAsync(request);
-                return Redirect(url);
+                var request = new AuthorizeGeneratorRequest(parameters, client, resources, result.Principal);
+                var authorizationCode = await _generator.GenerateAsync(request);
+                return Redirect(CreateRedirectUri(authorizationCode));
             }
             #endregion
+        }
+
+        public string CreateRedirectUri(AuthorizationCode authorizationCode)
+        {
+            var buffer = new StringBuilder();
+            buffer.Append(authorizationCode.RedirectUri);
+            buffer.AppendFormat("?{0}={1}", OpenIdConnectParameterNames.Code, authorizationCode.Code);
+            buffer.AppendFormat("&{0}={1}", OpenIdConnectParameterNames.State, authorizationCode.State);
+            return buffer.ToString();
         }
     }
 }

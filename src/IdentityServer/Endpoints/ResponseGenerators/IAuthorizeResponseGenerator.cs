@@ -2,6 +2,6 @@
 {
     public interface IAuthorizeResponseGenerator
     {
-        Task<string> GenerateAsync(AuthorizeGeneratorRequest request);
+        Task<AuthorizationCode> GenerateAsync(AuthorizeGeneratorRequest request);
     }
 }

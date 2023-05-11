@@ -75,7 +75,7 @@ namespace IdentityServer.Endpoints
             var grantResult = await RunGrantValidationAsync(context, new GrantValidationRequest(client, grantType, resources, body, _options));
             #endregion
 
-            #region Response Generator
+            #region Is Active
             if (grantResult.Subject.GetSubjectId() != null)
             {
                 //验证是否启用
@@ -85,9 +85,11 @@ namespace IdentityServer.Endpoints
                     return BadRequest(ValidationErrors.InvalidGrant, string.Format("User has been disabled:{0}", grantResult.Subject.GetSubjectId()));
                 }
             }
-            var response = await _generator.CreateTokenAsync(new TokenGeneratorRequest(grantType, grantResult.Subject, client, resources, grantResult.Code));
-            return Json(response.Serialize());
             #endregion
+
+            var response = await _generator.GenerateAsync(new TokenGeneratorRequest(grantType, grantResult.Subject, client, resources, grantResult.Code));
+
+            return Json(response.Serialize());
         }
 
         #region Validate Grant

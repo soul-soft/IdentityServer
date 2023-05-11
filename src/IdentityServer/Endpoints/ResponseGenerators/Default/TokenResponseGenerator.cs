@@ -16,7 +16,7 @@ namespace IdentityServer.Endpoints
             _claimService = claimService;
         }
 
-        public async Task<TokenGeneratorResponse> CreateTokenAsync(TokenGeneratorRequest request)
+        public async Task<TokenGeneratorResponse> GenerateAsync(TokenGeneratorRequest request)
         {
             string? refreshToken = null;
             string? identityToken = null;

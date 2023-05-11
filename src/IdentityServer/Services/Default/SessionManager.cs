@@ -14,6 +14,11 @@ namespace IdentityServer.Services
                 ?? throw new ArgumentNullException();
         }
 
+        public async Task<AuthenticateResult> AuthenticateAsync(string? scheme)
+        {
+            return await _context.AuthenticateAsync(scheme);
+        }
+
         public async Task SignInAsync(string? scheme, ClaimsPrincipal principal, AuthenticationProperties? properties = null)
         {
             await _context.SignInAsync(scheme, principal, properties);

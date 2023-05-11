@@ -20,14 +20,9 @@ namespace IdentityServer.Endpoints
             _randomGenerator = randomGenerator;
         }
 
-        public async Task<string> GenerateAsync(AuthorizeGeneratorRequest request)
+        public async Task<AuthorizationCode> GenerateAsync(AuthorizeGeneratorRequest request)
         {
-            var authorizationCode = await CreateAuthorizationCodeAsync(request);
-            var buffer = new StringBuilder();
-            buffer.Append(authorizationCode.RedirectUri);
-            buffer.AppendFormat("?{0}={1}", OpenIdConnectParameterNames.Code, authorizationCode.Code);
-            buffer.AppendFormat("&{0}={1}", OpenIdConnectParameterNames.State, authorizationCode.State);
-            return buffer.ToString();
+            return await CreateAuthorizationCodeAsync(request);           
         }
 
         public async Task<AuthorizationCode> CreateAuthorizationCodeAsync(AuthorizeGeneratorRequest request)
