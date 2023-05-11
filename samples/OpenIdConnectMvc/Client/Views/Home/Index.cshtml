@@ -6,7 +6,7 @@
     var idToken = await Context.GetTokenAsync(OpenIdConnectParameterNames.IdToken);
     var accessToken = await Context.GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
 }
-<h1>Welcome Client</h1>
+<h1 style="text-align:center;margin-top:20px;"><a href="/">MVC Client</a></h1>
 
 <h3>User Claims</h3>
 <ul>
@@ -22,13 +22,11 @@
 <h3>Access Token</h3>
 <div>@accessToken</div>
 
-<h3>JWT IO</h3>
-<a href="http://jwt.io" target="_blank">jwt.io</a>
+<h3><a href="http://jwt.io" target="_top">jwt.io</a></h3>
 
-<h3>Call Api</h3>
-<a href="/Home/WeatherForecast" target="_blank">Call</a><br/>
+<h3><a href="/Home/WeatherForecast" target="_parent">Call Api</a><br /></h3>
 
-<h3>Logout</h3>
-<a href="/Account/Logout">Logout</a>
+<h3><a href="/Account/Logout">Logout</a></h3>
+
 
 

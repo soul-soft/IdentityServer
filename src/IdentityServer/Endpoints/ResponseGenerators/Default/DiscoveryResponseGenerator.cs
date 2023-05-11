@@ -38,15 +38,15 @@ namespace IdentityServer.Endpoints
                 IntrospectionEndpoint = _serverUrl.GetEndpointUri(IdentityServerEndpointNames.Introspection),
             };
             configuration.AdditionalData.Add("revocation_endpoint", _serverUrl.GetEndpointUri(IdentityServerEndpointNames.Revocation));
-            var supportedExtensionsGrantTypes = _extensionGrantValidators.GetSupportedGrantTypes();
-            foreach (var item in supportedExtensionsGrantTypes)
-            {
-                configuration.GrantTypesSupported.Add(item);
-            }
             configuration.GrantTypesSupported.Add(GrantTypes.ClientCredentials);
             configuration.GrantTypesSupported.Add(GrantTypes.Password);
             configuration.GrantTypesSupported.Add(GrantTypes.RefreshToken);
             configuration.GrantTypesSupported.Add(GrantTypes.AuthorizationCode);
+            var extensionsGrantTypes = _extensionGrantValidators.GetSupportedGrantTypes();
+            foreach (var item in extensionsGrantTypes)
+            {
+                configuration.GrantTypesSupported.Add(item);
+            }
             var scopes = await _resources.GetShowInDiscoveryDocumentScopesAsync();
             foreach (var item in scopes)
             {

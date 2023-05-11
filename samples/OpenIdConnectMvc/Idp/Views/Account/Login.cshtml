@@ -1,14 +1,21 @@
-﻿<form action="/account/login?ReturnUrl=@System.Net.WebUtility.UrlEncode(Context.Request.Query["ReturnUrl"])" method="post">
-    <label>username</label><br />
-    <input type="text" name="Username" value="admin" /><br />
-    <label>password</label><br />
-    <input type="password" name="Password" value="admin" /><br />
-   @* <label>30天免登入</label>
-    <input type="radio" name="Remember" value="1" /><br />*@
-    @if (Model.Error != null)
-    {
-        <label style="color:red">@Model.Error</label>
-        <br />
-    }
-    <input type="submit" value="login" />
-</form>
+﻿<h1 style="text-align:center;margin-top:20px;"><a href="/">Identity Server</a></h1>
+
+<h1 style="text-align:center;margin-top:40px;">登入系统</h1>
+
+<div style="width:200px;margin:0 auto;">
+
+    <form action="/account/login?ReturnUrl=@System.Net.WebUtility.UrlEncode(Context.Request.Query["ReturnUrl"])" method="post">
+        <label style="text-align:left;">username</label><br />
+        <input style="margin-top:4px;" type="text" name="Username" value="admin" /><br />
+        <label style="text-align:left;">password</label><br />
+        <input style="margin-top:4px;" type="password" name="Password" value="admin" /><br />
+        @* <label>30天免登入</label>
+        <input type="radio" name="Remember" value="1" /><br />*@
+        @if (Model.Error != null)
+        {
+            <label style="color:red">@Model.Error</label>
+            <br />
+        }
+        <input type="submit" value="login" style="margin-top:10px;margin-left:60px;" />
+    </form>
+</div>

@@ -57,7 +57,8 @@ namespace IdentityServer.Services.Default
             var sb = new StringBuilder();
             sb.AppendFormat("Url：{0}\r\n", context.Request.Path);
             sb.AppendFormat("Method：{0}\r\n", context.Request.Method);
-            sb.AppendFormat("Body：{0}\r\n", body);
+            sb.AppendFormat("ContentType：{0}\r\n", context.Request.ContentType ?? "null");
+            sb.AppendFormat("Content：{0}\r\n", body);
             _logger.LogDebug(sb.ToString());
         }
     }

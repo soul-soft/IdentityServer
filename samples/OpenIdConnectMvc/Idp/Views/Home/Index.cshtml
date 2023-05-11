@@ -1,4 +1,4 @@
-﻿<h1>Welcome Idp</h1>
+﻿<h1 style="text-align:center;margin-top:20px;"><a href="/">Identity Server</a></h1>
 <h3>User Claims</h3>
 <ul>
     @foreach (var item in Context.User.Claims)
@@ -7,4 +7,7 @@
     }
 </ul>
 <br/>
-<a href="/Account/Logout">logout</a>
+<h3><a href="/Account/Logout">Logout</a></h3>
+<h3><a href="/.well-known/openid-configuration">Discovery docs</a></h3>
+<h3><a href="/.well-known/openid-configuration/jwks">Jwks</a></h3>
+<h3><a href="https://github.com/soul-soft/IdentityServer">Github</a></h3>

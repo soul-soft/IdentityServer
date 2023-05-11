@@ -2,7 +2,7 @@
 {
     public interface IDiscoveryResponseGenerator
     {
-        Task<JwkDiscoveryGeneratorResponse> CreateJwkDiscoveryDocumentAsync();
         Task<DiscoveryGeneratorResponse> GetDiscoveryDocumentAsync();
+        Task<JwkDiscoveryGeneratorResponse> CreateJwkDiscoveryDocumentAsync();
     }
 }

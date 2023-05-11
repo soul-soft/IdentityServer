@@ -14,7 +14,7 @@ namespace IdentityServer.Endpoints
 
         public async Task ExecuteAsync(HttpContext context)
         {
-            context.Response.ContentType = MediaTypeNames.Application.Json;
+            context.Response.ContentType = "application/json;charset=utf-8";
             await context.Response.WriteAsync(_content, System.Text.Encoding.UTF8);
         }
     }
