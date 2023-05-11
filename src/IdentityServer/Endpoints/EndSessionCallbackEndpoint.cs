@@ -1,5 +1,4 @@
 ﻿using System.Collections.Specialized;
-using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
@@ -30,6 +29,7 @@ namespace IdentityServer.Endpoints
 
             await _sessionManager.SignOutAsync(_options.AuthenticationScheme);
             var redirectUri = BuildRedirectUri(parameters);
+
             return Redirect(redirectUri);
         }
 
