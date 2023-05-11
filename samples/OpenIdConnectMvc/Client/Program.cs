@@ -25,7 +25,10 @@ builder.Services.AddAuthentication(configureOptions =>
         //使用idp作为默认的质询方案
         configureOptions.DefaultChallengeScheme = "Idp";
     })
-    .AddCookie("Cookie")
+    .AddCookie("Cookie", configureOptions =>
+    {
+        configureOptions.Cookie.Name = "Idc";
+    })
     .AddOpenIdConnect("Idp", configureOptions =>
     {
         configureOptions.ClientId = "mvc";

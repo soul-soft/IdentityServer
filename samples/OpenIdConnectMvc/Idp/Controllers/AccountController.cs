@@ -79,9 +79,13 @@ namespace Idp.Controllers
         /// </summary>
         /// <param name="manager"></param>
         /// <returns></returns>
-        public async Task<IActionResult> Logout([FromServices] ISessionManager manager)
+        public async Task<IActionResult> Logout([FromServices] ISessionManager manager,string returnUrl)
         {
             await manager.SignOutAsync("Cookie");
+            if (!string.IsNullOrEmpty(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
             return Redirect("/Account/Login");
         }
     }

@@ -16,7 +16,10 @@ builder.Services.AddAuthentication(configureOptions =>
         //使用内置的cookie作为默认的质询方案
         configureOptions.DefaultChallengeScheme = "Cookie";
     })
-    .AddCookie("Cookie");
+    .AddCookie("Cookie", configureOptions => 
+    {
+        configureOptions.Cookie.Name = "Idp";
+    });
 //添加授权策略
 builder.Services.AddAuthorization(configure =>
 {
@@ -41,7 +44,10 @@ builder.Services.AddIdentityServer(configureOptions =>
     .AddInMemoryDeveloperSigningCredentials();
 
 var app = builder.Build();
-
+app.Use(async (c, next) => 
+{
+    await next();
+});
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

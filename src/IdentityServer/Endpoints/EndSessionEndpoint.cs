@@ -1,5 +1,6 @@
 ﻿using System.Collections.Specialized;
 using System.Net;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
@@ -69,7 +70,8 @@ namespace IdentityServer.Endpoints
             }
             #endregion
 
-            await _sessionManager.SignOutAsync(_options.AuthenticationScheme);
+            var propertities = new AuthenticationProperties();
+            await _sessionManager.SignOutAsync(_options.AuthenticationScheme, propertities);
            
             if (!string.IsNullOrEmpty(postLogoutRedirectUri))
             {

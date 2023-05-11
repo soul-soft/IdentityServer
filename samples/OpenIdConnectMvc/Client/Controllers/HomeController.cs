@@ -1,5 +1,8 @@
+using System.Net;
+using System.Text.Encodings.Web;
 using Client.Apis;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
@@ -18,7 +21,7 @@ namespace Client.Controllers
         {
             return View();
         }
-
+        [AllowAnonymous]
         public IActionResult Welcome()
         {
             return View();
@@ -29,10 +32,12 @@ namespace Client.Controllers
             var model = await client.GetWeatherForecastListAsync();
             return View(model);
         }
-
-        public async Task Logout([FromServices] IdentityServer server)
+        public async Task<IActionResult> Logout([FromServices] IdentityServer server)
         {
+            //±¾µØÍË³ö
             await HttpContext.SignOutAsync("Cookie");
+            var returnUrl = WebUtility.UrlEncode("https://localhost:8081/Home/Welcome");
+            return Redirect($"https://localhost:8080/Account/Logout?ReturnUrl={returnUrl}");
         }
     }
 }
