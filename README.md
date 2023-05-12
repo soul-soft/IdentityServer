@@ -6,6 +6,10 @@ identityserver是开源的，免费的，简单的身份认证框架，基于微
 2. [nuget](https://www.nuget.org/packages/Soul.IdentityServer/)
 3. [gitee](https://gitee.com/soul-au/IdentityServer)
 
+## OIDC认证流程
+
+![oidc](/images/oidc.jpg)
+
 ## 赞助
 
 如果你觉得这个项目非常牛逼就给我打钱
