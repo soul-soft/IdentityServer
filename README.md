@@ -8,7 +8,7 @@ identityserver是开源的，免费的，简单的身份认证框架，基于微
 
 ## OIDC认证流程
 
-![oidc](/images/oidc.jpg)
+![oidc](/images/oidc-signin.jpg)
 
 ## 赞助
 
