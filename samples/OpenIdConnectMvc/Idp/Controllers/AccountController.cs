@@ -23,7 +23,7 @@ namespace Idp.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Login(string returnUrl)
+        public IActionResult Login()
         {
             var returnModel = new AccountLoginViewModel();
             return View(returnModel);
@@ -57,11 +57,11 @@ namespace Idp.Controllers
             var claims = new List<Claim>();
             claims.Add(new Claim(JwtClaimTypes.Subject, model.Username));
             var properties = new AuthenticationProperties();
-            if (model.Remember == 1)
-            {
-                properties.IsPersistent = true;
-                properties.ExpiresUtc = DateTime.UtcNow.AddDays(30);
-            }
+            //if (model.Remember == 1)
+            //{
+            //    properties.IsPersistent = true;
+            //    properties.ExpiresUtc = DateTime.UtcNow.AddDays(30);
+            //}
             var subject = new ClaimsPrincipal(new ClaimsIdentity(claims, "Cookie"));
             await manager.SignInAsync("Cookie", subject, properties);
             if (!string.IsNullOrEmpty(model.ReturnUrl))
