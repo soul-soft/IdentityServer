@@ -29,7 +29,7 @@ namespace IdentityServer.Services
         {
             var claims = new List<Claim>();
             var claimTypes = request.Resources.AllowedClaimTypes;
-            var profileClaims = await _profileService.GetProfileClaimsAsync(new ProfileClaimsRequest(request.Subject, request.Client, request.Resources));
+            var profileClaims = await _profileService.GetUserInfoClaimsAsync(new ProfileClaimsRequest(request.Subject, request.Client, request.Resources));
             claims.AddRange(profileClaims.Where(a => claimTypes.Contains(a.Type)));
             return new ClaimsPrincipal(new ClaimsIdentity(claims));
         }

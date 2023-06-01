@@ -9,7 +9,7 @@ namespace IdentityServer.Services
             return Task.FromResult(true);
         }
 
-        public Task<IEnumerable<Claim>> GetProfileClaimsAsync(ProfileClaimsRequest request)
+        public Task<IEnumerable<Claim>> GetUserInfoClaimsAsync(ProfileClaimsRequest request)
         {
             IEnumerable<Claim> result = Array.Empty<Claim>();
             return Task.FromResult(result);
