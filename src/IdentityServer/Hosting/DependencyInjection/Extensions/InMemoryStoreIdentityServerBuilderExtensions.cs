@@ -66,7 +66,7 @@ namespace IdentityServer.Hosting.DependencyInjection
                 {
                     File.WriteAllText(filename, JsonSerializer.Serialize(jwk));
                 }
-                builder.AddInMemorySigningCredentials(key, signingAlgorithm);
+                builder.AddInMemorySigningCredentials(jwk, signingAlgorithm);
                 return builder;
             }
         }
