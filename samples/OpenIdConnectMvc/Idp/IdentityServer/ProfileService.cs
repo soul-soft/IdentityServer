@@ -30,12 +30,13 @@ namespace Idp.IdentityServer
             return Task.FromResult<IEnumerable<Claim>>(claims);
         }
 
-        public Task<IEnumerable<Claim>> GetProfileClaimsAsync(ProfileClaimsRequest request)
+
+        public Task<IEnumerable<Claim>> GetUserInfoClaimsAsync(ProfileClaimsRequest request)
         {
             var claims = new List<Claim>();
             if (request.ClaimTypes.Any(a => a == JwtClaimTypes.NickName))
             {
-                claims.Add(new Claim(JwtClaimTypes.NickName,"tom"));
+                claims.Add(new Claim(JwtClaimTypes.NickName, "tom"));
             }
             if (request.ClaimTypes.Any(a => a == JwtClaimTypes.Picture))
             {
